@@ -1,5 +1,38 @@
 /* === CSS Específico para tienda.html === */
 
+/* Asegurar que el contenedor principal tenga el mismo ancho que header/footer */
+.tienda .container,
+.tienda > .container,
+div.container[style*="max-width"] {
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    padding: 40px 20px !important;
+    width: 100%;
+    box-sizing: border-box !important;
+}
+
+/* Layout de tienda */
+.tienda-layout {
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Sidebar de filtros */
+.tienda-filters-sidebar {
+    width: 100%;
+    max-width: 280px;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.tienda-filters-sidebar .about-card {
+    box-sizing: border-box;
+    width: 100%;
+}
+
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
@@ -15,20 +48,42 @@
 
 /* ===== TABLET (768px - 1023px) ===== */
 @media (min-width: 768px) and (max-width: 1023px) {
+    /* Asegurar que el contenedor tenga el mismo padding que header/footer */
     .container {
         padding: 30px 20px !important;
-        max-width: 1200px !important;
+        max-width: 100% !important;
         margin: 0 auto !important;
+        box-sizing: border-box !important;
+    }
+    
+    /* Contenedor específico de tienda */
+    div.container[style*="max-width"] {
+        max-width: 100% !important;
+        padding: 30px 20px !important;
+        box-sizing: border-box !important;
     }
     
     .tienda-layout {
         grid-template-columns: 240px 1fr !important;
         gap: 24px !important;
         width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
     }
     
     .tienda-filters-sidebar {
         position: static !important;
+        width: 100% !important;
+        max-width: 240px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
+    }
+    
+    .tienda-filters-sidebar .about-card {
+        width: 100% !important;
+        box-sizing: border-box !important;
     }
     
     .container > div {
@@ -60,16 +115,28 @@
 
 /* ===== MOBILE (hasta 767px) ===== */
 @media (max-width: 767px) {
+    /* Asegurar que el contenedor tenga el mismo padding que header/footer */
     .container {
         padding: 20px 16px !important;
-        max-width: 1200px !important;
+        max-width: 100% !important;
         margin: 0 auto !important;
+        box-sizing: border-box !important;
+    }
+    
+    /* Contenedor específico de tienda - mismo ancho que header/footer */
+    div.container[style*="max-width"] {
+        max-width: 100% !important;
+        padding: 20px 16px !important;
+        box-sizing: border-box !important;
     }
     
     .tienda-layout {
         grid-template-columns: 1fr !important;
         gap: 24px !important;
         width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
     }
     
     .tienda-filters-sidebar {
@@ -77,10 +144,16 @@
         order: -1; /* Filtros arriba en móvil */
         width: 100% !important;
         max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
     }
     
     .tienda-filters-sidebar .about-card {
         padding: 20px 16px !important;
+        margin: 0 !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
     }
     
     .container > div {
