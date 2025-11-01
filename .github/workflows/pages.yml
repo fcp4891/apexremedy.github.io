@@ -91,6 +91,8 @@ jobs:
         with:
           path: './frontend'
           retention-days: 30
+        env:
+          GITHUB_PAGES_BASE_PATH: '/apexremedy.github.io'
       
       - name: Deploy to GitHub Pages
         id: deployment
