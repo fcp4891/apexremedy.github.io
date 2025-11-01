@@ -27,10 +27,19 @@
                 return;
             }
             
-            // Eventos que resetean el timer de inactividad
+            // Eventos que resetean el timer de inactividad (con throttling para evitar demasiados resets)
+            let resetTimeout = null;
+            const throttledReset = () => {
+                if (resetTimeout) return;
+                resetTimeout = setTimeout(() => {
+                    this.resetInactivityTimer();
+                    resetTimeout = null;
+                }, 1000); // Reset máximo una vez por segundo
+            };
+            
             const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
             events.forEach(event => {
-                document.addEventListener(event, () => this.resetInactivityTimer(), { passive: true });
+                document.addEventListener(event, throttledReset, { passive: true });
             });
 
             // Detectar cuando la página se oculta/visible (pero NO cerrar sesión en navegación)
@@ -54,20 +63,24 @@
             // Limpiar timers existentes
             if (this.inactivityTimer) {
                 clearTimeout(this.inactivityTimer);
+                this.inactivityTimer = null;
             }
             if (this.warningTimer) {
                 clearTimeout(this.warningTimer);
+                this.warningTimer = null;
             }
 
-            // Ocultar warning si está visible
+            // Ocultar warning si está visible (pero solo una vez, no cada vez que se resetea)
             if (this.isWarningShown) {
                 this.hideWarning();
             }
 
-            // Configurar nuevo timer de inactividad
-            this.inactivityTimer = setTimeout(() => {
-                this.showInactivityWarning();
-            }, this.inactivityTimeout);
+            // Configurar nuevo timer de inactividad solo si no hay warning mostrado
+            if (!this.isWarningShown) {
+                this.inactivityTimer = setTimeout(() => {
+                    this.showInactivityWarning();
+                }, this.inactivityTimeout);
+            }
         }
 
         showInactivityWarning() {
@@ -236,10 +249,28 @@
         }
     }
 
+    // Flag para prevenir múltiples inicializaciones
+    let sessionManagerInitialized = false;
+    let initSessionManagerTimeout = null;
+
     // Inicializar cuando el DOM esté listo y authManager esté disponible
     function initSessionManager() {
+        // Limpiar timeout pendiente si existe
+        if (initSessionManagerTimeout) {
+            clearTimeout(initSessionManagerTimeout);
+            initSessionManagerTimeout = null;
+        }
+
+        // Prevenir múltiples inicializaciones
+        if (sessionManagerInitialized && typeof window.sessionManager !== 'undefined') {
+            return;
+        }
+
         if (typeof authManager === 'undefined') {
-            setTimeout(initSessionManager, 100);
+            // Limitar reintentos para evitar loops infinitos
+            if (!sessionManagerInitialized) {
+                initSessionManagerTimeout = setTimeout(initSessionManager, 100);
+            }
             return;
         }
 
@@ -248,34 +279,50 @@
             return;
         }
 
-        // Crear instancia global
-        if (typeof sessionManager === 'undefined') {
+        // Crear instancia global solo si no existe
+        if (typeof window.sessionManager === 'undefined') {
+            sessionManagerInitialized = true;
             window.sessionManager = new SessionManager();
         }
     }
 
-    // Inicializar cuando el DOM esté listo
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initSessionManager);
-    } else {
-        initSessionManager();
+    // Inicializar cuando el DOM esté listo (solo una vez)
+    if (!sessionManagerInitialized) {
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initSessionManager, { once: true });
+        } else {
+            // Ejecutar después de un pequeño delay para asegurar que otros scripts estén listos
+            setTimeout(initSessionManager, 50);
+        }
     }
 
     // Reinicializar cuando el usuario inicie sesión
     window.addEventListener('userLoggedIn', () => {
-        if (typeof sessionManager !== 'undefined') {
-            sessionManager.destroy();
+        if (typeof window.sessionManager !== 'undefined') {
+            window.sessionManager.destroy();
+            window.sessionManager = undefined;
         }
+        sessionManagerInitialized = false;
         setTimeout(() => {
-            window.sessionManager = new SessionManager();
+            if (typeof authManager !== 'undefined' && authManager.isAuthenticated()) {
+                sessionManagerInitialized = true;
+                window.sessionManager = new SessionManager();
+            }
         }, 500);
     });
 
     // Destruir cuando el usuario cierre sesión
     window.addEventListener('userLoggedOut', () => {
-        if (typeof sessionManager !== 'undefined') {
-            sessionManager.destroy();
+        if (typeof window.sessionManager !== 'undefined') {
+            window.sessionManager.destroy();
             window.sessionManager = undefined;
+        }
+        sessionManagerInitialized = false;
+        
+        // Limpiar timeout pendiente
+        if (initSessionManagerTimeout) {
+            clearTimeout(initSessionManagerTimeout);
+            initSessionManagerTimeout = null;
         }
     });
 
