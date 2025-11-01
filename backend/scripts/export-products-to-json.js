@@ -111,28 +111,73 @@ async function exportProducts() {
                 medicinalInfo = product.medicinal_info;
             }
             
-            // Construir objeto normalizado para el frontend
+            // Parsear campos JSON adicionales si existen
+            let cannabinoidProfile = null;
+            let terpeneProfile = null;
+            let strainInfo = null;
+            let therapeuticInfo = null;
+            let usageInfo = null;
+            let safetyInfo = null;
+            let specifications = null;
+            
+            // Intentar parsear desde strings JSON
+            const parseJsonField = (field) => {
+                if (!field) return null;
+                if (typeof field === 'string') {
+                    try {
+                        return JSON.parse(field);
+                    } catch (e) {
+                        return field; // Si no es JSON válido, retornar como string
+                    }
+                }
+                return field;
+            };
+            
+            cannabinoidProfile = parseJsonField(product.cannabinoid_profile);
+            terpeneProfile = parseJsonField(product.terpene_profile);
+            strainInfo = parseJsonField(product.strain_info);
+            therapeuticInfo = parseJsonField(product.therapeutic_info);
+            usageInfo = parseJsonField(product.usage_info);
+            safetyInfo = parseJsonField(product.safety_info);
+            specifications = parseJsonField(product.specifications);
+            
+            // Construir objeto normalizado para el frontend con TODOS los campos
             const normalized = {
                 id: product.id,
                 name: product.name,
-                description: product.description || '',
+                description: product.description || product.short_description || '',
+                short_description: product.short_description || product.description || '',
                 sku: product.sku,
+                breeder: product.breeder || null,
                 category: product.category || '',
                 category_slug: product.category_slug || '',
                 category_id: product.category_id,
+                product_type: product.product_type || null,
                 price: product.base_price || product.price || 0,
                 base_price: product.base_price || product.price || 0,
                 stock: product.stock_quantity || product.stock || 0,
                 stock_quantity: product.stock_quantity || product.stock || 0,
+                stock_unit: product.stock_unit || null,
                 image: product.image || product.primary_image || '',
                 images: product.images || [],
                 featured: product.featured === 1 || product.featured === true,
                 active: product.active === 1 || product.active === true,
+                is_medicinal: product.is_medicinal === 1 || product.is_medicinal === true,
+                requires_prescription: product.requires_prescription === 1 || product.requires_prescription === true,
                 created_at: product.created_at,
                 updated_at: product.updated_at,
+                // Campos estructurados
                 attributes: attributes,
                 price_variants: priceVariants,
-                medicinal_info: medicinalInfo
+                medicinal_info: medicinalInfo,
+                // Campos específicos para modales
+                cannabinoid_profile: cannabinoidProfile,
+                terpene_profile: terpeneProfile,
+                strain_info: strainInfo,
+                therapeutic_info: therapeuticInfo,
+                usage_info: usageInfo,
+                safety_info: safetyInfo,
+                specifications: specifications
             };
             
             return normalized;

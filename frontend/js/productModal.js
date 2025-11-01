@@ -336,53 +336,90 @@ function openMedicalOilModal(product, attrs) {
         return;
     }
     
+    console.log('💊 Abriendo modal de aceite medicinal:', product);
+    
+    // Extraer información medicinal si está anidada
+    let medicinalInfo = {};
+    if (product.medicinal_info) {
+        try {
+            medicinalInfo = typeof product.medicinal_info === 'string' 
+                ? JSON.parse(product.medicinal_info) 
+                : product.medicinal_info;
+        } catch (e) {
+            console.warn('⚠️ Error parseando medicinal_info:', e);
+        }
+    }
+    
+    // Helper para establecer valores
+    const setName = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value || '';
+    };
+    
     // Datos básicos
-    document.getElementById('medOilName').textContent = product.name;
-    document.getElementById('medOilBreeder').textContent = product.breeder || 'Apexremedy';
-    document.getElementById('medOilSku').textContent = product.sku || 'N/A';
-    document.getElementById('medOilCategory').textContent = formatCategoryName(product.category);
+    setName('medOilName', product.name);
+    setName('medOilBreeder', product.breeder || attrs?.breeder || 'Apexremedy');
+    setName('medOilSku', product.sku || 'N/A');
+    setName('medOilCategory', formatCategoryName(product.category || product.category_slug));
+    
+    // Descripción completa
+    const descEl = document.getElementById('medOilDescription');
+    if (descEl) {
+        descEl.textContent = product.description || product.short_description || 'Sin descripción disponible';
+    }
     
     // Imagen
     const image = document.getElementById('medOilImage');
-    setElementImageWithHover(image, product);
+    if (image) {
+        setElementImageWithHover(image, product);
+    }
     
     // Precio y stock
-    document.getElementById('medOilPrice').textContent = `$${formatPrice(product.base_price || product.price)}`;
-    document.getElementById('medOilStock').textContent = formatStock(product.stock_quantity || product.stock, product.stock_unit || 'unidades');
+    setName('medOilPrice', `$${formatPrice(product.base_price || product.price || 0)}`);
+    setName('medOilStock', formatStock(product.stock_quantity || product.stock || 0, product.stock_unit || 'unidades'));
+    
+    // 🆕 Extraer campos desde medicinal_info y attributes
+    const specifications = product.specifications || medicinalInfo?.specifications || attrs?.specifications;
+    const cannabinoidProfile = product.cannabinoid_profile || medicinalInfo?.cannabinoid_profile || attrs?.cannabinoid_profile;
+    const strainInfo = product.strain_info || medicinalInfo?.strain_info || attrs?.strain_info;
+    const therapeuticInfo = product.therapeutic_info || medicinalInfo?.therapeutic_info || attrs?.therapeutic_info;
+    const usageInfo = product.usage_info || medicinalInfo?.usage_info || attrs?.usage_info;
+    const safetyInfo = product.safety_info || medicinalInfo?.safety_info || attrs?.safety_info;
     
     // Especificaciones técnicas
-    if (product.specifications) {
-        fillSpecifications(product.specifications, 'medOilSpecs');
+    if (specifications) {
+        fillSpecifications(specifications, 'medOilSpecs');
     }
     
     // Perfil cannabinoide
-    if (product.cannabinoid_profile) {
-        fillCannabinoidProfile(product.cannabinoid_profile, 'medOilCannabinoids');
+    if (cannabinoidProfile) {
+        fillCannabinoidProfile(cannabinoidProfile, 'medOilCannabinoids');
     }
     
-    // Información de extracción
-    if (product.strain_info) {
-        fillStrainInfo(product.strain_info, 'medOilStrain');
+    // Información de extracción/cepa
+    if (strainInfo) {
+        fillStrainInfo(strainInfo, 'medOilStrain');
     }
     
-    // Atributos físicos
-    if (product.attributes) {
-        fillAttributes(product.attributes, 'medOilAttributes');
+    // Atributos físicos (también desde attributes)
+    const productAttributes = product.attributes || attrs || {};
+    if (productAttributes && Object.keys(productAttributes).length > 0) {
+        fillAttributes(productAttributes, 'medOilAttributes');
     }
     
     // Información terapéutica
-    if (product.therapeutic_info) {
-        fillTherapeuticInfo(product.therapeutic_info, 'medOilTherapeutic');
+    if (therapeuticInfo) {
+        fillTherapeuticInfo(therapeuticInfo, 'medOilTherapeutic');
     }
     
     // Información de uso
-    if (product.usage_info) {
-        fillUsageInfo(product.usage_info, 'medOilUsage');
+    if (usageInfo) {
+        fillUsageInfo(usageInfo, 'medOilUsage');
     }
     
     // Información de seguridad
-    if (product.safety_info) {
-        fillSafetyInfo(product.safety_info, 'medOilSafety');
+    if (safetyInfo) {
+        fillSafetyInfo(safetyInfo, 'medOilSafety');
     }
     
     // Mostrar modal
@@ -401,38 +438,89 @@ function openMedicalConcentrateModal(product, attrs) {
         return;
     }
     
+    console.log('🧪 Abriendo modal de concentrado medicinal:', product);
+    
+    // Extraer información medicinal si está anidada
+    let medicinalInfo = {};
+    if (product.medicinal_info) {
+        try {
+            medicinalInfo = typeof product.medicinal_info === 'string' 
+                ? JSON.parse(product.medicinal_info) 
+                : product.medicinal_info;
+        } catch (e) {
+            console.warn('⚠️ Error parseando medicinal_info:', e);
+        }
+    }
+    
+    const setName = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value || '';
+    };
+    
     // Datos básicos
-    document.getElementById('medConcentrateName').textContent = product.name;
-    document.getElementById('medConcentrateBreeder').textContent = product.breeder || 'Apexremedy';
-    document.getElementById('medConcentrateSku').textContent = product.sku || 'N/A';
-    document.getElementById('medConcentrateCategory').textContent = formatCategoryName(product.category);
+    setName('medConcentrateName', product.name);
+    setName('medConcentrateBreeder', product.breeder || attrs?.breeder || 'Apexremedy');
+    setName('medConcentrateSku', product.sku || 'N/A');
+    setName('medConcentrateCategory', formatCategoryName(product.category || product.category_slug));
+    
+    // Descripción completa
+    const descEl = document.getElementById('medConcentrateDescription');
+    if (descEl) {
+        descEl.textContent = product.description || product.short_description || 'Sin descripción disponible';
+    }
     
     // Imagen
     const image = document.getElementById('medConcentrateImage');
-    setElementImageWithHover(image, product);
+    if (image) {
+        setElementImageWithHover(image, product);
+    }
     
     // Precio y stock
-    document.getElementById('medConcentratePrice').textContent = `$${formatPrice(product.base_price || product.price)}`;
-    document.getElementById('medConcentrateStock').textContent = formatStock(product.stock_quantity || product.stock, product.stock_unit || 'g');
+    setName('medConcentratePrice', `$${formatPrice(product.base_price || product.price || 0)}`);
+    setName('medConcentrateStock', formatStock(product.stock_quantity || product.stock || 0, product.stock_unit || 'g'));
+    
+    // 🆕 Extraer campos desde medicinal_info y attributes
+    const cannabinoidProfile = product.cannabinoid_profile || medicinalInfo?.cannabinoid_profile || attrs?.cannabinoid_profile;
+    const terpeneProfile = product.terpene_profile || medicinalInfo?.terpene_profile || attrs?.terpene_profile;
+    const strainInfo = product.strain_info || medicinalInfo?.strain_info || attrs?.strain_info;
+    const therapeuticInfo = product.therapeutic_info || medicinalInfo?.therapeutic_info || attrs?.therapeutic_info;
+    const usageInfo = product.usage_info || medicinalInfo?.usage_info || attrs?.usage_info;
+    const safetyInfo = product.safety_info || medicinalInfo?.safety_info || attrs?.safety_info;
     
     // Perfil cannabinoide
-    if (product.cannabinoid_profile) {
-        fillCannabinoidProfile(product.cannabinoid_profile, 'medConcentrateCannabinoids');
+    if (cannabinoidProfile) {
+        fillCannabinoidProfile(cannabinoidProfile, 'medConcentrateCannabinoids');
+    }
+    
+    // Perfil terpénico
+    if (terpeneProfile) {
+        fillTerpeneProfile(terpeneProfile, 'medConcentrateTerpenes');
     }
     
     // Información de cepa
-    if (product.strain_info) {
-        fillStrainInfo(product.strain_info, 'medConcentrateStrain');
+    if (strainInfo) {
+        fillStrainInfo(strainInfo, 'medConcentrateStrain');
+    }
+    
+    // Atributos (método de extracción, etc.)
+    const productAttributes = product.attributes || attrs || {};
+    if (productAttributes && Object.keys(productAttributes).length > 0) {
+        fillAttributes(productAttributes, 'medConcentrateAttributes');
     }
     
     // Información terapéutica
-    if (product.therapeutic_info) {
-        fillTherapeuticInfo(product.therapeutic_info, 'medConcentrateTherapeutic');
+    if (therapeuticInfo) {
+        fillTherapeuticInfo(therapeuticInfo, 'medConcentrateTherapeutic');
     }
     
     // Información de uso
-    if (product.usage_info) {
-        fillUsageInfo(product.usage_info, 'medConcentrateUsage');
+    if (usageInfo) {
+        fillUsageInfo(usageInfo, 'medConcentrateUsage');
+    }
+    
+    // Información de seguridad
+    if (safetyInfo) {
+        fillSafetyInfo(safetyInfo, 'medConcentrateSafety');
     }
     
     // Crear selector de gramaje si hay variantes de precio
@@ -454,34 +542,48 @@ function openSeedModal(product, attrs) {
         return;
     }
     
+    console.log('🌱 Abriendo modal de semillas:', product);
+    
+    const setName = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value || '';
+    };
+    
     // Datos básicos
-    document.getElementById('seedName').textContent = product.name;
-    document.getElementById('seedBreeder').textContent = product.breeder || attrs.breeder || 'Banco de semillas';
-    document.getElementById('seedSku').textContent = product.sku || 'N/A';
-    document.getElementById('seedCategory').textContent = formatCategoryName(product.category);
-    document.getElementById('seedDescription').textContent = product.description || 'Sin descripción disponible';
+    setName('seedName', product.name);
+    setName('seedBreeder', product.breeder || attrs?.breeder || 'Banco de semillas');
+    setName('seedSku', product.sku || 'N/A');
+    setName('seedCategory', formatCategoryName(product.category || product.category_slug));
+    setName('seedDescription', product.description || product.short_description || 'Sin descripción disponible');
     
     // Imagen
     const image = document.getElementById('seedImage');
-    setElementImageWithHover(image, product);
+    if (image) {
+        setElementImageWithHover(image, product);
+    }
     
     // Precio y stock
-    document.getElementById('seedPrice').textContent = `$${formatPrice(product.base_price || product.price)}`;
-    document.getElementById('seedStock').textContent = formatStock(product.stock_quantity || product.stock, product.stock_unit || 'packs');
+    setName('seedPrice', `$${formatPrice(product.base_price || product.price || 0)}`);
+    setName('seedStock', formatStock(product.stock_quantity || product.stock || 0, product.stock_unit || 'packs'));
+    
+    // 🆕 Extraer información desde strain_info y attributes
+    const strainInfo = product.strain_info || attrs?.strain_info;
+    const specifications = product.specifications || attrs?.specifications;
+    const productAttributes = product.attributes || attrs || {};
     
     // Información de cepa
-    if (product.strain_info) {
-        fillStrainInfo(product.strain_info, 'seedStrain');
+    if (strainInfo) {
+        fillStrainInfo(strainInfo, 'seedStrain');
     }
     
     // Especificaciones del pack
-    if (product.specifications) {
-        fillSpecifications(product.specifications, 'seedSpecs');
+    if (specifications) {
+        fillSpecifications(specifications, 'seedSpecs');
     }
     
-    // Atributos de cultivo
-    if (product.attributes) {
-        fillAttributes(product.attributes, 'seedAttributes');
+    // Atributos de cultivo (strain_type, flowering_time, yield, etc.)
+    if (productAttributes && Object.keys(productAttributes).length > 0) {
+        fillAttributes(productAttributes, 'seedAttributes');
     }
     
     // Mostrar modal
@@ -500,29 +602,42 @@ function openVaporizerModal(product, attrs) {
         return;
     }
     
+    console.log('💨 Abriendo modal de vaporizador:', product);
+    
+    const setName = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value || '';
+    };
+    
     // Datos básicos
-    document.getElementById('vaporizerName').textContent = product.name;
-    document.getElementById('vaporizerBrand').textContent = product.breeder || attrs.brand || 'Marca Premium';
-    document.getElementById('vaporizerSku').textContent = product.sku || 'N/A';
-    document.getElementById('vaporizerCategory').textContent = formatCategoryName(product.category);
-    document.getElementById('vaporizerDescription').textContent = product.description || 'Sin descripción disponible';
+    setName('vaporizerName', product.name);
+    setName('vaporizerBrand', product.breeder || attrs?.brand || attrs?.breeder || 'Marca Premium');
+    setName('vaporizerSku', product.sku || 'N/A');
+    setName('vaporizerCategory', formatCategoryName(product.category || product.category_slug));
+    setName('vaporizerDescription', product.description || product.short_description || 'Sin descripción disponible');
     
     // Imagen
     const image = document.getElementById('vaporizerImage');
-    setElementImageWithHover(image, product);
-    
-    // Precio y stock
-    document.getElementById('vaporizerPrice').textContent = `$${formatPrice(product.base_price || product.price)}`;
-    document.getElementById('vaporizerStock').textContent = formatStock(product.stock_quantity || product.stock, product.stock_unit || 'unidades');
-    
-    // Especificaciones técnicas
-    if (product.specifications) {
-        fillSpecifications(product.specifications, 'vaporizerSpecs');
+    if (image) {
+        setElementImageWithHover(image, product);
     }
     
-    // Características
-    if (product.attributes) {
-        fillAttributes(product.attributes, 'vaporizerAttributes');
+    // Precio y stock
+    setName('vaporizerPrice', `$${formatPrice(product.base_price || product.price || 0)}`);
+    setName('vaporizerStock', formatStock(product.stock_quantity || product.stock || 0, product.stock_unit || 'unidades'));
+    
+    // 🆕 Extraer especificaciones y atributos
+    const specifications = product.specifications || attrs?.specifications;
+    const productAttributes = product.attributes || attrs || {};
+    
+    // Especificaciones técnicas
+    if (specifications) {
+        fillSpecifications(specifications, 'vaporizerSpecs');
+    }
+    
+    // Características (temperatura, batería, material, etc.)
+    if (productAttributes && Object.keys(productAttributes).length > 0) {
+        fillAttributes(productAttributes, 'vaporizerAttributes');
     }
     
     // Mostrar modal
@@ -541,28 +656,41 @@ function openApparelModal(product, attrs) {
         return;
     }
     
+    console.log('👕 Abriendo modal de ropa:', product);
+    
+    const setName = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value || '';
+    };
+    
     // Datos básicos
-    document.getElementById('apparelName').textContent = product.name;
-    document.getElementById('apparelSku').textContent = product.sku || 'N/A';
-    document.getElementById('apparelCategory').textContent = formatCategoryName(product.category);
-    document.getElementById('apparelDescription').textContent = product.description || 'Sin descripción disponible';
+    setName('apparelName', product.name);
+    setName('apparelSku', product.sku || 'N/A');
+    setName('apparelCategory', formatCategoryName(product.category || product.category_slug));
+    setName('apparelDescription', product.description || product.short_description || 'Sin descripción disponible');
     
     // Imagen
     const image = document.getElementById('apparelImage');
-    setElementImageWithHover(image, product);
-    
-    // Precio y stock
-    document.getElementById('apparelPrice').textContent = `$${formatPrice(product.base_price || product.price)}`;
-    document.getElementById('apparelStock').textContent = formatStock(product.stock_quantity || product.stock, product.stock_unit || 'unidades');
-    
-    // Especificaciones
-    if (product.specifications) {
-        fillSpecifications(product.specifications, 'apparelSpecs');
+    if (image) {
+        setElementImageWithHover(image, product);
     }
     
-    // Características
-    if (product.attributes) {
-        fillAttributes(product.attributes, 'apparelAttributes');
+    // Precio y stock
+    setName('apparelPrice', `$${formatPrice(product.base_price || product.price || 0)}`);
+    setName('apparelStock', formatStock(product.stock_quantity || product.stock || 0, product.stock_unit || 'unidades'));
+    
+    // 🆕 Extraer especificaciones y atributos
+    const specifications = product.specifications || attrs?.specifications;
+    const productAttributes = product.attributes || attrs || {};
+    
+    // Especificaciones (tallas, materiales, etc.)
+    if (specifications) {
+        fillSpecifications(specifications, 'apparelSpecs');
+    }
+    
+    // Características (talla, color, material, etc.)
+    if (productAttributes && Object.keys(productAttributes).length > 0) {
+        fillAttributes(productAttributes, 'apparelAttributes');
     }
     
     // Mostrar modal
