@@ -1193,7 +1193,11 @@ body:has(.cart-sidebar.open) .cart-overlay{
     background:#059669!important;
   }
   
-  /* Footer del carrito - POSITION FIXED para siempre visible */
+  /* Footer del carrito - POSITION FIXED para siempre visible cuando está abierto */
+  .cart-total{
+    display:none!important;
+  }
+  
   .cart-sidebar.open .cart-total{
     position:fixed!important;
     bottom:0!important;
@@ -1213,15 +1217,6 @@ body:has(.cart-sidebar.open) .cart-overlay{
     z-index:40!important;
     box-shadow:0 -4px 16px rgba(0,0,0,0.2)!important;
     box-sizing:border-box!important;
-  }
-  
-  /* Ocultar footer cuando el carrito está cerrado */
-  .cart-total{
-    display:none!important;
-  }
-  
-  .cart-sidebar.open .cart-total{
-    display:flex!important;
   }
   
   .cart-total .total-amount{
