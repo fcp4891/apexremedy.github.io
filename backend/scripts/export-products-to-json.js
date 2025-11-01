@@ -14,8 +14,6 @@ async function exportProducts() {
         console.log('🚀 Iniciando exportación de productos a JSON...');
         
         // Verificar que la base de datos existe
-        const fs = require('fs');
-        const path = require('path');
         const dbPath = process.env.DB_PATH || path.join(__dirname, '../database/apexremedy.db');
         
         if (!fs.existsSync(dbPath)) {
