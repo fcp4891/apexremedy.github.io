@@ -1,0 +1,93 @@
+/* === CSS Específico para admin/dashboard.html === */
+
+.admin-dashboard-header {
+    margin-bottom: 32px;
+}
+
+.admin-dashboard-header h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--admin-primary-red);
+    margin-bottom: 8px;
+    font-family: var(--admin-font-primary);
+}
+
+.admin-dashboard-meta {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+    font-size: 0.9rem;
+    color: var(--admin-medium-gray);
+}
+
+.admin-dashboard-meta span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.admin-dashboard-meta .status-active {
+    color: var(--admin-success);
+}
+
+/* Charts Container */
+.admin-charts-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.admin-chart-card {
+    background: var(--admin-white);
+    padding: 24px;
+    border-radius: var(--admin-border-radius);
+    box-shadow: var(--admin-box-shadow);
+}
+
+.admin-chart-card h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--admin-primary-red);
+    margin-bottom: 20px;
+    font-family: var(--admin-font-primary);
+}
+
+/* Recent Orders */
+.admin-recent-section {
+    background: var(--admin-white);
+    padding: 24px;
+    border-radius: var(--admin-border-radius);
+    box-shadow: var(--admin-box-shadow);
+}
+
+.admin-recent-section h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--admin-primary-red);
+    margin-bottom: 20px;
+    font-family: var(--admin-font-primary);
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 1024px) {
+    .admin-charts-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-dashboard-header h1 {
+        font-size: 2rem;
+    }
+    
+    .admin-dashboard-meta {
+        flex-direction: column;
+        gap: 8px;
+    }
+}
+

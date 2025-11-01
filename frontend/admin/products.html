@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Productos - Apexremedy Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style/css_admin.css">
+    <link rel="stylesheet" href="style/products.css">
+    <script src="./js/config.js"></script>
+    <script src="./js/utils.js"></script>
+    <script defer src="./js/adminTemplate.js"></script>
+</head>
+<body>
+    <!-- Header se carga automáticamente -->
+    <div id="header-container"></div>
+
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800">Gestion de Productos</h1>
+            <p class="text-gray-600 mt-1">Administra tu catalogo completo</p>
+        </div>
+        <button onclick="openCreateModal()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold shadow-lg transition">
+            <i class="fas fa-plus mr-2"></i>Nuevo Producto
+        </button>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm">Total Productos</p>
+                    <p id="totalProducts" class="text-3xl font-bold text-gray-800">0</p>
+                </div>
+                <div class="bg-blue-100 p-4 rounded-full">
+                    <i class="fas fa-box text-blue-600 text-2xl"></i>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm">En Stock</p>
+                    <p id="inStockProducts" class="text-3xl font-bold text-green-600">0</p>
+                </div>
+                <div class="bg-green-100 p-4 rounded-full">
+                    <i class="fas fa-check-circle text-green-600 text-2xl"></i>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm">Medicinales</p>
+                    <p id="medicinalProducts" class="text-3xl font-bold text-red-600">0</p>
+                </div>
+                <div class="bg-red-100 p-4 rounded-full">
+                    <i class="fas fa-prescription text-red-600 text-2xl"></i>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm">Categorías</p>
+                    <p id="totalCategories" class="text-3xl font-bold text-purple-600">0</p>
+                </div>
+                <div class="bg-purple-100 p-4 rounded-full">
+                    <i class="fas fa-tags text-purple-600 text-2xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
+            <div class="md:col-span-2">
+                <input type="text" id="searchInput" placeholder="Buscar productos..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+            </div>
+            <select id="categoryFilter" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                <option value="">Categorías</option>
+            </select>
+            <select id="statusFilter" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                <option value="">Estados</option>
+                <option value="in_stock">En Stock</option>
+                <option value="out_of_stock">Sin Stock</option>
+                <option value="featured">Destacados</option>
+                <option value="medicinal">Medicinales</option>
+            </select>
+            <div class="flex gap-1">
+                <button onclick="resetFilters()" class="px-2 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors text-sm" title="Limpiar Filtros">
+                    <i class="fas fa-times"></i>
+                </button>
+                <button onclick="testMedicinalFilter()" class="px-2 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors text-sm" title="Filtro Medicinal">
+                    <i class="fas fa-prescription"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">ID</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Imagen</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Producto</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Categoria</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Precio</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Stock</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Estado</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="productsTableBody" class="divide-y divide-gray-200">
+                    <tr>
+                        <td colspan="8" class="px-6 py-12 text-center">
+                            <i class="fas fa-spinner fa-spin text-4xl text-green-600"></i>
+                            <p class="text-gray-500 mt-2">Cargando productos...</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Crear/Editar Producto -->
+<div id="productModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h2 id="modalTitle" class="text-2xl font-bold text-gray-800">Nuevo Producto</h2>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+
+            <form id="productForm" class="space-y-6">
+                <input type="hidden" id="productId">
+                
+                <!-- Informacion Basica -->
+                <div class="border-b pb-4">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Informacion Basica</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Nombre *</label>
+                            <input type="text" id="productName" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Categoria *</label>
+                            <select id="productCategory" required onchange="updateFormFields()" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                                <option value="">Seleccionar categoria</option>
+                                <option value="semillas_coleccion">Semillas de Coleccion</option>
+                                <option value="accesorios">Accesorios</option>
+                                <option value="indoors">Indoors</option>
+                                <option value="iluminacion">Iluminacion</option>
+                                <option value="aditivos">Aditivos</option>
+                                <option value="vapo">Vaporizadores</option>
+                                <option value="parafernalia">Parafernalia</option>
+                                <option value="smartshop">Smartshop</option>
+                                <option value="merchandising">Merchandising</option>
+                                <option value="ofertas">Ofertas</option>
+                                <option value="medicinal">Medicinal</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Descripcion</label>
+                        <textarea id="productDescription" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                        <div id="priceField">
+                            <label for="productPrice" class="block text-sm font-medium text-gray-700 mb-2">Precio *</label>
+                            <input type="number" id="productPrice" step="1" min="0" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Stock *</label>
+                            <input type="number" id="productStock" min="0" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                        </div>
+
+                        <div class="flex items-center">
+                            <label class="flex items-center cursor-pointer mt-6">
+                                <input type="checkbox" id="productFeatured" class="w-5 h-5 text-green-600 rounded focus:ring-2 focus:ring-green-500">
+                                <span class="ml-2 text-sm font-medium text-gray-700">Destacado</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">SKU</label>
+                            <input type="text" id="productSku" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                        </div>
+                        
+                        <div id="breederField" class="hidden">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Breeder / Banco</label>
+                            <input type="text" id="productBreeder" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECCION MEDICINAL CON IDS CORREGIDOS -->
+                <div id="medicinalSection" class="hidden border-b pb-4">
+                    <h3 class="text-lg font-bold text-red-800 mb-4">
+                        <i class="fas fa-prescription mr-2"></i>Configuracion Medicinal
+                    </h3>
+                    
+                    <div class="bg-red-50 border-2 border-red-200 rounded-lg p-4 mb-4">
+                        <p class="text-sm text-red-800 font-semibold mb-2">
+                            <i class="fas fa-exclamation-triangle mr-1"></i>
+                            Este producto requiere receta medica
+                        </p>
+                        <p class="text-xs text-red-700">
+                            Solo usuarios con documentos verificados podran ver este producto
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Unidad de Medida *</label>
+                            <select id="productUnit" onchange="updateMedicinalPriceLabels()" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500">
+                                <option value="gramos">Gramos (g)</option>
+                                <option value="mililitros">Mililitros (ml)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de Cepa *</label>
+                            <select id="medicinalStrainType" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500">
+                                <option value="">Seleccionar tipo</option>
+                                <option value="Sativa">Sativa</option>
+                                <option value="Indica">Indica</option>
+                                <option value="Ruderalis">Ruderalis</option>
+                                <option value="Sativa-dominant Hybrid">Hibrido Sativa-dominante</option>
+                                <option value="Indica-dominant Hybrid">Hibrido Indica-dominante</option>
+                                <option value="Balanced Hybrid">Hibrido Balanceado (50/50)</option>
+                                <option value="Sativa/Indica (70/30)">Sativa/Indica (70/30)</option>
+                                <option value="Sativa/Indica (60/40)">Sativa/Indica (60/40)</option>
+                                <option value="Indica/Sativa (70/30)">Indica/Sativa (70/30)</option>
+                                <option value="Indica/Sativa (60/40)">Indica/Sativa (60/40)</option>
+                                <option value="Indica/Sativa (80/20)">Indica/Sativa (80/20)</option>
+                                <option value="Sativa/Indica (80/20)">Sativa/Indica (80/20)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-4">
+                        <div>
+                            <label id="label5" class="block text-sm font-medium text-gray-700 mb-2">Precio 5g *</label>
+                            <input type="number" id="price5g" step="1" min="0" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500">
+                        </div>
+                        <div>
+                            <label id="label10" class="block text-sm font-medium text-gray-700 mb-2">Precio 10g *</label>
+                            <input type="number" id="price10g" step="1" min="0" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500">
+                        </div>
+                        <div>
+                            <label id="label20" class="block text-sm font-medium text-gray-700 mb-2">Precio 20g *</label>
+                            <input type="number" id="price20g" step="1" min="0" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500">
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Uso Terapeutico</label>
+                        <textarea id="therapeuticUse" rows="2" placeholder="Ej: Dolor cronico, ansiedad, insomnio..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 mt-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Dosificacion</label>
+                            <input type="text" id="dosageRecommendation" placeholder="Ej: 0.1-0.2g inicial" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Administracion</label>
+                            <input type="text" id="administrationMethod" placeholder="Ej: Vaporizacion 180-210C" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 mt-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Contraindicaciones</label>
+                            <input type="text" id="contraindications" placeholder="Embarazo, lactancia..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Efectos Secundarios</label>
+                            <input type="text" id="sideEffects" placeholder="Xerostomia, somnolencia..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500">
+                        </div>
+                    </div>
+
+                    <!-- Informacion de la Cepa -->
+                    <div class="mt-6 pt-6 border-t border-gray-200">
+                        <h4 class="text-md font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-cannabis mr-2"></i>Informacion de la Cepa
+                        </h4>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">THC %</label>
+                                <input type="number" id="medicinalThc" step="0.1" min="0" max="100" placeholder="Ej: 25.0" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">CBD %</label>
+                                <input type="number" id="medicinalCbd" step="0.1" min="0" max="100" placeholder="Ej: 0.5" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">CBN %</label>
+                                <input type="number" id="medicinalCbn" step="0.1" min="0" max="100" placeholder="Ej: 0.8" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Genetica</label>
+                                <input type="text" id="medicinalGenetics" placeholder="Ej: Critical Mass x OG Kush" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Origen Geografico</label>
+                                <input type="text" id="medicinalOrigin" placeholder="Ej: California, USA" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Aromas (separados por coma)</label>
+                                <input type="text" id="medicinalAromas" placeholder="citrico, terroso, pino" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Efectos (separados por coma)</label>
+                                <input type="text" id="medicinalEffects" placeholder="relajante, euforico, creativo" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Terpenos Principales</label>
+                                <input type="text" id="medicinalTerpenes" placeholder="Limoneno, Mirceno, Cariofileno" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Sabor</label>
+                                <input type="text" id="medicinalFlavor" placeholder="dulce, terroso, herbal" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Imagenes -->
+                <div class="border-b pb-4">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Imagenes del Producto</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Imagen Principal -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Imagen Principal *</label>
+                            
+                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-green-500 transition cursor-pointer" id="mainImageDropzone">
+                                <div class="relative">
+                                    <img id="previewImg" src="" alt="Preview" class="hidden max-w-full h-48 mx-auto object-cover rounded-lg mb-2">
+                                    <div id="uploadPlaceholder" class="text-gray-400">
+                                        <i class="fas fa-cloud-upload-alt text-5xl mb-3"></i>
+                                        <p class="text-sm">Arrastra una imagen aqui o haz clic para seleccionar</p>
+                                        <p class="text-xs mt-1">PNG, JPG hasta 2MB</p>
+                                    </div>
+                                    <button type="button" id="removeImageBtn" class="hidden absolute top-0 right-0 bg-red-500 text-white rounded-full p-2 hover:bg-red-600">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <input type="file" id="productImageFile" accept="image/*" class="hidden" onchange="handleImageUpload(event, 'main')">
+                            <input type="hidden" id="productImage">
+                        </div>
+
+                        <!-- Segunda Imagen -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Segunda Imagen (opcional)</label>
+                            
+                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-purple-500 transition cursor-pointer" id="secondImageDropzone">
+                                <div class="relative">
+                                    <img id="previewImgSecond" src="" alt="Preview Second" class="hidden max-w-full h-48 mx-auto object-cover rounded-lg mb-2">
+                                    <div id="uploadPlaceholderSecond" class="text-gray-400">
+                                        <i class="fas fa-cloud-upload-alt text-5xl mb-3"></i>
+                                        <p class="text-sm">Arrastra una segunda imagen</p>
+                                        <p class="text-xs mt-1">PNG, JPG hasta 2MB</p>
+                                    </div>
+                                    <button type="button" id="removeSecondImageBtn" class="hidden absolute top-0 right-0 bg-red-500 text-white rounded-full p-2 hover:bg-red-600">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <input type="file" id="productSecondImageFile" accept="image/*" class="hidden" onchange="handleImageUpload(event, 'second')">
+                            <input type="hidden" id="productSecondImage">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botones -->
+                <div class="flex gap-3 pt-4">
+                    <button type="submit" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold transition">
+                        <i class="fas fa-save mr-2"></i>Guardar Producto
+                    </button>
+                    <button type="button" onclick="closeModal()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 rounded-lg font-semibold transition">
+                        Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+    <!-- Footer -->
+    <div id="footer-container"></div>
+
+    <!-- Scripts -->
+    <script src="./js/api/apiClient.js"></script>
+    <script src="./js/auth.js"></script>
+    <script src="./js/sessionManager.js"></script>
+    <script src="./js/notifications.js"></script>
+    <script src="./js/adminProductModals.js"></script>
+    <script src="./js/adminEditModals.js"></script>
+
+<script>
+// Funcion para actualizar las etiquetas de precio medicinal segun la unidad
+function updateMedicinalPriceLabels() {
+    const unit = document.getElementById('productUnit')?.value || 'gramos';
+    const suffix = unit === 'mililitros' ? 'ml' : 'g';
+    
+    // Actualizar etiquetas
+    const label5 = document.getElementById('label5');
+    const label10 = document.getElementById('label10');
+    const label20 = document.getElementById('label20');
+    
+    if (label5) label5.textContent = `Precio 5${suffix} *`;
+    if (label10) label10.textContent = `Precio 10${suffix} *`;
+    if (label20) label20.textContent = `Precio 20${suffix} *`;
+    
+    // También actualizar el label del precio principal si existe
+    const priceLabel = document.querySelector('label[for="productPrice"]');
+    if (priceLabel && document.getElementById('productCategory')?.value === 'medicinal') {
+        priceLabel.textContent = `Precio 1${suffix} *`;
+    }
+    
+    console.log('🏷️ Etiquetas actualizadas a:', suffix);
+}
+
+// FUNCIÓN REDIRIGIDA AL SISTEMA DE SELECCIÓN DE CATEGORÍAS
+function openCreateModal() {
+    console.log('🆕 Redirigiendo al selector de categorías...');
+    
+    // Verificar que la función del selector de categorías esté disponible
+    if (typeof showCategorySelector === 'function') {
+        showCategorySelector();
+    } else if (typeof openCreateModal !== 'undefined' && window.openCreateModal !== openCreateModal) {
+        // Si existe otra función openCreateModal en adminProductModals.js
+        window.openCreateModal();
+    } else {
+        console.error('❌ Sistema de categorías no disponible, usando modal básico');
+        openBasicCreateModal();
+    }
+}
+
+// Función de fallback para el modal básico de creación
+function openBasicCreateModal() {
+    console.log('🔍 === USANDO MODAL BÁSICO DE CREACIÓN ===');
+    
+    // Resetear formulario
+    document.getElementById('productForm').reset();
+    document.getElementById('productId').value = '';
+    document.getElementById('modalTitle').textContent = 'Nuevo Producto';
+    
+    // Resetear imágenes
+    removeImage('main');
+    removeImage('second');
+    
+    // Resetear campos medicinales a valores por defecto
+    const unitSelect = document.getElementById('productUnit');
+    if (unitSelect) {
+        unitSelect.value = 'gramos';
+    }
+    
+    // Ocultar sección medicinal por defecto
+    const medicinalSection = document.getElementById('medicinalSection');
+    if (medicinalSection) {
+        medicinalSection.classList.add('hidden');
+    }
+    
+    // Mostrar campo de precio normal
+    const priceField = document.getElementById('priceField');
+    if (priceField) {
+        priceField.classList.remove('hidden');
+    }
+    
+    // Actualizar etiquetas
+    updateMedicinalPriceLabels();
+    
+    // Abrir modal
+    document.getElementById('productModal').classList.remove('hidden');
+    
+    console.log('✅ Modal de creación abierto');
+}
+
+// Configurar Drag and Drop para imagenes
+document.addEventListener('DOMContentLoaded', function() {
+    setupImageDropzones();
+    
+    // Observar cambios en el modal para resetear etiquetas
+    const modal = document.getElementById('productModal');
+    if (modal) {
+        // Usar MutationObserver para detectar cuando el modal se abre
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.attributeName === 'class') {
+                    const isHidden = modal.classList.contains('hidden');
+                    if (!isHidden) {
+                        // El modal se acaba de abrir, resetear las etiquetas
+                        setTimeout(() => {
+                            const category = document.getElementById('productCategory')?.value;
+                            if (category === 'medicinal') {
+                                resetMedicinalLabels();
+                            }
+                        }, 100);
+                    }
+                }
+            });
+        });
+        
+        observer.observe(modal, { attributes: true });
+    }
+});
+
+function setupImageDropzones() {
+    setupDropzone('mainImageDropzone', 'productImageFile', 'main');
+    setupDropzone('secondImageDropzone', 'productSecondImageFile', 'second');
+    
+    // ✅ AGREGAR ESTOS EVENT LISTENERS
+    const removeMainBtn = document.getElementById('removeImageBtn');
+    const removeSecondBtn = document.getElementById('removeSecondImageBtn');
+    
+    if (removeMainBtn) {
+        removeMainBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            removeImage('main');
+        });
+    }
+    
+    if (removeSecondBtn) {
+        removeSecondBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            removeImage('second');
+        });
+    }
+}
+
+function setupDropzone(dropzoneId, fileInputId, type) {
+    const dropzone = document.getElementById(dropzoneId);
+    const fileInput = document.getElementById(fileInputId);
+    
+    if (!dropzone || !fileInput) return;
+
+    // Click para abrir selector
+    dropzone.addEventListener('click', function(e) {
+        if (!e.target.closest('button')) {
+            fileInput.click();
+        }
+    });
+
+    // Prevenir comportamiento por defecto
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropzone.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    // Efectos visuales
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropzone.addEventListener(eventName, function() {
+            dropzone.classList.add('border-green-500', 'bg-green-50');
+        }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropzone.addEventListener(eventName, function() {
+            dropzone.classList.remove('border-green-500', 'bg-green-50');
+        }, false);
+    });
+
+    // Manejar drop
+    dropzone.addEventListener('drop', function(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        if (files.length > 0) {
+            handleImageFile(files[0], type);
+        }
+    }, false);
+}
+
+function handleImageUpload(event, type) {
+    const file = event.target.files[0];
+    if (file) {
+        handleImageFile(file, type);
+    }
+}
+
+function handleImageFile(file, type) {
+    if (!file.type.startsWith('image/')) {
+        notify.error('Por favor selecciona un archivo de imagen valido');
+        return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) { // Aumentado a 5MB para el archivo original
+        notify.error('La imagen no debe superar 5MB');
+        return;
+    }
+
+    // Mostrar indicador de carga
+    const dropzone = type === 'main' ? 
+        document.getElementById('mainImageDropzone') : 
+        document.getElementById('hoverImageDropzone');
+    
+    const originalContent = dropzone.innerHTML;
+    dropzone.innerHTML = '<div class="text-green-600"><i class="fas fa-spinner fa-spin text-4xl mb-2"></i><p>Procesando imagen...</p></div>';
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+            // Comprimir la imagen
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Tamaño máximo para las imágenes
+            const MAX_WIDTH = 1200;
+            const MAX_HEIGHT = 1200;
+            
+            let width = img.width;
+            let height = img.height;
+            
+            // Calcular nuevas dimensiones manteniendo el aspect ratio
+            if (width > height) {
+                if (width > MAX_WIDTH) {
+                    height *= MAX_WIDTH / width;
+                    width = MAX_WIDTH;
+                }
+            } else {
+                if (height > MAX_HEIGHT) {
+                    width *= MAX_HEIGHT / height;
+                    height = MAX_HEIGHT;
+                }
+            }
+            
+            canvas.width = width;
+            canvas.height = height;
+            
+            // Dibujar imagen redimensionada
+            ctx.drawImage(img, 0, 0, width, height);
+            
+            // Convertir a base64 con compresión (0.85 = 85% calidad)
+            const compressedBase64 = canvas.toDataURL('image/jpeg', 0.85);
+            
+            // Calcular tamaño de la imagen comprimida
+            const compressedSize = Math.round((compressedBase64.length * 3) / 4);
+            console.log(`Imagen ${type} comprimida: ${(compressedSize / 1024).toFixed(2)} KB (original: ${(file.size / 1024).toFixed(2)} KB)`);
+            
+            // Restaurar contenido original del dropzone
+            dropzone.innerHTML = originalContent;
+            
+            // Actualizar UI
+            if (type === 'main') {
+                document.getElementById('previewImg').src = compressedBase64;
+                document.getElementById('previewImg').classList.remove('hidden');
+                document.getElementById('uploadPlaceholder').classList.add('hidden');
+                document.getElementById('removeImageBtn').classList.remove('hidden');
+                document.getElementById('productImage').value = compressedBase64;
+            } else if (type === 'second') {
+                document.getElementById('previewImgSecond').src = compressedBase64;
+                document.getElementById('previewImgSecond').classList.remove('hidden');
+                document.getElementById('uploadPlaceholderSecond').classList.add('hidden');
+                document.getElementById('removeSecondImageBtn').classList.remove('hidden');
+                document.getElementById('productSecondImage').value = compressedBase64;
+            }
+            
+            notify.success('Imagen cargada correctamente');
+        };
+        
+        img.onerror = function() {
+            dropzone.innerHTML = originalContent;
+            notify.error('Error al procesar la imagen');
+        };
+        
+        img.src = e.target.result;
+    };
+    
+    reader.onerror = function() {
+        dropzone.innerHTML = originalContent;
+        notify.error('Error al leer el archivo de imagen');
+    };
+    
+    reader.readAsDataURL(file);
+}
+
+function removeImage(type) {
+    if (type === 'main') {
+        document.getElementById('previewImg').src = '';
+        document.getElementById('previewImg').classList.add('hidden');
+        document.getElementById('uploadPlaceholder').classList.remove('hidden');
+        document.getElementById('removeImageBtn').classList.add('hidden');
+        document.getElementById('productImage').value = '';
+        document.getElementById('productImageFile').value = '';
+    } else if (type === 'second') {
+        document.getElementById('previewImgSecond').src = '';
+        document.getElementById('previewImgSecond').classList.add('hidden');
+        document.getElementById('uploadPlaceholderSecond').classList.remove('hidden');
+        document.getElementById('removeSecondImageBtn').classList.add('hidden');
+        document.getElementById('productSecondImage').value = '';
+        document.getElementById('productSecondImageFile').value = '';
+    }
+}
+
+// FUNCIÓN REDIRIGIDA AL SISTEMA DE MODALES PERSONALIZADOS
+async function openEditModal(productId) {
+    console.log('🔄 === PRODUCTS.HTML === openEditModal llamado con ID:', productId);
+    
+    // Usar la función del sistema de adminProductModals.js
+    if (typeof window.adminOpenEditModal === 'function') {
+        console.log('📞 Llamando a adminOpenEditModal del sistema...');
+        return window.adminOpenEditModal(productId);
+    }
+    
+    console.log('⚠️ adminOpenEditModal no encontrada, usando modal básico...');
+    return openBasicEditModal(productId);
+}
+
+// Función de fallback para el modal básico (la función original)
+async function openBasicEditModal(productId) {
+    try {
+        console.log('🔍 === USANDO MODAL BÁSICO (FALLBACK) ===');
+        console.log('Product ID:', productId);
+        
+        const response = await api.getProductById(productId);
+        console.log('📦 RESPUESTA COMPLETA DEL BACKEND:');
+        console.log(JSON.stringify(response, null, 2));
+        
+        if (!response.success) {
+            throw new Error(response.message || 'Error al obtener el producto');
+        }
+        
+        const product = response.data.product;
+        console.log('📦 PRODUCTO EXTRAÍDO:');
+        console.log(JSON.stringify(product, null, 2));
+        
+        // Actualizar título del modal
+        document.getElementById('modalTitle').textContent = 'Editar Producto';
+        document.getElementById('productId').value = product.id;
+        
+        // ===== INFORMACIÓN BÁSICA =====
+        console.log('\n📝 CARGANDO INFORMACIÓN BÁSICA...');
+        document.getElementById('productName').value = product.name || '';
+        document.getElementById('productCategory').value = product.category || '';
+        document.getElementById('productDescription').value = product.description || '';
+        document.getElementById('productPrice').value = product.price || 0;
+        document.getElementById('productStock').value = product.stock || 0;
+        document.getElementById('productFeatured').checked = product.featured || false;
+        document.getElementById('productSku').value = product.sku || '';
+        document.getElementById('productBreeder').value = product.breeder || '';
+        console.log('✅ Información básica cargada');
+        
+        // Actualizar campos según categoría
+        console.log('\n🔄 EJECUTANDO updateFormFields()...');
+        updateFormFields();
+        
+        // Verificar si la sección medicinal está visible
+        const medicinalSection = document.getElementById('medicinalSection');
+        console.log('Sección medicinal visible:', medicinalSection && !medicinalSection.classList.contains('hidden'));
+        
+        // ===== CARGAR IMÁGENES =====
+        // Cargar imagen principal
+        if (product.image || (product.images && product.images.length > 0)) {
+            const imgUrl = product.image || product.images[0].url || '';
+            if (imgUrl) {
+                document.getElementById('previewImg').src = imgUrl;
+                document.getElementById('previewImg').classList.remove('hidden');
+                document.getElementById('uploadPlaceholder').classList.add('hidden');
+                document.getElementById('removeImageBtn').classList.remove('hidden');
+                document.getElementById('productImage').value = imgUrl;
+            }
+        }
+        
+        // Cargar segunda imagen si existe
+        if (product.images && product.images.length > 1) {
+            const secondImgUrl = product.images[1].url;
+            if (secondImgUrl) {
+                document.getElementById('previewImgSecond').src = secondImgUrl;
+                document.getElementById('previewImgSecond').classList.remove('hidden');
+                document.getElementById('uploadPlaceholderSecond').classList.add('hidden');
+                document.getElementById('removeSecondImageBtn').classList.remove('hidden');
+                document.getElementById('productSecondImage').value = secondImgUrl;
+            }
+        } else if (product.image_hover) {
+            // Mantener compatibilidad con el sistema antiguo
+            document.getElementById('previewImgSecond').src = product.image_hover;
+            document.getElementById('previewImgSecond').classList.remove('hidden');
+            document.getElementById('uploadPlaceholderSecond').classList.add('hidden');
+            document.getElementById('removeSecondImageBtn').classList.remove('hidden');
+            document.getElementById('productSecondImage').value = product.image_hover;
+        }
+        
+        // ===== DATOS MEDICINALES =====
+        if (product.category === 'medicinal') {
+            console.log('\n💊 === CARGANDO DATOS MEDICINALES ===');
+            
+            // ESPERAR un momento para que updateFormFields termine
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            // Verificar que los campos existan
+            console.log('\n🔍 VERIFICANDO EXISTENCIA DE CAMPOS:');
+            const camposMedicinales = {
+                'productUnit': document.getElementById('productUnit'),
+                'medicinalStrainType': document.getElementById('medicinalStrainType'),
+                'price5g': document.getElementById('price5g'),
+                'price10g': document.getElementById('price10g'),
+                'price20g': document.getElementById('price20g'),
+                'therapeuticUse': document.getElementById('therapeuticUse'),
+                'dosageRecommendation': document.getElementById('dosageRecommendation'),
+                'administrationMethod': document.getElementById('administrationMethod'),
+                'contraindications': document.getElementById('contraindications'),
+                'sideEffects': document.getElementById('sideEffects'),
+                'medicinalThc': document.getElementById('medicinalThc'),
+                'medicinalCbd': document.getElementById('medicinalCbd'),
+                'medicinalCbn': document.getElementById('medicinalCbn'),
+                'medicinalGenetics': document.getElementById('medicinalGenetics'),
+                'medicinalOrigin': document.getElementById('medicinalOrigin'),
+                'medicinalAromas': document.getElementById('medicinalAromas'),
+                'medicinalEffects': document.getElementById('medicinalEffects'),
+                'medicinalTerpenes': document.getElementById('medicinalTerpenes'),
+                'medicinalFlavor': document.getElementById('medicinalFlavor')
+            };
+            
+            let camposFaltantes = [];
+            Object.keys(camposMedicinales).forEach(id => {
+                if (!camposMedicinales[id]) {
+                    console.error(`❌ Campo ${id} NO EXISTE`);
+                    camposFaltantes.push(id);
+                } else {
+                    console.log(`✅ Campo ${id} existe`);
+                }
+            });
+            
+            if (camposFaltantes.length > 0) {
+                console.error('⚠️ FALTAN ESTOS CAMPOS:', camposFaltantes);
+                alert('Error: Faltan campos en el formulario. Revisa la consola.');
+                return;
+            }
+            
+            // Helper para parsear JSON (definirlo antes de usar)
+            const parseJSONField = (data) => {
+                if (!data) return {};
+                if (typeof data === 'string') {
+                    try {
+                        // Puede venir doblemente escapado
+                        let parsed = data;
+                        if (parsed.startsWith('"') && parsed.endsWith('"')) {
+                            parsed = JSON.parse(parsed);
+                        }
+                        if (typeof parsed === 'string') {
+                            parsed = JSON.parse(parsed);
+                        }
+                        return parsed;
+                    } catch (e) {
+                        try {
+                            return JSON.parse(data);
+                        } catch (e2) {
+                            console.warn('Error parseando JSON:', e2);
+                            return {};
+                        }
+                    }
+                }
+                return data || {};
+            };
+            
+            // Parsear strain_info primero para usarlo más adelante
+            let strainInfo = {};
+            if (product.strain_info) {
+                strainInfo = parseJSONField(product.strain_info);
+                console.log('strain_info PARSEADO (temprano):', strainInfo);
+                
+                // Si strain_info tiene datos pero los campos directos están vacíos, usarlos
+                if (!product.medicinal_genetics && strainInfo.genetics) {
+                    product.medicinal_genetics = strainInfo.genetics;
+                }
+                if (!product.medicinal_origin && strainInfo.origin) {
+                    product.medicinal_origin = strainInfo.origin;
+                }
+                if (!product.medicinal_strain_type && strainInfo.type) {
+                    product.medicinal_strain_type = strainInfo.type;
+                }
+            }
+            
+            // Unidad y tipo de cepa
+            console.log('\n📏 CARGANDO UNIDAD Y TIPO DE CEPA:');
+            const unitSelect = document.getElementById('productUnit');
+            if (unitSelect && product.unit) {
+                unitSelect.value = product.unit;
+                console.log('✅ Unidad establecida:', product.unit);
+            } else {
+                console.warn('⚠️ No hay unidad o el campo no existe');
+            }
+            
+            const strainSelect = document.getElementById('medicinalStrainType');
+            if (strainSelect && product.medicinal_strain_type) {
+                strainSelect.value = product.medicinal_strain_type;
+                console.log('✅ Tipo de cepa:', product.medicinal_strain_type);
+            } else {
+                console.warn('⚠️ No hay tipo de cepa o el campo no existe');
+            }
+            
+            // Actualizar etiquetas
+            updateMedicinalPriceLabels();
+            
+            // ===== PRECIOS MEDICINALES =====
+            console.log('\n💰 CARGANDO PRECIOS:');
+            console.log('Precios en BD:', {
+                '1g': product.medicinal_price_1g,
+                '5g': product.medicinal_price_5g,
+                '10g': product.medicinal_price_10g,
+                '20g': product.medicinal_price_20g
+            });
+            
+            const price1g = document.getElementById('productPrice');
+            const price5g = document.getElementById('price5g');
+            const price10g = document.getElementById('price10g');
+            const price20g = document.getElementById('price20g');
+            
+            if (price1g) {
+                price1g.value = product.medicinal_price_1g || product.price || 0;
+                console.log('✅ Precio 1g asignado:', price1g.value);
+            }
+            if (price5g) {
+                price5g.value = product.medicinal_price_5g || 0;
+                console.log('✅ Precio 5g asignado:', price5g.value);
+            }
+            if (price10g) {
+                price10g.value = product.medicinal_price_10g || 0;
+                console.log('✅ Precio 10g asignado:', price10g.value);
+            }
+            if (price20g) {
+                price20g.value = product.medicinal_price_20g || 0;
+                console.log('✅ Precio 20g asignado:', price20g.value);
+            }
+            
+            // ===== CANNABINOIDES =====
+            console.log('\n🧪 CARGANDO CANNABINOIDES:');
+            
+            // Parsear cannabinoid_profile si existe
+            let cannabinoidProfile = {};
+            if (product.cannabinoid_profile) {
+                cannabinoidProfile = parseJSONField(product.cannabinoid_profile);
+                console.log('cannabinoid_profile PARSEADO:', cannabinoidProfile);
+            }
+            
+            // Usar valores de cannabinoid_profile si los campos directos están vacíos
+            const thcValue = product.medicinal_thc || cannabinoidProfile.thc || '';
+            const cbdValue = product.medicinal_cbd || cannabinoidProfile.cbd || '';
+            const cbnValue = product.medicinal_cbn || cannabinoidProfile.cbn || '';
+            
+            console.log('Cannabinoides en BD:', {
+                THC: thcValue,
+                CBD: cbdValue,
+                CBN: cbnValue,
+                desde_cannabinoid_profile: Object.keys(cannabinoidProfile).length > 0
+            });
+            
+            const thcInput = document.getElementById('medicinalThc');
+            const cbdInput = document.getElementById('medicinalCbd');
+            const cbnInput = document.getElementById('medicinalCbn');
+            
+            if (thcInput) {
+                thcInput.value = thcValue;
+                console.log('✅ THC asignado:', thcInput.value);
+            }
+            if (cbdInput) {
+                cbdInput.value = cbdValue;
+                console.log('✅ CBD asignado:', cbdInput.value);
+            }
+            if (cbnInput) {
+                cbnInput.value = cbnValue;
+                console.log('✅ CBN asignado:', cbnInput.value);
+            }
+            
+            // ===== INFORMACIÓN DE LA CEPA =====
+            console.log('\n🌱 CARGANDO INFORMACIÓN DE CEPA:');
+            
+            // Parsear terpene_profile si existe
+            let terpeneProfile = {};
+            if (product.terpene_profile) {
+                terpeneProfile = parseJSONField(product.terpene_profile);
+                console.log('terpene_profile PARSEADO:', terpeneProfile);
+            }
+            
+            // Usar valores de strain_info si están disponibles (ya parseados arriba)
+            const geneticsValue = product.medicinal_genetics || strainInfo.genetics || strainInfo.lineage || '';
+            const originValue = product.medicinal_origin || strainInfo.origin || '';
+            
+            // Para terpenos, construir string desde el objeto si está en terpene_profile
+            let terpenesString = product.medicinal_terpenes || '';
+            if (!terpenesString && Object.keys(terpeneProfile).length > 0) {
+                // Construir lista de terpenos desde el objeto
+                terpenesString = Object.entries(terpeneProfile)
+                    .filter(([name, value]) => value && value !== '' && value !== 0)
+                    .map(([name, value]) => name)
+                    .join(', ');
+            }
+            
+            const strainData = {
+                genetics: geneticsValue,
+                origin: originValue,
+                aromas: product.medicinal_aromas || '',
+                effects: product.medicinal_effects || '',
+                terpenes: terpenesString,
+                flavor: product.medicinal_flavor || ''
+            };
+            console.log('Datos de cepa en BD:', strainData);
+            
+            const geneticsInput = document.getElementById('medicinalGenetics');
+            const originInput = document.getElementById('medicinalOrigin');
+            const aromasInput = document.getElementById('medicinalAromas');
+            const effectsInput = document.getElementById('medicinalEffects');
+            const terpenesInput = document.getElementById('medicinalTerpenes');
+            const flavorInput = document.getElementById('medicinalFlavor');
+            
+            if (geneticsInput) {
+                geneticsInput.value = geneticsValue;
+                console.log('✅ Genética asignada:', geneticsInput.value);
+            }
+            if (originInput) {
+                originInput.value = originValue;
+                console.log('✅ Origen asignado:', originInput.value);
+            }
+            if (aromasInput) {
+                aromasInput.value = product.medicinal_aromas || '';
+                console.log('✅ Aromas asignados');
+            }
+            if (effectsInput) {
+                effectsInput.value = product.medicinal_effects || '';
+                console.log('✅ Efectos asignados');
+            }
+            if (terpenesInput) {
+                terpenesInput.value = terpenesString;
+                console.log('✅ Terpenos asignados');
+            }
+            if (flavorInput) {
+                flavorInput.value = product.medicinal_flavor || '';
+                console.log('✅ Sabor asignado');
+            }
+            
+            // ===== INFORMACIÓN TERAPÉUTICA =====
+            console.log('\n💊 CARGANDO INFORMACIÓN TERAPÉUTICA:');
+            console.log('medicinal_info RAW:', product.medicinal_info);
+            
+            let medicinalInfo = parseJSONField(product.medicinal_info);
+            console.log('medicinal_info PARSEADO:', medicinalInfo);
+            
+            const therapeuticInput = document.getElementById('therapeuticUse');
+            const dosageInput = document.getElementById('dosageRecommendation');
+            const administrationInput = document.getElementById('administrationMethod');
+            const contraindicationsInput = document.getElementById('contraindications');
+            const sideEffectsInput = document.getElementById('sideEffects');
+            
+            if (therapeuticInput) {
+                therapeuticInput.value = medicinalInfo.therapeutic_use || '';
+                console.log('✅ Uso terapéutico asignado:', therapeuticInput.value);
+            }
+            if (dosageInput) {
+                dosageInput.value = medicinalInfo.dosage_recommendation || medicinalInfo.dosage?.beginner || '';
+                console.log('✅ Dosificación asignada:', dosageInput.value);
+            }
+            if (administrationInput) {
+                // Puede venir como array o string
+                const adminValue = medicinalInfo.administration;
+                if (Array.isArray(adminValue)) {
+                    administrationInput.value = adminValue.join(', ');
+                } else {
+                    administrationInput.value = adminValue || '';
+                }
+                console.log('✅ Administración asignada:', administrationInput.value);
+            }
+            if (contraindicationsInput) {
+                // Puede venir como array o string
+                const contraValue = medicinalInfo.contraindications;
+                if (Array.isArray(contraValue)) {
+                    contraindicationsInput.value = contraValue.join(', ');
+                } else {
+                    contraindicationsInput.value = contraValue || '';
+                }
+                console.log('✅ Contraindicaciones asignadas:', contraindicationsInput.value);
+            }
+            if (sideEffectsInput) {
+                // Puede venir como array o string
+                const sideValue = medicinalInfo.side_effects;
+                if (Array.isArray(sideValue)) {
+                    sideEffectsInput.value = sideValue.join(', ');
+                } else {
+                    sideEffectsInput.value = sideValue || '';
+                }
+                console.log('✅ Efectos secundarios asignados:', sideEffectsInput.value);
+            }
+            
+            console.log('\n✅ === DATOS MEDICINALES CARGADOS ===');
+        }
+        
+        // Abrir modal
+        document.getElementById('productModal').classList.remove('hidden');
+        console.log('\n✅ === MODAL ABIERTO ===');
+        
+    } catch (error) {
+        console.error('❌ === ERROR EN openEditModal ===');
+        console.error('Error completo:', error);
+        console.error('Stack:', error.stack);
+        notify.error('Error al cargar el producto: ' + error.message);
+    }
+}
+
+console.log('✅ Función openEditModal -> adminOpenEditModal cargada');
+
+
+// Cerrar modal con overlay y ESC
+(function () {
+  function enableOverlayToClose(modalId) {
+    const modal = document.getElementById(modalId);
+    if (!modal) return;
+
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) {
+        if (typeof window.closeModal === 'function') {
+          window.closeModal(); // ✅ siempre usa la versión actual
+        } else {
+          modal.classList.add('hidden');
+        }
+      }
+    });
+
+    const dialog = modal.firstElementChild;
+    if (dialog) {
+      dialog.addEventListener('click', function(e) {
+        e.stopPropagation();
+      });
+    }
+  }
+
+  if (document.getElementById('productModal')) {
+    enableOverlayToClose('productModal'); // ✅ sin pasar callback
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key !== 'Escape') return;
+    const modalProduct = document.getElementById('productModal');
+    if (modalProduct && !modalProduct.classList.contains('hidden')) {
+      if (typeof window.closeModal === 'function') {
+        window.closeModal(); // ✅ también dinámico
+      } else {
+        modalProduct.classList.add('hidden');
+      }
+    }
+  });
+})();
+
+// Funcion para actualizar campos del formulario segun la categoria seleccionada
+function updateFormFields() {
+    const category = document.getElementById('productCategory')?.value;
+    const medicinalSection = document.getElementById('medicinalSection');
+    const priceField = document.getElementById('priceField');
+    const breederField = document.getElementById('breederField');
+    
+    // Mostrar/ocultar sección medicinal
+    if (medicinalSection) {
+        if (category === 'medicinal') {
+            medicinalSection.classList.remove('hidden');
+            if (priceField) priceField.classList.add('hidden');
+            
+            // Actualizar etiquetas según la unidad actual
+            updateMedicinalPriceLabels();
+        } else {
+            medicinalSection.classList.add('hidden');
+            if (priceField) priceField.classList.remove('hidden');
+        }
+    }
+    
+    // Mostrar campo breeder solo para semillas
+    if (breederField) {
+        if (category === 'semillas_coleccion') {
+            breederField.classList.remove('hidden');
+        } else {
+            breederField.classList.add('hidden');
+        }
+    }
+}
+
+// Funcion para resetear el formulario al abrir el modal
+function resetMedicinalLabels() {
+    const unitSelector = document.getElementById('productUnit');
+    if (unitSelector) {
+        const productId = document.getElementById('productId')?.value;
+        if (!productId) {
+            unitSelector.value = 'gramos';
+        }
+        updateMedicinalPriceLabels();
+    }
+}
+
+function closeModal() {
+    document.getElementById('productModal').classList.add('hidden');
+    document.getElementById('productForm').reset();
+    document.getElementById('productId').value = '';
+    removeImage('main');
+    removeImage('second');
+}
+
+console.log('Funciones de modal cargadas correctamente');
+
+// DEBUG: Verificar carga de sistemas de modales
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+        console.log('🔍 === VERIFICACIÓN DE SISTEMAS DE MODALES ===');
+        console.log('openMedicinalFlowerEditModal:', typeof openMedicinalFlowerEditModal);
+        console.log('openMedicinalOilEditModal:', typeof openMedicinalOilEditModal);  
+        console.log('showCategorySelector:', typeof showCategorySelector);
+        console.log('adminProductModals cargado:', typeof window.openCreateModal);
+        console.log('adminEditModals cargado:', typeof window.openMedicinalFlowerEditModal);
+        
+        if (typeof openMedicinalFlowerEditModal === 'function') {
+            console.log('✅ Sistema de modales de administración listo');
+        } else {
+            console.warn('⚠️ Sistema de modales de administración no completamente cargado');
+        }
+    }, 1000);
+    
+    // Inicializar sistema después de verificaciones
+    setTimeout(async () => {
+        if (typeof window.manualInit === 'function') {
+            console.log('🚀 Llamando a inicialización manual...');
+            await window.manualInit();
+        } else {
+            console.warn('⚠️ manualInit no disponible');
+        }
+    }, 1500);
+});
+</script>
+
+</body>
+</html>

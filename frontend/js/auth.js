@@ -1,0 +1,353 @@
+// frontend/js/auth.js
+// Gestor de autenticación del frontend
+
+// Prevenir doble declaración
+if (typeof AuthManager === 'undefined') {
+    class AuthManager {
+        constructor() {
+            this.currentUser = null;
+            this.token = null;
+            this.loadFromStorage();
+        }
+
+        // Cargar datos de localStorage
+        loadFromStorage() {
+            const token = localStorage.getItem('authToken');
+            const user = localStorage.getItem('currentUser');
+            
+            if (token && user) {
+                this.token = token;
+                try {
+                    this.currentUser = JSON.parse(user);
+                } catch (e) {
+                    this.clearStorage();
+                }
+            }
+        }
+
+        // Guardar en localStorage
+        saveToStorage() {
+            if (this.token && this.currentUser) {
+                localStorage.setItem('authToken', this.token);
+                localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+            }
+        }
+
+        // Limpiar localStorage
+        clearStorage() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('currentUser');
+            this.token = null;
+            this.currentUser = null;
+        }
+
+        // Registrar nuevo usuario
+        async register(userData) {
+            try {
+                const response = await api.register(userData);
+                
+                if (response.success) {
+                    // NO guardar token ni usuario después del registro
+                    // La cuenta debe ser aprobada primero
+                    return { 
+                        success: true, 
+                        message: 'Tu cuenta ha sido creada exitosamente. Debes esperar la aprobación del administrador antes de iniciar sesión.'
+                    };
+                }
+                
+                return { success: false, message: response.message };
+            } catch (error) {
+                return { success: false, message: error.message };
+            }
+        }
+
+        // Iniciar sesión - ACTUALIZADO CON REDIRECCIÓN SEGÚN ROL
+        async login(email, password) {
+            try {
+                const response = await api.login({ email, password });
+                
+                if (response.success) {
+                    const { token, user } = response.data;
+                    
+                    // Guardar token y usuario
+                    this.token = token;
+                    this.currentUser = user;
+                    this.saveToStorage();
+                    
+                    window.dispatchEvent(new Event('userLoggedIn'));
+        
+                    // Actualizar UI si la función existe
+                    this.updateUI();
+                    
+                    // ============================================
+                    // REDIRECCIÓN MEJORADA SEGÚN ROL Y ESTADO
+                    // ============================================
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const redirect = urlParams.get('redirect');
+                    
+                    if (redirect) {
+                        const redirectPath = redirect.startsWith('/') ? redirect :
+                                             redirect.startsWith('./') ? redirect :
+                                             `./${redirect}`;
+                        window.location.href = redirectPath;
+                      } else if (user.role === 'admin') {
+                        window.location.href = '/admin/perfil.html';
+                      } else {
+                        window.location.href = '/perfil.html';
+                      }
+                    
+                    return { success: true, user };
+                } else {
+                    return { 
+                        success: false, 
+                        message: response.message || 'Credenciales inválidas',
+                        account_status: response.account_status
+                    };
+                }
+            } catch (error) {
+                
+                // Manejar errores específicos de cuenta
+                if (error.response && error.response.data) {
+                    const { account_status, message, rejection_reason } = error.response.data;
+                    
+                    if (account_status === 'pending') {
+                        return {
+                            success: false,
+                            message: message || 'Tu cuenta está pendiente de aprobación',
+                            account_status: 'pending'
+                        };
+                    }
+                    
+                    if (account_status === 'rejected') {
+                        return {
+                            success: false,
+                            message: message || 'Tu cuenta ha sido rechazada',
+                            account_status: 'rejected',
+                            rejection_reason
+                        };
+                    }
+                }
+                
+                return { 
+                    success: false, 
+                    message: error.message || 'Error al iniciar sesión' 
+                };
+            }
+        }
+
+        // Cerrar sesión - MEJORADO
+        logout() {
+            const wasAdmin = this.currentUser?.role === 'admin';
+            
+            // ✅ AGREGAR: Disparar evento para limpiar carrito
+            window.dispatchEvent(new Event('userLoggedOut'));
+            
+            // Limpiar datos
+            this.clearStorage();
+            
+            // Llamar a API logout si existe
+            if (typeof api !== 'undefined' && api.logout) {
+                api.logout();
+            }
+            
+            // Actualizar UI
+            this.updateUI();
+            
+            // Redirigir según tipo de usuario
+            if (wasAdmin) {
+                if (window.location.pathname.includes('admin')) {
+                    window.location.href = '../login.html';
+                } else {
+                    window.location.href = './login.html';
+                }
+            } else {
+                if (window.location.pathname.includes('admin')) {
+                    window.location.href = '../index.html';
+                } else {
+                    window.location.href = './index.html';
+                }
+            }
+        }
+
+        // Verificar si está autenticado
+        isAuthenticated() {
+            return this.token !== null && this.currentUser !== null;
+        }
+
+        // Verificar si es admin
+        isAdmin() {
+            return this.isAuthenticated() && this.currentUser.role === 'admin';
+        }
+
+        // Obtener usuario actual
+        getCurrentUser() {
+            return this.currentUser;
+        }
+
+        // Obtener token
+        getToken() {
+            return this.token;
+        }
+
+        // Actualizar perfil
+        async updateProfile(data) {
+            try {
+                const response = await api.updateProfile(data);
+                
+                if (response.success) {
+                    this.currentUser = response.data.user;
+                    this.saveToStorage();
+                    this.updateUI();
+                    return { success: true, user: this.currentUser };
+                }
+                
+                return { success: false, message: response.message };
+            } catch (error) {
+                return { success: false, message: error.message };
+            }
+        }
+
+        // Verificar token válido con el servidor
+        async verifyToken() {
+            if (!this.token) {
+                return false;
+            }
+            
+            try {
+                const response = await api.getMe();
+                if (response.success) {
+                    this.currentUser = response.data.user;
+                    this.saveToStorage();
+                    return true;
+                }
+                return false;
+            } catch (error) {
+                // Solo hacer logout si es específicamente un error de token inválido
+                if (error.message.includes('Token') || 
+                    error.message.includes('Usuario no encontrado') || 
+                    error.message.includes('Unauthorized')) {
+                    this.logout();
+                }
+                return false;
+            }
+        }
+
+        // Actualizar UI según estado de autenticación
+        updateUI() {
+            const userMenuDesktop = document.getElementById('userMenuDesktop');
+            const userMenuMobile = document.getElementById('userMenuMobile');
+            const guestMenuDesktop = document.getElementById('guestMenuDesktop');
+            const guestMenuMobile = document.getElementById('guestMenuMobile');
+            const userNameDisplay = document.getElementById('userNameDisplay');
+            const adminMenuItem = document.getElementById('adminMenuItem');
+
+            if (this.isAuthenticated()) {
+                // Mostrar menú de usuario
+                if (userMenuDesktop) userMenuDesktop.classList.remove('hidden');
+                if (userMenuMobile) userMenuMobile.classList.remove('hidden');
+                if (guestMenuDesktop) guestMenuDesktop.classList.add('hidden');
+                if (guestMenuMobile) guestMenuMobile.classList.add('hidden');
+                
+                // Mostrar nombre de usuario
+                if (userNameDisplay) {
+                    userNameDisplay.textContent = this.currentUser.name.split(' ')[0];
+                }
+                
+                // Mostrar menú admin si es admin
+                if (adminMenuItem) {
+                    if (this.isAdmin()) {
+                        adminMenuItem.classList.remove('hidden');
+                    } else {
+                        adminMenuItem.classList.add('hidden');
+                    }
+                }
+            } else {
+                // Mostrar menú de invitado
+                if (userMenuDesktop) userMenuDesktop.classList.add('hidden');
+                if (userMenuMobile) userMenuMobile.classList.add('hidden');
+                if (guestMenuDesktop) guestMenuDesktop.classList.remove('hidden');
+                if (guestMenuMobile) guestMenuMobile.classList.remove('hidden');
+                
+                if (adminMenuItem) adminMenuItem.classList.add('hidden');
+            }
+        }
+
+        // Requerir autenticación (para páginas protegidas) - MEJORADO
+        requireAuth(redirectPath = 'login.html') {
+            if (!this.isAuthenticated()) {
+                notify.warning('Debes iniciar sesión para acceder a esta página', 'Autenticación requerida');
+                
+                const currentPath = window.location.pathname;
+                const currentPage = currentPath.split('/').pop();
+                
+                if (currentPath.includes('admin')) {
+                    window.location.href = `../${redirectPath}?redirect=${currentPage}`;
+                } else {
+                    window.location.href = `./${redirectPath}?redirect=${currentPage}`;
+                }
+                return false;
+            }
+            
+            return true;
+        }
+
+        // Requerir rol admin (para páginas admin) - MEJORADO
+        requireAdmin() {
+            if (!this.isAuthenticated()) {
+              notify.warning('Debes iniciar sesión para acceder al panel admin');
+              window.location.href = '../login.html?redirect=admin';
+              return false;
+            }
+            const user = this.getCurrentUser();
+            if (!user || user.role !== 'admin') {
+              notify.error('Acceso denegado. Solo administradores.');
+              window.location.href = '../perfil.html';
+              return false;
+            }
+            return true;
+          }
+    }
+
+    // Crear instancia global solo si no existe
+    if (typeof authManager === 'undefined') {
+        window.authManager = new AuthManager();
+    }
+
+    // Inicializar UI cuando el DOM esté listo
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initAuth);
+    } else {
+        initAuth();
+    }
+
+    function initAuth() {
+        if (window.authManager) {
+            window.authManager.updateUI();
+            
+            // Configurar botón de logout si existe
+            const logoutButtons = document.querySelectorAll('[data-logout]');
+            logoutButtons.forEach(button => {
+              button.addEventListener('click', (e) => {
+                e.preventDefault();
+                notify.confirm({
+                  title: "¿Cerrar sesión?",
+                  message: "Tu sesión actual se cerrará y volverás al inicio.",
+                  type: "warning",
+                  icon: "logout",
+                  confirmText: "Cerrar sesión",
+                  cancelText: "Cancelar",
+                  confirmClass: "danger"
+                }).then((confirmed) => {
+                  if (confirmed) {
+                    notify.info("Cerrando sesión...");
+                    window.authManager.logout();
+                  } else {
+                    notify.info("Operación cancelada");
+                  }
+                });
+              });
+            });            
+        }
+    }
+
+}

@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" type="image/png" href="./assets/images/logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Pedidos - Apexremedy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./style/css_home.css">
+    <link rel="stylesheet" href="./style/mis-pedidos.css">
+    <script src="./js/config.js"></script>
+    <script src="./js/utils.js"></script>
+    <script defer src="./js/template.js"></script>
+</head>
+<body>
+    <!-- Header template -->
+    <div id="header-container"></div>
+
+    <!-- Hero Section -->
+    <section class="shop-header">
+        <div class="container">
+            <h1>
+                <i class="fas fa-shopping-bag"></i> Mis Pedidos
+            </h1>
+            <p>Historial completo de tus compras</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="orders-container">
+        <div class="container">
+            <!-- Lista de pedidos -->
+            <div id="ordersList" class="orders-list">
+                <!-- Loading -->
+                <div class="orders-loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Cargando pedidos...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer template -->
+    <div id="footer-container"></div>
+
+    <!-- Modal detalle pedido -->
+    <div id="orderModal" class="hidden order-modal">
+        <div class="order-modal-content">
+            <div class="order-modal-header">
+                <div>
+                    <h3>Pedido #<span id="modalOrderId"></span></h3>
+                    <p class="order-modal-date">Fecha: <span id="modalDate"></span></p>
+                </div>
+                <button onclick="closeModal()" class="order-modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div style="margin-bottom: 24px;">
+                <span id="modalStatus" class="order-status"></span>
+            </div>
+
+            <!-- Items -->
+            <div class="order-modal-table">
+                <h4 style="font-weight: 600; color: var(--accent-black); margin-bottom: 12px; font-family: var(--font-primary);">Productos</h4>
+                <table class="order-table">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th class="text-right">Cant.</th>
+                            <th class="text-right">Precio</th>
+                            <th class="text-right">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modalItems">
+                        <!-- Items aquí -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Totales -->
+            <div class="order-totals-box">
+                <div class="order-total-row">
+                    <span>Subtotal:</span>
+                    <span id="modalSubtotal" class="font-semibold">$0</span>
+                </div>
+                <div class="order-total-row">
+                    <span>IVA (19%):</span>
+                    <span id="modalTax" class="font-semibold">$0</span>
+                </div>
+                <div class="order-total-row final">
+                    <span>Total:</span>
+                    <span id="modalTotal" class="amount">$0</span>
+                </div>
+            </div>
+
+            <!-- INFO DE PAGO -->
+            <div id="modalPaymentBox" class="order-payment-box">
+                <h4>Pago</h4>
+                <div class="order-payment-info">
+                    <div class="order-payment-method">
+                        Método de pago:
+                        <strong id="modalPaymentMethod">—</strong>
+                        <span id="modalPaymentHint" class="order-payment-hint hidden">
+                            Pago en efectivo al entregar
+                        </span>
+                    </div>
+                    <div id="modalPaymentAction"></div>
+                </div>
+            </div>
+  
+                <!-- Información de pago -->
+                <div id="paymentInfo" class="bg-blue-50 rounded-lg p-4 mb-6 hidden">
+                    <h4 class="font-semibold text-gray-700 mb-2">
+                        <i class="fas fa-info-circle text-blue-600 mr-2"></i>Estado de Pago
+                    </h4>
+                    <p id="paymentStatusText" class="text-sm text-gray-600"></p>
+                </div>
+
+                <!-- Botón cancelar -->
+                <div id="cancelSection" class="hidden">
+                    <button onclick="cancelOrder()" class="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-semibold transition">
+                        <i class="fas fa-times-circle mr-2"></i>Cancelar Pedido
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- Modal Transferencia (cliente) -->
+<!-- Modal: Pedido Confirmado / Datos para Transferencia (idéntico a checkout) -->
+<div id="transferModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" onclick="if(event.target.id==='transferModal') hideTransferModal()">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden" onclick="event.stopPropagation()">
+      <div class="px-6 py-4 border-b flex items-center justify-between">
+        <h3 class="text-xl font-bold">¡Pedido Confirmado!</h3>
+        <button class="text-gray-400 hover:text-gray-600" onclick="hideTransferModal()">
+          <i class="fas fa-times text-2xl"></i>
+        </button>
+      </div>
+  
+      <div class="p-6 space-y-6">
+        <div class="flex items-center justify-between">
+          <div class="text-gray-700">
+            <div class="text-sm">Pedido <span class="font-semibold">#<span id="transferOrderNumber">—</span></span></div>
+            <div class="text-sm">Monto a Transferir: <strong id="transferAmountText">—</strong></div>
+          </div>
+          <div class="hidden md:block">
+            <i class="fas fa-receipt text-3xl text-blue-600"></i>
+          </div>
+        </div>
+  
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="bg-gray-50 rounded-xl p-4 border">
+            <h4 class="font-semibold mb-3">Datos para Transferencia</h4>
+            <dl class="text-sm text-gray-700 space-y-1">
+              <div class="flex justify-between"><dt>Banco:</dt><dd class="font-medium">Banco Estado</dd></div>
+              <div class="flex justify-between"><dt>Tipo de Cuenta:</dt><dd class="font-medium">Cuenta Corriente</dd></div>
+              <div class="flex justify-between"><dt>Número de Cuenta:</dt><dd class="font-medium">12345678-9</dd></div>
+              <div class="flex justify-between"><dt>RUT:</dt><dd class="font-medium">76.XXX.XXX-X</dd></div>
+              <div class="flex justify-between"><dt>Titular:</dt><dd class="font-medium">Apexremedy SpA</dd></div>
+              <div class="flex justify-between"><dt>Email:</dt><dd class="font-medium">pagos@apexremedy.cl</dd></div>
+            </dl>
+          </div>
+  
+          <div class="bg-blue-50 rounded-xl p-4 border border-blue-200">
+            <h4 class="font-semibold mb-3">Subir Comprobante de Pago</h4>
+            <p class="text-sm text-blue-900 mb-3">Una vez realizada la transferencia, sube tu comprobante para agilizar el proceso.</p>
+            <form id="transferForm" class="space-y-3">
+              <input type="hidden" id="transferOrderId">
+              <label class="block">
+                <span class="block text-sm font-medium mb-1">Archivo (JPG, PNG o PDF – máx 5MB)</span>
+                <input id="receiptFile" type="file" accept=".pdf,.jpg,.jpeg,.png" required class="w-full border rounded px-3 py-2 bg-white">
+              </label>
+              <div class="flex items-center justify-end gap-3 pt-2">
+                <button type="button" class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300" onclick="hideTransferModal()">Cancelar</button>
+                <button type="submit" class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white">
+                  <i class="fas fa-paper-plane mr-2"></i> Enviar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+  
+        <div class="bg-white rounded-xl border p-4">
+          <h4 class="font-semibold mb-2">Instrucciones Importantes</h4>
+          <ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
+            <li>Realiza la transferencia por el monto exacto indicado.</li>
+            <li>Incluye el número de orden (<strong>#<span id="transferOrderNumber2">—</span></strong>) en el mensaje.</li>
+            <li>Sube el comprobante para verificación más rápida.</li>
+            <li>Recibirás confirmación por email en 24–48 horas hábiles.</li>
+          </ul>
+        </div>
+  
+        <div class="flex flex-wrap gap-3 justify-end">
+          <a href="./mis-pedidos.html" class="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-800">Mis Pedidos</a>
+          <a href="./index.html" class="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-800">Volver al inicio</a>
+          <button onclick="window.print()" class="px-4 py-2 rounded-lg bg-gray-800 hover:bg-black text-white">
+            <i class="fas fa-print mr-2"></i> Imprimir
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>  
+  
+    <!-- Scripts -->
+    <script src="./js/api/apiClient.js"></script>
+    <script src="./js/auth.js"></script>
+    <script src="./js/sessionManager.js"></script>
+    <script src="./js/notifications.js"></script>
+    <script src="./js/db_articulos.js"></script>
+    <script>
+        let currentOrderId = null;
+
+        // Verificar autenticación - CORREGIDO
+        (function initPage() {
+            console.log('🔍 Verificando autenticación...');
+            
+            if (!authManager.isAuthenticated()) {
+                console.log('❌ Usuario no autenticado');
+                notify.warning('Debes iniciar sesión para ver tus pedidos', 'Acceso Requerido');
+                
+                setTimeout(() => {
+                    window.location.href = './login.html?redirect=mis-pedidos';
+                }, 1500);
+                return;
+            }
+            
+            console.log('✅ Usuario autenticado, cargando pedidos...');
+            loadOrders();
+        })();
+
+        // Cargar pedidos
+        async function loadOrders() {
+            try {
+                console.log('📦 Cargando pedidos del usuario...');
+                const response = await api.request('/orders/my-orders?limit=50');
+                
+                console.log('📊 Respuesta del servidor:', response);
+                
+                if (response.success) {
+                    const orders = response.data.orders || [];
+                    console.log(`✅ ${orders.length} pedidos encontrados`);
+                    displayOrders(orders);
+                } else {
+                    throw new Error(response.message || 'Error al cargar pedidos');
+                }
+            } catch (error) {
+                console.error('❌ Error al cargar pedidos:', error);
+                document.getElementById('ordersList').innerHTML = `
+                    <div class="text-center py-12">
+                        <i class="fas fa-exclamation-triangle text-4xl text-red-500 mb-4"></i>
+                        <p class="text-gray-600 mb-4">Error al cargar pedidos</p>
+                        <p class="text-sm text-gray-500">${error.message}</p>
+                        <button onclick="loadOrders()" class="mt-4 bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg">
+                            <i class="fas fa-refresh mr-2"></i>Reintentar
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // Mostrar pedidos - MEJORADO
+        function displayOrders(orders) {
+    // 🔁 usar el ID REAL que existe en mis-pedidos.html
+    const container = document.getElementById('ordersList');
+
+    if (!orders || orders.length === 0) {
+        container.innerHTML = `
+            <div class="orders-empty">
+                <i class="fas fa-shopping-bag"></i>
+                <h3>No tienes pedidos aún</h3>
+                <p>Comienza a comprar en nuestro catálogo</p>
+                <a href="./productos.html" class="cta-button" style="display: inline-flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span>Ver Productos</span>
+                </a>
+            </div>
+        `;
+        return;
+    }
+
+    const statusConfig = {
+        pending_payment: { class: 'pending',  label: 'Pendiente de pago',           icon: 'fa-clock' },
+        processing:      { class: 'processing',    label: 'Procesando',                 icon: 'fa-cog' },
+        shipped:         { class: 'shipped',label: 'Enviado',                     icon: 'fa-truck' },
+        delivered:       { class: 'delivered',  label: 'Entregado',                  icon: 'fa-check-circle' },
+        cancelled:       { class: 'cancelled',      label: 'Cancelado',                  icon: 'fa-times-circle' }
+    };
+
+    container.innerHTML = orders.map(order => {
+        // construir estado final por pedido
+        const baseStatus = statusConfig[order.status] || {
+            class: 'pending',
+            label: order.status,
+            icon: 'fa-question'
+        };
+
+        const finalStatus =
+            (order.status === 'pending_payment' && order.payment_method === 'cash')
+                ? { ...baseStatus, label: 'Pago en efectivo pendiente' }
+                : baseStatus;
+
+        return `
+            <div class="order-card">
+                <div class="order-header">
+                    <div>
+                        <h4 class="order-title">Pedido #${order.id}</h4>
+                        <p class="order-date">
+                            ${new Date(order.created_at).toLocaleDateString('es-CL', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                            })}
+                        </p>
+                    </div>
+                    <span class="order-status ${finalStatus.class}">
+                        <i class="fas ${finalStatus.icon}"></i> ${finalStatus.label}
+                    </span>
+                </div>
+
+                <div class="order-footer">
+                    <span class="order-total">
+                        ${Utils.formatPrice(order.total)}
+                    </span>
+
+                    <div class="order-actions">
+                        ${
+                            order.status === 'pending_payment' &&
+                            order.payment_method === 'transfer'
+                                ? `
+                                <button onclick="openTransferModal('${order.id}', ${order.total || 0})"
+                                        class="cta-button"
+                                        style="padding: 8px 16px; font-size: 0.9rem;"
+                                        title="Enviar transferencia">
+                                    <i class="fas fa-receipt"></i>
+                                    <span>Enviar transferencia</span>
+                                </button>
+                                `
+                                : ''
+                        }
+
+                        <button onclick="viewOrderDetails(${order.id})"
+                                class="cta-button"
+                                style="padding: 8px 16px; font-size: 0.9rem;">
+                            <i class="fas fa-eye"></i>
+                            <span>Ver Detalles</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+
+        // Ver detalles del pedido
+        async function viewOrderDetails(id) {
+            try {
+                console.log(`🔍 Cargando detalles del pedido #${id}...`);
+                const response = await api.request(`/orders/${id}`);
+                
+                if (response.success) {
+                    console.log('✅ Detalles del pedido cargados:', response.data.order);
+                    showOrderModal(response.data.order);
+                } else {
+                    throw new Error(response.message || 'Error al cargar detalles');
+                }
+            } catch (error) {
+                console.error('❌ Error al cargar detalles:', error);
+                notify.error('No se pudieron cargar los detalles del pedido', 'Error');
+            }
+        }
+
+// Mostrar modal - MEJORADO
+function showOrderModal(order) {
+  currentOrderId = order.id;
+
+  // Estados (con texto especial para efectivo pendiente)
+  const statusConfig = {
+    pending_payment: { class: 'pending', label: 'Pendiente de pago' },
+    processing:      { class: 'processing',   label: 'Procesando' },
+    shipped:         { class: 'shipped', label: 'Enviado' },
+    delivered:       { class: 'delivered', label: 'Entregado' },
+    cancelled:       { class: 'cancelled',     label: 'Cancelado' }
+  };
+
+  const baseStatus = statusConfig[order.status] || { class: 'pending', label: order.status };
+  const status = (order.status === 'pending_payment' && order.payment_method === 'cash')
+    ? { ...baseStatus, label: 'Pago en efectivo pendiente' }
+    : baseStatus;
+
+  // Header modal
+  document.getElementById('modalOrderId').textContent = order.id;
+  document.getElementById('modalDate').textContent = new Date(order.created_at).toLocaleDateString('es-CL', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+
+  // Badge de estado
+  const statusBadge = document.getElementById('modalStatus');
+  statusBadge.className = `order-status ${status.class}`;
+  statusBadge.innerHTML = `<i class="fas fa-circle"></i> ${status.label}`;
+
+  // Items
+  const itemsHtml = (order.items || []).map(item => `
+    <tr>
+      <td>${item.product_name}</td>
+      <td class="text-right">${item.quantity}</td>
+      <td class="text-right">${Utils.formatPrice(item.price)}</td>
+      <td class="text-right font-semibold">${Utils.formatPrice(item.quantity * item.price)}</td>
+    </tr>
+  `).join('');
+  document.getElementById('modalItems').innerHTML = itemsHtml;
+
+  // Totales
+  document.getElementById('modalSubtotal').textContent = Utils.formatPrice(order.subtotal);
+  document.getElementById('modalTax').textContent     = Utils.formatPrice(order.tax);
+  document.getElementById('modalTotal').textContent   = Utils.formatPrice(order.total);
+
+  // Estado de pago informativo (si lo usas)
+  const paymentInfo = document.getElementById('paymentInfo');
+  const paymentStatusText = document.getElementById('paymentStatusText');
+  if (order.payment_status) {
+    paymentInfo.classList.remove('hidden');
+    const paymentMessages = {
+      pending:   'Pago pendiente de verificación',
+      confirmed: 'Pago confirmado',
+      rejected:  'Pago rechazado'
+    };
+    paymentStatusText.textContent = paymentMessages[order.payment_status] || 'Estado desconocido';
+  } else {
+    paymentInfo.classList.add('hidden');
+  }
+
+  // Sección cancelar
+  const cancelSection = document.getElementById('cancelSection');
+  if (order.status === 'pending_payment') {
+    cancelSection.classList.remove('hidden');
+  } else {
+    cancelSection.classList.add('hidden');
+  }
+
+  // Método de pago + acción (mismo modal que checkout)
+  const paymentMethodText =
+    order.payment_method === 'cash'     ? 'Efectivo' :
+    order.payment_method === 'transfer' ? 'Transferencia' : '—';
+
+  const methodEl = document.getElementById('modalPaymentMethod');
+  const hintEl   = document.getElementById('modalPaymentHint');
+  const actionEl = document.getElementById('modalPaymentAction');
+
+  methodEl.textContent = paymentMethodText;
+  hintEl.classList.add('hidden');
+  actionEl.innerHTML = '';
+
+  if (order.payment_method === 'transfer') {
+    if (order.status === 'pending_payment') {
+      actionEl.innerHTML = `
+        <button class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm"
+                onclick="openTransferModal('${order.id}', ${order.total || 0})">
+          <i class="fas fa-receipt mr-2"></i> Enviar transferencia
+        </button>
+      `;
+    } else {
+      actionEl.innerHTML = `<span class="text-sm text-gray-500">No hay acciones disponibles</span>`;
+    }
+  } else if (order.payment_method === 'cash') {
+    hintEl.classList.remove('hidden');
+    actionEl.innerHTML = `<span class="text-sm text-gray-500">El pago se realizará al entregar</span>`;
+  } else {
+    actionEl.innerHTML = `<span class="text-sm text-gray-400">—</span>`;
+  }
+
+  // Mostrar modal
+  document.getElementById('orderModal').classList.remove('hidden');
+}
+
+        function closeModal() {
+            document.getElementById('orderModal').classList.add('hidden');
+            currentOrderId = null;
+        }
+
+        async function quickCancel(id) {
+            currentOrderId = id;
+            await cancelOrder();
+        }
+
+        async function cancelOrder() {
+            if (!currentOrderId) {
+                console.error('❌ No hay pedido seleccionado');
+                return;
+            }
+
+            const confirmed = await notify.confirm({
+                type: 'warning',
+                icon: 'question',
+                title: '¿Cancelar Pedido?',
+                message: '¿Estás seguro de cancelar este pedido? Esta acción no se puede deshacer.',
+                confirmText: 'Sí, Cancelar',
+                cancelText: 'No, Mantener',
+                confirmClass: 'danger'
+            });
+
+            if (!confirmed) {
+                console.log('ℹ️ Cancelación abortada por el usuario');
+                return;
+            }
+
+            try {
+                console.log(`🗑️ Cancelando pedido #${currentOrderId}...`);
+                
+                const response = await api.request(`/orders/${currentOrderId}/cancel`, {
+                    method: 'POST'
+                });
+
+                if (response.success) {
+                    console.log('✅ Pedido cancelado exitosamente');
+                    notify.success('Pedido cancelado correctamente', '✅ Cancelado');
+                    closeModal();
+                    loadOrders();
+                } else {
+                    throw new Error(response.message || 'Error al cancelar pedido');
+                }
+            } catch (error) {
+                console.error('❌ Error al cancelar pedido:', error);
+                notify.error(error.message || 'Error al cancelar pedido', 'Error');
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        document.getElementById('orderModal').addEventListener('click', (e) => {
+            if (e.target.id === 'orderModal') {
+                closeModal();
+            }
+        });
+    </script>
+<script>
+    // Modal transferencia (cliente)
+    function openTransferModal(orderId, amount) {
+  document.getElementById('transferOrderId').value = orderId;
+  document.getElementById('transferOrderNumber').textContent  = String(orderId);
+  document.getElementById('transferOrderNumber2').textContent = String(orderId);
+  document.getElementById('transferAmountText').textContent =
+    (amount || 0).toLocaleString('es-CL', { style: 'currency', currency: 'CLP' });
+
+  document.getElementById('transferModal').classList.remove('hidden');
+}
+
+// Cerrar modal (click fuera + ESC)
+function hideTransferModal() {
+  const form = document.getElementById('transferForm');
+  form?.reset();
+  document.getElementById('transferModal').classList.add('hidden');
+}
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideTransferModal(); });
+
+// Enviar comprobante (mismo endpoint que checkout)
+document.getElementById('transferForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const orderId = document.getElementById('transferOrderId').value;
+  const file    = document.getElementById('receiptFile').files[0];
+
+  if (!file) { notify.warning('Adjunta el comprobante de transferencia'); return; }
+
+  const fd = new FormData();
+  fd.append('payment_proof', file);
+
+  try {
+    const res = await api.request(`/orders/${orderId}/payment-proof`, {
+      method: 'POST',
+      body: fd,
+      headers: {} // importante: sin Content-Type, lo define el navegador
+    });
+
+    if (res?.success) {
+      notify.success('¡Transferencia enviada! Quedará pendiente de validación.');
+      hideTransferModal();
+      if (typeof loadOrders === 'function') loadOrders(); // refresca “Mis pedidos”
+    } else {
+      throw new Error(res?.message || 'No se pudo enviar la transferencia');
+    }
+  } catch (err) {
+    console.error(err);
+    notify.error('Error al enviar la transferencia');
+  }
+});
+    
+    document.getElementById('transferForm')?.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const orderId = document.getElementById('transferOrderId').value;
+      const file    = document.getElementById('receiptFile').files[0];
+      if (!file) return;
+    
+      const fd = new FormData();
+      // usa tu endpoint existente de órdenes: POST /api/orders/:id/payment-proof
+      fd.append('payment_proof', file);
+    
+      try {
+        const res = await api.request(`/orders/${orderId}/payment-proof`, {
+          method: 'POST',
+          body: fd,
+          headers: {} // IMPORTANTE: sin Content-Type (lo define el browser)
+        });
+        if (res?.success) {
+          notify.success('¡Transferencia enviada! Quedará pendiente de validación.');
+          hideTransferModal();
+          // refresca lista y, si está abierto, el modal
+          loadOrders();
+        } else {
+          throw new Error(res?.message || 'No se pudo enviar la transferencia');
+        }
+      } catch (err) {
+        console.error(err);
+        notify.error('Error al enviar la transferencia');
+      }
+    });
+    </script>
+    
+</body>
+</html>

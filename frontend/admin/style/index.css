@@ -1,0 +1,79 @@
+/* === CSS Específico para admin/index.html === */
+
+.admin-welcome-card {
+    background: linear-gradient(135deg, var(--admin-white), var(--admin-bg-cream));
+    border: 2px solid rgba(192, 86, 33, 0.2);
+    margin-bottom: 32px;
+}
+
+.admin-welcome-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--admin-primary-red), var(--admin-dark-red));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--admin-shadow-lg);
+    flex-shrink: 0;
+}
+
+.admin-welcome-icon i {
+    font-size: 2.5rem;
+    color: var(--admin-accent-yellow);
+}
+
+/* Quick Actions */
+.admin-quick-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-top: 32px;
+}
+
+.admin-quick-action {
+    background: var(--admin-white);
+    padding: 20px;
+    border-radius: var(--admin-border-radius);
+    box-shadow: var(--admin-box-shadow);
+    text-decoration: none;
+    color: var(--admin-black);
+    transition: var(--admin-transition);
+    border: 2px solid transparent;
+}
+
+.admin-quick-action:hover {
+    border-color: var(--admin-primary-red);
+    transform: translateY(-4px);
+    box-shadow: var(--admin-shadow-lg);
+}
+
+.admin-quick-action i {
+    font-size: 2rem;
+    color: var(--admin-primary-red);
+    margin-bottom: 12px;
+}
+
+.admin-quick-action h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--admin-black);
+    margin-bottom: 4px;
+    font-family: var(--admin-font-primary);
+}
+
+.admin-quick-action p {
+    font-size: 0.85rem;
+    color: var(--admin-medium-gray);
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 768px) {
+    .admin-quick-actions {
+        grid-template-columns: 1fr;
+    }
+}
+

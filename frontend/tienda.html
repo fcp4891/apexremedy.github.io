@@ -1,0 +1,1517 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" type="image/png" href="./assets/images/logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tienda - Apexremedy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+          safelist: [
+            'from-amber-200','via-yellow-200','to-amber-200',
+            'from-violet-200','via-purple-200','to-violet-200',
+            'from-emerald-200','via-green-200','to-emerald-200',
+            'from-sky-200','via-cyan-200','to-sky-200',
+            'from-cyan-100','via-sky-100','to-cyan-100',
+            'text-stone-900','text-amber-800','text-purple-800','text-emerald-800','text-sky-800','text-cyan-700',
+            'bg-yellow-100','text-yellow-800',
+            'bg-purple-100','text-purple-800',
+            'bg-emerald-100','text-emerald-800',
+            'bg-sky-100','text-sky-800',
+            'bg-cyan-50','text-cyan-700',
+            'border-yellow-300','border-purple-300','border-green-300','border-sky-300','border-cyan-200',
+            'bg-gradient-to-r','bg-gradient-to-br','shadow-sm','shadow-lg','px-3','py-1','rounded-full'
+          ]
+        }
+    </script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./style/css_home.css">
+    <link rel="stylesheet" href="./style/tienda.css">
+    
+    <script src="./js/config.js"></script>
+    <script src="./js/utils.js"></script>
+    <script defer src="./js/template.js"></script>
+
+</head>
+<body>
+    <!-- Header template -->
+    <div id="header-container"></div>
+
+    <!-- Hero de Tienda -->
+    <section class="shop-header">
+        <div class="container">
+            <h1>
+                <i class="fas fa-store mr-3"></i>Nuestra Tienda
+            </h1>
+            <p>
+                Explora nuestra selección de productos premium
+            </p>
+        </div>
+    </section>
+
+    <section id="registro-catalogo" class="registration-notice-section" style="background: linear-gradient(135deg, rgba(166, 137, 65, 0.05), rgba(244, 208, 63, 0.03)); padding: 60px 20px;">
+        <div class="container">
+          <!-- Alerta principal -->
+          <div style="max-width: 900px; margin: 0 auto; padding: 40px; background: var(--white); border-radius: var(--border-radius); box-shadow: var(--box-shadow); border-top: 5px solid var(--primary-green);">
+            
+            <!-- Icono y título -->
+            <div style="text-align: center; margin-bottom: 30px;">
+              <div style="width: 80px; height: 80px; margin: 0 auto 20px; background: linear-gradient(135deg, var(--primary-green), var(--light-green)); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                <i class="fas fa-user-lock" style="font-size: 36px; color: var(--accent-yellow);"></i>
+              </div>
+              <p style="font-size: 1.15rem; color: var(--medium-gray); line-height: 1.6;">
+                Solo los usuarios registrados pueden ver nuestro catálogo de productos medicinales
+              </p>
+            </div>
+      
+            <!-- Beneficios de registrarse -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 35px;">
+              <div style="padding: 20px; background: var(--light-gray); border-radius: 12px; border-left: 4px solid var(--primary-green);">
+                <div style="display: flex; align-items: start; gap: 12px;">
+                  <i class="fas fa-eye" style="font-size: 24px; color: var(--primary-green); margin-top: 2px;"></i>
+                  <div>
+                    <h4 style="font-weight: 600; color: var(--accent-black); margin-bottom: 6px;">Catálogo Medicinal</h4>
+                    <p style="font-size: 0.9rem; color: var(--medium-gray); line-height: 1.5;">Accede a todos nuestros productos y variedades medicinales</p>
+                  </div>
+                </div>
+              </div>
+      
+              <div style="padding: 20px; background: var(--light-gray); border-radius: 12px; border-left: 4px solid var(--primary-green);">
+                <div style="display: flex; align-items: start; gap: 12px;">
+                  <i class="fas fa-tag" style="font-size: 24px; color: var(--primary-green); margin-top: 2px;"></i>
+                  <div>
+                    <h4 style="font-weight: 600; color: var(--accent-black); margin-bottom: 6px;">Ofertas Especiales</h4>
+                    <p style="font-size: 0.9rem; color: var(--medium-gray); line-height: 1.5;">Promociones y descuentos exclusivos para miembros</p>
+                  </div>
+                </div>
+              </div>
+      
+              <div style="padding: 20px; background: var(--light-gray); border-radius: 12px; border-left: 4px solid var(--primary-green);">
+                <div style="display: flex; align-items: start; gap: 12px;">
+                  <i class="fas fa-shipping-fast" style="font-size: 24px; color: var(--primary-green); margin-top: 2px;"></i>
+                  <div>
+                    <h4 style="font-weight: 600; color: var(--accent-black); margin-bottom: 6px;">Compra Rápida</h4>
+                    <p style="font-size: 0.9rem; color: var(--medium-gray); line-height: 1.5;">Proceso de compra simplificado y seguimiento de pedidos</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+      
+            <!-- Nota informativa -->
+            <div style="margin-bottom: 30px; padding: 20px; background: linear-gradient(135deg, rgba(166, 137, 65, 0.08), rgba(244, 208, 63, 0.05)); border-radius: 12px; border: 2px solid rgba(166, 137, 65, 0.2);">
+              <div style="display: flex; align-items: start; gap: 15px;">
+                <i class="fas fa-info-circle" style="font-size: 28px; color: var(--primary-green); margin-top: 2px;"></i>
+                <div>
+                  <h4 style="font-weight: 600; color: var(--primary-green); margin-bottom: 8px; font-size: 1.1rem;">¿Por qué necesito registrarme?</h4>
+                  <p style="color: var(--medium-gray); line-height: 1.7; font-size: 0.95rem;">
+                    El registro nos permite verificar que nuestros productos llegan a personas mayores de edad y cumplir con todas las normativas vigentes. Además, te garantiza una experiencia de compra segura, discreta y personalizada. Tu privacidad y seguridad son nuestra prioridad.
+                  </p>
+                </div>
+              </div>
+            </div>
+      
+            <!-- Botones de acción -->
+            <div style="text-align: center;">
+              <a href="./registro.html" class="cta-button" style="display: inline-flex; align-items: center; gap: 10px; padding: 16px 40px; font-size: 1.1rem; margin-bottom: 15px;">
+                <i class="fas fa-user-plus"></i>
+                Registrarse Ahora
+              </a>
+              <p style="color: var(--medium-gray); font-size: 0.9rem;">
+                ¿Ya tienes cuenta? 
+                <a href="./login.html" style="color: var(--primary-green); font-weight: 600; text-decoration: underline;">Inicia sesión aquí</a>
+              </p>
+            </div>
+      
+          </div>
+        </div>
+      </section>
+
+    <!-- Contenido Principal -->
+    <div class="container" style="padding: 40px 20px;">
+        <div style="display: grid; grid-template-columns: 280px 1fr; gap: 32px; align-items: start;">
+            
+            <!-- Sidebar de Filtros -->
+            <aside style="position: sticky; top: 90px;">
+                <div class="about-card" style="padding: 24px;">
+                    <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 20px; color: var(--primary-green);">
+                        <i class="fas fa-filter mr-2"></i>Filtros
+                    </h2>
+                    
+                    <!-- Búsqueda -->
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--accent-black);">
+                            Buscar
+                        </label>
+                        <input type="text" 
+                               id="searchInput" 
+                               placeholder="Nombre del producto..."
+                               style="width: 100%; padding: 10px 12px; border: 2px solid var(--light-gray); border-radius: 8px; font-size: 0.95rem;">
+                    </div>
+                    
+                    <!-- Categoría -->
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--accent-black);">
+                            Categoría
+                        </label>
+                        <select id="categoryFilter" 
+                                style="width: 100%; padding: 10px 12px; border: 2px solid var(--light-gray); border-radius: 8px; font-size: 0.95rem;">
+                            <option value="all">Todas</option>
+                            <!-- 🆕 Las categorías se cargan dinámicamente según el usuario -->
+                        </select>
+                    </div>
+                    
+                    <!-- Rango de Precio -->
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--accent-black);">
+                            Precio
+                        </label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                            <input type="number" 
+                                   id="minPrice" 
+                                   placeholder="Mín"
+                                   style="padding: 10px 12px; border: 2px solid var(--light-gray); border-radius: 8px; font-size: 0.95rem;">
+                            <input type="number" 
+                                   id="maxPrice" 
+                                   placeholder="Máx"
+                                   style="padding: 10px 12px; border: 2px solid var(--light-gray); border-radius: 8px; font-size: 0.95rem;">
+                        </div>
+                    </div>
+                    
+                    <!-- Stock -->
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" 
+                                   id="inStockFilter"
+                                   style="margin-right: 8px; width: 18px; height: 18px;">
+                            <span style="font-weight: 500;">Solo con stock</span>
+                        </label>
+                    </div>
+                    
+                    <!-- Destacados -->
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" 
+                                   id="featuredFilter"
+                                   style="margin-right: 8px; width: 18px; height: 18px;">
+                            <span style="font-weight: 500;">Solo destacados</span>
+                        </label>
+                    </div>
+                    
+                    <!-- Ordenar por -->
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--accent-black);">
+                            Ordenar por
+                        </label>
+                        <select id="sortBy" 
+                                style="width: 100%; padding: 10px 12px; border: 2px solid var(--light-gray); border-radius: 8px; font-size: 0.95rem;">
+                            <option value="created_at DESC">Más recientes</option>
+                            <option value="price ASC">Precio: menor a mayor</option>
+                            <option value="price DESC">Precio: mayor a menor</option>
+                            <option value="name ASC">Nombre: A-Z</option>
+                            <option value="name DESC">Nombre: Z-A</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Botones -->
+                    <button onclick="applyFilters()" 
+                            class="cta-button full-width" 
+                            style="margin-bottom: 10px;">
+                        Aplicar Filtros
+                    </button>
+                    <button onclick="clearFilters()" 
+                            class="secondary-button full-width">
+                        Limpiar Filtros
+                    </button>
+                    
+                    <!-- Botón para actualizar acceso medicinal (solo usuarios autenticados) -->
+                    <button id="refreshAccessBtn"
+                            onclick="refreshUserToken()"
+                            class="secondary-button full-width"
+                            style="background: #f59e0b; color: white; margin-top: 8px; display: none; font-size: 0.9rem;"
+                            title="Actualiza tu acceso a productos medicinales sin cerrar sesión">
+                        <i class="fas fa-sync mr-2"></i>Actualizar Acceso
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Grid de Productos -->
+            <main>
+                <!-- Contador de resultados -->
+                <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <p id="resultCount" style="color: var(--medium-gray); font-size: 0.95rem;">
+                        Cargando productos...
+                    </p>
+                </div>
+                
+                <!-- Grid -->
+                <div id="productsGrid" class="products-grid">
+                    <!-- Los productos se cargarán aquí -->
+                    <div style="grid-column: 1/-1; display: flex; justify-content: center; padding: 60px 0;">
+                        <div style="width: 48px; height: 48px; border: 3px solid var(--light-gray); border-top-color: var(--primary-green); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Footer template -->
+    <div id="footer-container"></div>
+
+    <!-- Sidebar del carrito -->
+    <div id="cartSidebar" class="cart-sidebar">
+        <div class="cart-header">
+            <h3><i class="fas fa-shopping-cart"></i> Carrito de Compras</h3>
+            <button id="closeCart" class="cta-button" style="padding: 6px 12px;">Cerrar</button>
+        </div>
+        <div id="cartItems" class="cart-items"></div>
+        <div class="cart-total">
+            <div class="total-amount" id="cartTotal">Total: $0</div>
+            <a href="./carrito.html" class="cta-button full-width">Ver Carrito Completo</a>
+        </div>
+    </div>
+    <div id="cartOverlay" class="cart-overlay" style="display: none;"></div>
+
+    <!-- Modal Detalle Producto - Para productos medicinales y semillas -->
+    <div id="productDetailModal" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4 backdrop-blur-sm" onclick="closeProductModalOnOverlay(event)">
+        <div class="relative w-[70vw] max-h-[85vh] overflow-hidden" onclick="event.stopPropagation()">
+            <div class="bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl shadow-2xl overflow-hidden max-h-[85vh] flex flex-col">
+                <div id="modalHeader" class="bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-300 p-3 flex-shrink-0">
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1">
+                            <h2 id="modalProductName" class="text-2xl font-bold text-white drop-shadow-lg"></h2>
+                            <p id="modalProductBreeder" class="text-amber-100 text-xs mt-1"></p>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <div id="modalRarityBadge" class="px-3 py-1 rounded-full font-bold text-xs shadow-lg"></div>
+                            <button onclick="closeProductModal()" class="text-white hover:text-amber-200 transition-colors" title="Cerrar">
+                                <i class="fas fa-times text-xl"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-0 overflow-y-auto flex-1">
+                    <!-- Columna Izquierda - Imagen + Precio + Gramaje -->
+                    <div class="p-4 space-y-3 overflow-y-auto modal-scroll">
+                        <div class="p-4 flex items-center justify-center relative flex-1">
+                            <div class="relative group w-full flex items-center justify-center">
+                                <img id="modalProductImage" src="" alt="" 
+                                     class="w-full max-w-xs rounded-lg shadow-xl transition-transform duration-300 group-hover:scale-105 opacity-70">
+                                <div class="absolute bottom-2 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition duration-300">
+                                    <span id="modalStockInfo" class="bg-black bg-opacity-75 text-white px-3 py-1 rounded-full text-sm font-bold"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Selector de gramaje para productos medicinales -->
+                        <div id="gramsButtonsContainer" class="flex flex-wrap gap-2 justify-center"></div>
+
+                        <div class="px-4 pb-2">
+                            <div class="bg-white rounded-lg p-3 shadow-md">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-xs text-gray-600">Precio</p>
+                                        <p id="modalProductPrice" class="text-2xl font-bold text-green-600"></p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-xs text-gray-600">Disponible</p>
+                                        <p id="modalProductStock" class="text-xl font-bold text-blue-600"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="px-4 pb-4">
+                            <button onclick="addToCartFromModal()" class="cta-button">
+                                <i class="fas fa-shopping-cart text-lg"></i>
+                                <span class="text-base">Agregar al Carrito</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Columna Derecha - Información detallada -->
+                    <div class="p-4 space-y-3 overflow-y-auto modal-scroll">
+                        <!-- Información Medicinal (solo para productos medicinales) -->
+                        <div id="medicinalInfoSection" class="hidden space-y-3">
+                            <div class="bg-gradient-to-br from-red-50 to-pink-50 rounded-lg p-4 border-2 border-red-200">
+                                <h3 class="font-bold text-red-900 mb-3 flex items-center text-base">
+                                    <i class="fas fa-heartbeat mr-2 text-red-600"></i>Información Terapéutica
+                                </h3>
+                                <div class="space-y-2 text-sm">
+                                    <div>
+                                        <span class="font-semibold text-red-800">Uso:</span>
+                                        <span id="modalTherapeuticUse" class="text-gray-700 ml-1"></span>
+                                    </div>
+                                    <div>
+                                        <span class="font-semibold text-red-800">Dosificación:</span>
+                                        <span id="modalDosage" class="text-gray-700 ml-1"></span>
+                                    </div>
+                                    <div>
+                                        <span class="font-semibold text-red-800">Administración:</span>
+                                        <span id="modalAdministration" class="text-gray-700 ml-1"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-gradient-to-br from-orange-50 to-red-50 rounded-lg p-4 border-2 border-orange-200">
+                                <h3 class="font-bold text-orange-900 mb-3 flex items-center text-base">
+                                    <i class="fas fa-exclamation-triangle mr-2 text-orange-600"></i>Precauciones
+                                </h3>
+                                <div class="space-y-2 text-sm">
+                                    <div>
+                                        <span class="font-semibold text-orange-800">Contraindicaciones:</span>
+                                        <span id="modalContraindications" class="text-gray-700 ml-1"></span>
+                                    </div>
+                                    <div>
+                                        <span class="font-semibold text-orange-800">Efectos secundarios:</span>
+                                        <span id="modalSideEffects" class="text-gray-700 ml-1"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Información de la cepa -->
+                        <div id="geneticsSection" class="bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg p-3">
+                            <h3 class="font-bold text-purple-900 mb-2 flex items-center text-sm">
+                                <i class="fas fa-dna mr-1 text-xs"></i>Genética
+                            </h3>
+                            <div class="space-y-1.5">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs text-gray-700">Tipo:</span>
+                                    <span id="modalStrainType" class="font-semibold text-purple-700 text-xs px-2 py-0.5 bg-white rounded-full"></span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs text-gray-700">Genética:</span>
+                                    <span id="modalGenetics" class="text-xs text-gray-800 font-medium text-right max-w-[60%]"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="thcCbdSection" class="grid grid-cols-2 gap-2">
+                            <div class="bg-gradient-to-br from-red-50 to-pink-50 rounded-lg p-2 text-center">
+                                <p class="text-xs text-red-600 font-semibold">THC</p>
+                                <p id="modalThc" class="text-xl font-bold text-red-700"></p>
+                            </div>
+                            <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-2 text-center">
+                                <p class="text-xs text-green-600 font-semibold">CBD</p>
+                                <p id="modalCbd" class="text-xl font-bold text-green-700"></p>
+                            </div>
+                        </div>
+
+                        <div id="floweringSection" class="bg-white rounded-lg p-3 shadow-md">
+                            <div class="grid grid-cols-2 gap-3 text-xs">
+                                <div>
+                                    <p class="text-gray-600 font-medium flex items-center">
+                                        <i class="fas fa-clock mr-1 text-blue-500"></i>Floración
+                                    </p>
+                                    <p id="modalFlowering" class="font-bold text-gray-800 mt-1"></p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-600 font-medium flex items-center">
+                                        <i class="fas fa-chart-line mr-1 text-purple-500"></i>Dificultad
+                                    </p>
+                                    <p id="modalDifficulty" class="font-bold text-gray-800 mt-1"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="aromasSection" class="bg-gradient-to-r from-pink-50 to-purple-50 rounded-lg p-3">
+                            <h3 class="font-bold text-pink-900 mb-2 flex items-center text-xs">
+                                <i class="fas fa-wind mr-1"></i>Aromas
+                            </h3>
+                            <div id="modalAromas" class="flex flex-wrap gap-1.5"></div>
+                        </div>
+
+                        <div id="effectsSection" class="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg p-3">
+                            <h3 class="font-bold text-blue-900 mb-2 flex items-center text-xs">
+                                <i class="fas fa-magic mr-1"></i>Efectos
+                            </h3>
+                            <div id="modalEffects" class="flex flex-wrap gap-1.5"></div>
+                        </div>
+
+                        <div class="bg-amber-50 rounded-lg p-3">
+                            <h3 class="font-bold text-amber-900 mb-2 flex items-center text-xs">
+                                <i class="fas fa-scroll mr-1"></i>Descripción
+                            </h3>
+                            <p id="modalDescription" class="text-xs text-gray-700 leading-relaxed"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="modalFooter" class="bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-300 px-4 py-2 flex-shrink-0">
+                    <div class="flex items-center justify-between text-white text-xs">
+                        <div class="flex items-center space-x-3">
+                            <span id="modalSku" class="text-gray-600 font-mono"></span>
+                            <span id="modalCategory" class="text-gray-600 px-2 py-0.5 bg-white bg-opacity-60 rounded-full"></span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-gray-600 font-semibold">Apexremedy</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- ============================================ -->
+<!-- SISTEMA DE MODALES PERSONALIZADOS POR CATEGORÍA -->
+<!-- ============================================ -->
+
+<!-- Modal Flores Medicinales -->
+<div id="medicalFlowerModal" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4 backdrop-blur-sm" onclick="closeProductModalOnOverlay(event)">
+    <div class="relative w-[85vw] max-h-[90vh] overflow-hidden" onclick="event.stopPropagation()">
+        <div class="bg-gradient-to-br from-green-50 to-emerald-100 rounded-xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-green-600 via-emerald-500 to-green-600 p-4 flex-shrink-0">
+                <div class="flex items-center justify-between">
+                    <div class="flex-1">
+                        <h2 id="medFlowerName" class="text-3xl font-bold text-white drop-shadow-lg"></h2>
+                        <p id="medFlowerBreeder" class="text-green-100 text-sm mt-1"></p>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <div class="px-4 py-2 rounded-full font-bold text-sm shadow-lg bg-red-600 text-white">
+                            🏥 MEDICINAL
+                        </div>
+                        <button onclick="closeProductModal()" class="text-white hover:text-green-200 transition-colors" title="Cerrar">
+                            <i class="fas fa-times text-2xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-0 overflow-y-auto flex-1">
+                <!-- Columna 1: Imagen + Precios + Gramaje -->
+                <div class="p-6 space-y-4 bg-gradient-to-b from-green-50 to-white">
+                    <div class="flex items-center justify-center">
+                        <img id="medFlowerImage" src="" alt="" 
+                             class="w-full max-w-sm rounded-xl shadow-2xl transition-transform duration-300 hover:scale-105">
+                    </div>
+                    
+                    <!-- Selector de gramaje -->
+                    <div id="medFlowerGramsContainer" class="flex flex-wrap gap-2 justify-center"></div>
+                    
+                    <!-- Precio y Stock -->
+                    <div class="bg-white rounded-xl p-4 shadow-lg border-2 border-green-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600 font-medium">Precio</p>
+                                <p id="medFlowerPrice" class="text-3xl font-bold text-green-600"></p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm text-gray-600 font-medium">Disponible</p>
+                                <p id="medFlowerStock" class="text-2xl font-bold text-blue-600"></p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Botón de compra -->
+                    <button onclick="addToCartFromModal()" class="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105">
+                        <i class="fas fa-shopping-cart text-lg mr-2"></i>
+                        Agregar al Carrito
+                    </button>
+                </div>
+
+                <!-- Columna 2: Información Cannabinoides + Terpenos -->
+                <div class="p-6 space-y-4 bg-gradient-to-b from-white to-green-50">
+                    <!-- Perfil cannabinoide -->
+                    <div class="bg-gradient-to-br from-red-50 to-pink-50 rounded-xl p-4 border-2 border-red-200">
+                        <h3 class="font-bold text-red-900 mb-3 flex items-center text-lg">
+                            <i class="fas fa-leaf mr-2 text-red-600"></i>Perfil Cannabinoide
+                        </h3>
+                        <div id="medFlowerCannabinoids" class="grid grid-cols-2 gap-3"></div>
+                    </div>
+
+                    <!-- Perfil terpénico -->
+                    <div class="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl p-4 border-2 border-purple-200">
+                        <h3 class="font-bold text-purple-900 mb-3 flex items-center text-lg">
+                            <i class="fas fa-spa mr-2 text-purple-600"></i>Perfil Terpénico
+                        </h3>
+                        <div id="medFlowerTerpenes" class="space-y-2"></div>
+                    </div>
+
+                    <!-- Información de cepa -->
+                    <div class="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-4 border-2 border-blue-200">
+                        <h3 class="font-bold text-blue-900 mb-3 flex items-center text-lg">
+                            <i class="fas fa-dna mr-2 text-blue-600"></i>Información Genética
+                        </h3>
+                        <div id="medFlowerStrain" class="space-y-2 text-sm"></div>
+                    </div>
+                </div>
+
+                <!-- Columna 3: Información Terapéutica + Uso + Seguridad -->
+                <div class="p-6 space-y-4 bg-gradient-to-b from-green-50 to-white">
+                    <!-- Información terapéutica -->
+                    <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border-2 border-green-200">
+                        <h3 class="font-bold text-green-900 mb-3 flex items-center text-lg">
+                            <i class="fas fa-heartbeat mr-2 text-green-600"></i>Uso Terapéutico
+                        </h3>
+                        <div id="medFlowerTherapeutic" class="space-y-3 text-sm"></div>
+                    </div>
+
+                    <!-- Información de uso -->
+                    <div class="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl p-4 border-2 border-amber-200">
+                        <h3 class="font-bold text-amber-900 mb-3 flex items-center text-lg">
+                            <i class="fas fa-clock mr-2 text-amber-600"></i>Guía de Uso
+                        </h3>
+                        <div id="medFlowerUsage" class="space-y-3 text-sm"></div>
+                    </div>
+
+                    <!-- Información de seguridad -->
+                    <div class="bg-gradient-to-br from-red-50 to-orange-50 rounded-xl p-4 border-2 border-red-200">
+                        <h3 class="font-bold text-red-900 mb-3 flex items-center text-lg">
+                            <i class="fas fa-shield-alt mr-2 text-red-600"></i>Información de Seguridad
+                        </h3>
+                        <div id="medFlowerSafety" class="space-y-3 text-sm"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="bg-gradient-to-r from-green-600 via-emerald-500 to-green-600 px-6 py-3 flex-shrink-0">
+                <div class="flex items-center justify-between text-white text-sm">
+                    <div class="flex items-center space-x-4">
+                        <span id="medFlowerSku" class="font-mono bg-white bg-opacity-20 px-3 py-1 rounded-full"></span>
+                        <span id="medFlowerCategory" class="bg-white bg-opacity-20 px-3 py-1 rounded-full"></span>
+                    </div>
+                    <div>
+                        <span class="font-semibold">Apexremedy · Cannabis Medicinal</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Aceites Medicinales -->
+<div id="medicalOilModal" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4 backdrop-blur-sm" onclick="closeProductModalOnOverlay(event)">
+    <div class="relative w-[85vw] max-h-[90vh] overflow-hidden" onclick="event.stopPropagation()">
+        <div class="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-blue-600 via-indigo-500 to-blue-600 p-4 flex-shrink-0">
+                <div class="flex items-center justify-between">
+                    <div class="flex-1">
+                        <h2 id="medOilName" class="text-3xl font-bold text-white drop-shadow-lg"></h2>
+                        <p id="medOilBreeder" class="text-blue-100 text-sm mt-1"></p>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <div class="px-4 py-2 rounded-full font-bold text-sm shadow-lg bg-red-600 text-white">
+                            💧 ACEITE MEDICINAL
+                        </div>
+                        <button onclick="closeProductModal()" class="text-white hover:text-blue-200 transition-colors" title="Cerrar">
+                            <i class="fas fa-times text-2xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-0 overflow-y-auto flex-1">
+                <!-- Columna 1: Imagen + Precio -->
+                <div class="p-6 space-y-4 bg-gradient-to-b from-blue-50 to-white">
+                    <div class="flex items-center justify-center">
+                        <img id="medOilImage" src="" alt="" 
+                             class="w-full max-w-sm rounded-xl shadow-2xl transition-transform duration-300 hover:scale-105">
+                    </div>
+                    
+                    <!-- Precio y Stock -->
+                    <div class="bg-white rounded-xl p-4 shadow-lg border-2 border-blue-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600 font-medium">Precio</p>
+                                <p id="medOilPrice" class="text-3xl font-bold text-blue-600"></p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm text-gray-600 font-medium">Disponible</p>
+                                <p id="medOilStock" class="text-2xl font-bold text-green-600"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Especificaciones técnicas -->
+                    <div class="bg-gradient-to-br from-gray-50 to-slate-50 rounded-xl p-4 border-2 border-gray-200">
+                        <h3 class="font-bold text-gray-900 mb-3 flex items-center text-lg">
+                            <i class="fas fa-flask mr-2 text-gray-600"></i>Especificaciones
+                        </h3>
+                        <div id="medOilSpecs" class="space-y-2 text-sm"></div>
+                    </div>
+                    
+                    <!-- Botón de compra -->
+                    <button onclick="addToCartFromModal()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105">
+                        <i class="fas fa-shopping-cart text-lg mr-2"></i>
+                        Agregar al Carrito
+                    </button>
+                </div>
+
+                <!-- Columna 2: Perfil cannabinoide + Información de extracción -->
+                <div class="p-6 space-y-4 bg-gradient-to-b from-white to-blue-50">
+                    <!-- Perfil cannabinoide -->
+                    <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border-2 border-green-200">
+                        <h3 class="font-bold text-green-900 mb-3 flex items-center text-lg">
+                            <i class="fas fa-leaf mr-2 text-green-600"></i>Perfil Cannabinoide
+                        </h3>
+                        <div id="medOilCannabinoids" class="grid grid-cols-2 gap-3"></div>
+                    </div>
+
+                    <!-- Información de extracción -->
+                    <div class="bg-gradient-to-br from-purple-50 to-violet-50 rounded-xl p-4 border-2 border-purple-200">
+                        <h3 class="font-bold text-purple-900 mb-3 flex items-center text-lg">
+                            <i class="fas fa-microscope mr-2 text-purple-600"></i>Información de Extracción
+                        </h3>
+                        <div id="medOilStrain" class="space-y-2 text-sm"></div>
+                    </div>
+
+                    <!-- Atributos físicos -->
+                    <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-4 border-2 border-amber-200">
+                        <h3 class="font-bold text-amber-900 mb-3 flex items-center text-lg">
+                            <i class="fas fa-eye mr-2 text-amber-600"></i>Características Físicas
+                        </h3>
+                        <div id="medOilAttributes" class="space-y-2 text-sm"></div>
+                    </div>
+                </div>
+
+                <!-- Columna 3: Terapéutico + Uso + Seguridad -->
+                <div class="p-6 space-y-4 bg-gradient-to-b from-blue-50 to-white">
+                    <!-- Información terapéutica -->
+                    <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border-2 border-green-200">
+                        <h3 class="font-bold text-green-900 mb-3 flex items-center text-lg">
+                            <i class="fas fa-heartbeat mr-2 text-green-600"></i>Uso Terapéutico
+                        </h3>
+                        <div id="medOilTherapeutic" class="space-y-3 text-sm"></div>
+                    </div>
+
+                    <!-- Información de uso -->
+                    <div class="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-4 border-2 border-blue-200">
+                        <h3 class="font-bold text-blue-900 mb-3 flex items-center text-lg">
+                            <i class="fas fa-tint mr-2 text-blue-600"></i>Guía de Dosificación
+                        </h3>
+                        <div id="medOilUsage" class="space-y-3 text-sm"></div>
+                    </div>
+
+                    <!-- Información de seguridad -->
+                    <div class="bg-gradient-to-br from-red-50 to-pink-50 rounded-xl p-4 border-2 border-red-200">
+                        <h3 class="font-bold text-red-900 mb-3 flex items-center text-lg">
+                            <i class="fas fa-exclamation-triangle mr-2 text-red-600"></i>Precauciones
+                        </h3>
+                        <div id="medOilSafety" class="space-y-3 text-sm"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="bg-gradient-to-r from-blue-600 via-indigo-500 to-blue-600 px-6 py-3 flex-shrink-0">
+                <div class="flex items-center justify-between text-white text-sm">
+                    <div class="flex items-center space-x-4">
+                        <span id="medOilSku" class="font-mono bg-white bg-opacity-20 px-3 py-1 rounded-full"></span>
+                        <span id="medOilCategory" class="bg-white bg-opacity-20 px-3 py-1 rounded-full"></span>
+                    </div>
+                    <div>
+                        <span class="font-semibold">Apexremedy · Aceites Medicinales</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Concentrados Medicinales -->
+<div id="medicalConcentrateModal" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4 backdrop-blur-sm" onclick="closeProductModalOnOverlay(event)">
+    <div class="relative w-[85vw] max-h-[90vh] overflow-hidden" onclick="event.stopPropagation()">
+        <div class="bg-gradient-to-br from-purple-50 to-violet-100 rounded-xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-purple-600 via-violet-500 to-purple-600 p-4 flex-shrink-0">
+                <div class="flex items-center justify-between">
+                    <div class="flex-1">
+                        <h2 id="medConcentrateName" class="text-3xl font-bold text-white drop-shadow-lg"></h2>
+                        <p id="medConcentrateBreeder" class="text-purple-100 text-sm mt-1"></p>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <div class="px-4 py-2 rounded-full font-bold text-sm shadow-lg bg-red-600 text-white">
+                            💎 CONCENTRADO MEDICINAL
+                        </div>
+                        <button onclick="closeProductModal()" class="text-white hover:text-purple-200 transition-colors" title="Cerrar">
+                            <i class="fas fa-times text-2xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-0 overflow-y-auto flex-1">
+                <!-- Columna 1: Imagen + Precio + Gramaje -->
+                <div class="p-6 space-y-4 bg-gradient-to-b from-purple-50 to-white">
+                    <div class="flex items-center justify-center">
+                        <img id="medConcentrateImage" src="" alt="" 
+                             class="w-full max-w-sm rounded-xl shadow-2xl transition-transform duration-300 hover:scale-105">
+                    </div>
+                    
+                    <!-- Selector de gramaje -->
+                    <div id="medConcentrateGramsContainer" class="flex flex-wrap gap-2 justify-center"></div>
+                    
+                    <!-- Precio y Stock -->
+                    <div class="bg-white rounded-xl p-4 shadow-lg border-2 border-purple-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600 font-medium">Precio</p>
+                                <p id="medConcentratePrice" class="text-3xl font-bold text-purple-600"></p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm text-gray-600 font-medium">Disponible</p>
+                                <p id="medConcentrateStock" class="text-2xl font-bold text-green-600"></p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Botón de compra -->
+                    <button onclick="addToCartFromModal()" class="w-full bg-gradient-to-r from-purple-600 to-violet-600 text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105">
+                        <i class="fas fa-shopping-cart text-lg mr-2"></i>
+                        Agregar al Carrito
+                    </button>
+                </div>
+
+                <!-- Columna 2: Perfil cannabinoide + Información de extracción -->
+                <div class="p-6 space-y-4 bg-gradient-to-b from-white to-purple-50">
+                    <!-- Perfil cannabinoide -->
+                    <div class="bg-gradient-to-br from-red-50 to-pink-50 rounded-xl p-4 border-2 border-red-200">
+                        <h3 class="font-bold text-red-900 mb-3 flex items-center text-lg">
+                            <i class="fas fa-leaf mr-2 text-red-600"></i>Perfil Cannabinoide
+                        </h3>
+                        <div id="medConcentrateCannabinoids" class="grid grid-cols-2 gap-3"></div>
+                    </div>
+
+                    <!-- Información de cepa y extracción -->
+                    <div class="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-4 border-2 border-blue-200">
+                        <h3 class="font-bold text-blue-900 mb-3 flex items-center text-lg">
+                            <i class="fas fa-dna mr-2 text-blue-600"></i>Información Genética
+                        </h3>
+                        <div id="medConcentrateStrain" class="space-y-2 text-sm"></div>
+                    </div>
+                </div>
+
+                <!-- Columna 3: Terapéutico + Uso -->
+                <div class="p-6 space-y-4 bg-gradient-to-b from-purple-50 to-white">
+                    <!-- Información terapéutica -->
+                    <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border-2 border-green-200">
+                        <h3 class="font-bold text-green-900 mb-3 flex items-center text-lg">
+                            <i class="fas fa-heartbeat mr-2 text-green-600"></i>Uso Terapéutico
+                        </h3>
+                        <div id="medConcentrateTherapeutic" class="space-y-3 text-sm"></div>
+                    </div>
+
+                    <!-- Información de uso -->
+                    <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-4 border-2 border-amber-200">
+                        <h3 class="font-bold text-amber-900 mb-3 flex items-center text-lg">
+                            <i class="fas fa-fire mr-2 text-amber-600"></i>Guía de Uso Concentrados
+                        </h3>
+                        <div id="medConcentrateUsage" class="space-y-3 text-sm"></div>
+                    </div>
+
+                    <!-- Advertencia de potencia -->
+                    <div class="bg-gradient-to-br from-red-50 to-orange-50 rounded-xl p-4 border-2 border-red-300">
+                        <h3 class="font-bold text-red-900 mb-3 flex items-center text-lg">
+                            <i class="fas fa-exclamation-triangle mr-2 text-red-600"></i>⚠️ ALTA POTENCIA
+                        </h3>
+                        <div class="text-sm text-red-800 space-y-2">
+                            <p><strong>Solo para usuarios experimentados</strong></p>
+                            <p>Los concentrados tienen potencias extremadamente altas (80-95% THC)</p>
+                            <p><strong>Comenzar con dosis mínimas (0.01-0.02g)</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="bg-gradient-to-r from-purple-600 via-violet-500 to-purple-600 px-6 py-3 flex-shrink-0">
+                <div class="flex items-center justify-between text-white text-sm">
+                    <div class="flex items-center space-x-4">
+                        <span id="medConcentrateSku" class="font-mono bg-white bg-opacity-20 px-3 py-1 rounded-full"></span>
+                        <span id="medConcentrateCategory" class="bg-white bg-opacity-20 px-3 py-1 rounded-full"></span>
+                    </div>
+                    <div>
+                        <span class="font-semibold">Apexremedy · Concentrados Medicinales</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Semillas -->
+<div id="seedModal" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4 backdrop-blur-sm" onclick="closeProductModalOnOverlay(event)">
+    <div class="relative w-[85vw] max-h-[90vh] overflow-hidden" onclick="event.stopPropagation()">
+        <div class="bg-gradient-to-br from-yellow-50 to-amber-100 rounded-xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-yellow-600 via-amber-500 to-yellow-600 p-4 flex-shrink-0">
+                <div class="flex items-center justify-between">
+                    <div class="flex-1">
+                        <h2 id="seedName" class="text-3xl font-bold text-white drop-shadow-lg"></h2>
+                        <p id="seedBreeder" class="text-yellow-100 text-sm mt-1"></p>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <div class="px-4 py-2 rounded-full font-bold text-sm shadow-lg bg-green-600 text-white">
+                            🌱 SEMILLAS COLECCIÓN
+                        </div>
+                        <button onclick="closeProductModal()" class="text-white hover:text-yellow-200 transition-colors" title="Cerrar">
+                            <i class="fas fa-times text-2xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-0 overflow-y-auto flex-1">
+                <!-- Columna 1: Imagen + Precio -->
+                <div class="p-6 space-y-4 bg-gradient-to-b from-yellow-50 to-white">
+                    <div class="flex items-center justify-center">
+                        <img id="seedImage" src="" alt="" 
+                             class="w-full max-w-sm rounded-xl shadow-2xl transition-transform duration-300 hover:scale-105">
+                    </div>
+                    
+                    <!-- Precio y Stock -->
+                    <div class="bg-white rounded-xl p-4 shadow-lg border-2 border-yellow-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600 font-medium">Precio</p>
+                                <p id="seedPrice" class="text-3xl font-bold text-yellow-600"></p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm text-gray-600 font-medium">Disponible</p>
+                                <p id="seedStock" class="text-2xl font-bold text-green-600"></p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Botón de compra -->
+                    <button onclick="addToCartFromModal()" class="w-full bg-gradient-to-r from-yellow-600 to-amber-600 text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105">
+                        <i class="fas fa-shopping-cart text-lg mr-2"></i>
+                        Agregar al Carrito
+                    </button>
+                </div>
+
+                <!-- Columna 2: Información de la cepa -->
+                <div class="p-6 space-y-4 bg-gradient-to-b from-white to-yellow-50">
+                    <!-- Información genética -->
+                    <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border-2 border-green-200">
+                        <h3 class="font-bold text-green-900 mb-3 flex items-center text-lg">
+                            <i class="fas fa-dna mr-2 text-green-600"></i>Información Genética
+                        </h3>
+                        <div id="seedStrain" class="space-y-2 text-sm"></div>
+                    </div>
+
+                    <!-- Especificaciones del pack -->
+                    <div class="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-4 border-2 border-blue-200">
+                        <h3 class="font-bold text-blue-900 mb-3 flex items-center text-lg">
+                            <i class="fas fa-box mr-2 text-blue-600"></i>Especificaciones del Pack
+                        </h3>
+                        <div id="seedSpecs" class="space-y-2 text-sm"></div>
+                    </div>
+                </div>
+
+                <!-- Columna 3: Cultivo + Características -->
+                <div class="p-6 space-y-4 bg-gradient-to-b from-yellow-50 to-white">
+                    <!-- Características de cultivo -->
+                    <div class="bg-gradient-to-br from-purple-50 to-violet-50 rounded-xl p-4 border-2 border-purple-200">
+                        <h3 class="font-bold text-purple-900 mb-3 flex items-center text-lg">
+                            <i class="fas fa-seedling mr-2 text-purple-600"></i>Cultivo
+                        </h3>
+                        <div id="seedAttributes" class="space-y-2 text-sm"></div>
+                    </div>
+
+                    <!-- Aviso legal -->
+                    <div class="bg-gradient-to-br from-orange-50 to-red-50 rounded-xl p-4 border-2 border-orange-200">
+                        <h3 class="font-bold text-orange-900 mb-3 flex items-center text-lg">
+                            <i class="fas fa-balance-scale mr-2 text-orange-600"></i>⚖️ Aviso Legal
+                        </h3>
+                        <div class="text-sm text-orange-800 space-y-2">
+                            <p><strong>Solo para colección y uso ornamental</strong></p>
+                            <p>La germinación de semillas de cannabis puede estar prohibida en tu jurisdicción</p>
+                            <p>Consulta las leyes locales antes de adquirir</p>
+                            <p><strong>Prohibida la venta a menores de 18 años</strong></p>
+                        </div>
+                    </div>
+
+                    <!-- Descripción -->
+                    <div class="bg-gradient-to-br from-gray-50 to-slate-50 rounded-xl p-4 border-2 border-gray-200">
+                        <h3 class="font-bold text-gray-900 mb-3 flex items-center text-lg">
+                            <i class="fas fa-scroll mr-2 text-gray-600"></i>Descripción
+                        </h3>
+                        <p id="seedDescription" class="text-sm text-gray-700 leading-relaxed"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="bg-gradient-to-r from-yellow-600 via-amber-500 to-yellow-600 px-6 py-3 flex-shrink-0">
+                <div class="flex items-center justify-between text-white text-sm">
+                    <div class="flex items-center space-x-4">
+                        <span id="seedSku" class="font-mono bg-white bg-opacity-20 px-3 py-1 rounded-full"></span>
+                        <span id="seedCategory" class="bg-white bg-opacity-20 px-3 py-1 rounded-full"></span>
+                    </div>
+                    <div>
+                        <span class="font-semibold">Apexremedy · Semillas de Colección</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Vaporizadores -->
+<div id="vaporizerModal" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4 backdrop-blur-sm" onclick="closeProductModalOnOverlay(event)">
+    <div class="relative w-[85vw] max-h-[90vh] overflow-hidden" onclick="event.stopPropagation()">
+        <div class="bg-gradient-to-br from-cyan-50 to-blue-100 rounded-xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-cyan-600 via-blue-500 to-cyan-600 p-4 flex-shrink-0">
+                <div class="flex items-center justify-between">
+                    <div class="flex-1">
+                        <h2 id="vaporizerName" class="text-3xl font-bold text-white drop-shadow-lg"></h2>
+                        <p id="vaporizerBrand" class="text-cyan-100 text-sm mt-1"></p>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <div class="px-4 py-2 rounded-full font-bold text-sm shadow-lg bg-blue-600 text-white">
+                            💨 VAPORIZADOR
+                        </div>
+                        <button onclick="closeProductModal()" class="text-white hover:text-cyan-200 transition-colors" title="Cerrar">
+                            <i class="fas fa-times text-2xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-0 overflow-y-auto flex-1">
+                <!-- Columna 1: Imagen + Precio -->
+                <div class="p-6 space-y-4 bg-gradient-to-b from-cyan-50 to-white">
+                    <div class="flex items-center justify-center">
+                        <img id="vaporizerImage" src="" alt="" 
+                             class="w-full max-w-md rounded-xl shadow-2xl transition-transform duration-300 hover:scale-105">
+                    </div>
+                    
+                    <!-- Precio y Stock -->
+                    <div class="bg-white rounded-xl p-4 shadow-lg border-2 border-cyan-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600 font-medium">Precio</p>
+                                <p id="vaporizerPrice" class="text-3xl font-bold text-cyan-600"></p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm text-gray-600 font-medium">Disponible</p>
+                                <p id="vaporizerStock" class="text-2xl font-bold text-green-600"></p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Botón de compra -->
+                    <button onclick="addToCartFromModal()" class="w-full bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105">
+                        <i class="fas fa-shopping-cart text-lg mr-2"></i>
+                        Agregar al Carrito
+                    </button>
+                </div>
+
+                <!-- Columna 2: Especificaciones + Características -->
+                <div class="p-6 space-y-4 bg-gradient-to-b from-white to-cyan-50">
+                    <!-- Especificaciones técnicas -->
+                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border-2 border-blue-200">
+                        <h3 class="font-bold text-blue-900 mb-3 flex items-center text-lg">
+                            <i class="fas fa-cogs mr-2 text-blue-600"></i>Especificaciones Técnicas
+                        </h3>
+                        <div id="vaporizerSpecs" class="space-y-2 text-sm"></div>
+                    </div>
+
+                    <!-- Características -->
+                    <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border-2 border-green-200">
+                        <h3 class="font-bold text-green-900 mb-3 flex items-center text-lg">
+                            <i class="fas fa-star mr-2 text-green-600"></i>Características
+                        </h3>
+                        <div id="vaporizerAttributes" class="space-y-2 text-sm"></div>
+                    </div>
+
+                    <!-- Ventajas de vaporizar -->
+                    <div class="bg-gradient-to-br from-purple-50 to-violet-50 rounded-xl p-4 border-2 border-purple-200">
+                        <h3 class="font-bold text-purple-900 mb-3 flex items-center text-lg">
+                            <i class="fas fa-heart mr-2 text-purple-600"></i>Beneficios de Vaporizar
+                        </h3>
+                        <div class="text-sm text-purple-800 space-y-2">
+                            <p>• <strong>Más saludable:</strong> Sin combustión ni toxinas</p>
+                            <p>• <strong>Más eficiente:</strong> Mejor aprovechamiento</p>
+                            <p>• <strong>Mejor sabor:</strong> Preserva terpenos</p>
+                            <p>• <strong>Control preciso:</strong> Temperatura ajustable</p>
+                            <p>• <strong>Discreto:</strong> Menos olor</p>
+                        </div>
+                    </div>
+
+                    <!-- Descripción -->
+                    <div class="bg-gradient-to-br from-gray-50 to-slate-50 rounded-xl p-4 border-2 border-gray-200">
+                        <h3 class="font-bold text-gray-900 mb-3 flex items-center text-lg">
+                            <i class="fas fa-scroll mr-2 text-gray-600"></i>Descripción
+                        </h3>
+                        <p id="vaporizerDescription" class="text-sm text-gray-700 leading-relaxed"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="bg-gradient-to-r from-cyan-600 via-blue-500 to-cyan-600 px-6 py-3 flex-shrink-0">
+                <div class="flex items-center justify-between text-white text-sm">
+                    <div class="flex items-center space-x-4">
+                        <span id="vaporizerSku" class="font-mono bg-white bg-opacity-20 px-3 py-1 rounded-full"></span>
+                        <span id="vaporizerCategory" class="bg-white bg-opacity-20 px-3 py-1 rounded-full"></span>
+                    </div>
+                    <div>
+                        <span class="font-semibold">Apexremedy · Vaporizadores Premium</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Ropa/Merchandising -->
+<div id="apparelModal" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4 backdrop-blur-sm" onclick="closeProductModalOnOverlay(event)">
+    <div class="relative w-[80vw] max-h-[85vh] overflow-hidden" onclick="event.stopPropagation()">
+        <div class="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-2xl overflow-hidden max-h-[85vh] flex flex-col">
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-slate-600 via-gray-500 to-slate-600 p-4 flex-shrink-0">
+                <div class="flex items-center justify-between">
+                    <div class="flex-1">
+                        <h2 id="apparelName" class="text-3xl font-bold text-white drop-shadow-lg"></h2>
+                        <p id="apparelBrand" class="text-slate-100 text-sm mt-1">Apexremedy Merchandise</p>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <div class="px-4 py-2 rounded-full font-bold text-sm shadow-lg bg-gray-600 text-white">
+                            👕 MERCHANDISING
+                        </div>
+                        <button onclick="closeProductModal()" class="text-white hover:text-slate-200 transition-colors" title="Cerrar">
+                            <i class="fas fa-times text-2xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-0 overflow-y-auto flex-1">
+                <!-- Columna 1: Imagen + Precio -->
+                <div class="p-6 space-y-4 bg-gradient-to-b from-slate-50 to-white">
+                    <div class="flex items-center justify-center">
+                        <img id="apparelImage" src="" alt="" 
+                             class="w-full max-w-md rounded-xl shadow-2xl transition-transform duration-300 hover:scale-105">
+                    </div>
+                    
+                    <!-- Precio y Stock -->
+                    <div class="bg-white rounded-xl p-4 shadow-lg border-2 border-slate-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600 font-medium">Precio</p>
+                                <p id="apparelPrice" class="text-3xl font-bold text-slate-600"></p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm text-gray-600 font-medium">Disponible</p>
+                                <p id="apparelStock" class="text-2xl font-bold text-green-600"></p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Botón de compra -->
+                    <button onclick="addToCartFromModal()" class="w-full bg-gradient-to-r from-slate-600 to-gray-600 text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105">
+                        <i class="fas fa-shopping-cart text-lg mr-2"></i>
+                        Agregar al Carrito
+                    </button>
+                </div>
+
+                <!-- Columna 2: Especificaciones + Información -->
+                <div class="p-6 space-y-4 bg-gradient-to-b from-white to-slate-50">
+                    <!-- Especificaciones del producto -->
+                    <div class="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-4 border-2 border-blue-200">
+                        <h3 class="font-bold text-blue-900 mb-3 flex items-center text-lg">
+                            <i class="fas fa-tshirt mr-2 text-blue-600"></i>Especificaciones
+                        </h3>
+                        <div id="apparelSpecs" class="space-y-2 text-sm"></div>
+                    </div>
+
+                    <!-- Características del producto -->
+                    <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border-2 border-green-200">
+                        <h3 class="font-bold text-green-900 mb-3 flex items-center text-lg">
+                            <i class="fas fa-palette mr-2 text-green-600"></i>Características
+                        </h3>
+                        <div id="apparelAttributes" class="space-y-2 text-sm"></div>
+                    </div>
+
+                    <!-- Información de cuidado -->
+                    <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-4 border-2 border-amber-200">
+                        <h3 class="font-bold text-amber-900 mb-3 flex items-center text-lg">
+                            <i class="fas fa-heart mr-2 text-amber-600"></i>Cuidado y Mantenimiento
+                        </h3>
+                        <div class="text-sm text-amber-800 space-y-2">
+                            <p>• Lavar a máquina con agua fría</p>
+                            <p>• No usar lejía ni blanqueadores</p>
+                            <p>• Secar al aire libre o secadora baja temperatura</p>
+                            <p>• Planchar a temperatura media</p>
+                            <p>• No lavar en seco</p>
+                        </div>
+                    </div>
+
+                    <!-- Descripción -->
+                    <div class="bg-gradient-to-br from-gray-50 to-slate-50 rounded-xl p-4 border-2 border-gray-200">
+                        <h3 class="font-bold text-gray-900 mb-3 flex items-center text-lg">
+                            <i class="fas fa-scroll mr-2 text-gray-600"></i>Descripción
+                        </h3>
+                        <p id="apparelDescription" class="text-sm text-gray-700 leading-relaxed"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="bg-gradient-to-r from-slate-600 via-gray-500 to-slate-600 px-6 py-3 flex-shrink-0">
+                <div class="flex items-center justify-between text-white text-sm">
+                    <div class="flex items-center space-x-4">
+                        <span id="apparelSku" class="font-mono bg-white bg-opacity-20 px-3 py-1 rounded-full"></span>
+                        <span id="apparelCategory" class="bg-white bg-opacity-20 px-3 py-1 rounded-full"></span>
+                    </div>
+                    <div>
+                        <span class="font-semibold">Apexremedy · Merchandising Oficial</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Grow Shop - Productos Regulares -->
+<div id="growShopModal" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4 backdrop-blur-sm" onclick="closeProductModalOnOverlay(event)">
+    <div class="relative w-[70vw] max-h-[85vh] overflow-hidden" onclick="event.stopPropagation()">
+        <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl shadow-2xl overflow-hidden max-h-[85vh] flex flex-col">
+            
+            <!-- Header -->
+            <div id="growShopHeader" class="bg-gradient-to-r from-gray-500 via-gray-300 to-gray-500 p-3 flex-shrink-0">
+                <div class="flex items-center justify-between">
+                    <div class="flex-1">
+                        <h2 id="growShopProductName" class="text-2xl font-bold text-white drop-shadow-lg"></h2>
+                        <p id="growShopProductBreeder" class="text-gray-100 text-xs mt-1"></p>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                    <div id="growShopCategoryBadge" class="px-3 py-1 rounded-full font-bold text-xs shadow-lg bg-gray-600 text-white"></div>
+                        <button onclick="closeProductModal()" class="text-white hover:text-gray-300 transition-colors" title="Cerrar">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+  
+            <!-- Contenido -->
+            <div class="grid md:grid-cols-2 gap-0 overflow-hidden flex-1">
+                
+                <!-- Columna Izquierda - Imagen + Precio + Botón -->
+                <div class="flex flex-col bg-gradient-to-br from-gray-50 to-gray-100">
+                    <div class="p-4 flex items-center justify-center relative flex-1">
+                        <div class="relative group w-full flex items-center justify-center">
+                            <img id="growShopProductImage" src="" alt="" 
+                            class="w-full max-w-xs rounded-lg shadow-xl transition-transform duration-300 group-hover:scale-105 opacity-80 backdrop-blur-sm bg-transparent">
+                            <div class="absolute bottom-2 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition duration-300">
+                                <span id="growShopStockInfo" class="bg-black bg-opacity-75 text-white px-3 py-1 rounded-full text-sm font-bold"></span>
+                            </div>
+                        </div>
+                    </div>
+  
+                    <!-- Precio y Stock -->
+                    <div class="px-4 pb-2">
+                        <div class="bg-white rounded-lg p-3 shadow-md">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-xs text-gray-600">Precio</p>
+                                    <p id="growShopProductPrice" class="text-2xl font-bold text-green-600"></p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-xs text-gray-600">Disponible</p>
+                                    <p id="growShopProductStock" class="text-xl font-bold text-blue-600"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+  
+                    <!-- Botón Agregar al Carrito -->
+                    <div class="px-4 pb-4">
+                        <button onclick="addToCartFromModal()" class="cta-button">
+                            <i class="fas fa-shopping-cart text-lg"></i>
+                            <span class="text-base">Agregar al Carrito</span>
+                        </button>
+                    </div>
+                </div>
+  
+                <!-- Columna Derecha - Información -->
+                <div class="p-4 space-y-3 overflow-y-auto modal-scroll">
+                    
+                    <!-- Información del Producto -->
+                    <div class="bg-white rounded-lg p-4 shadow-md border-2 border-gray-200">
+                        <h3 class="font-bold text-gray-900 mb-3 flex items-center text-base">
+                            <i class="fas fa-info-circle mr-2 text-gray-600"></i>Información del Producto
+                        </h3>
+                        <div id="growShopProductInfo" class="space-y-3">
+                            <!-- Se llenará dinámicamente -->
+                        </div>
+                    </div>
+  
+                    <!-- Badge Destacado -->
+                    <div id="growShopFeaturedBadge" class="hidden bg-yellow-50 border-2 border-yellow-200 rounded-lg p-3">
+                        <div class="flex items-center">
+                            <i class="fas fa-star text-yellow-500 text-xl mr-2"></i>
+                            <div>
+                                <p class="text-sm font-bold text-yellow-800">Producto Destacado</p>
+                                <p class="text-xs text-yellow-700">Uno de nuestros productos más populares</p>
+                            </div>
+                        </div>
+                    </div>
+  
+                    <!-- Descripción -->
+                    <div class="bg-gray-50 rounded-lg p-3 border-2 border-gray-200">
+                        <h3 class="font-bold text-gray-900 mb-2 flex items-center text-sm">
+                            <i class="fas fa-scroll mr-1"></i>Descripción
+                        </h3>
+                        <p id="growShopDescription" class="text-xs text-gray-700 leading-relaxed"></p>
+                    </div>
+  
+                    <!-- Características -->
+                    <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-4 border-2 border-green-200">
+                        <h3 class="font-bold text-green-900 mb-3 flex items-center text-base">
+                            <i class="fas fa-check-circle mr-2 text-green-600"></i>Características
+                        </h3>
+                        <ul class="space-y-2 text-sm text-gray-700">
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-600 mr-2 mt-1"></i>
+                                <span>Producto de alta calidad</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-600 mr-2 mt-1"></i>
+                                <span>Garantía de satisfacción</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-600 mr-2 mt-1"></i>
+                                <span>Envío disponible a todo Chile</span>
+                            </li>
+                        </ul>
+                    </div>
+  
+                    <!-- Información de Envío -->
+                    <div class="bg-blue-50 border-2 border-blue-200 rounded-lg p-3">
+                        <div class="flex items-start">
+                            <i class="fas fa-shipping-fast text-blue-600 text-xl mr-3 mt-0.5"></i>
+                            <div>
+                                <p class="text-sm font-bold text-blue-900 mb-1">Envío Disponible</p>
+                                <p class="text-xs text-blue-700">
+                                    Despacho a todo Chile. Los tiempos y costos se calculan al finalizar la compra.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+  
+                    <!-- Compra Segura -->
+                    <div class="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                        <div class="flex items-start">
+                            <i class="fas fa-shield-alt text-gray-600 text-lg mr-3 mt-0.5"></i>
+                            <div>
+                                <p class="text-sm font-semibold text-gray-800 mb-1">Compra Segura</p>
+                                <p class="text-xs text-gray-600">
+                                    Todos nuestros productos cuentan con garantía y soporte post-venta.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+  
+                </div>
+            </div>
+  
+            <!-- Footer -->
+            <div id="growShopFooter" class="bg-gradient-to-r from-gray-500 via-gray-300 to-gray-500 px-4 py-2 flex-shrink-0">
+                <div class="flex items-center justify-between text-white text-xs">
+                    <div class="flex items-center space-x-3">
+                        <span id="growShopSku" class="text-gray-300 font-mono"></span>
+                        <span id="growShopCategory" class="text-gray-300 px-2 py-0.5 bg-white bg-opacity-20 rounded-full"></span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-gray-300 font-semibold">Apexremedy</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+
+    <!-- Scripts -->
+    <script src="./js/api/apiClient.js"></script>
+    <script src="./js/auth.js"></script>
+    <script src="./js/sessionManager.js"></script>
+    <script src="./js/notifications.js"></script>
+    <script src="./js/carrito.js"></script>
+    <script src="./js/productModal.js"></script>
+    <script src="./js/db_articulos.js"></script>
+    
+    <script>
+        let allProducts = [];
+        
+        // 🆕 Cargar categorías según permisos del usuario
+        async function loadCategories() {
+            const categories = await productManager.getCategories();
+            const select = document.getElementById('categoryFilter');
+            
+            // Limpiar opciones existentes excepto "Todas"
+            select.innerHTML = '<option value="all">Todas</option>';
+            
+            // Agregar categorías disponibles
+            categories.forEach(cat => {
+                const option = document.createElement('option');
+                option.value = cat;
+                option.textContent = formatCategoryName(cat);
+                select.appendChild(option);
+            });
+            
+            console.log('✅ Categorías cargadas:', categories);
+        }
+        
+        // Formatear nombre de categoría para mostrar
+        function formatCategoryName(category) {
+            const names = {
+                'semillas_coleccion': 'Semillas de Colección',
+                'accesorios': 'Accesorios',
+                'indoors': 'Indoors',
+                'iluminacion': 'Iluminación',
+                'aditivos': 'Aditivos',
+                'vapo': 'Vaporizadores',
+                'parafernalia': 'Parafernalia',
+                'smartshop': 'Smartshop',
+                'merchandising': 'Merchandising',
+                'ofertas': 'Ofertas',
+                'medicinal': '🏥 Medicinal'
+            };
+            return names[category] || category;
+        }
+        
+        // Cargar productos
+        async function loadProducts() {
+            productManager.showLoading();
+            allProducts = await productManager.loadProducts();
+            applyFilters();
+        }
+        
+        // Aplicar filtros
+        function applyFilters() {
+            const search = document.getElementById('searchInput').value;
+            const category = document.getElementById('categoryFilter').value;
+            const minPrice = document.getElementById('minPrice').value;
+            const maxPrice = document.getElementById('maxPrice').value;
+            const inStock = document.getElementById('inStockFilter').checked;
+            const featured = document.getElementById('featuredFilter').checked;
+            
+            const filters = {
+                search: search || undefined,
+                category: category !== 'all' ? category : undefined,
+                minPrice: minPrice ? parseInt(minPrice) : undefined,
+                maxPrice: maxPrice ? parseInt(maxPrice) : undefined,
+                inStock: inStock || undefined,
+                featured: featured || undefined
+            };
+            
+            const filtered = productManager.filterProducts(filters);
+            productManager.renderProducts(filtered);
+            
+            // Actualizar contador
+            document.getElementById('resultCount').textContent = 
+                `${filtered.length} producto${filtered.length !== 1 ? 's' : ''} encontrado${filtered.length !== 1 ? 's' : ''}`;
+        }
+        
+        // Limpiar filtros
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('categoryFilter').value = 'all';
+            document.getElementById('minPrice').value = '';
+            document.getElementById('maxPrice').value = '';
+            document.getElementById('inStockFilter').checked = false;
+            document.getElementById('featuredFilter').checked = false;
+            document.getElementById('sortBy').value = 'created_at DESC';
+            
+            applyFilters();
+        }
+        
+        // Búsqueda en tiempo real
+        let searchTimeout;
+        document.getElementById('searchInput').addEventListener('input', () => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(applyFilters, 500);
+        });
+        
+        // Verificar si mostrar botón de actualización de acceso
+        function checkAccessButton() {
+            const btn = document.getElementById('refreshAccessBtn');
+            if (!btn) return;
+            
+            // Solo mostrar en casos excepcionales donde el token esté desactualizado
+            if (window.authManager && window.authManager.isAuthenticated()) {
+                const user = window.authManager.getCurrentUser();
+                
+                // Solo mostrar si:
+                // 1. No es admin Y
+                // 2. No tiene account_status definido (token viejo) O tiene status pending/rejected
+                const needsRefresh = user && user.role !== 'admin' && 
+                                   (typeof user.account_status === 'undefined' || 
+                                    user.account_status !== 'approved');
+                
+                if (needsRefresh) {
+                    btn.style.display = 'block';
+                    console.log('🔧 Token desactualizado - botón de actualización disponible');
+                } else {
+                    btn.style.display = 'none';
+                }
+            } else {
+                btn.style.display = 'none';
+            }
+        }
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadCategories();
+            await loadProducts();
+            
+            // Verificar botón de acceso después de cargar
+            setTimeout(checkAccessButton, 1000);
+        });
+    </script>
+<script>
+    // 🔒 Control de visibilidad según estado de autenticación
+    document.addEventListener('DOMContentLoaded', async function() {
+      const registroSection = document.getElementById('registro-catalogo'); // index
+      const userNotice = document.getElementById('unregistered-user-notice'); // tienda
+      
+      // Función para verificar si está logueado
+      function isUserLoggedIn() {
+        // Método 1: Verificar token en localStorage
+        const token = localStorage.getItem('authToken');
+        if (token) return true;
+        
+        // Método 2: Verificar token en sessionStorage
+        const sessionToken = sessionStorage.getItem('authToken');
+        if (sessionToken) return true;
+        
+        // Método 3: Verificar objeto de usuario
+        const user = localStorage.getItem('user');
+        if (user) {
+          try {
+            const userObj = JSON.parse(user);
+            return userObj && userObj.id;
+          } catch (e) {
+            return false;
+          }
+        }
+        
+        return false;
+      }
+      
+      const isLoggedIn = isUserLoggedIn();
+      
+      // Ocultar/mostrar según estado
+      if (registroSection) {
+        registroSection.style.display = isLoggedIn ? 'none' : 'block';
+      }
+      
+      if (userNotice) {
+        userNotice.style.display = isLoggedIn ? 'none' : 'block';
+      }
+      
+      console.log('Estado de autenticación:', isLoggedIn ? '✅ Logueado' : '❌ No logueado');
+    });
+  </script>
+</body>
+</html>

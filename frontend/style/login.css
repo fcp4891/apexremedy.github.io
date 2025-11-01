@@ -1,0 +1,298 @@
+/* === LOGIN PAGE === */
+
+/* Contenedor principal del formulario */
+.login-container {
+  min-height: calc(100vh - 400px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+}
+
+.login-form-wrapper {
+  max-width: 480px;
+  width: 100%;
+}
+
+/* Header del formulario */
+.login-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.login-icon-container {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-green), var(--light-green));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-icon-container i {
+  font-size: 2.5rem;
+  color: var(--accent-yellow);
+}
+
+.login-header h2 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--primary-green);
+    margin-bottom: 10px;
+}
+
+.login-header p {
+  color: var(--medium-gray);
+}
+
+/* Formulario */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Input con icono */
+.input-with-icon {
+  position: relative;
+}
+
+.input-with-icon i {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--medium-gray);
+}
+
+.input-with-icon input {
+  width: 100%;
+  padding: 12px 12px 12px 40px;
+  border: 2px solid var(--light-gray);
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.input-with-icon.password-input input {
+  padding-right: 40px;
+}
+
+.toggle-password-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--medium-gray);
+}
+
+/* Label de formulario */
+.form-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: rgb(141, 82, 59);
+}
+
+/* Recordarme y olvidé contraseña */
+.login-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.login-checkbox-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.login-checkbox-label input[type="checkbox"] {
+  margin-right: 8px;
+  width: 18px;
+  height: 18px;
+}
+
+.login-checkbox-label span {
+  font-size: 0.95rem;
+  color: var(--accent-black);
+}
+
+.forgot-password-link {
+  font-size: 0.95rem;
+  color: var(--primary-green);
+  text-decoration: none;
+}
+
+/* Mensajes */
+.message-container {
+  display: none;
+}
+
+.error-message {
+  display: none;
+  background: #fee;
+  border: 1px solid #fcc;
+  color: #c00;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.success-message {
+  display: none;
+  background: #efe;
+  border: 1px solid #cfc;
+  color: #060;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+/* Credenciales de prueba */
+.test-credentials {
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 8px;
+  padding: 16px;
+  font-size: 0.9rem;
+}
+
+.test-credentials p:first-child {
+  font-weight: 600;
+  color: #1e40af;
+  margin-bottom: 8px;
+}
+
+.test-credentials p {
+  color: #3b82f6;
+  margin-bottom: 4px;
+}
+
+/* Footer del formulario */
+.login-footer {
+  margin-top: 24px;
+  text-align: center;
+  padding-top: 24px;
+  border-top: 1px solid var(--light-gray);
+}
+
+.login-footer p {
+  color: var(--medium-gray);
+}
+
+.register-link {
+  color: var(--primary-green);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* Botón submit con loader */
+.submit-btn-with-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+/* Mobile */
+@media (max-width: 768px) {
+  .login-container {
+    padding: 40px 16px;
+    min-height: calc(100vh - 300px);
+  }
+  
+  .login-form-wrapper {
+    max-width: 100%;
+  }
+  
+  .login-header h2 {
+    font-size: 1.75rem;
+  }
+  
+  .login-icon-container {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .login-icon-container i {
+    font-size: 2rem;
+  }
+  
+  .about-card {
+    padding: 24px 20px;
+  }
+  
+  .input-with-icon input {
+    padding: 10px 10px 10px 38px;
+    font-size: 0.95rem;
+  }
+  
+  .input-with-icon.password-input input {
+    padding-right: 38px;
+  }
+  
+  .login-options {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .forgot-password-link {
+    font-size: 0.9rem;
+  }
+  
+  .test-credentials {
+    padding: 12px;
+    font-size: 0.85rem;
+  }
+  
+  .test-credentials p {
+    font-size: 0.85rem;
+  }
+}
+
+/* Extra Small */
+@media (max-width: 480px) {
+  .login-container {
+    padding: 30px 12px;
+  }
+  
+  .login-header h2 {
+    font-size: 1.5rem;
+  }
+  
+  .login-icon-container {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .login-icon-container i {
+    font-size: 1.75rem;
+  }
+  
+  .about-card {
+    padding: 20px 16px;
+  }
+  
+  .form-label {
+    font-size: 0.9rem;
+  }
+  
+  .input-with-icon input {
+    padding: 10px 10px 10px 36px;
+    font-size: 0.9rem;
+  }
+  
+  .cta-button {
+    padding: 12px 20px;
+    font-size: 0.95rem;
+  }
+}
+

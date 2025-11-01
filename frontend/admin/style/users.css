@@ -1,0 +1,91 @@
+/* === CSS Específico para admin/users.html === */
+
+.admin-users-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.admin-users-header h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--admin-primary-red);
+    font-family: var(--admin-font-primary);
+}
+
+.admin-user-card {
+    background: var(--admin-white);
+    border: 2px solid var(--admin-light-gray);
+    border-radius: var(--admin-border-radius);
+    padding: 24px;
+    transition: var(--admin-transition);
+}
+
+.admin-user-card:hover {
+    border-color: var(--admin-primary-red);
+    box-shadow: var(--admin-shadow-lg);
+}
+
+.admin-user-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--admin-primary-red), var(--admin-dark-red));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--admin-white);
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-right: 16px;
+}
+
+.admin-user-info {
+    flex: 1;
+}
+
+.admin-user-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--admin-black);
+    margin-bottom: 4px;
+    font-family: var(--admin-font-primary);
+}
+
+.admin-user-email {
+    color: var(--admin-medium-gray);
+    font-size: 0.9rem;
+}
+
+.admin-user-role {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.admin-user-role.admin {
+    background: rgba(192, 86, 33, 0.1);
+    color: var(--admin-primary-red);
+}
+
+.admin-user-role.customer {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 768px) {
+    .admin-users-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+

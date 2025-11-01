@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" type="image/png" href="./assets/images/logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Apexremedy</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./style/css_home.css">
+    <link rel="stylesheet" href="./style/login.css">
+    
+    <script src="./js/config.js"></script>
+    <script src="./js/utils.js"></script>
+    <script defer src="./js/template.js"></script>
+</head>
+<body class="login-page">
+    <!-- Header template -->
+    <div id="header-container"></div>
+
+    <!-- Formulario de Login -->
+    <div class="login-container">
+        <div class="login-form-wrapper">
+            <!-- Header -->
+            <div class="login-header">
+                <div class="login-icon-container">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <h2>Iniciar Sesión</h2>
+                <p>Accede a tu cuenta de Apexremedy</p>
+            </div>
+
+            <!-- Formulario -->
+            <div class="about-card">
+                <form id="loginForm" class="login-form">
+                    <!-- Email -->
+                    <div>
+                        <label class="form-label">Correo Electrónico</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" 
+                                   id="email" 
+                                   name="email"
+                                   required
+                                   placeholder="tu@email.com">
+                        </div>
+                    </div>
+
+                    <!-- Password -->
+                    <div>
+                        <label class="form-label">Contraseña</label>
+                        <div class="input-with-icon password-input">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" 
+                                   id="password" 
+                                   name="password"
+                                   required
+                                   placeholder="••••••••">
+                            <button type="button" 
+                                    id="togglePassword"
+                                    class="toggle-password-btn">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Recordarme -->
+                    <div class="login-options">
+                        <label class="login-checkbox-label">
+                            <input type="checkbox" id="remember">
+                            <span>Recordarme</span>
+                        </label>
+                        <a href="./recuperar-password.html" class="forgot-password-link">
+                            ¿Olvidaste tu contraseña?
+                        </a>
+                    </div>
+
+                    <!-- Mensajes -->
+                    <div id="messageContainer" class="message-container">
+                        <div id="errorMessage" class="error-message">
+                            <i class="fas fa-exclamation-circle" style="margin-right: 8px;"></i>
+                            <span id="errorText"></span>
+                        </div>
+                        <div id="successMessage" class="success-message">
+                            <i class="fas fa-check-circle" style="margin-right: 8px;"></i>
+                            <span id="successText"></span>
+                        </div>
+                    </div>
+
+                    <!-- Botón Submit -->
+                    <button type="submit" 
+                            id="submitBtn"
+                            class="cta-button full-width submit-btn-with-loader">
+                        <span id="btnText">Iniciar Sesión</span>
+                        <i id="btnLoader" style="display: none;" class="fas fa-spinner fa-spin"></i>
+                    </button>
+
+                    <!-- Credenciales de prueba -->
+                    <div class="test-credentials">
+                        <p>Credenciales de prueba:</p>
+                        <p><strong>Admin:</strong> admin@apexremedy.local / Admin123!</p>
+                        <p><strong>Cliente_1 (permiso pdte):</strong> paciente.medicinal@apexremedy.local / Medicinal123!</p>
+                        <p><strong>Cliente_2 (permiso pdte):</strong> felipe.cliente@apexremedy.local / Cliente123!</p>
+                        <p><strong>Cliente_3 (permiso aprobado):</strong> pila@123.com / 123456789</p>
+                    </div>
+                </form>
+
+                <!-- Registro -->
+                <div class="login-footer">
+                    <p>
+                        ¿No tienes cuenta? 
+                        <a href="./registro.html" class="register-link">Regístrate aquí</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer template -->
+    <div id="footer-container"></div>
+
+    <!-- Sidebar del carrito -->
+    <div id="cartSidebar" class="cart-sidebar">
+        <div class="cart-header">
+            <h3><i class="fas fa-shopping-cart"></i> Carrito de Compras</h3>
+            <button id="closeCart" class="cta-button" style="padding: 6px 12px;">Cerrar</button>
+        </div>
+        <div id="cartItems" class="cart-items"></div>
+        <div class="cart-total">
+            <div class="total-amount" id="cartTotal">Total: $0</div>
+            <a href="./carrito.html" class="cta-button full-width">Ver Carrito Completo</a>
+        </div>
+    </div>
+    <div id="cartOverlay" class="cart-overlay" style="display: none;"></div>
+
+    <!-- Scripts -->
+    <script src="./js/api/apiClient.js"></script>
+    <script src="./js/auth.js"></script>
+    <script src="./js/sessionManager.js"></script>
+    <script src="./js/notifications.js"></script>
+    <script src="./js/db_articulos.js"></script>
+    <script src="./js/carrito.js"></script>
+    
+    <script>
+        // Toggle password visibility
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const icon = this.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+
+        // Manejar submit del formulario
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    
+    if (!email || !password) {
+        notify.warning('Por favor completa todos los campos');
+        return;
+    }
+    
+    const submitBtn = document.getElementById('submitBtn');
+    const btnText = document.getElementById('btnText');
+    const btnLoader = document.getElementById('btnLoader');
+    
+    submitBtn.disabled = true;
+    btnText.textContent = 'Iniciando sesión...';
+    btnLoader.classList.remove('hidden');
+    
+    try {
+        const result = await authManager.login(email, password);
+        
+        if (result.success) {
+            notify.success('¡Bienvenido!', 'Inicio de sesión exitoso');
+            // La redirección se maneja en authManager.login()
+        } else {
+            // ==========================================
+            // MANEJAR DIFERENTES ESTADOS DE CUENTA
+            // ==========================================
+            
+            if (result.account_status === 'pending') {
+                notify.warning(
+                    '⏳ Tu cuenta está pendiente de aprobación.\n\n' +
+                    'Estamos revisando tus documentos. Te notificaremos por email cuando tu cuenta sea aprobada.\n\n' +
+                    '¿Necesitas ayuda? Contacta a soporte@apexremedy.cl',
+                    'Cuenta Pendiente',
+                    8000
+                );
+            } else if (result.account_status === 'rejected') {
+                const reason = result.rejection_reason || 'No especificado';
+                notify.error(
+                    `❌ Tu cuenta ha sido rechazada.\n\n` +
+                    `Razón: ${reason}\n\n` +
+                    `Para más información, contacta a soporte@apexremedy.cl`,
+                    'Cuenta Rechazada',
+                    10000
+                );
+            } else {
+                notify.error(result.message || 'Credenciales inválidas');
+            }
+            
+            submitBtn.disabled = false;
+            btnText.textContent = 'Iniciar Sesión';
+            btnLoader.classList.add('hidden');
+        }
+    } catch (error) {
+        console.error('Error en login:', error);
+        notify.error('Error al conectar con el servidor');
+        submitBtn.disabled = false;
+        btnText.textContent = 'Iniciar Sesión';
+        btnLoader.classList.add('hidden');
+    }
+});
+        
+        // Funciones auxiliares
+        function showError(message) {
+            const errorMessage = document.getElementById('errorMessage');
+            const errorText = document.getElementById('errorText');
+            const messageContainer = document.getElementById('messageContainer');
+            
+            errorText.textContent = message;
+            errorMessage.style.display = 'block';
+            messageContainer.style.display = 'block';
+        }
+        
+        function showSuccess(message) {
+            const successMessage = document.getElementById('successMessage');
+            const successText = document.getElementById('successText');
+            const messageContainer = document.getElementById('messageContainer');
+            
+            successText.textContent = message;
+            successMessage.style.display = 'block';
+            messageContainer.style.display = 'block';
+        }
+        
+        function hideMessages() {
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+        
+        function resetButton() {
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            const btnLoader = document.getElementById('btnLoader');
+            
+            submitBtn.disabled = false;
+            btnText.textContent = 'Iniciar Sesión';
+            btnLoader.style.display = 'none';
+        }
+        
+        // Redirigir si ya está autenticado
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                if (typeof authManager !== 'undefined' && authManager.isAuthenticated()) {
+                if (authManager.isAdmin()) {
+                    window.location.href = './admin/perfil.html';
+                } else {
+                    window.location.href = './perfil.html';
+                }
+                }
+            }, 100);
+        });
+    </script>
+</body>
+</html>

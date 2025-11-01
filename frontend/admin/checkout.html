@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Apexremedy Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style/css_admin.css">
+    <script src="./js/config.js"></script>
+    <script src="./js/utils.js"></script>
+    <script defer src="./js/adminTemplate.js"></script>
+</head>
+<body>
+    <!-- Header se carga automáticamente -->
+    <div id="header-container"></div>
+
+    <!-- Header Section -->
+    <section class="shop-header">
+        <div class="container">
+            <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 12px;">
+                <i class="fas fa-shopping-cart mr-3"></i>Finalizar Compra
+            </h1>
+            <p style="font-size: 1.1rem; opacity: 0.95;">
+                Completa tu orden de forma segura
+            </p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid lg:grid-cols-3 gap-8">
+            
+            <!-- Formulario de Checkout -->
+            <div class="lg:col-span-2">
+                
+                <!-- Información de Entrega -->
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-shipping-fast text-green-600 mr-3"></i>
+                        Información de Entrega
+                    </h2>
+                    
+                    <form id="checkoutForm">
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <!-- Nombre Completo -->
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Nombre Completo *
+                                </label>
+                                <input type="text" 
+                                       id="customerName" 
+                                       required 
+                                       class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition"
+                                       placeholder="Juan Pérez González">
+                            </div>
+                            
+                            <!-- Email -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Email *
+                                </label>
+                                <input type="email" 
+                                       id="customerEmail" 
+                                       required 
+                                       class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition"
+                                       placeholder="tu@email.com">
+                            </div>
+                            
+                            <!-- Teléfono -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Teléfono *
+                                </label>
+                                <input type="tel" 
+                                       id="customerPhone" 
+                                       required 
+                                       class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition"
+                                       placeholder="+56 9 1234 5678">
+                            </div>
+                            
+                            <!-- Dirección de Entrega -->
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Dirección de Entrega *
+                                </label>
+                                <textarea id="customerAddress" 
+                                          required 
+                                          rows="3" 
+                                          class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition resize-none"
+                                          placeholder="Calle Principal 123, Depto 456, Comuna, Región"></textarea>
+                                <p class="mt-1 text-xs text-gray-500">
+                                    <i class="fas fa-info-circle mr-1"></i>
+                                    Incluye número de depto/casa, comuna y región
+                                </p>
+                            </div>
+                            
+                            <!-- Notas del Pedido -->
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Notas del Pedido (Opcional)
+                                </label>
+                                <textarea id="orderNotes" 
+                                          rows="3" 
+                                          placeholder="Instrucciones especiales para la entrega, referencias del lugar, horarios preferidos, etc."
+                                          class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition resize-none"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Método de Pago -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-credit-card text-green-600 mr-3"></i>
+                        Método de Pago
+                    </h2>
+                    
+                    <div class="space-y-3">
+                        <!-- Transferencia Bancaria -->
+                        <label class="flex items-center p-4 border-2 border-green-500 bg-green-50 rounded-lg cursor-pointer hover:border-green-600 transition group">
+                            <input type="radio" 
+                                   name="payment" 
+                                   value="transfer" 
+                                   checked 
+                                   class="mr-3 w-5 h-5 text-green-600 focus:ring-green-500">
+                            <div class="flex-1">
+                                <div class="font-semibold text-gray-800 flex items-center">
+                                    Transferencia Bancaria
+                                    <span class="ml-2 text-xs bg-green-600 text-white px-2 py-1 rounded-full">Recomendado</span>
+                                </div>
+                                <div class="text-sm text-gray-600 mt-1">
+                                    Recibirás los datos bancarios después de confirmar
+                                </div>
+                            </div>
+                            <i class="fas fa-university text-3xl text-green-600 group-hover:scale-110 transition-transform"></i>
+                        </label>
+                        
+                        <!-- Pago Contra Entrega -->
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-green-500 transition group">
+                            <input type="radio" 
+                                   name="payment" 
+                                   value="cash" 
+                                   class="mr-3 w-5 h-5 text-green-600 focus:ring-green-500">
+                            <div class="flex-1">
+                                <div class="font-semibold text-gray-800">Pago Contra Entrega</div>
+                                <div class="text-sm text-gray-600 mt-1">
+                                    Paga en efectivo al recibir tu pedido
+                                </div>
+                            </div>
+                            <i class="fas fa-money-bill-wave text-3xl text-gray-400 group-hover:text-green-600 group-hover:scale-110 transition-all"></i>
+                        </label>
+                    </div>
+
+                    <!-- Información de Seguridad -->
+                    <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div class="flex items-start">
+                            <i class="fas fa-shield-alt text-blue-600 text-xl mr-3 mt-1"></i>
+                            <div class="text-sm text-blue-900">
+                                <strong>Compra 100% Segura:</strong> Tus datos están protegidos con encriptación SSL. 
+                                Nunca compartimos información personal con terceros.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Beneficios -->
+                    <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+                        <div class="p-3 bg-gray-50 rounded-lg">
+                            <i class="fas fa-truck text-green-600 text-2xl mb-2"></i>
+                            <p class="text-xs text-gray-600 font-medium">Envío Rápido</p>
+                        </div>
+                        <div class="p-3 bg-gray-50 rounded-lg">
+                            <i class="fas fa-undo text-green-600 text-2xl mb-2"></i>
+                            <p class="text-xs text-gray-600 font-medium">Devolución Fácil</p>
+                        </div>
+                        <div class="p-3 bg-gray-50 rounded-lg">
+                            <i class="fas fa-headset text-green-600 text-2xl mb-2"></i>
+                            <p class="text-xs text-gray-600 font-medium">Soporte 24/7</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+<!-- Resumen del Pedido -->
+<div class="lg:col-span-1">
+    <div class="bg-white rounded-lg shadow-lg p-6 sticky top-20">
+        <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+            <i class="fas fa-receipt text-green-600 mr-2"></i>
+            Resumen del Pedido
+        </h2>
+        
+        <!-- Productos -->
+        <div id="orderItems" class="space-y-3 mb-4 max-h-60 overflow-y-auto border-b pb-4">
+            <div class="text-center py-4 text-gray-400">
+                <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                <p class="text-sm">Cargando productos...</p>
+            </div>
+        </div>
+        
+        <!-- Totales -->
+        <div class="space-y-3 mb-6">
+            <div class="flex justify-between text-gray-600">
+                <span>Subtotal:</span>
+                <span id="summarySubtotal" class="font-semibold">$0</span>
+            </div>
+            <div class="flex justify-between text-gray-600">
+                <span>IVA (19%):</span>
+                <span id="summaryTax" class="font-semibold">$0</span>
+            </div>
+            <div class="flex justify-between text-gray-600">
+                <span class="flex items-center">
+                    Envío:
+                    <i class="fas fa-info-circle text-xs ml-1 text-gray-400" title="Calculado al confirmar"></i>
+                </span>
+                <span class="font-semibold text-green-600">Gratis</span>
+            </div>
+            <div class="border-t-2 pt-3 flex justify-between text-xl font-bold">
+                <span class="text-gray-800">Total:</span>
+                <span id="summaryTotal" class="text-green-600">$0</span>
+            </div>
+        </div>
+        
+        <!-- Botón de Compra -->
+        <button onclick="submitOrder()" 
+                id="submitBtn" 
+                class="w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-lg font-bold text-lg transition shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:bg-gray-400 disabled:transform-none disabled:cursor-not-allowed">
+            <i class="fas fa-lock mr-2"></i>Confirmar Pedido
+        </button>
+        
+        <!-- Garantías -->
+        <div class="mt-6 space-y-3 text-sm text-gray-600">
+            <div class="flex items-center">
+                <i class="fas fa-check-circle text-green-600 mr-2"></i>
+                <span>Envío rápido y seguro</span>
+            </div>
+            <div class="flex items-center">
+                <i class="fas fa-check-circle text-green-600 mr-2"></i>
+                <span>Productos de calidad garantizada</span>
+            </div>
+            <div class="flex items-center">
+                <i class="fas fa-check-circle text-green-600 mr-2"></i>
+                <span>Soporte al cliente 24/7</span>
+            </div>
+            <div class="flex items-center">
+                <i class="fas fa-check-circle text-green-600 mr-2"></i>
+                <span>Política de devolución de 30 días</span>
+            </div>
+        </div>
+
+        <!-- Contacto -->
+        <div class="mt-6 pt-4 border-t text-center text-xs text-gray-500">
+            <p class="mb-1">¿Necesitas ayuda?</p>
+            <p class="font-semibold text-gray-700">
+                <i class="fas fa-phone-alt mr-1"></i>
+                +56 9 1234 5678
+            </p>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- Sección de Confianza -->
+<div class="mt-12 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-8">
+<div class="text-center mb-6">
+    <h3 class="text-2xl font-bold text-gray-800 mb-2">
+        <i class="fas fa-award text-green-600 mr-2"></i>
+        Compra con Confianza
+    </h3>
+    <p class="text-gray-600">Miles de clientes satisfechos confían en nosotros</p>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 text-center">
+    <div class="bg-white rounded-lg p-6 shadow-md">
+        <i class="fas fa-box-open text-green-600 text-4xl mb-3"></i>
+        <h4 class="font-bold text-gray-800 mb-1">+10,000</h4>
+        <p class="text-sm text-gray-600">Pedidos Entregados</p>
+    </div>
+    <div class="bg-white rounded-lg p-6 shadow-md">
+        <i class="fas fa-star text-yellow-500 text-4xl mb-3"></i>
+        <h4 class="font-bold text-gray-800 mb-1">4.8/5</h4>
+        <p class="text-sm text-gray-600">Calificación Promedio</p>
+    </div>
+    <div class="bg-white rounded-lg p-6 shadow-md">
+        <i class="fas fa-users text-blue-600 text-4xl mb-3"></i>
+        <h4 class="font-bold text-gray-800 mb-1">5,000+</h4>
+        <p class="text-sm text-gray-600">Clientes Satisfechos</p>
+    </div>
+    <div class="bg-white rounded-lg p-6 shadow-md">
+        <i class="fas fa-shield-alt text-purple-600 text-4xl mb-3"></i>
+        <h4 class="font-bold text-gray-800 mb-1">100%</h4>
+        <p class="text-sm text-gray-600">Compra Segura</p>
+    </div>
+</div>
+</div>
+</div>
+
+    <!-- Footer -->
+    <div id="footer-container"></div>
+
+    <!-- Scripts -->
+    <script src="./js/api/apiClient.js"></script>
+    <script src="./js/auth.js"></script>
+    <script src="./js/sessionManager.js"></script>
+    <script src="./js/notifications.js"></script>
+
+<!-- Modal de Éxito (Para pago contra entrega) -->
+<div id="successModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+<div class="bg-white rounded-lg shadow-xl max-w-md w-full p-8 text-center animate-fadeIn">
+<div class="mb-4">
+    <div class="bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+        <i class="fas fa-check-circle text-green-600 text-5xl"></i>
+    </div>
+</div>
+<h3 class="text-2xl font-bold text-gray-800 mb-2">¡Pedido Confirmado!</h3>
+<p class="text-gray-600 mb-6">
+    Tu pedido #<span id="orderId" class="font-mono font-bold text-green-600"></span> 
+    ha sido recibido exitosamente.
+</p>
+<div class="space-y-3">
+    <a href="./mis-pedidos.html" 
+       class="block bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold transition shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+        <i class="fas fa-list mr-2"></i>Ver Mis Pedidos
+    </a>
+    <a href="./tienda.html" 
+       class="block bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded-lg font-semibold transition shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+        <i class="fas fa-shopping-bag mr-2"></i>Seguir Comprando
+    </a>
+</div>
+</div>
+</div>
+
+<!-- Scripts -->
+<script src="../js/api/apiClient.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/notifications.js"></script>
+<script src="../js/carrito.js"></script>
+<script src="../js/checkout.js"></script>
+
+<script>
+// ============================================
+// PROTECCIÓN DE RUTA - REQUIERE AUTENTICACIÓN
+// ============================================
+(function() {
+'use strict';
+function checkAuth() {
+    if (typeof authManager === 'undefined') {
+        console.warn('⚠️ authManager no disponible');
+        window.location.href = './login.html?redirect=checkout';
+        return;
+    }
+    if (!authManager.isAuthenticated()) {
+        notify.warning('Debes iniciar sesión para continuar con tu compra', 'Autenticación Requerida');
+        setTimeout(() => {
+            window.location.href = './login.html?redirect=checkout';
+        }, 2000);
+        return;
+    }
+    console.log('✅ Usuario autenticado');
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', checkAuth);
+} else {
+    checkAuth();
+}
+})();
+</script>
+
+<style>
+/* Animaciones personalizadas */
+@keyframes fadeIn {
+from {
+    opacity: 0;
+    transform: scale(0.9);
+}
+to {
+    opacity: 1;
+    transform: scale(1);
+}
+}
+
+.animate-fadeIn {
+animation: fadeIn 0.3s ease-out;
+}
+
+/* Scroll personalizado para productos */
+#orderItems::-webkit-scrollbar {
+width: 6px;
+}
+
+#orderItems::-webkit-scrollbar-track {
+background: #f1f1f1;
+border-radius: 10px;
+}
+
+#orderItems::-webkit-scrollbar-thumb {
+background: #16a34a;
+border-radius: 10px;
+}
+
+#orderItems::-webkit-scrollbar-thumb:hover {
+background: #15803d;
+}
+
+/* Efecto hover en radio buttons */
+input[type="radio"]:checked + div {
+color: #15803d;
+}
+
+/* Loading skeleton para productos */
+.skeleton {
+background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+background-size: 200% 100%;
+animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+0% { background-position: 200% 0; }
+100% { background-position: -200% 0; }
+}
+
+/* Responsive sticky sidebar */
+@media (min-width: 1024px) {
+.sticky {
+    position: sticky;
+    top: 5rem;
+}
+}
+
+/* Print styles para instrucciones */
+@media print {
+body * {
+    visibility: hidden;
+}
+#transferModal, #transferModal * {
+    visibility: visible;
+}
+#transferModal {
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+button, a[href] {
+    display: none !important;
+}
+}
+</style>
+</body>
+</html>

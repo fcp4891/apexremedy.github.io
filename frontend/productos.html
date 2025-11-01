@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" type="image/png" href="./assets/images/logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos - Apexremedy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./style/css_home.css">
+    <script src="./js/config.js"></script>
+    <script src="./js/utils.js"></script>
+    <script defer src="./js/template.js"></script>
+</head>
+<body>
+    <!-- Header template -->
+    <div id="header-container"></div>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-8">
+        <!-- Hero Section -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-800 mb-4">Nuestros Productos</h1>
+            <p class="text-lg text-gray-600">Encuentra los mejores productos para tu salud y bienestar</p>
+        </div>
+
+        <!-- Filtros y búsqueda -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="md:col-span-2">
+                    <div class="relative">
+                        <input 
+                            type="text" 
+                            id="searchInput" 
+                            placeholder="Buscar productos..."
+                            class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                        <i class="fas fa-search absolute left-3 top-4 text-gray-400"></i>
+                    </div>
+                </div>
+                <select id="categoryFilter" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                    <option value="">Todas las categorías</option>
+                </select>
+                <select id="sortFilter" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                    <option value="name">Nombre A-Z</option>
+                    <option value="price_asc">Precio: Menor a Mayor</option>
+                    <option value="price_desc">Precio: Mayor a Menor</option>
+                    <option value="newest">Más Recientes</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Contador de resultados -->
+        <div class="mb-6">
+            <p class="text-gray-600">
+                Mostrando <span id="resultCount" class="font-semibold text-gray-800">0</span> productos
+            </p>
+        </div>
+
+        <!-- Grid de productos -->
+        <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+            <!-- Loading -->
+            <div class="col-span-full flex justify-center py-12">
+                <i class="fas fa-spinner fa-spin text-4xl text-green-600"></i>
+            </div>
+        </div>
+
+        <!-- Mensaje sin resultados -->
+        <div id="noResults" class="hidden col-span-full text-center py-12">
+            <i class="fas fa-box-open text-6xl text-gray-300 mb-4"></i>
+            <p class="text-xl text-gray-500">No se encontraron productos</p>
+        </div>
+
+        <!-- Botón cargar más -->
+        <div class="text-center">
+            <button id="loadMoreBtn" class="hidden bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg transition font-semibold">
+                <i class="fas fa-plus mr-2"></i>Cargar más productos
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer template -->
+    <div id="footer-container"></div>
+
+    <!-- Modal detalle producto -->
+    <div id="productModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <h3 id="modalTitle" class="text-2xl font-bold text-gray-800"></h3>
+                    <button onclick="closeProductModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <img id="modalImage" src="" alt="" class="w-full rounded-lg shadow-lg">
+                    </div>
+                    <div>
+                        <div class="mb-4">
+                            <span id="modalCategory" class="bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full"></span>
+                        </div>
+                        <p id="modalDescription" class="text-gray-600 mb-6"></p>
+                        
+                        <div class="mb-6">
+                            <p class="text-sm text-gray-500 mb-1">Precio</p>
+                            <p id="modalPrice" class="text-3xl font-bold text-green-600"></p>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <p class="text-sm text-gray-500 mb-1">Disponibilidad</p>
+                            <p id="modalStock" class="text-lg font-semibold"></p>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Cantidad</label>
+                            <div class="flex items-center gap-3">
+                                <button onclick="decreaseQuantity()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 w-10 h-10 rounded-lg">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <input type="number" id="modalQuantity" value="1" min="1" class="w-20 text-center border border-gray-300 rounded-lg py-2">
+                                <button onclick="increaseQuantity()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 w-10 h-10 rounded-lg">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <button onclick="addToCartFromModal()" class="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold transition">
+                            <i class="fas fa-shopping-cart mr-2"></i>Agregar al Carrito
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="./js/api/apiClient.js"></script>
+    <script src="./js/auth.js"></script>
+    <script src="./js/notifications.js"></script>
+    <script src="./js/productModal.js"></script>
+    <script src="./js/db_articulos.js"></script>
+    <script src="./js/carrito.js"></script>
+    <script>
+        let allProducts = [];
+        let filteredProducts = [];
+        let displayedCount = 12;
+        let currentProduct = null;
+
+        // Cargar productos
+        async function loadProducts() {
+            try {
+                const response = await api.request('/products?limit=100');
+                if (response.success) {
+                    allProducts = response.data.products || response.data;
+                    filteredProducts = [...allProducts];
+                    applyFilters();
+                }
+            } catch (error) {
+                console.error('Error al cargar productos:', error);
+                showError('Error al cargar productos');
+            }
+        }
+
+        // Cargar categorías
+        async function loadCategories() {
+            try {
+                const response = await api.request('/products/categories');
+                if (response.success) {
+                    const select = document.getElementById('categoryFilter');
+                    response.data.categories.forEach(cat => {
+                        const option = document.createElement('option');
+                        option.value = cat;
+                        option.textContent = cat;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error al cargar categorías:', error);
+            }
+        }
+
+        // Aplicar filtros
+        function applyFilters() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const category = document.getElementById('categoryFilter').value;
+            const sort = document.getElementById('sortFilter').value;
+
+            filteredProducts = allProducts.filter(p => {
+                const matchSearch = !search || 
+                    p.name.toLowerCase().includes(search) || 
+                    (p.description && p.description.toLowerCase().includes(search));
+                const matchCategory = !category || p.category === category;
+                return matchSearch && matchCategory;
+            });
+
+            // Ordenar
+            switch(sort) {
+                case 'price_asc':
+                    filteredProducts.sort((a, b) => a.price - b.price);
+                    break;
+                case 'price_desc':
+                    filteredProducts.sort((a, b) => b.price - a.price);
+                    break;
+                case 'newest':
+                    filteredProducts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                    break;
+                default:
+                    filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
+            }
+
+            displayedCount = 12;
+            displayProducts();
+        }
+
+        // Mostrar productos
+        function displayProducts() {
+            const grid = document.getElementById('productsGrid');
+            const products = filteredProducts.slice(0, displayedCount);
+            
+            document.getElementById('resultCount').textContent = filteredProducts.length;
+            
+            if (products.length === 0) {
+                grid.innerHTML = '';
+                document.getElementById('noResults').classList.remove('hidden');
+                document.getElementById('loadMoreBtn').classList.add('hidden');
+                return;
+            }
+
+            document.getElementById('noResults').classList.add('hidden');
+
+            grid.innerHTML = products.map(p => `
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition">
+                    <div class="relative pb-[75%]">
+<img src="${p.image || 'https://via.placeholder.com/400x300?...'}"
+     alt="${p.name}"
+     class="absolute inset-0 w-full h-full object-cover opacity-80 backdrop-blur-sm rounded-lg"
+                             onerror="this.src='https://via.placeholder.com/400x300?text=Imagen+No+Disponible'">
+                        ${p.featured ? '<div class="absolute top-2 right-2 bg-yellow-500 text-white px-2 py-1 rounded-full text-xs font-semibold"><i class="fas fa-star mr-1"></i>Destacado</div>' : ''}
+                        ${p.stock === 0 ? '<div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center"><span class="text-white font-bold text-xl">AGOTADO</span></div>' : ''}
+                    </div>
+                    <div class="p-4">
+                        <p class="text-xs text-green-600 font-semibold mb-1">${p.category || 'Sin categoría'}</p>
+                        <h3 class="text-lg font-bold text-gray-800 mb-2 line-clamp-2">${p.name}</h3>
+                        <p class="text-gray-600 text-sm mb-3 line-clamp-2">${p.description || 'Sin descripción'}</p>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-2xl font-bold text-green-600">$${p.price.toLocaleString()}</span>
+                            <span class="text-sm ${p.stock > 0 ? 'text-green-600' : 'text-red-600'}">
+                                ${p.stock > 0 ? `Stock: ${p.stock}` : 'Sin stock'}
+                            </span>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="viewProduct(${p.id})" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded-lg transition">
+                                Ver detalles
+                            </button>
+                            ${p.stock > 0 ? `
+                                <button onclick="addToCart(${p.id}, '${p.name.replace(/'/g, "\\'")}', ${p.price}, 1)" 
+                                        class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg transition">
+                                    <i class="fas fa-cart-plus"></i> Agregar
+                                </button>
+                            ` : `
+                                <button disabled class="flex-1 bg-gray-400 text-white py-2 rounded-lg cursor-not-allowed">
+                                    Agotado
+                                </button>
+                            `}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Botón cargar más
+            const loadMoreBtn = document.getElementById('loadMoreBtn');
+            if (filteredProducts.length > displayedCount) {
+                loadMoreBtn.classList.remove('hidden');
+            } else {
+                loadMoreBtn.classList.add('hidden');
+            }
+        }
+
+        // Ver detalles del producto
+        async function viewProduct(id) {
+            try {
+                const response = await api.request(`/products/${id}`);
+                if (response.success) {
+                    currentProduct = response.data.product;
+                    showProductModal(currentProduct);
+                }
+            } catch (error) {
+                showError('Error al cargar producto');
+            }
+        }
+
+        // Mostrar modal
+        function showProductModal(product) {
+            document.getElementById('modalTitle').textContent = product.name;
+            document.getElementById('modalImage').src = product.image || 'https://via.placeholder.com/600x400';
+            document.getElementById('modalCategory').textContent = product.category || 'Sin categoría';
+            document.getElementById('modalDescription').textContent = product.description || 'Sin descripción disponible';
+            document.getElementById('modalPrice').textContent = `$${product.price.toLocaleString()}`;
+            document.getElementById('modalStock').textContent = product.stock > 0 ? `${product.stock} disponibles` : 'Sin stock';
+            document.getElementById('modalStock').className = product.stock > 0 ? 'text-lg font-semibold text-green-600' : 'text-lg font-semibold text-red-600';
+            document.getElementById('modalQuantity').value = 1;
+            document.getElementById('modalQuantity').max = product.stock;
+            
+            document.getElementById('productModal').classList.remove('hidden');
+        }
+
+        function closeProductModal() {
+            document.getElementById('productModal').classList.add('hidden');
+            currentProduct = null;
+        }
+
+        function increaseQuantity() {
+            const input = document.getElementById('modalQuantity');
+            if (parseInt(input.value) < parseInt(input.max)) {
+                input.value = parseInt(input.value) + 1;
+            }
+        }
+
+        function decreaseQuantity() {
+            const input = document.getElementById('modalQuantity');
+            if (parseInt(input.value) > 1) {
+                input.value = parseInt(input.value) - 1;
+            }
+        }
+
+        function addToCartFromModal() {
+            if (!currentProduct) return;
+            const quantity = parseInt(document.getElementById('modalQuantity').value);
+            addToCart(currentProduct.id, currentProduct.name, currentProduct.price, quantity);
+            closeProductModal();
+        }
+
+        // Agregar al carrito (usa tu carrito.js)
+        function addToCart(id, name, price, quantity) {
+            if (typeof window.agregarAlCarrito === 'function') {
+                window.agregarAlCarrito(id, name, price, quantity);
+                showSuccess(`${name} agregado al carrito`);
+            } else {
+                console.error('Función agregarAlCarrito no encontrada');
+            }
+        }
+
+        // Cargar más productos
+        document.getElementById('loadMoreBtn').addEventListener('click', () => {
+            displayedCount += 12;
+            displayProducts();
+        });
+
+        // Filtros
+        let searchTimeout;
+        document.getElementById('searchInput').addEventListener('input', () => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(applyFilters, 300);
+        });
+
+        document.getElementById('categoryFilter').addEventListener('change', applyFilters);
+        document.getElementById('sortFilter').addEventListener('change', applyFilters);
+
+        // Notificaciones
+        function showSuccess(msg) {
+            notify.success(msg);
+        }
+
+        function showError(msg) {
+            notify.error(msg);
+        }
+
+        // Inicializar
+        loadProducts();
+        loadCategories();
+    </script>
+</body>
+</html>

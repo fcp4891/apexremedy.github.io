@@ -1,0 +1,87 @@
+/* === CSS Específico para admin/orders.html === */
+
+.admin-orders-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.admin-orders-header h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--admin-primary-red);
+    font-family: var(--admin-font-primary);
+}
+
+.admin-orders-filters {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+}
+
+.admin-order-card {
+    background: var(--admin-white);
+    border: 2px solid var(--admin-light-gray);
+    border-radius: var(--admin-border-radius);
+    padding: 24px;
+    margin-bottom: 16px;
+    transition: var(--admin-transition);
+}
+
+.admin-order-card:hover {
+    border-color: var(--admin-primary-red);
+    box-shadow: var(--admin-shadow-lg);
+}
+
+.admin-order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--admin-light-gray);
+}
+
+.admin-order-id {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--admin-primary-red);
+    font-family: var(--admin-font-primary);
+}
+
+.admin-order-date {
+    color: var(--admin-medium-gray);
+    font-size: 0.9rem;
+    margin-top: 4px;
+}
+
+.admin-order-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 768px) {
+    .admin-orders-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .admin-orders-filters {
+        flex-direction: column;
+    }
+    
+    .admin-order-header {
+        flex-direction: column;
+        gap: 12px;
+    }
+}
+

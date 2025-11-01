@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" type="image/png" href="./assets/images/logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo 2025</title>
+    <link rel="stylesheet" href="./style/css_home.css">
+    <link rel="stylesheet" href="./style/catalogo.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Página de Portada -->
+        <section class="page cover-page" id="page-1">
+            <div class="cover-content">
+                <h1 class="cover-title">CATÁLOGO<br>2025</h1>
+            </div>
+        </section>
+
+        <!-- Página de Términos y Condiciones -->
+        <section class="page terms-page" id="page-2">
+            <div class="page-content">
+                <h2 class="page-title">Términos y condiciones de envíos y entrega</h2>
+                <div class="terms-content" id="terms-content"></div>
+            </div>
+        </section>
+
+        <!-- Páginas de Productos -->
+        <section class="page products-page" id="page-3">
+            <div class="page-content">
+                <div class="product-images" id="product-images-1"></div>
+                <div class="product-list" id="product-list-1"></div>
+            </div>
+        </section>
+
+        <section class="page products-page" id="page-4">
+            <div class="page-content">
+                <div class="product-images" id="product-images-2"></div>
+                <div class="product-list" id="product-list-2"></div>
+            </div>
+        </section>
+
+        <!-- Página de Hash -->
+        <section class="page hash-page" id="page-5">
+            <div class="page-content">
+                <div class="hash-images" id="hash-images"></div>
+                <div class="hash-content">
+                    <h3 class="hash-title" id="hash-title"></h3>
+                    <div class="hash-prices" id="hash-prices"></div>
+                    <p class="hash-note" id="hash-note"></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Página de Aceite -->
+        <section class="page oil-page" id="page-6">
+            <div class="page-content">
+                <div class="oil-images" id="oil-images"></div>
+                <div class="oil-content" id="oil-content"></div>
+            </div>
+        </section>
+
+        <!-- Página de Políticas -->
+        <section class="page policies-page" id="page-7">
+            <div class="page-content">
+                <h2 class="page-title">Políticas Generales</h2>
+                <div class="policies-content" id="policies-content"></div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Barra de Navegación -->
+    <nav class="navbar">
+        <div class="nav-controls">
+            <button class="nav-btn" id="prev-btn">←</button>
+            <span class="page-indicator" id="page-indicator">1 / 7</span>
+            <button class="nav-btn" id="next-btn">→</button>
+        </div>
+        <div class="nav-actions">
+            <button class="action-btn" id="download-btn">📥 Descargar PDF</button>
+            <button class="action-btn" id="edit-btn">✏️ Editar</button>
+        </div>
+    </nav>
+
+    <!-- Modal de Edición -->
+    <div class="modal" id="edit-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Editar Catálogo</h2>
+            <div class="editor-tabs">
+                <button class="tab-btn active" data-tab="products">Productos</button>
+                <button class="tab-btn" data-tab="hash">Hash</button>
+                <button class="tab-btn" data-tab="oil">Aceite</button>
+                <button class="tab-btn" data-tab="terms">Términos</button>
+                <button class="tab-btn" data-tab="policies">Políticas</button>
+            </div>
+            <div class="editor-content">
+                <textarea id="data-editor" rows="20"></textarea>
+                <div class="editor-actions">
+                    <button class="save-btn" id="save-btn">💾 Guardar Cambios</button>
+                    <button class="cancel-btn" id="cancel-btn">❌ Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

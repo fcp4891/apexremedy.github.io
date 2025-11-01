@@ -1,0 +1,72 @@
+<nav class="admin-nav">
+    <div class="admin-container">
+        <div class="admin-nav-container">
+            <!-- Logo y Título -->
+            <div class="admin-nav-logo-section">
+                <a href="./index.html" class="admin-nav-logo">
+                    <div class="admin-nav-logo-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <span class="admin-nav-logo-text">Apexremedy <span class="admin-nav-logo-badge">Admin</span></span>
+                </a>
+                <span id="currentPageTitle" class="admin-nav-page-title"></span>
+            </div>
+
+            <!-- Menú de Navegación -->
+            <div class="admin-nav-menu">
+                <a href="./index.html" class="admin-nav-link" data-page="index">
+                    <i class="fas fa-home"></i>
+                    <span>Inicio</span>
+                </a>
+                <a href="./dashboard.html" class="admin-nav-link" data-page="dashboard">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="./users.html" class="admin-nav-link" data-page="users">
+                    <i class="fas fa-users"></i>
+                    <span>Usuarios</span>
+                </a>
+                <a href="./products.html" class="admin-nav-link" data-page="products">
+                    <i class="fas fa-box"></i>
+                    <span>Productos</span>
+                </a>
+                <a href="./orders.html" class="admin-nav-link" data-page="orders">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span>Pedidos</span>
+                </a>
+            </div>
+
+            <!-- Menú de Usuario -->
+            <div class="admin-nav-user">
+                <div class="admin-nav-user-info">
+                    <p class="admin-nav-user-role">Administrador</p>
+                    <p id="adminUserName" class="admin-nav-user-name">Cargando...</p>
+                </div>
+                <div class="admin-nav-user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="admin-nav-user-dropdown">
+                    <div class="admin-nav-user-dropdown-header">
+                        <p id="dropdownUserName" class="admin-nav-user-dropdown-name">Cargando...</p>
+                        <p id="dropdownUserEmail" class="admin-nav-user-dropdown-email">email@example.com</p>
+                    </div>
+                    <div class="admin-nav-user-dropdown-menu">
+                        <a href="./perfil.html" class="admin-nav-user-dropdown-item">
+                            <i class="fas fa-user-circle"></i>
+                            <span>Mi Perfil</span>
+                        </a>
+                        <a href="../index.html" class="admin-nav-user-dropdown-item">
+                            <i class="fas fa-globe"></i>
+                            <span>Ver Sitio Web</span>
+                        </a>
+                        <hr class="admin-nav-user-dropdown-divider">
+                        <button onclick="handleAdminLogout()" class="admin-nav-user-dropdown-item admin-nav-user-dropdown-logout">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Cerrar Sesión</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>

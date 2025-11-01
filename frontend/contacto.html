@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" type="image/png" href="./assets/images/logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacto - Apexremedy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./style/css_home.css">
+    <link rel="stylesheet" href="./style/contacto.css">
+    <script src="./js/config.js"></script>
+    <script src="./js/utils.js"></script>
+    <script defer src="./js/template.js"></script>
+</head>
+<body>
+    <!-- Header template -->
+    <div id="header-container"></div>
+
+    <!-- Hero Section -->
+    <section class="shop-header">
+        <div class="container">
+          <h1>
+            <i class="fas fa-headset"></i> Contáctanos
+          </h1>
+          <p>
+            Estamos aquí para ayudarte
+          </p>
+        </div>
+      </section>
+
+    <!-- Main Content -->
+    <section class="about-section">
+        <div class="container">
+            <div class="contact-grid">
+            <!-- Formulario de Contacto -->
+            <div>
+                <div class="contact-form-card">
+                    <h2>Envíanos un Mensaje</h2>
+                    
+                    <form id="contactForm">
+                        <div class="contact-input-wrapper">
+                            <label class="contact-label">
+                                Nombre Completo *
+                            </label>
+                            <i class="fas fa-user"></i>
+                            <input 
+                                type="text" 
+                                id="name" 
+                                required
+                                placeholder="Juan Pérez">
+                        </div>
+
+                        <div class="contact-input-wrapper">
+                            <label class="contact-label">
+                                Correo Electrónico *
+                            </label>
+                            <i class="fas fa-envelope"></i>
+                            <input 
+                                type="email" 
+                                id="email" 
+                                required
+                                placeholder="tu@email.com">
+                        </div>
+
+                        <div class="contact-input-wrapper">
+                            <label class="contact-label">
+                                Teléfono
+                            </label>
+                            <i class="fas fa-phone"></i>
+                            <input 
+                                type="tel" 
+                                id="phone"
+                                placeholder="+56 9 1234 5678">
+                        </div>
+
+                        <div class="contact-input-wrapper">
+                            <label class="contact-label">
+                                Asunto *
+                            </label>
+                            <select id="subject" required>
+                                <option value="">Selecciona un asunto</option>
+                                <option value="consulta">Consulta General</option>
+                                <option value="producto">Consulta sobre Productos</option>
+                                <option value="pedido">Seguimiento de Pedido</option>
+                                <option value="reclamo">Reclamo</option>
+                                <option value="sugerencia">Sugerencia</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                        </div>
+
+                        <div class="contact-input-wrapper">
+                            <label class="contact-label">
+                                Mensaje *
+                            </label>
+                            <textarea 
+                                id="message" 
+                                required
+                                rows="6"
+                                placeholder="Escribe tu mensaje aquí..."></textarea>
+                        </div>
+
+                        <!-- Mensajes -->
+                        <div id="messageContainer" class="hidden">
+                            <div id="successMessage" class="contact-message success">
+                                <i class="fas fa-check-circle"></i>
+                                <span id="successText"></span>
+                            </div>
+                            <div id="errorMessage" class="contact-message error">
+                                <i class="fas fa-exclamation-circle"></i>
+                                <span id="errorText"></span>
+                            </div>
+                        </div>
+
+                        <button 
+                            type="submit" 
+                            id="submitBtn"
+                            class="cta-button full-width">
+                            <i class="fas fa-paper-plane"></i>
+                            <span id="btnText">Enviar Mensaje</span>
+                            <i id="btnLoader" class="fas fa-spinner fa-spin hidden"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Información de Contacto -->
+            <div>
+                <!-- Información -->
+                <div class="contact-info-card">
+                    <h2>Información de Contacto</h2>
+                    
+                    <div class="contact-item-wrapper">
+                        <div class="contact-item-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="contact-item-content">
+                            <h3>Dirección</h3>
+                            <p>Av. Providencia 1234<br>Santiago, Chile</p>
+                        </div>
+                    </div>
+
+                    <div class="contact-item-wrapper">
+                        <div class="contact-item-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="contact-item-content">
+                            <h3>Teléfono</h3>
+                            <p>+56 9 1234 5678<br>+56 2 2345 6789</p>
+                        </div>
+                    </div>
+
+                    <div class="contact-item-wrapper">
+                        <div class="contact-item-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="contact-item-content">
+                            <h3>Email</h3>
+                            <p>contacto@apexremedy.cl<br>ventas@apexremedy.cl</p>
+                        </div>
+                    </div>
+
+                    <div class="contact-item-wrapper">
+                        <div class="contact-item-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="contact-item-content">
+                            <h3>Horario de Atención</h3>
+                            <p>
+                                Lunes a Viernes: 9:00 - 18:00<br>
+                                Sábados: 10:00 - 14:00<br>
+                                Domingos: Cerrado
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Redes Sociales -->
+                <div class="contact-info-card">
+                    <h2>Síguenos en Redes Sociales</h2>
+                    
+                    <div class="social-links">
+                        <a href="#" class="social-link facebook" title="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="social-link instagram" title="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="social-link twitter" title="Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="social-link whatsapp" title="WhatsApp">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Mapa -->
+                <div class="contact-info-card">
+                    <h2>Ubicación</h2>
+                    <div class="map-placeholder">
+                        <div class="map-placeholder-content">
+                            <i class="fas fa-map-marked-alt"></i>
+                            <p>Mapa de ubicación</p>
+                            <p class="map-note">(Integrar Google Maps aquí)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+        <div class="container">
+            <h2>Preguntas Frecuentes</h2>
+            
+            <div class="faq-grid">
+                <div class="faq-card">
+                    <h3>
+                        <i class="fas fa-question-circle"></i>
+                        ¿Cuál es el tiempo de entrega?
+                    </h3>
+                    <p>Las entregas se realizan entre 24-48 horas en Santiago y 3-5 días hábiles en regiones.</p>
+                </div>
+
+                <div class="faq-card">
+                    <h3>
+                        <i class="fas fa-question-circle"></i>
+                        ¿Aceptan devoluciones?
+                    </h3>
+                    <p>Sí, aceptamos devoluciones dentro de los 7 días desde la compra, siempre que el producto esté en perfectas condiciones.</p>
+                </div>
+
+                <div class="faq-card">
+                    <h3>
+                        <i class="fas fa-question-circle"></i>
+                        ¿Qué métodos de pago aceptan?
+                    </h3>
+                    <p>Aceptamos transferencia bancaria y pago contra entrega en efectivo.</p>
+                </div>
+
+                <div class="faq-card">
+                    <h3>
+                        <i class="fas fa-question-circle"></i>
+                        ¿Hacen despacho a todo Chile?
+                    </h3>
+                    <p>Sí, realizamos envíos a todo el territorio nacional a través de nuestros servicios de courier.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer template -->
+    <div id="footer-container"></div>
+
+    <!-- Scripts -->
+    <script src="./js/api/apiClient.js"></script>
+    <script src="./js/auth.js"></script>
+    <script src="./js/notifications.js"></script>
+    <script src="./js/db_articulos.js"></script>
+    <script src="./js/carrito.js"></script>
+    
+    <script>
+        // Manejar envío del formulario
+        document.getElementById('contactForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            const btnLoader = document.getElementById('btnLoader');
+            
+            // Obtener datos del formulario
+            const formData = {
+                name: document.getElementById('name').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                subject: document.getElementById('subject').value,
+                message: document.getElementById('message').value.trim()
+            };
+            
+            // Validación
+            if (!formData.name || !formData.email || !formData.subject || !formData.message) {
+                showError('Por favor completa todos los campos obligatorios');
+                return;
+            }
+            
+            // Deshabilitar botón
+            submitBtn.disabled = true;
+            btnText.textContent = 'Enviando...';
+            btnLoader.classList.remove('hidden');
+            hideMessages();
+            
+            // Simular envío (aquí integrarías con tu backend)
+            setTimeout(() => {
+                // Éxito
+                showSuccess('¡Mensaje enviado exitosamente! Te contactaremos pronto.');
+                document.getElementById('contactForm').reset();
+                
+                // Resetear botón
+                submitBtn.disabled = false;
+                btnText.textContent = 'Enviar Mensaje';
+                btnLoader.classList.add('hidden');
+                
+                // Log para desarrollo
+                console.log('Datos del formulario:', formData);
+                
+                // TODO: Integrar con endpoint de backend para enviar email
+                // await api.request('/contact', {
+                //     method: 'POST',
+                //     body: JSON.stringify(formData)
+                // });
+            }, 1500);
+        });
+        
+        // Funciones auxiliares
+        function showSuccess(message) {
+            const container = document.getElementById('messageContainer');
+            const successMsg = document.getElementById('successMessage');
+            const successText = document.getElementById('successText');
+            
+            successText.textContent = message;
+            successMsg.classList.remove('hidden');
+            container.classList.remove('hidden');
+            
+            // Scroll al mensaje
+            successMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Auto-ocultar después de 5 segundos
+            setTimeout(() => {
+                successMsg.classList.add('hidden');
+            }, 5000);
+        }
+        
+        function showError(message) {
+            const container = document.getElementById('messageContainer');
+            const errorMsg = document.getElementById('errorMessage');
+            const errorText = document.getElementById('errorText');
+            
+            errorText.textContent = message;
+            errorMsg.classList.remove('hidden');
+            container.classList.remove('hidden');
+            
+            // Scroll al mensaje
+            errorMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        
+        function hideMessages() {
+            document.getElementById('successMessage').classList.add('hidden');
+            document.getElementById('errorMessage').classList.add('hidden');
+        }
+    </script>
+
+<div id="cartSidebar" class="cart-sidebar">
+    <div class="cart-header">
+      <h3><i class="fas fa-shopping-cart"></i> Carrito de Compras</h3>
+      <button id="closeCart" class="cta-button" style="padding: 6px 12px;">Cerrar</button>
+    </div>
+    <div id="cartItems" class="cart-items"></div>
+    <div class="cart-total">
+      <div class="total-amount" id="cartTotal">Total: $0</div>
+      <a href="./carrito.html" class="cta-button full-width">Ver Carrito Completo</a>
+    </div>
+  </div>
+  <div id="cartOverlay" class="cart-overlay" style="display: none;"></div>
+
+</body>
+</html>

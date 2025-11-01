@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" type="image/png" href="./assets/images/logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Apexremedy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./style/css_home.css">
+    <link rel="stylesheet" href="./style/checkout.css">
+    <script src="./js/config.js"></script>
+    <script src="./js/utils.js"></script>
+    <script defer src="./js/template.js"></script>
+</head>
+<body>
+    <!-- Header template -->
+    <div id="header-container"></div>
+
+    <!-- Header Section -->
+    <section class="shop-header">
+        <div class="container">
+            <h1>
+                <i class="fas fa-shopping-bag"></i>Finalizar Compra
+            </h1>
+            <p>
+                Completa tu orden de forma segura
+            </p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container checkout-container" style="max-width: 1400px; margin: 0 auto; padding: 40px 20px;">
+        <div class="checkout-grid" style="display: grid; grid-template-columns: 2fr 1fr; gap: 32px; align-items: start;">
+            
+            <!-- Formulario de Checkout -->
+            <div>
+                
+                <!-- Información de Entrega -->
+                <div class="checkout-section">
+                    <h2 class="checkout-title">
+                        <i class="fas fa-shipping-fast"></i>
+                        Información de Entrega
+                    </h2>
+                    
+                    <form id="checkoutForm">
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <!-- Nombre Completo -->
+                            <div class="md:col-span-2">
+                                <label class="checkout-label">
+                                    Nombre Completo *
+                                </label>
+                                <input type="text" 
+                                       id="customerName" 
+                                       required 
+                                       class="checkout-input"
+                                       placeholder="Juan Pérez González">
+                            </div>
+                            
+                            <!-- Email -->
+                            <div>
+                                <label class="checkout-label">
+                                    Email *
+                                </label>
+                                <input type="email" 
+                                       id="customerEmail" 
+                                       required 
+                                       class="checkout-input"
+                                       placeholder="tu@email.com">
+                            </div>
+                            
+                            <!-- Teléfono -->
+                            <div>
+                                <label class="checkout-label">
+                                    Teléfono *
+                                </label>
+                                <input type="tel" 
+                                       id="customerPhone" 
+                                       required 
+                                       class="checkout-input"
+                                       placeholder="+56 9 1234 5678">
+                            </div>
+                            
+                            <!-- Dirección de Entrega -->
+                            <div class="md:col-span-2">
+                                <label class="checkout-label">
+                                    Dirección de Entrega *
+                                </label>
+                                <textarea id="customerAddress" 
+                                          required 
+                                          rows="3" 
+                                          class="checkout-textarea"
+                                          placeholder="Calle Principal 123, Depto 456, Comuna, Región"></textarea>
+                                <p class="mt-1 text-xs text-gray-500">
+                                    <i class="fas fa-info-circle mr-1"></i>
+                                    Incluye número de depto/casa, comuna y región
+                                </p>
+                            </div>
+                            
+                            <!-- Notas del Pedido -->
+                            <div class="md:col-span-2">
+                                <label class="checkout-label">
+                                    Notas del Pedido (Opcional)
+                                </label>
+                                <textarea id="orderNotes" 
+                                          rows="3" 
+                                          placeholder="Instrucciones especiales para la entrega, referencias del lugar, horarios preferidos, etc."
+                                          class="checkout-textarea"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Método de Pago -->
+                <div class="checkout-section">
+                    <h2 class="checkout-title">
+                        <i class="fas fa-credit-card"></i>
+                        Método de Pago
+                    </h2>
+                    
+                    <div class="space-y-3">
+                        <!-- Transferencia Bancaria -->
+                        <label class="flex items-center p-4 border-2 border-green-500 bg-green-50 rounded-lg cursor-pointer hover:border-green-600 transition group">
+                            <input type="radio" 
+                                   name="payment" 
+                                   value="transfer" 
+                                   checked 
+                                   class="mr-3 w-5 h-5 text-green-600 focus:ring-green-500">
+                            <div class="flex-1">
+                                <div class="font-semibold text-gray-800 flex items-center">
+                                    Transferencia Bancaria
+                                    <span class="ml-2 text-xs bg-green-600 text-white px-2 py-1 rounded-full">Recomendado</span>
+                                </div>
+                                <div class="text-sm text-gray-600 mt-1">
+                                    Recibirás los datos bancarios después de confirmar
+                                </div>
+                            </div>
+                            <i class="fas fa-university text-3xl text-green-600 group-hover:scale-110 transition-transform"></i>
+                        </label>
+                        
+                        <!-- Pago Contra Entrega -->
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-green-500 transition group">
+                            <input type="radio" 
+                                   name="payment" 
+                                   value="cash" 
+                                   class="mr-3 w-5 h-5 text-green-600 focus:ring-green-500">
+                            <div class="flex-1">
+                                <div class="font-semibold text-gray-800">Pago Contra Entrega</div>
+                                <div class="text-sm text-gray-600 mt-1">
+                                    Paga en efectivo al recibir tu pedido
+                                </div>
+                            </div>
+                            <i class="fas fa-money-bill-wave text-3xl text-gray-400 group-hover:text-green-600 group-hover:scale-110 transition-all"></i>
+                        </label>
+                    </div>
+
+                    <!-- Información de Seguridad -->
+                    <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div class="flex items-start">
+                            <i class="fas fa-shield-alt text-blue-600 text-xl mr-3 mt-1"></i>
+                            <div class="text-sm text-blue-900">
+                                <strong>Compra 100% Segura:</strong> Tus datos están protegidos con encriptación SSL. 
+                                Nunca compartimos información personal con terceros.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Beneficios -->
+                    <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+                        <div class="p-3 bg-gray-50 rounded-lg">
+                            <i class="fas fa-truck text-green-600 text-2xl mb-2"></i>
+                            <p class="text-xs text-gray-600 font-medium">Envío Rápido</p>
+                        </div>
+                        <div class="p-3 bg-gray-50 rounded-lg">
+                            <i class="fas fa-undo text-green-600 text-2xl mb-2"></i>
+                            <p class="text-xs text-gray-600 font-medium">Devolución Fácil</p>
+                        </div>
+                        <div class="p-3 bg-gray-50 rounded-lg">
+                            <i class="fas fa-headset text-green-600 text-2xl mb-2"></i>
+                            <p class="text-xs text-gray-600 font-medium">Soporte 24/7</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Términos y Condiciones de Envío -->
+                <div class="terms-container">
+                    <h2 class="checkout-title">
+                        <i class="fas fa-file-contract"></i>
+                        Términos y Condiciones de Envío
+                    </h2>
+                    
+                    <div class="terms-content">
+                        <div class="space-y-3 text-sm text-gray-700">
+                            <div>
+                                <h4 class="font-semibold text-gray-800 mb-1">1. Despacho en el Mismo Día Hábil</h4>
+                                <p>Todo pedido cuyo pago o aporte sea confirmado antes de las 12:00 p.m. (mediodía) será despachado y/o entregado en el transcurso del mismo día hábil (lunes a viernes).</p>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800 mb-1">2. Días de Servicio</h4>
+                                <p>Nuestros servicios de envío y entrega se realizan exclusivamente de Lunes a Viernes.</p>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800 mb-1">3. Costo y Disponibilidad (Región Metropolitana)</h4>
+                                <p>Tanto el costo como la disponibilidad del servicio de entrega dependerán de la comuna de destino. Se recomienda consultar ambos antes de finalizar el pedido.</p>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800 mb-1">4. Promoción: Despacho Gratuito</h4>
+                                <p>Los pedidos con aportes iguales o superiores a $100.000 (cien mil pesos) tendrán despacho gratuito dentro del anillo de América Vespucio.</p>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800 mb-1">5. Envíos a Regiones</h4>
+                                <p>Todos los envíos a regiones se realizarán bajo la modalidad "Por Pagar", siendo el costo asumido por el cliente al momento de recibir el paquete.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Checkbox de Aceptación -->
+                    <label class="terms-checkbox">
+                        <input type="checkbox" 
+                               id="acceptTerms" 
+                               required>
+                        <span>
+                            <span class="required-asterisk">*</span> He leído y acepto los <strong>Términos y Condiciones de Envío</strong> y entiendo que el despacho se realizará según las condiciones establecidas.
+                        </span>
+                    </label>
+                </div>
+            </div>
+
+<!-- Resumen del Pedido -->
+<div>
+    <div class="checkout-section" style="position: sticky; top: 100px;">
+        <h2 class="checkout-title">
+            <i class="fas fa-receipt"></i>
+            Resumen del Pedido
+        </h2>
+        
+        <!-- Productos -->
+        <div id="orderItems" class="space-y-3 mb-4 max-h-60 overflow-y-auto border-b pb-4">
+            <div class="text-center py-4 text-gray-400">
+                <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                <p class="text-sm">Cargando productos...</p>
+            </div>
+        </div>
+        
+        <!-- Totales -->
+        <div class="space-y-3 mb-6">
+            <div class="flex justify-between text-gray-600">
+                <span>Subtotal:</span>
+                <span id="summarySubtotal" class="font-semibold">$0</span>
+            </div>
+            <div class="flex justify-between text-gray-600">
+                <span>IVA (19%):</span>
+                <span id="summaryTax" class="font-semibold">$0</span>
+            </div>
+            <div class="flex justify-between text-gray-600">
+                <span class="flex items-center">
+                    Envío:
+                    <i class="fas fa-info-circle text-xs ml-1 text-gray-400" title="Calculado al confirmar"></i>
+                </span>
+                <span class="font-semibold text-green-600">Gratis</span>
+            </div>
+            <div class="border-t-2 pt-3 flex justify-between text-xl font-bold">
+                <span class="text-gray-800">Total:</span>
+                <span id="summaryTotal" class="text-green-600">$0</span>
+            </div>
+        </div>
+        
+        <!-- Botón de Compra -->
+        <button onclick="submitOrder()" 
+                id="submitBtn" 
+                class="checkout-btn">
+            <i class="fas fa-lock mr-2"></i>Confirmar Pedido
+        </button>
+        
+        <!-- Garantías -->
+        <div class="mt-6 space-y-3 text-sm text-gray-600">
+            <div class="flex items-center">
+                <i class="fas fa-check-circle text-green-600 mr-2"></i>
+                <span>Envío rápido y seguro</span>
+            </div>
+            <div class="flex items-center">
+                <i class="fas fa-check-circle text-green-600 mr-2"></i>
+                <span>Productos de calidad garantizada</span>
+            </div>
+            <div class="flex items-center">
+                <i class="fas fa-check-circle text-green-600 mr-2"></i>
+                <span>Soporte al cliente 24/7</span>
+            </div>
+            <div class="flex items-center">
+                <i class="fas fa-check-circle text-green-600 mr-2"></i>
+                <span>Política de devolución de 30 días</span>
+            </div>
+        </div>
+
+        <!-- Contacto -->
+        <div class="mt-6 pt-4 border-t text-center text-xs text-gray-500">
+            <p class="mb-1">¿Necesitas ayuda?</p>
+            <p class="font-semibold text-gray-700">
+                <i class="fas fa-phone-alt mr-1"></i>
+                +56 9 1234 5678
+            </p>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- Sección de Confianza -->
+<div class="mt-12 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-8">
+<div class="text-center mb-6">
+    <h3 class="text-2xl font-bold text-gray-800 mb-2">
+        <i class="fas fa-award text-green-600 mr-2"></i>
+        Compra con Confianza
+    </h3>
+    <p class="text-gray-600">Miles de clientes satisfechos confían en nosotros</p>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 text-center">
+    <div class="bg-white rounded-lg p-6 shadow-md">
+        <i class="fas fa-box-open text-green-600 text-4xl mb-3"></i>
+        <h4 class="font-bold text-gray-800 mb-1">+10,000</h4>
+        <p class="text-sm text-gray-600">Pedidos Entregados</p>
+    </div>
+    <div class="bg-white rounded-lg p-6 shadow-md">
+        <i class="fas fa-star text-yellow-500 text-4xl mb-3"></i>
+        <h4 class="font-bold text-gray-800 mb-1">4.8/5</h4>
+        <p class="text-sm text-gray-600">Calificación Promedio</p>
+    </div>
+    <div class="bg-white rounded-lg p-6 shadow-md">
+        <i class="fas fa-users text-blue-600 text-4xl mb-3"></i>
+        <h4 class="font-bold text-gray-800 mb-1">5,000+</h4>
+        <p class="text-sm text-gray-600">Clientes Satisfechos</p>
+    </div>
+    <div class="bg-white rounded-lg p-6 shadow-md">
+        <i class="fas fa-shield-alt text-purple-600 text-4xl mb-3"></i>
+        <h4 class="font-bold text-gray-800 mb-1">100%</h4>
+        <p class="text-sm text-gray-600">Compra Segura</p>
+    </div>
+</div>
+</div>
+</div>
+
+<!-- Footer template -->
+<div id="footer-container"></div>
+
+<!-- Modal de Éxito (Para pago contra entrega) -->
+<div id="successModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+<div class="bg-white rounded-lg shadow-xl max-w-md w-full p-8 text-center animate-fadeIn">
+<div class="mb-4">
+    <div class="bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+        <i class="fas fa-check-circle text-green-600 text-5xl"></i>
+    </div>
+</div>
+<h3 class="text-2xl font-bold text-gray-800 mb-2">¡Pedido Confirmado!</h3>
+<p class="text-gray-600 mb-6">
+    Tu pedido #<span id="orderId" class="font-mono font-bold text-green-600"></span> 
+    ha sido recibido exitosamente.
+</p>
+<div class="space-y-3">
+    <a href="./mis-pedidos.html" 
+       class="block bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold transition shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+        <i class="fas fa-list mr-2"></i>Ver Mis Pedidos
+    </a>
+    <a href="./tienda.html" 
+       class="block bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded-lg font-semibold transition shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+        <i class="fas fa-shopping-bag mr-2"></i>Seguir Comprando
+    </a>
+</div>
+</div>
+</div>
+
+<!-- Scripts -->
+<script src="./js/api/apiClient.js"></script>
+<script src="./js/auth.js"></script>
+<script src="./js/sessionManager.js"></script>
+<script src="./js/notifications.js"></script>
+<script src="./js/carrito.js"></script>
+<script src="./js/checkout.js"></script>
+
+<script>
+// ============================================
+// PROTECCIÓN DE RUTA - REQUIERE AUTENTICACIÓN
+// ============================================
+(function() {
+'use strict';
+function checkAuth() {
+    if (typeof authManager === 'undefined') {
+        console.warn('⚠️ authManager no disponible');
+        window.location.href = './login.html?redirect=checkout';
+        return;
+    }
+    if (!authManager.isAuthenticated()) {
+        notify.warning('Debes iniciar sesión para continuar con tu compra', 'Autenticación Requerida');
+        setTimeout(() => {
+            window.location.href = './login.html?redirect=checkout';
+        }, 2000);
+        return;
+    }
+    console.log('✅ Usuario autenticado');
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', checkAuth);
+} else {
+    checkAuth();
+}
+})();
+</script>
+
+</body>
+</html>

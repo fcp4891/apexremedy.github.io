@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admin - Apexremedy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style/css_admin.css">
+    <link rel="stylesheet" href="style/index.css">
+    <script src="./js/config.js"></script>
+    <script src="./js/utils.js"></script>
+    <script defer src="./js/adminTemplate.js"></script>
+</head>
+<body>
+    <!-- Header se carga automáticamente -->
+    <div id="header-container"></div>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header Section -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">Panel de Administración</h1>
+            <p class="text-gray-600 mt-1">Gestiona usuarios, productos y pedidos desde aquí</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="admin-grid admin-grid-4 admin-mb-3">
+            <div class="admin-stat-card blue">
+                <div class="admin-stat-header">
+                    <div>
+                        <p class="admin-stat-label">Total Usuarios</p>
+                        <p id="totalUsers" class="admin-stat-value">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </p>
+                    </div>
+                    <div class="admin-stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+                <div class="admin-stat-footer">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>Registrados en el sistema</span>
+                </div>
+            </div>
+
+            <div class="admin-stat-card green">
+                <div class="admin-stat-header">
+                    <div>
+                        <p class="admin-stat-label">Productos</p>
+                        <p id="totalProducts" class="admin-stat-value">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </p>
+                    </div>
+                    <div class="admin-stat-icon">
+                        <i class="fas fa-box"></i>
+                    </div>
+                </div>
+                <div class="admin-stat-footer">
+                    <i class="fas fa-boxes"></i>
+                    <span>En el catálogo</span>
+                </div>
+            </div>
+
+            <div class="admin-stat-card yellow">
+                <div class="admin-stat-header">
+                    <div>
+                        <p class="admin-stat-label">Pedidos Pendientes</p>
+                        <p id="pendingOrders" class="admin-stat-value">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </p>
+                    </div>
+                    <div class="admin-stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                </div>
+                <div class="admin-stat-footer">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>Requieren atención</span>
+                </div>
+            </div>
+
+            <div class="admin-stat-card purple">
+                <div class="admin-stat-header">
+                    <div>
+                        <p class="admin-stat-label">Ventas Hoy</p>
+                        <p id="todaySales" class="admin-stat-value">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </p>
+                    </div>
+                    <div class="admin-stat-icon">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                </div>
+                <div class="admin-stat-footer">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Ingresos del día</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="admin-mb-3">
+            <h3 style="font-size: 1.75rem; font-weight: 700; color: var(--admin-primary-red); margin-bottom: 24px; font-family: var(--admin-font-primary);">Acciones Rápidas</h3>
+            <div class="admin-quick-actions">
+                <a href="./dashboard.html" class="admin-quick-action">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Dashboard</h3>
+                    <p>Análisis completo</p>
+                </a>
+
+                <a href="./users.html" class="admin-quick-action">
+                    <i class="fas fa-users"></i>
+                    <h3>Usuarios</h3>
+                    <p>Gestionar usuarios</p>
+                </a>
+
+                <a href="./products.html" class="admin-quick-action">
+                    <i class="fas fa-box"></i>
+                    <h3>Productos</h3>
+                    <p>Catálogo completo</p>
+                </a>
+
+                <a href="./orders.html" class="admin-quick-action">
+                    <i class="fas fa-shopping-cart"></i>
+                    <h3>Pedidos</h3>
+                    <p>Gestionar pedidos</p>
+                </a>
+            </div>
+        </div>
+
+        <!-- Secondary Actions -->
+        <div class="admin-grid admin-grid-3">
+            <div class="admin-card">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                    <h4 style="font-size: 1.25rem; font-weight: 700; color: var(--admin-black); font-family: var(--admin-font-primary);">Mi Perfil</h4>
+                    <i class="fas fa-user-circle" style="font-size: 2rem; color: var(--admin-primary-red);"></i>
+                </div>
+                <p style="color: var(--admin-medium-gray); margin-bottom: 20px;">Actualiza tu información personal y preferencias</p>
+                <a href="./perfil.html" class="admin-btn-primary admin-full-width admin-text-center">
+                    <i class="fas fa-arrow-right"></i>
+                    <span>Ir a Perfil</span>
+                </a>
+            </div>
+
+            <div class="admin-card">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                    <h4 style="font-size: 1.25rem; font-weight: 700; color: var(--admin-black); font-family: var(--admin-font-primary);">Sitio Web</h4>
+                    <i class="fas fa-globe" style="font-size: 2rem; color: var(--admin-primary-red);"></i>
+                </div>
+                <p style="color: var(--admin-medium-gray); margin-bottom: 20px;">Ver el sitio web desde la perspectiva del cliente</p>
+                <a href="../index.html" class="admin-btn-primary admin-full-width admin-text-center">
+                    <i class="fas fa-external-link-alt"></i>
+                    <span>Ver Sitio</span>
+                </a>
+            </div>
+
+            <div class="admin-card">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                    <h4 style="font-size: 1.25rem; font-weight: 700; color: var(--admin-black); font-family: var(--admin-font-primary);">Ayuda</h4>
+                    <i class="fas fa-question-circle" style="font-size: 2rem; color: var(--admin-primary-red);"></i>
+                </div>
+                <p style="color: var(--admin-medium-gray); margin-bottom: 20px;">¿Necesitas ayuda? Revisa la documentación</p>
+                <a href="#" class="admin-btn-primary admin-full-width admin-text-center">
+                    <i class="fas fa-book"></i>
+                    <span>Documentación</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div id="footer-container"></div>
+
+    <!-- Scripts -->
+    <script src="./js/api/apiClient.js"></script>
+    <script src="./js/auth.js"></script>
+    <script src="./js/sessionManager.js"></script>
+    <script src="./js/notifications.js"></script>
+    <script>
+// ============================================
+// PROTECCIÓN DE RUTA - SOLO ADMIN
+// ============================================
+(function() {
+    'use strict';
+    function checkAdminAccess() {
+        if (typeof authManager === 'undefined') {
+            window.location.href = '../login.html';
+            return;
+        }
+        if (!authManager.requireAdmin()) {
+            return; // requireAdmin ya redirige
+        }
+    }
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', checkAdminAccess);
+    } else {
+        checkAdminAccess();
+    }
+})();
+        console.log('🚀 Iniciando admin dashboard...');
+        
+        // CREAR INSTANCIA DE API SI NO EXISTE
+        if (typeof api === 'undefined') {
+            console.log('⚠️ api no existe globalmente, creando instancia...');
+            window.api = new APIClient();
+        }
+        
+        // Verificar que todo esté cargado
+        console.log('✔️ authManager:', typeof authManager);
+        console.log('✔️ api:', typeof api);
+        console.log('✔️ APIClient:', typeof APIClient);
+        
+        // Verificar autenticación y rol de admin
+        function checkAuth() {
+            console.log('🔐 Verificando autenticación...');
+            
+            if (!authManager.isAuthenticated()) {
+                console.log('❌ No autenticado, redirigiendo...');
+                alert('Debes iniciar sesión');
+                window.location.href = '../login.html';
+                return false;
+            }
+            
+            const user = authManager.getCurrentUser();
+            console.log('👤 Usuario:', user);
+            
+            if (!user || user.role !== 'admin') {
+                console.log('❌ No es admin, redirigiendo...');
+                alert('Acceso denegado. Solo administradores.');
+                window.location.href = '../index.html';
+                return false;
+            }
+            
+            // document.getElementById('adminName').textContent = user.name;
+            console.log('✔️ Admin verificado:', user.name);
+            
+            return true;
+        }
+
+        // Cargar estadísticas
+        async function loadStats() {
+            console.log('📊 Cargando estadísticas...');
+            
+            try {
+                const token = authManager.getToken();
+                console.log('🔑 Token:', token ? 'Disponible' : 'No disponible');
+                
+                // 1. Usuarios
+                console.log('📥 Solicitando usuarios...');
+                try {
+                    const usersResponse = await api.request('/users');
+                    console.log('📊 Respuesta usuarios:', usersResponse);
+                    
+                    if (usersResponse.success) {
+                        const users = usersResponse.data?.users || usersResponse.data || [];
+                        const count = Array.isArray(users) ? users.length : usersResponse.count || 0;
+                        document.getElementById('totalUsers').textContent = count;
+                        console.log('✔️ Usuarios:', count);
+                    } else {
+                        document.getElementById('totalUsers').textContent = '0';
+                    }
+                } catch (error) {
+                    console.error('❌ Error usuarios:', error);
+                    console.error('Detalles:', error.message);
+                    document.getElementById('totalUsers').textContent = 'Error';
+                }
+
+                // 2. Productos
+                console.log('📥 Solicitando productos...');
+                try {
+                    const productsResponse = await api.request('/products', 'GET');
+                    console.log('📊 Respuesta productos:', productsResponse);
+                    
+                    if (productsResponse.success) {
+                        const products = productsResponse.data?.products || productsResponse.data || [];
+                        document.getElementById('totalProducts').textContent = products.length;
+                        console.log('✔️ Productos:', products.length);
+                    } else {
+                        document.getElementById('totalProducts').textContent = '0';
+                    }
+                } catch (error) {
+                    console.error('❌ Error productos:', error);
+                    document.getElementById('totalProducts').textContent = '0';
+                }
+
+                // 3. Pedidos
+                console.log('📥 Solicitando pedidos...');
+                try {
+                    const ordersResponse = await api.request('/orders', 'GET');
+                    console.log('📊 Respuesta pedidos:', ordersResponse);
+                    
+                    if (ordersResponse.success) {
+                        const orders = ordersResponse.data?.orders || ordersResponse.data || [];
+                        const pending = orders.filter(o => o.status === 'pending').length;
+                        document.getElementById('pendingOrders').textContent = pending;
+                        
+                        const today = new Date().toISOString().split('T')[0];
+                        const todayOrders = orders.filter(o => o.created_at && o.created_at.startsWith(today));
+                        const todaySales = todayOrders.reduce((sum, o) => sum + (o.total || 0), 0);
+                        document.getElementById('todaySales').textContent = `$${todaySales.toLocaleString()}`;
+                        
+                        console.log('✔️ Pedidos pendientes:', pending);
+                        console.log('✔️ Ventas hoy:', todaySales);
+                    } else {
+                        document.getElementById('pendingOrders').textContent = '0';
+                        document.getElementById('todaySales').textContent = '$0';
+                    }
+                } catch (error) {
+                    console.error('❌ Error pedidos:', error);
+                    document.getElementById('pendingOrders').textContent = '0';
+                    document.getElementById('todaySales').textContent = '$0';
+                }
+                
+                console.log('✔️ Estadísticas cargadas completamente');
+            } catch (error) {
+                console.error('❌ Error general:', error);
+            }
+        }
+
+        // Cerrar sesión
+/*         document.getElementById('logoutBtn').addEventListener('click', () => {
+            if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+                console.log('👋 Cerrando sesión...');
+                authManager.logout();
+            }
+        }); */
+
+        // Inicializar
+        console.log('🏁 Inicializando...');
+        if (checkAuth()) {
+            loadStats();
+        }
+    </script>
+</body>
+</html>

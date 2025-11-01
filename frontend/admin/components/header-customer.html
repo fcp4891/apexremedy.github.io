@@ -1,0 +1,151 @@
+<!-- Header para CLIENTES - Sin enlaces de administración -->
+<nav class="bg-gradient-to-r from-green-700 to-green-800 shadow-xl sticky top-0 z-50">
+    <div class="container mx-auto px-4">
+        <div class="flex items-center justify-between h-16">
+            <!-- Logo y Título -->
+            <div class="flex items-center gap-6">
+                <a href="../index.html" class="flex items-center gap-2 text-white hover:text-green-200 transition-all duration-200 group">
+                    <div class="bg-white bg-opacity-20 p-2 rounded-lg group-hover:bg-opacity-30 transition-all">
+                        <i class="fas fa-user-circle text-xl"></i>
+                    </div>
+                    <span class="text-xl font-bold hidden md:block">Mi Cuenta</span>
+                </a>
+                
+                <span class="text-green-300 hidden lg:block">|</span>
+                <span id="currentPageTitle" class="text-white font-semibold text-lg hidden lg:block">Mi Perfil</span>
+            </div>
+
+            <!-- Menú de Usuario (Cliente) -->
+            <div class="flex items-center gap-2">
+                <!-- Enlaces de navegación para clientes -->
+                <div class="hidden lg:flex items-center gap-1 mr-4">
+                    <a href="../index.html" class="nav-link">
+                        <i class="fas fa-home mr-1"></i>
+                        <span>Inicio</span>
+                    </a>
+                    <a href="../tienda.html" class="nav-link">
+                        <i class="fas fa-store mr-1"></i>
+                        <span>Tienda</span>
+                    </a>
+                    <a href="./perfil.html" class="nav-link active" data-page="perfil">
+                        <i class="fas fa-user-circle mr-1"></i>
+                        <span>Mi Perfil</span>
+                    </a>
+                </div>
+
+                <!-- Menú de Usuario -->
+                <div class="relative group">
+                    <button class="flex items-center gap-3 px-4 py-2 rounded-lg bg-white bg-opacity-10 hover:bg-opacity-20 transition-all duration-200">
+                        <div class="text-right hidden md:block">
+                            <p class="text-xs text-green-200">Cliente</p>
+                            <p id="customerUserName" class="text-sm font-semibold text-white">Cargando...</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-bold shadow-lg">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <i class="fas fa-chevron-down text-white text-xs hidden md:block"></i>
+                    </button>
+                    
+                    <!-- Dropdown Menu -->
+                    <div class="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transform scale-95 group-hover:scale-100 transition-all duration-200 overflow-hidden">
+                        <div class="px-4 py-3 bg-gradient-to-r from-blue-50 to-blue-100 border-b border-blue-200">
+                            <p class="text-sm font-semibold text-gray-800" id="dropdownCustomerName">Cargando...</p>
+                            <p class="text-xs text-gray-600" id="dropdownCustomerEmail">email@example.com</p>
+                        </div>
+                        
+                        <div class="py-2">
+                            <a href="./perfil.html" class="dropdown-item">
+                                <i class="fas fa-user-circle text-blue-600"></i>
+                                <span>Mi Perfil</span>
+                            </a>
+                            <a href="../carrito.html" class="dropdown-item">
+                                <i class="fas fa-shopping-cart text-green-600"></i>
+                                <span>Mi Carrito</span>
+                            </a>
+                            <a href="../tienda.html" class="dropdown-item lg:hidden">
+                                <i class="fas fa-store text-purple-600"></i>
+                                <span>Tienda</span>
+                            </a>
+                            <hr class="my-2 border-gray-200">
+                            <a href="../index.html" class="dropdown-item">
+                                <i class="fas fa-home text-blue-600"></i>
+                                <span>Ir al Inicio</span>
+                            </a>
+                            <hr class="my-2 border-gray-200">
+                            <button onclick="handleAdminLogout()" class="dropdown-item text-red-600 hover:bg-red-50 w-full text-left">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Cerrar Sesión</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="handleAdminLogout()" class="lg:hidden ml-2 bg-red-600 hover:bg-red-700 text-white p-2 rounded-lg transition-all duration-200">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<style>
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 12px;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.2s;
+    position: relative;
+}
+
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: translateY(-1px);
+}
+
+.nav-link.active {
+    background-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40%;
+    height: 3px;
+    background-color: #fbbf24;
+    border-radius: 2px;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    color: #374151;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.dropdown-item:hover {
+    background-color: #f3f4f6;
+    padding-left: 20px;
+}
+
+.dropdown-item i {
+    width: 20px;
+    text-align: center;
+    font-size: 1rem;
+}
+
+.group:hover .group-hover\:opacity-100 { opacity: 1; }
+.group:hover .group-hover\:visible { visibility: visible; }
+.group:hover .group-hover\:scale-100 { transform: scale(1); }
+</style>

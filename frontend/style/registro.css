@@ -1,0 +1,704 @@
+/* === CSS Específico para registro.html === */
+
+/* Contenedor principal */
+.register-container {
+  min-height: calc(100vh - 200px);
+  padding: 60px 20px;
+}
+
+.register-form-wrapper {
+  max-width: 900px;
+}
+
+/* Header del formulario */
+.register-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.register-icon-container {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-green), var(--light-green));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.register-icon-container i {
+  font-size: 2.5rem;
+  color: var(--accent-yellow);
+}
+
+.register-header h2 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--primary-green);
+  margin-bottom: 10px;
+}
+
+.register-header p {
+  color: var(--medium-gray);
+  font-size: 1.1rem;
+}
+
+/* Formulario multi-step */
+.register-form-card {
+  max-width: 100%;
+  padding: 40px;
+}
+
+/* Progress steps */
+.steps-container {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 40px;
+  position: relative;
+}
+
+.steps-progress-line {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--light-gray);
+  z-index: 0;
+}
+
+.progress-bar {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  height: 2px;
+  background: var(--primary-green);
+  z-index: 0;
+  width: 0%;
+  transition: width 0.3s;
+}
+
+.step-indicator {
+  flex: 1;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.step-circle {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 10px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  border: 3px solid white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.step-indicator.active .step-circle {
+  background: var(--primary-green);
+  color: white;
+}
+
+.step-indicator.active p {
+  font-size: 0.85rem;
+  color: var(--primary-green);
+  font-weight: 600;
+}
+
+.step-indicator:not(.active) .step-circle {
+  background: var(--light-gray);
+  color: var(--medium-gray);
+}
+
+.step-indicator:not(.active) p {
+  font-size: 0.85rem;
+  color: var(--medium-gray);
+  font-weight: 600;
+}
+
+/* Form step */
+.form-step {
+  display: block;
+}
+
+.form-step h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-green);
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.form-step h3 i {
+  color: var(--primary-green);
+}
+
+/* Form grid */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+/* Input con icono */
+.input-with-icon {
+  position: relative;
+}
+
+.input-with-icon i {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--medium-gray);
+}
+
+.input-with-icon input {
+  width: 100%;
+  padding: 12px 12px 12px 40px;
+  border: 2px solid var(--light-gray);
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+}
+
+.input-with-icon.password-input input {
+  padding-right: 40px;
+}
+
+.toggle-password-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--medium-gray);
+}
+
+/* Label */
+.form-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--accent-black);
+}
+
+/* Password hint */
+.password-hint {
+  font-size: 0.85rem;
+  color: var(--medium-gray);
+  margin-top: 4px;
+}
+
+/* Checkbox de términos */
+.terms-checkbox-label {
+  display: flex;
+  align-items: start;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.terms-checkbox-label input[type="checkbox"] {
+  margin-right: 10px;
+  margin-top: 4px;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.terms-checkbox-label span {
+  font-size: 0.95rem;
+  color: var(--accent-black);
+}
+
+.terms-checkbox-label a {
+  color: var(--primary-green);
+  font-weight: 600;
+}
+
+/* Botones de navegación */
+.step-buttons {
+  margin-top: 32px;
+  display: flex;
+  gap: 12px;
+}
+
+/* Documentos */
+.document-section-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-green);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.document-section-description {
+  color: var(--medium-gray);
+  margin-bottom: 32px;
+  font-size: 0.95rem;
+}
+
+.document-upload-area {
+  margin-bottom: 24px;
+}
+
+.document-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--accent-black);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.document-label i {
+  color: #10b981;
+}
+
+.upload-zone {
+  border: 2px dashed var(--light-gray);
+  border-radius: var(--border-radius);
+  padding: 30px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  background: var(--white);
+}
+
+.upload-placeholder {
+  display: block;
+}
+
+.upload-placeholder i {
+  font-size: 3rem;
+  color: var(--medium-gray);
+  margin-bottom: 12px;
+  display: block;
+}
+
+.upload-placeholder p:first-of-type {
+  color: var(--medium-gray);
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.upload-placeholder p:last-of-type {
+  color: var(--medium-gray);
+  font-size: 0.85rem;
+  margin-bottom: 16px;
+}
+
+.upload-preview {
+  display: none;
+}
+
+.upload-preview i {
+  font-size: 3rem;
+  color: var(--primary-green);
+  margin-bottom: 12px;
+  display: block;
+}
+
+.upload-preview p:first-of-type {
+  font-weight: 600;
+  color: var(--primary-green);
+  margin-bottom: 8px;
+}
+
+.upload-preview p:last-of-type {
+  font-size: 0.85rem;
+  color: var(--medium-gray);
+  margin-bottom: 16px;
+}
+
+.remove-doc-btn {
+  border-color: var(--error);
+  color: var(--error);
+}
+
+/* Footer del formulario */
+.register-footer {
+  margin-top: 32px;
+  text-align: center;
+  padding-top: 24px;
+  border-top: 1px solid var(--light-gray);
+}
+
+.register-footer p {
+  color: var(--medium-gray);
+}
+
+.login-link {
+  color: var(--primary-green);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* Estados de los indicadores de paso */
+.step-indicator.completed .step-circle {
+    background: var(--primary-green);
+    color: white;
+}
+
+.step-indicator.completed p {
+    color: var(--primary-green);
+}
+
+.step-indicator.active .step-circle {
+    background: var(--primary-green);
+    color: white;
+}
+
+.step-indicator.active p {
+    color: var(--primary-green);
+}
+
+.step-indicator.pending .step-circle {
+    background: var(--light-gray);
+    color: var(--medium-gray);
+}
+
+.step-indicator.pending p {
+    color: var(--medium-gray);
+}
+
+/* Zonas de carga de documentos */
+.upload-zone {
+    transition: all 0.3s ease;
+}
+
+.upload-zone:hover {
+    border-color: var(--primary-green) !important;
+    background: rgba(141, 82, 59, 0.05) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(141, 82, 59, 0.1);
+}
+
+.upload-zone.dragging {
+    border-color: var(--primary-green) !important;
+    background: rgba(141, 82, 59, 0.1) !important;
+    transform: scale(1.02);
+}
+
+/* Clase hidden */
+.hidden {
+    display: none !important;
+}
+
+/* Animación de entrada para los pasos */
+.form-step {
+    animation: fadeInSlide 0.4s ease-out;
+}
+
+@keyframes fadeInSlide {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Animación de la barra de progreso */
+#progressBar {
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Estilos para los botones de documento */
+.document-upload-area .secondary-button {
+    transition: all 0.3s ease;
+}
+
+.document-upload-area .secondary-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Preview de archivos */
+#recetaPreview,
+#carnetPreview,
+#certificadoPreview {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Inputs con focus */
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="tel"]:focus,
+input[type="password"]:focus {
+    border-color: var(--primary-green) !important;
+    box-shadow: 0 0 0 3px rgba(141, 82, 59, 0.1);
+    outline: none;
+}
+
+/* Checkbox personalizado */
+input[type="checkbox"]:checked {
+    accent-color: var(--primary-green);
+}
+
+/* Botón de toggle password */
+#togglePassword {
+    transition: color 0.2s;
+}
+
+#togglePassword:hover {
+    color: var(--primary-green) !important;
+}
+
+/* Loading spinner */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.fa-spinner {
+    animation: spin 1s linear infinite;
+}
+
+/* Efecto al subir archivo */
+@keyframes fileUploadSuccess {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.upload-zone.success {
+    animation: fileUploadSuccess 0.3s ease-out;
+}
+
+/* Efecto de pulse para documentos requeridos */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+.document-upload-area label i {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* Transiciones suaves para todos los elementos interactivos */
+button,
+a,
+input,
+.upload-zone {
+    transition: all 0.3s ease;
+}
+
+/* Mejora de accesibilidad: focus visible */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+    outline: 2px solid var(--primary-green);
+    outline-offset: 2px;
+}
+
+/* Estilo para el link de términos */
+a[href="#"] {
+    transition: color 0.2s ease;
+}
+
+a[href="#"]:hover {
+    color: var(--light-green) !important;
+    text-decoration: underline;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+/* Tablet y Mobile */
+@media (max-width: 768px) {
+    .register-container {
+        padding: 40px 16px;
+    }
+    
+    .register-form-wrapper {
+        max-width: 100%;
+    }
+    
+    .register-header h2 {
+        font-size: 2rem;
+    }
+    
+    .register-icon-container {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .register-icon-container i {
+        font-size: 2rem;
+    }
+    
+    .register-form-card {
+        padding: 24px 20px;
+    }
+    
+    .steps-container {
+        margin-bottom: 30px;
+    }
+    
+    .step-indicator p {
+        font-size: 0.7rem;
+    }
+    
+    .step-circle {
+        width: 35px;
+        height: 35px;
+        font-size: 0.9rem;
+    }
+    
+    .form-step h3,
+    .document-section-title {
+        font-size: 1.25rem;
+    }
+    
+    .form-grid-2 {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .upload-zone {
+        padding: 20px;
+    }
+    
+    .upload-placeholder i {
+        font-size: 2.5rem;
+    }
+    
+    .step-buttons {
+        flex-direction: column;
+    }
+    
+    .step-buttons .cta-button,
+    .step-buttons .secondary-button {
+        width: 100%;
+    }
+    
+    .document-section-description {
+        font-size: 0.9rem;
+    }
+}
+
+/* Mobile Pequeño */
+@media (max-width: 480px) {
+    .register-container {
+        padding: 30px 12px;
+    }
+    
+    .register-header h2 {
+        font-size: 1.75rem;
+    }
+    
+    .register-icon-container {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .register-icon-container i {
+        font-size: 1.75rem;
+    }
+    
+    .register-form-card {
+        padding: 20px 16px;
+    }
+    
+    .form-step h3,
+    .document-section-title {
+        font-size: 1.1rem;
+    }
+    
+    .form-label {
+        font-size: 0.9rem;
+    }
+    
+    .input-with-icon input {
+        padding: 10px 10px 10px 36px;
+        font-size: 0.95rem;
+    }
+    
+    .input-with-icon i {
+        left: 10px;
+        font-size: 0.9rem;
+    }
+    
+    .password-hint {
+        font-size: 0.8rem;
+    }
+    
+    .terms-checkbox-label span {
+        font-size: 0.85rem;
+    }
+    
+    .upload-zone {
+        padding: 16px;
+    }
+    
+    .upload-placeholder i {
+        font-size: 2rem;
+    }
+    
+    .upload-placeholder p {
+        font-size: 0.85rem;
+    }
+    
+    .cta-button,
+    .secondary-button {
+        padding: 10px 16px;
+        font-size: 0.9rem;
+    }
+    
+    .step-circle {
+        width: 32px;
+        height: 32px;
+        font-size: 0.85rem;
+    }
+    
+    .steps-progress-line,
+    .progress-bar {
+        top: 16px;
+    }
+}
+

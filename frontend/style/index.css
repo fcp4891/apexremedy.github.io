@@ -1,0 +1,72 @@
+/* === CSS Específico para index.html === */
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Mejorar visibilidad del carrito sidebar en index */
+.cart-sidebar {
+    z-index: 1100;
+}
+
+.cart-overlay {
+    z-index: 1050;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+/* Mobile */
+@media (max-width: 768px) {
+    /* Hero section */
+    .hero {
+        min-height: 50vh;
+    }
+    
+    .hero-overlay {
+        padding: 40px 16px;
+    }
+    
+    /* Registro catálogo section */
+    .registro-catalogo {
+        padding: 40px 16px;
+    }
+    
+    .registro-catalogo-grid {
+        grid-template-columns: 1fr !important;
+        gap: 24px;
+    }
+    
+    /* Productos preview */
+    .products-preview {
+        padding: 40px 0;
+    }
+    
+    /* Modales de productos */
+    .product-modal-content {
+        max-width: 95vw;
+        padding: 20px;
+    }
+    
+    .product-modal-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* Extra Small Mobile */
+@media (max-width: 480px) {
+    .hero-overlay {
+        padding: 30px 12px;
+    }
+    
+    .registro-catalogo {
+        padding: 30px 12px;
+    }
+    
+    .product-modal-content {
+        padding: 16px;
+        max-width: 100vw;
+    }
+}
+

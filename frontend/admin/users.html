@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Usuarios - Apexremedy Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style/css_admin.css">
+    <link rel="stylesheet" href="style/users.css">
+    <script src="./js/config.js"></script>
+    <script src="./js/utils.js"></script>
+    <script defer src="./js/adminTemplate.js"></script>
+</head>
+<body>
+    <!-- Header se carga automáticamente -->
+    <div id="header-container"></div>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header Section -->
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-800">Gestión de Usuarios</h1>
+                <p class="text-gray-600 mt-1">Administra y aprueba cuentas de usuario</p>
+            </div>
+            <button onclick="showApprovalGuide()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg font-semibold transition flex items-center gap-2" title="Guía de aprobación de usuarios">
+                <i class="fas fa-info-circle"></i>
+                <span>Guía de Aprobación</span>
+            </button>
+        </div>
+
+        <!-- Estadísticas -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Total Usuarios</p>
+                        <p id="totalUsers" class="text-3xl font-bold text-gray-800">0</p>
+                    </div>
+                    <div class="bg-blue-100 p-4 rounded-full">
+                        <i class="fas fa-users text-blue-600 text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Pendientes</p>
+                        <p id="pendingUsers" class="text-3xl font-bold text-yellow-600">0</p>
+                    </div>
+                    <div class="bg-yellow-100 p-4 rounded-full">
+                        <i class="fas fa-clock text-yellow-600 text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Aprobados</p>
+                        <p id="approvedUsers" class="text-3xl font-bold text-green-600">0</p>
+                    </div>
+                    <div class="bg-green-100 p-4 rounded-full">
+                        <i class="fas fa-check-circle text-green-600 text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Rechazados</p>
+                        <p id="rejectedUsers" class="text-3xl font-bold text-red-600">0</p>
+                    </div>
+                    <div class="bg-red-100 p-4 rounded-full">
+                        <i class="fas fa-times-circle text-red-600 text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <input type="text" id="searchInput" placeholder="Buscar por nombre o email..." 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                </div>
+                <select id="statusFilter" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                    <option value="">Todos los estados</option>
+                    <option value="pending">Pendientes</option>
+                    <option value="approved">Aprobados</option>
+                    <option value="rejected">Rechazados</option>
+                </select>
+                <select id="roleFilter" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                    <option value="">Todos los roles</option>
+                    <option value="customer">Clientes</option>
+                    <option value="admin">Administradores</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Tabla de Usuarios -->
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50 border-b border-gray-200">
+                        <tr>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">ID</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Usuario</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Contacto</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Rol</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Estado</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Registro</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTable" class="divide-y divide-gray-200">
+                        <tr>
+                            <td colspan="7" class="px-6 py-12 text-center">
+                                <i class="fas fa-spinner fa-spin text-4xl text-green-600"></i>
+                                <p class="text-gray-500 mt-2">Cargando usuarios...</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Ver Documentos -->
+    <div id="documentsModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">Documentos del Usuario</h2>
+                    <button onclick="closeDocumentsModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+
+                <div id="documentsContent" class="space-y-6">
+                    <!-- Contenido dinámico -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Aprobar -->
+    <div id="approveModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">Aprobar Cuenta</h2>
+                    <button onclick="closeApproveModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+
+                <form id="approveForm">
+                    <input type="hidden" id="approveUserId">
+                    
+                    <p class="text-gray-600 mb-4">
+                        ¿Estás seguro de aprobar la cuenta de <strong id="approveUserName"></strong>?
+                    </p>
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Notas del Administrador (opcional)</label>
+                        <textarea id="approveNotes" rows="3" 
+                                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                                  placeholder="Agregar notas internas..."></textarea>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <button type="submit" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold">
+                            <i class="fas fa-check mr-2"></i>Aprobar
+                        </button>
+                        <button type="button" onclick="closeApproveModal()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 rounded-lg font-semibold">
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Rechazar -->
+    <div id="rejectModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">Rechazar Cuenta</h2>
+                    <button onclick="closeRejectModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+
+                <form id="rejectForm">
+                    <input type="hidden" id="rejectUserId">
+                    
+                    <p class="text-gray-600 mb-4">
+                        Vas a rechazar la cuenta de <strong id="rejectUserName"></strong>.
+                    </p>
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Razón del Rechazo *</label>
+                        <textarea id="rejectReason" rows="3" required
+                                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"
+                                  placeholder="Especifica la razón del rechazo..."></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Notas Internas (opcional)</label>
+                        <textarea id="rejectNotes" rows="2"
+                                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"
+                                  placeholder="Notas adicionales..."></textarea>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <button type="submit" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-semibold">
+                            <i class="fas fa-times mr-2"></i>Rechazar
+                        </button>
+                        <button type="button" onclick="closeRejectModal()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 rounded-lg font-semibold">
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+<!-- Modal Editar Usuario -->
+<div id="editModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">Editar Usuario</h2>
+                <button onclick="closeEditModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+
+            <form id="editForm">
+                <input type="hidden" id="editUserId">
+                
+                <div class="space-y-4">
+                    <!-- Nombre -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nombre Completo *</label>
+                        <input type="text" id="editName" required
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                    </div>
+
+                    <!-- Email -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                        <input type="email" id="editEmail" required
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                    </div>
+
+                    <!-- Teléfono y RUT -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Teléfono</label>
+                            <input type="tel" id="editPhone"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                                   placeholder="+56912345678">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">RUT</label>
+                            <input type="text" id="editRut"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                                   placeholder="12345678-9">
+                        </div>
+                    </div>
+
+                    <!-- Rol -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Rol *</label>
+                        <select id="editRole" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                            <option value="customer">Cliente</option>
+                            <option value="admin">Administrador</option>
+                        </select>
+                    </div>
+
+                    <!-- Estado de Cuenta -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Estado de Cuenta *</label>
+                        <select id="editAccountStatus" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                            <option value="pending">Pendiente</option>
+                            <option value="approved">Aprobado</option>
+                            <option value="rejected">Rechazado</option>
+                        </select>
+                        <p class="text-xs text-gray-500 mt-1">Cambiar el estado aquí actualizará el acceso del usuario</p>
+                    </div>
+
+                    <!-- Info adicional -->
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-info-circle text-blue-600 text-xl mt-1"></i>
+                            <div class="text-sm text-blue-800">
+                                <p class="font-semibold mb-1">Información</p>
+                                <ul class="space-y-1">
+                                    <li>• El email debe ser único en el sistema</li>
+                                    <li>• Los cambios se aplicarán inmediatamente</li>
+                                    <li>• El usuario recibirá notificación de cambios</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex gap-3 mt-6">
+                    <button type="submit" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg font-semibold transition">
+                        <i class="fas fa-save mr-2"></i>Guardar Cambios
+                    </button>
+                    <button type="button" onclick="closeEditModal()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 rounded-lg font-semibold transition">
+                        Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+    <!-- Footer -->
+    <div id="footer-container"></div>
+
+    <!-- Scripts -->
+    <script src="./js/api/apiClient.js"></script>
+    <script src="./js/auth.js"></script>
+    <script src="./js/sessionManager.js"></script>
+    <script src="./js/notifications.js"></script>
+    
+    <script>
+        // ============================================
+        // PROTECCIÓN DE RUTA - SOLO ADMIN
+        // ============================================
+        (function() {
+            'use strict';
+            function checkAdminAccess() {
+                if (typeof authManager === 'undefined') {
+                    window.location.href = '../login.html';
+                    return;
+                }
+                if (!authManager.requireAdmin()) {
+                    return;
+                }
+            }
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', checkAdminAccess);
+            } else {
+                checkAdminAccess();
+            }
+        })();
+        
+        let allUsers = [];
+        let filteredUsers = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!authManager.requireAdmin()) {
+                return;
+            }
+            loadUsers();
+            setupFilters();
+        });
+
+// Cargar usuarios
+async function loadUsers() {
+    try {
+        console.log('📥 Cargando usuarios...');
+        console.log('🔍 API object:', window.api);
+        
+        // Asegurarse de que api está disponible
+        if (typeof window.api === 'undefined') {
+            console.error('❌ window.api no está definido');
+            notify.error('Error: API no está disponible');
+            return;
+        }
+        
+        const response = await window.api.getUsers();
+        
+        console.log('📦 Respuesta del servidor:', response);
+        
+        if (response.success) {
+            allUsers = response.data.users || [];
+            console.log('👥 Usuarios obtenidos (raw):', allUsers);
+            
+            // 🔴 IMPORTANTE: Asegurarse de que todos tengan account_status
+            allUsers = allUsers.map(user => {
+                console.log('👤 Usuario sin procesar:', user);
+                return {
+                    ...user,
+                    account_status: user.account_status || 'pending' // Default si no existe
+                };
+            });
+            
+            console.log('✅ Usuarios procesados:', allUsers);
+            
+            filteredUsers = [...allUsers];
+            updateStats();
+            displayUsers();
+            
+            console.log('✅ Usuarios cargados:', allUsers.length);
+        } else {
+            throw new Error(response.message || 'Error al cargar usuarios');
+        }
+    } catch (error) {
+        console.error('❌ Error al cargar usuarios:', error);
+        notify.error('Error al cargar usuarios: ' + error.message);
+    }
+}
+
+        // Actualizar estadísticas
+        function updateStats() {
+            document.getElementById('totalUsers').textContent = allUsers.length;
+            document.getElementById('pendingUsers').textContent = allUsers.filter(u => u.account_status === 'pending').length;
+            document.getElementById('approvedUsers').textContent = allUsers.filter(u => u.account_status === 'approved').length;
+            document.getElementById('rejectedUsers').textContent = allUsers.filter(u => u.account_status === 'rejected').length;
+        }
+
+        // Configurar filtros
+        function setupFilters() {
+            let searchTimeout;
+            const searchInput = document.getElementById('searchInput');
+            
+            searchInput.addEventListener('input', () => {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(applyFilters, 300);
+            });
+
+            document.getElementById('statusFilter').addEventListener('change', applyFilters);
+            document.getElementById('roleFilter').addEventListener('change', applyFilters);
+        }
+
+        // Aplicar filtros
+        function applyFilters() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const status = document.getElementById('statusFilter').value;
+            const role = document.getElementById('roleFilter').value;
+
+            filteredUsers = allUsers.filter(user => {
+                const matchSearch = !search || 
+                    user.name.toLowerCase().includes(search) || 
+                    user.email.toLowerCase().includes(search);
+                const matchStatus = !status || user.account_status === status;
+                const matchRole = !role || user.role === role;
+                
+                return matchSearch && matchStatus && matchRole;
+            });
+
+            displayUsers();
+        }
+
+        // Mostrar usuarios
+// Mostrar usuarios
+function displayUsers() {
+    const tbody = document.getElementById('usersTable');
+    
+    if (filteredUsers.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" class="px-6 py-12 text-center">
+                    <i class="fas fa-users text-6xl text-gray-300 mb-4"></i>
+                    <p class="text-xl text-gray-500">No se encontraron usuarios</p>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    tbody.innerHTML = filteredUsers.map(user => {
+        const statusColors = {
+            'pending': 'bg-yellow-100 text-yellow-800',
+            'approved': 'bg-green-100 text-green-800',
+            'rejected': 'bg-red-100 text-red-800'
+        };
+
+        const statusIcons = {
+            'pending': 'fa-clock',
+            'approved': 'fa-check-circle',
+            'rejected': 'fa-times-circle'
+        };
+
+        const statusLabels = {
+            'pending': 'Pendiente',
+            'approved': 'Aprobado',
+            'rejected': 'Rechazado'
+        };
+
+        return `
+            <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 text-sm font-medium text-gray-900">#${user.id}</td>
+                <td class="px-6 py-4">
+                    <div>
+                        <p class="text-sm font-medium text-gray-900">${user.name}</p>
+                        <p class="text-sm text-gray-500">${user.email}</p>
+                    </div>
+                </td>
+                <td class="px-6 py-4">
+                    <div class="text-sm text-gray-900">
+                        ${user.phone ? `<p><i class="fas fa-phone mr-1"></i>${user.phone}</p>` : ''}
+                        ${user.rut ? `<p class="text-gray-500"><i class="fas fa-id-card mr-1"></i>${user.rut}</p>` : ''}
+                    </div>
+                </td>
+                <td class="px-6 py-4">
+                    <span class="px-3 py-1 text-xs font-semibold rounded-full ${user.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}">
+                        ${user.role === 'admin' ? 'Admin' : 'Cliente'}
+                    </span>
+                </td>
+                <td class="px-6 py-4">
+                    <span class="px-3 py-1 text-xs font-semibold rounded-full ${statusColors[user.account_status]}">
+                        <i class="fas ${statusIcons[user.account_status]} mr-1"></i>${statusLabels[user.account_status]}
+                    </span>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-500">
+                    ${new Date(user.created_at).toLocaleDateString('es-CL')}
+                </td>
+                <td class="px-6 py-4 text-sm">
+                    <div class="flex gap-2">
+                        ${user.role !== 'admin' ? `
+                            <!-- Editar siempre visible -->
+                            <button onclick="openEditModal(${user.id})" class="text-indigo-600 hover:text-indigo-800" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            
+                            ${user.account_status === 'pending' ? `
+                                <button onclick="viewDocuments(${user.id})" class="text-blue-600 hover:text-blue-800" title="Ver documentos">
+                                    <i class="fas fa-file-alt"></i>
+                                </button>
+                                <button onclick="openApproveModal(${user.id}, '${user.name}')" class="text-green-600 hover:text-green-800" title="Aprobar">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button onclick="openRejectModal(${user.id}, '${user.name}')" class="text-red-600 hover:text-red-800" title="Rechazar">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                                <button onclick="deleteUser(${user.id}, '${user.name}')" class="text-red-600 hover:text-red-800" title="Eliminar">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            ` : ''}
+                            
+                            ${user.account_status === 'approved' ? `
+                                <button onclick="openRejectModal(${user.id}, '${user.name}')" class="text-red-600 hover:text-red-800" title="Rechazar">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                                <button onclick="setUserPending(${user.id})" class="text-yellow-600 hover:text-yellow-800" title="Marcar como Pendiente">
+                                    <i class="fas fa-clock"></i>
+                                </button>
+                                <button onclick="deleteUser(${user.id}, '${user.name}')" class="text-red-600 hover:text-red-800" title="Eliminar">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            ` : ''}
+                            
+                            ${user.account_status === 'rejected' ? `
+                                <button onclick="openApproveModal(${user.id}, '${user.name}')" class="text-green-600 hover:text-green-800" title="Aprobar">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button onclick="setUserPending(${user.id})" class="text-yellow-600 hover:text-yellow-800" title="Marcar como Pendiente">
+                                    <i class="fas fa-clock"></i>
+                                </button>
+                                <button onclick="deleteUser(${user.id}, '${user.name}')" class="text-red-600 hover:text-red-800" title="Eliminar">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            ` : ''}
+                        ` : `
+                            <button onclick="openEditModal(${user.id})" class="text-indigo-600 hover:text-indigo-800" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        `}
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+// Ver documentos
+async function viewDocuments(userId) {
+    try {
+        console.log('📄 Cargando documentos del usuario:', userId);
+        
+        // 🔴 CAMBIAR ESTO:
+        // const response = await api.request(`/users/${userId}/documents`, { method: 'GET' });
+        
+        // ✅ POR ESTO:
+        const response = await window.api.getUserDocuments(userId);
+
+        if (response.success) {
+            const documents = response.data.documents || [];
+            
+            // Obtener información del usuario
+            const userResponse = await window.api.request(`/users/${userId}`, { method: 'GET' });
+            const user = userResponse.data.user;
+            
+            // Mapear documentos a formato esperado
+            const documentsMap = {};
+            documents.forEach(doc => {
+                const base64Data = doc.file_data;
+                if (doc.document_type === 'receta_medica') {
+                    documentsMap.medical_prescription = base64Data;
+                } else if (doc.document_type === 'carnet_identidad') {
+                    documentsMap.id_card = base64Data;
+                } else if (doc.document_type === 'certificado_antecedentes') {
+                    documentsMap.background_check = base64Data;
+                }
+            });
+            
+            const content = document.getElementById('documentsContent');
+            
+            console.log('✅ Documentos recibidos:', {
+                userId: userId,
+                totalDocuments: documents.length,
+                documentsMap
+            });
+            
+            const userName = user.name || `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.email;
+            
+            content.innerHTML = `
+                <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+                    <h3 class="text-lg font-bold text-gray-800 mb-2">${userName}</h3>
+                    <p class="text-sm text-gray-600 mb-1"><i class="fas fa-envelope mr-2"></i>${user.email}</p>
+                    <div class="mt-3 flex gap-2">
+                        <span class="px-3 py-1 text-xs font-semibold rounded-full ${
+                            user.account_status === 'approved' ? 'bg-green-100 text-green-800' :
+                            user.account_status === 'rejected' ? 'bg-red-100 text-red-800' :
+                            'bg-yellow-100 text-yellow-800'
+                        }">
+                            ${user.account_status === 'approved' ? 'Aprobado' : 
+                              user.account_status === 'rejected' ? 'Rechazado' : 'Pendiente'}
+                        </span>
+                        ${documents.length > 0 ? 
+                            '<span class="px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800"><i class="fas fa-check mr-1"></i>Documentos Cargados</span>' : 
+                            '<span class="px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800"><i class="fas fa-clock mr-1"></i>Sin Documentos</span>'
+                        }
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <!-- Receta Médica -->
+                    <div class="border rounded-lg p-4 bg-white">
+                        <h4 class="font-semibold mb-3 flex items-center gap-2">
+                            <i class="fas fa-prescription text-green-600 text-xl"></i>
+                            <span>1. Receta Médica</span>
+                            ${!documentsMap.medical_prescription ? '<span class="text-xs text-red-600 ml-2">(No cargado)</span>' : '<span class="text-xs text-green-600 ml-2">(✓ Cargado)</span>'}
+                        </h4>
+                        ${documentsMap.medical_prescription ? 
+                            `${documentsMap.medical_prescription.includes('application/pdf') ?
+                                `<iframe src="${documentsMap.medical_prescription}" class="w-full h-96 border rounded"></iframe>` :
+                                `<img src="${documentsMap.medical_prescription}" class="max-w-full h-auto border rounded shadow-lg">`
+                            }` :
+                            '<div class="text-center py-8 bg-gray-50 rounded"><i class="fas fa-file-excel text-gray-300 text-5xl mb-3"></i><p class="text-gray-500">Documento no disponible</p></div>'
+                        }
+                    </div>
+
+                    <!-- Carnet de Identidad -->
+                    <div class="border rounded-lg p-4 bg-white">
+                        <h4 class="font-semibold mb-3 flex items-center gap-2">
+                            <i class="fas fa-id-card text-blue-600 text-xl"></i>
+                            <span>2. Carnet de Identidad</span>
+                            ${!documentsMap.id_card ? '<span class="text-xs text-red-600 ml-2">(No cargado)</span>' : '<span class="text-xs text-green-600 ml-2">(✓ Cargado)</span>'}
+                        </h4>
+                        ${documentsMap.id_card ? 
+                            `${documentsMap.id_card.includes('application/pdf') ?
+                                `<iframe src="${documentsMap.id_card}" class="w-full h-96 border rounded"></iframe>` :
+                                `<img src="${documentsMap.id_card}" class="max-w-full h-auto border rounded shadow-lg">`
+                            }` :
+                            '<div class="text-center py-8 bg-gray-50 rounded"><i class="fas fa-id-card text-gray-300 text-5xl mb-3"></i><p class="text-gray-500">Documento no disponible</p></div>'
+                        }
+                    </div>
+
+                    <!-- Certificado de Antecedentes -->
+                    <div class="border rounded-lg p-4 bg-white">
+                        <h4 class="font-semibold mb-3 flex items-center gap-2">
+                            <i class="fas fa-certificate text-purple-600 text-xl"></i>
+                            <span>3. Certificado de Antecedentes</span>
+                            ${!documentsMap.background_check ? '<span class="text-xs text-red-600 ml-2">(No cargado)</span>' : '<span class="text-xs text-green-600 ml-2">(✓ Cargado)</span>'}
+                        </h4>
+                        ${documentsMap.background_check ? 
+                            `${documentsMap.background_check.includes('application/pdf') ?
+                                `<iframe src="${documentsMap.background_check}" class="w-full h-96 border rounded"></iframe>` :
+                                `<img src="${documentsMap.background_check}" class="max-w-full h-auto border rounded shadow-lg">`
+                            }` :
+                            '<div class="text-center py-8 bg-gray-50 rounded"><i class="fas fa-certificate text-gray-300 text-5xl mb-3"></i><p class="text-gray-500">Documento no disponible</p></div>'
+                        }
+                    </div>
+                </div>
+
+                <!-- Botones de acción -->
+                ${user.account_status === 'pending' ? `
+                    <div class="mt-6 flex gap-3">
+                        <button onclick="closeDocumentsModal(); openApproveModal(${userId}, '${userName}')" 
+                                class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold transition">
+                            <i class="fas fa-check mr-2"></i>Aprobar Cuenta
+                        </button>
+                        <button onclick="closeDocumentsModal(); openRejectModal(${userId}, '${userName}')" 
+                                class="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-semibold transition">
+                            <i class="fas fa-times mr-2"></i>Rechazar Cuenta
+                        </button>
+                    </div>
+                ` : ''}
+            `;
+
+            document.getElementById('documentsModal').classList.remove('hidden');
+        } else {
+            throw new Error(response.message || 'Error al cargar documentos');
+        }
+    } catch (error) {
+        console.error('❌ Error al cargar documentos:', error);
+        notify.error('Error al cargar documentos: ' + error.message);
+    }
+}
+
+        function closeDocumentsModal() {
+            document.getElementById('documentsModal').classList.add('hidden');
+        }
+
+        // Aprobar usuario
+        function openApproveModal(userId, userName) {
+            document.getElementById('approveUserId').value = userId;
+            document.getElementById('approveUserName').textContent = userName;
+            document.getElementById('approveModal').classList.remove('hidden');
+        }
+
+        function closeApproveModal() {
+            document.getElementById('approveModal').classList.add('hidden');
+            document.getElementById('approveForm').reset();
+        }
+
+        document.getElementById('approveForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const userId = document.getElementById('approveUserId').value;
+    const notes = document.getElementById('approveNotes').value;
+    
+    try {
+        // ✅ USAR EL NUEVO MÉTODO
+        const response = await window.api.approveUser(userId, notes);
+
+        if (response.success) {
+            notify.success('Cuenta aprobada exitosamente');
+            closeApproveModal();
+            loadUsers();
+        } else {
+            throw new Error(response.message);
+        }
+    } catch (error) {
+        console.error('Error al aprobar:', error);
+        notify.error('Error al aprobar cuenta');
+    }
+});
+
+        // Rechazar usuario
+        function openRejectModal(userId, userName) {
+            document.getElementById('rejectUserId').value = userId;
+            document.getElementById('rejectUserName').textContent = userName;
+            document.getElementById('rejectModal').classList.remove('hidden');
+        }
+
+        function closeRejectModal() {
+            document.getElementById('rejectModal').classList.add('hidden');
+            document.getElementById('rejectForm').reset();
+        }
+
+        document.getElementById('rejectForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const userId = document.getElementById('rejectUserId').value;
+    const reason = document.getElementById('rejectReason').value;
+    const notes = document.getElementById('rejectNotes').value;
+    
+    try {
+        // ✅ USAR EL NUEVO MÉTODO
+        const response = await window.api.rejectUser(userId, reason, notes);
+
+        if (response.success) {
+            notify.success('Cuenta rechazada');
+            closeRejectModal();
+            loadUsers();
+        } else {
+            throw new Error(response.message);
+        }
+    } catch (error) {
+        console.error('Error al rechazar:', error);
+        notify.error('Error al rechazar cuenta');
+    }
+});
+
+        // Eliminar usuario
+        async function deleteUser(userId, userName) {
+    const confirmed = await notify.confirmDelete(`al usuario "${userName}"`);
+    if (!confirmed) return;
+    
+    try {
+        // ✅ USAR EL NUEVO MÉTODO
+        const response = await window.api.deleteUser(userId);
+
+        if (response.success) {
+            notify.success('Usuario eliminado');
+            loadUsers();
+        } else {
+            throw new Error(response.message);
+        }
+    } catch (error) {
+        console.error('Error al eliminar:', error);
+        notify.error('Error al eliminar usuario');
+    }
+}
+
+// Marcar usuario como pendiente
+async function setUserPending(userId) {
+    const confirmed = await notify.confirm({
+        type: 'warning',
+        icon: 'clock',
+        title: '¿Marcar como pendiente?',
+        message: 'El usuario volverá al estado de aprobación pendiente',
+        confirmText: 'Sí, marcar como pendiente',
+        cancelText: 'Cancelar',
+        confirmClass: 'warning'
+    });
+    if (!confirmed) return;
+    
+    try {
+        const response = await window.api.updateUser(userId, {
+            account_status: 'pending'
+        });
+
+        if (response.success) {
+            notify.success('Usuario marcado como pendiente');
+            loadUsers();
+        } else {
+            throw new Error(response.message);
+        }
+    } catch (error) {
+        console.error('Error al cambiar estado:', error);
+        notify.error('Error al cambiar estado del usuario');
+    }
+}
+
+        // Abrir modal de edición
+        async function openEditModal(userId) {
+    try {
+        // ✅ USAR EL NUEVO MÉTODO
+        const response = await window.api.getUserById(userId);
+
+        if (response.success) {
+            const user = response.data.user;
+            
+            document.getElementById('editUserId').value = user.id;
+            document.getElementById('editName').value = user.name;
+            document.getElementById('editEmail').value = user.email;
+            document.getElementById('editPhone').value = user.phone || '';
+            document.getElementById('editRut').value = user.rut || '';
+            document.getElementById('editRole').value = user.role;
+            document.getElementById('editAccountStatus').value = user.account_status || 'pending';
+            
+            document.getElementById('editModal').classList.remove('hidden');
+        } else {
+            throw new Error(response.message);
+        }
+    } catch (error) {
+        console.error('Error al cargar usuario:', error);
+        notify.error('Error al cargar datos del usuario');
+    }
+}
+
+// Cerrar modal de edición
+function closeEditModal() {
+    document.getElementById('editModal').classList.add('hidden');
+    document.getElementById('editForm').reset();
+}
+
+// Guardar cambios del usuario
+document.getElementById('editForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const userId = document.getElementById('editUserId').value;
+    const userData = {
+        name: document.getElementById('editName').value.trim(),
+        email: document.getElementById('editEmail').value.trim(),
+        phone: document.getElementById('editPhone').value.trim(),
+        rut: document.getElementById('editRut').value.trim(),
+        role: document.getElementById('editRole').value,
+        account_status: document.getElementById('editAccountStatus').value
+    };
+    
+    console.log('📤 Enviando actualización de usuario:', { userId, userData });
+    
+    if (!userData.name || !userData.email) {
+        notify.error('Nombre y email son obligatorios');
+        return;
+    }
+    
+    try {
+        // ✅ USAR EL NUEVO MÉTODO
+                    const response = await window.api.updateUser(userId, userData);
+
+        console.log('📥 Respuesta del servidor:', response);
+
+        if (response.success) {
+            console.log('✅ Usuario actualizado, recargando lista...');
+            notify.success('Usuario actualizado exitosamente');
+            closeEditModal();
+            await loadUsers();
+            console.log('✅ Lista de usuarios recargada');
+        } else {
+            throw new Error(response.message);
+        }
+    } catch (error) {
+        console.error('❌ Error al actualizar usuario:', error);
+        notify.error('Error al actualizar usuario: ' + error.message);
+    }
+});
+    </script>
+<script>
+    (function () {
+      // Utilidad: cierra al clickear overlay y evita cierre al click interno
+      function enableOverlayToClose(modalId, closeFn) {
+        const modal = document.getElementById(modalId);
+        if (!modal) return;
+    
+        // Cierra si clic es sobre el overlay (fondo oscuro)
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) {
+            if (typeof closeFn === 'function') {
+              closeFn();
+            } else {
+              // fallback: ocultar modal si no hay función de cierre
+              modal.classList.add('hidden');
+            }
+          }
+        });
+    
+        // Evita que clics dentro del contenido cierren el modal
+        const dialog = modal.firstElementChild; // tu contenedor .bg-white...
+        if (dialog) {
+          dialog.addEventListener('click', (e) => e.stopPropagation());
+        }
+      }
+    
+      // ---- Ordena aquí los modals por página ----
+      // Orders (orders.html)
+      if (document.getElementById('orderModal')) {
+        enableOverlayToClose('orderModal', window.closeModal); // orders.html define closeModal()
+      }
+    
+      // Products (products.html)
+      if (document.getElementById('productModal')) {
+        enableOverlayToClose('productModal', window.closeModal); // products.html define closeModal()
+      }
+    
+      // Users (users.html)
+      if (document.getElementById('documentsModal')) {
+        enableOverlayToClose('documentsModal', window.closeDocumentsModal);
+      }
+      if (document.getElementById('approveModal')) {
+        enableOverlayToClose('approveModal', window.closeApproveModal);
+      }
+      if (document.getElementById('rejectModal')) {
+        enableOverlayToClose('rejectModal', window.closeRejectModal);
+      }
+      if (document.getElementById('editModal')) {
+        enableOverlayToClose('editModal', window.closeEditModal);
+      }
+    
+      // Cerrar con ESC el primer modal abierto que encontremos
+      document.addEventListener('keydown', (e) => {
+        if (e.key !== 'Escape') return;
+    
+        const modalOrder = document.getElementById('orderModal');
+        const modalProduct = document.getElementById('productModal');
+        const modalDocs = document.getElementById('documentsModal');
+        const modalApprove = document.getElementById('approveModal');
+        const modalReject = document.getElementById('rejectModal');
+        const modalEdit = document.getElementById('editModal');
+    
+        const closers = [
+          [modalOrder, window.closeModal],
+          [modalProduct, window.closeModal],
+          [modalDocs, window.closeDocumentsModal],
+          [modalApprove, window.closeApproveModal],
+          [modalReject, window.closeRejectModal],
+          [modalEdit, window.closeEditModal],
+        ];
+    
+        for (const [m, fn] of closers) {
+          if (m && !m.classList.contains('hidden')) {
+            if (typeof fn === 'function') fn(); else m.classList.add('hidden');
+            break; // cierra solo uno
+          }
+        }
+      });
+    })();
+
+    /**
+     * 📋 GUÍA DE APROBACIÓN DE USUARIOS PARA PRODUCTOS MEDICINALES
+     */
+    function showApprovalGuide() {
+        const guideHTML = `
+            <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" id="approvalGuideModal">
+                <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl mx-4 max-h-screen overflow-y-auto">
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-3">
+                                <i class="fas fa-prescription text-green-600"></i>
+                                Guía de Aprobación de Usuarios Medicinales
+                            </h2>
+                            <button onclick="closeApprovalGuide()" class="text-gray-500 hover:text-gray-700">
+                                <i class="fas fa-times text-xl"></i>
+                            </button>
+                        </div>
+
+                        <div class="space-y-6">
+                            <!-- Introducción -->
+                            <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
+                                <div class="flex">
+                                    <div class="flex-shrink-0">
+                                        <i class="fas fa-info-circle text-blue-400"></i>
+                                    </div>
+                                    <div class="ml-3">
+                                        <h3 class="text-sm font-medium text-blue-800">¿Qué hace la aprobación?</h3>
+                                        <p class="mt-2 text-sm text-blue-700">
+                                            Los usuarios aprobados pueden ver y comprar productos medicinales. Sin aprobación, solo ven productos recreativos y accesorios.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Estados de usuario -->
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                                    <i class="fas fa-traffic-light text-orange-500"></i>
+                                    Estados de Usuario
+                                </h3>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div class="border border-yellow-300 bg-yellow-50 rounded-lg p-4">
+                                        <div class="flex items-center gap-2 mb-2">
+                                            <i class="fas fa-clock text-yellow-600"></i>
+                                            <span class="font-medium text-yellow-800">Pendiente</span>
+                                        </div>
+                                        <p class="text-sm text-yellow-700">Usuario recién registrado. No puede ver productos medicinales.</p>
+                                    </div>
+                                    <div class="border border-green-300 bg-green-50 rounded-lg p-4">
+                                        <div class="flex items-center gap-2 mb-2">
+                                            <i class="fas fa-check text-green-600"></i>
+                                            <span class="font-medium text-green-800">Aprobado</span>
+                                        </div>
+                                        <p class="text-sm text-green-700">Usuario verificado. Puede ver y comprar productos medicinales.</p>
+                                    </div>
+                                    <div class="border border-red-300 bg-red-50 rounded-lg p-4">
+                                        <div class="flex items-center gap-2 mb-2">
+                                            <i class="fas fa-times text-red-600"></i>
+                                            <span class="font-medium text-red-800">Rechazado</span>
+                                        </div>
+                                        <p class="text-sm text-red-700">Usuario no cumple requisitos. No puede iniciar sesión.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pasos para aprobar -->
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                                    <i class="fas fa-list-ol text-green-500"></i>
+                                    Cómo Aprobar un Usuario
+                                </h3>
+                                <div class="space-y-3">
+                                    <div class="flex items-start gap-3">
+                                        <span class="bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-medium">1</span>
+                                        <div>
+                                            <p class="font-medium text-gray-800">Revisar documentos</p>
+                                            <p class="text-sm text-gray-600">Haz clic en <i class="fas fa-file-alt text-blue-600"></i> para ver los documentos médicos del usuario.</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start gap-3">
+                                        <span class="bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-medium">2</span>
+                                        <div>
+                                            <p class="font-medium text-gray-800">Verificar información médica</p>
+                                            <p class="text-sm text-gray-600">Confirma que los datos médicos, RUT, y autorización sean válidos.</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start gap-3">
+                                        <span class="bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-medium">3</span>
+                                        <div>
+                                            <p class="font-medium text-gray-800">Aprobar o rechazar</p>
+                                            <p class="text-sm text-gray-600">Haz clic en <i class="fas fa-check text-green-600"></i> para aprobar o <i class="fas fa-times text-red-600"></i> para rechazar.</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start gap-3">
+                                        <span class="bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-medium">4</span>
+                                        <div>
+                                            <p class="font-medium text-gray-800">Notificar al usuario</p>
+                                            <p class="text-sm text-gray-600">El usuario debe cerrar sesión e iniciar sesión nuevamente para acceder a productos medicinales.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Resolución de problemas -->
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                                    <i class="fas fa-tools text-orange-500"></i>
+                                    Resolución de Problemas
+                                </h3>
+                                <div class="space-y-3">
+                                    <div class="bg-orange-50 border border-orange-200 rounded-lg p-4">
+                                        <p class="font-medium text-orange-800 mb-2">❓ "El usuario aprobado no ve productos medicinales"</p>
+                                        <p class="text-sm text-orange-700">
+                                            → Pide al usuario cerrar sesión e iniciar sesión nuevamente.<br>
+                                            → En la consola del navegador, ejecuta: <code class="bg-gray-200 px-1 rounded">diagnosticMedicinalAccess()</code>
+                                        </p>
+                                    </div>
+                                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                        <p class="font-medium text-blue-800 mb-2">🔍 "Necesito verificar el estado de un usuario"</p>
+                                        <p class="text-sm text-blue-700">
+                                            → Ve a la tabla de usuarios y revisa la columna "Estado".<br>
+                                            → Usa los botones de acción para cambiar el estado si es necesario.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Función de diagnóstico -->
+                            <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                                <h4 class="font-medium text-gray-800 mb-2 flex items-center gap-2">
+                                    <i class="fas fa-stethoscope text-purple-600"></i>
+                                    Herramienta de Diagnóstico
+                                </h4>
+                                <p class="text-sm text-gray-600 mb-3">
+                                    Los usuarios pueden ejecutar esta función en la consola del navegador para diagnosticar problemas de acceso:
+                                </p>
+                                <code class="bg-gray-800 text-green-400 px-3 py-2 rounded block text-sm">
+                                    diagnosticMedicinalAccess()
+                                </code>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 flex justify-end">
+                            <button onclick="closeApprovalGuide()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition">
+                                <i class="fas fa-check mr-2"></i>Entendido
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', guideHTML);
+    }
+
+    function closeApprovalGuide() {
+        const modal = document.getElementById('approvalGuideModal');
+        if (modal) {
+            modal.remove();
+        }
+    }
+
+    </script>
+    
+</body>
+</html>

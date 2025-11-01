@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro Admin - Apexremedy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style/css_admin.css">
+    <script src="./js/config.js"></script>
+    <script src="./js/utils.js"></script>
+    <script defer src="./js/adminTemplate.js"></script>
+</head>
+<body>
+    <!-- Header se carga automáticamente -->
+    <div id="header-container"></div>
+
+    <!-- Formulario de Registro -->
+    <div style="min-height: calc(100vh - 400px); display: flex; align-items: center; justify-content: center; padding: 60px 20px;">
+        <div style="max-width: 600px; width: 100%;">
+            <!-- Header -->
+            <div style="text-align: center; margin-bottom: 32px;">
+                <div style="width: 80px; height: 80px; margin: 0 auto 16px; border-radius: 50%; background: linear-gradient(135deg, var(--primary-green), var(--light-green)); display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-user-plus" style="font-size: 2.5rem; color: var(--accent-yellow);"></i>
+                </div>
+                <h2 style="font-size: 2rem; font-weight: 800; color: var(--accent-black); margin-bottom: 8px;">
+                    Crear Cuenta
+                </h2>
+                <p style="color: var(--medium-gray);">
+                    Únete a la familia Apexremedy
+                </p>
+            </div>
+
+            <!-- Formulario -->
+            <div class="about-card">
+                <form id="registerForm" style="display: flex; flex-direction: column; gap: 20px;">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Nombre -->
+                        <div class="md:col-span-2">
+                            <label style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--accent-black);">
+                                Nombre Completo *
+                            </label>
+                            <div style="position: relative;">
+                                <i class="fas fa-user" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--medium-gray);"></i>
+                                <input type="text" 
+                                       id="name" 
+                                       name="name"
+                                       required
+                                       style="width: 100%; padding: 12px 12px 12px 40px; border: 2px solid var(--light-gray); border-radius: 8px; font-size: 1rem;"
+                                       placeholder="Juan Pérez">
+                            </div>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="md:col-span-2">
+                            <label style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--accent-black);">
+                                Correo Electrónico *
+                            </label>
+                            <div style="position: relative;">
+                                <i class="fas fa-envelope" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--medium-gray);"></i>
+                                <input type="email" 
+                                       id="email" 
+                                       name="email"
+                                       required
+                                       style="width: 100%; padding: 12px 12px 12px 40px; border: 2px solid var(--light-gray); border-radius: 8px; font-size: 1rem;"
+                                       placeholder="tu@email.com">
+                            </div>
+                        </div>
+
+                        <!-- Teléfono -->
+                        <div>
+                            <label style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--accent-black);">
+                                Teléfono
+                            </label>
+                            <div style="position: relative;">
+                                <i class="fas fa-phone" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--medium-gray);"></i>
+                                <input type="tel" 
+                                       id="phone" 
+                                       name="phone"
+                                       style="width: 100%; padding: 12px 12px 12px 40px; border: 2px solid var(--light-gray); border-radius: 8px; font-size: 1rem;"
+                                       placeholder="+56912345678">
+                            </div>
+                        </div>
+
+                        <!-- RUT -->
+                        <div>
+                            <label style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--accent-black);">
+                                RUT
+                            </label>
+                            <div style="position: relative;">
+                                <i class="fas fa-id-card" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--medium-gray);"></i>
+                                <input type="text" 
+                                       id="rut" 
+                                       name="rut"
+                                       style="width: 100%; padding: 12px 12px 12px 40px; border: 2px solid var(--light-gray); border-radius: 8px; font-size: 1rem;"
+                                       placeholder="12345678-9">
+                            </div>
+                        </div>
+
+                        <!-- Password -->
+                        <div>
+                            <label style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--accent-black);">
+                                Contraseña *
+                            </label>
+                            <div style="position: relative;">
+                                <i class="fas fa-lock" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--medium-gray);"></i>
+                                <input type="password" 
+                                       id="password" 
+                                       name="password"
+                                       required
+                                       minlength="6"
+                                       style="width: 100%; padding: 12px 40px 12px 40px; border: 2px solid var(--light-gray); border-radius: 8px; font-size: 1rem;"
+                                       placeholder="••••••••">
+                                <button type="button" 
+                                        id="togglePassword"
+                                        style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--medium-gray);">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <p style="font-size: 0.85rem; color: var(--medium-gray); margin-top: 4px;">
+                                Mínimo 6 caracteres
+                            </p>
+                        </div>
+
+                        <!-- Confirmar Password -->
+                        <div>
+                            <label style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--accent-black);">
+                                Confirmar Contraseña *
+                            </label>
+                            <div style="position: relative;">
+                                <i class="fas fa-lock" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--medium-gray);"></i>
+                                <input type="password" 
+                                       id="confirmPassword" 
+                                       name="confirmPassword"
+                                       required
+                                       minlength="6"
+                                       style="width: 100%; padding: 12px 40px 12px 40px; border: 2px solid var(--light-gray); border-radius: 8px; font-size: 1rem;"
+                                       placeholder="••••••••">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Términos -->
+                    <div>
+                        <label style="display: flex; align-items: start; cursor: pointer;">
+                            <input type="checkbox" 
+                                   id="terms"
+                                   required
+                                   style="margin-right: 8px; margin-top: 4px; width: 18px; height: 18px;">
+                            <span style="font-size: 0.95rem; color: var(--accent-black);">
+                                Acepto los <a href="#" style="color: var(--primary-green); font-weight: 600;">términos y condiciones</a> y la <a href="#" style="color: var(--primary-green); font-weight: 600;">política de privacidad</a>
+                            </span>
+                        </label>
+                    </div>
+
+                    <!-- Mensajes -->
+                    <div id="messageContainer" style="display: none;">
+                        <div id="errorMessage" style="display: none; background: #fee; border: 1px solid #fcc; color: #c00; padding: 12px; border-radius: 8px;">
+                            <i class="fas fa-exclamation-circle" style="margin-right: 8px;"></i>
+                            <span id="errorText"></span>
+                        </div>
+                        <div id="successMessage" style="display: none; background: #efe; border: 1px solid #cfc; color: #060; padding: 12px; border-radius: 8px;">
+                            <i class="fas fa-check-circle" style="margin-right: 8px;"></i>
+                            <span id="successText"></span>
+                        </div>
+                    </div>
+
+                    <!-- Botón Submit -->
+                    <button type="submit" 
+                            id="submitBtn"
+                            class="cta-button full-width"
+                            style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <span id="btnText">Crear Cuenta</span>
+                        <i id="btnLoader" style="display: none;" class="fas fa-spinner fa-spin"></i>
+                    </button>
+                </form>
+
+                <!-- Login -->
+                <div style="margin-top: 24px; text-align: center; padding-top: 24px; border-top: 1px solid var(--light-gray);">
+                    <p style="color: var(--medium-gray);">
+                        ¿Ya tienes cuenta? 
+                        <a href="./login.html" style="color: var(--primary-green); font-weight: 600; text-decoration: none;">
+                            Inicia Sesión
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div id="footer-container"></div>
+
+    <!-- Scripts -->
+    <script src="./js/api/apiClient.js"></script>
+    <script src="./js/auth.js"></script>
+    <script src="./js/sessionManager.js"></script>
+    <script src="./js/notifications.js"></script>
+    <script>
+        // Toggle password visibility
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const icon = this.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+
+        // Manejar submit del formulario
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            const btnLoader = document.getElementById('btnLoader');
+            
+            // Obtener datos del formulario
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const rut = document.getElementById('rut').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            // Validación básica
+            if (!name || !email || !password) {
+                showError('Por favor completa todos los campos obligatorios');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showError('La contraseña debe tener al menos 6 caracteres');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                showError('Las contraseñas no coinciden');
+                return;
+            }
+            
+            // Deshabilitar botón y mostrar loader
+            submitBtn.disabled = true;
+            btnText.textContent = 'Creando cuenta...';
+            btnLoader.style.display = 'inline-block';
+            hideMessages();
+            
+            try {
+                // Preparar datos
+                const userData = {
+                    name,
+                    email,
+                    password,
+                    phone: phone || undefined,
+                    rut: rut || undefined
+                };
+                
+                // Intentar registro
+                const result = await authManager.register(userData);
+                
+                if (result.success) {
+                    // Éxito
+                    showSuccess('¡Cuenta creada exitosamente! Redirigiendo...');
+                    
+                    // Esperar un momento y redirigir
+                    setTimeout(() => {
+                        window.location.href = './index.html';
+                    }, 1500);
+                } else {
+                    // Error
+                    showError(result.message || 'Error al crear la cuenta');
+                    resetButton();
+                }
+            } catch (error) {
+                console.error('Error en registro:', error);
+                showError(error.message || 'Error al conectar con el servidor');
+                resetButton();
+            }
+        });
+        
+        // Funciones auxiliares
+        function showError(message) {
+            const errorMessage = document.getElementById('errorMessage');
+            const errorText = document.getElementById('errorText');
+            const messageContainer = document.getElementById('messageContainer');
+            
+            errorText.textContent = message;
+            errorMessage.style.display = 'block';
+            messageContainer.style.display = 'block';
+            
+            // Scroll al mensaje
+            errorMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        
+        function showSuccess(message) {
+            const successMessage = document.getElementById('successMessage');
+            const successText = document.getElementById('successText');
+            const messageContainer = document.getElementById('messageContainer');
+            
+            successText.textContent = message;
+            successMessage.style.display = 'block';
+            messageContainer.style.display = 'block';
+        }
+        
+        function hideMessages() {
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+        
+        function resetButton() {
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            const btnLoader = document.getElementById('btnLoader');
+            
+            submitBtn.disabled = false;
+            btnText.textContent = 'Crear Cuenta';
+            btnLoader.style.display = 'none';
+        }
+        
+        // Redirigir si ya está autenticado
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                if (typeof authManager !== 'undefined' && authManager.isAuthenticated()) {
+                    window.location.href = './index.html';
+                }
+            }, 100);
+        });
+    </script>
+</body>
+</html>

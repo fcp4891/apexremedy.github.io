@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" type="image/png" href="./assets/images/logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - Apexremedy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./style/css_home.css">
+    <link rel="stylesheet" href="./style/perfil.css">
+    <script src="./js/config.js"></script>
+    <script src="./js/utils.js"></script>
+    <script defer src="./js/template.js"></script>
+</head>
+<body>
+    <!-- Header template -->
+    <div id="header-container"></div>
+
+    <!-- Hero Section -->
+    <section class="shop-header">
+        <div class="container">
+            <h1>
+                <i class="fas fa-user-circle"></i> Mi Perfil
+            </h1>
+            <p>Gestiona tu información personal y preferencias</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="profile-container">
+        <div class="container">
+            <div class="profile-grid">
+                <!-- Menú lateral -->
+                <div class="profile-sidebar">
+                    <div class="profile-avatar">
+                        <div class="profile-avatar-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h2 id="userName" class="profile-name">Cargando...</h2>
+                        <p id="userEmail" class="profile-email">...</p>
+                        <span class="profile-badge">
+                            <i class="fas fa-user"></i> Cliente
+                        </span>
+                    </div>
+
+                    <nav class="profile-nav">
+                        <button onclick="showSection('info')" class="profile-nav-btn active section-btn">
+                            <i class="fas fa-user-circle"></i>
+                            <span>Información Personal</span>
+                        </button>
+                        <button onclick="showSection('password')" class="profile-nav-btn section-btn">
+                            <i class="fas fa-lock"></i>
+                            <span>Cambiar Contraseña</span>
+                        </button>
+                        <a href="./mis-pedidos.html" class="profile-nav-btn" style="text-decoration: none;">
+                            <i class="fas fa-shopping-bag"></i>
+                            <span>Mis Pedidos</span>
+                        </a>
+                        <a href="./index.html" class="profile-nav-link">
+                            <i class="fas fa-arrow-left"></i>
+                            <span>Volver al Inicio</span>
+                        </a>
+                        <button data-logout class="profile-nav-link logout" style="background: none; border: none; width: 100%; cursor: pointer;">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Cerrar Sesión</span>
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Contenido -->
+                <div>
+                    <!-- Información Personal -->
+                    <div id="infoSection" class="profile-section">
+                        <h2>
+                            <i class="fas fa-user-edit"></i>
+                            Información Personal
+                        </h2>
+                        
+                        <form id="profileForm" class="profile-form">
+                            <div class="profile-form-grid">
+                                <div class="profile-form-group">
+                                    <label class="profile-label">Nombre Completo *</label>
+                                    <input type="text" id="name" required class="profile-input">
+                                </div>
+
+                                <div class="profile-form-group">
+                                    <label class="profile-label">Email *</label>
+                                    <input type="email" id="email" required class="profile-input">
+                                </div>
+
+                                <div class="profile-form-group">
+                                    <label class="profile-label">Teléfono</label>
+                                    <input type="tel" id="phone" class="profile-input" placeholder="+56 9 1234 5678">
+                                </div>
+
+                                <div class="profile-form-group">
+                                    <label class="profile-label">RUT</label>
+                                    <input type="text" id="rut" class="profile-input" placeholder="12.345.678-9">
+                                </div>
+                            </div>
+
+                            <div class="profile-actions">
+                                <button type="submit" class="cta-button">
+                                    <i class="fas fa-save"></i>
+                                    <span>Guardar Cambios</span>
+                                </button>
+                                <button type="button" onclick="loadProfile()" class="secondary-button">
+                                    <i class="fas fa-undo"></i>
+                                    <span>Cancelar</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Cambiar Contraseña -->
+                    <div id="passwordSection" class="hidden profile-section">
+                        <h2>
+                            <i class="fas fa-key"></i>
+                            Cambiar Contraseña
+                        </h2>
+                        
+                        <div class="profile-info-box">
+                            <div class="profile-info-box-content">
+                                <i class="fas fa-info-circle"></i>
+                                <div>
+                                    <p class="profile-info-box-title">Requisitos de seguridad</p>
+                                    <ul class="profile-info-box-list">
+                                        <li>• Mínimo 6 caracteres</li>
+                                        <li>• Usa contraseñas seguras y únicas</li>
+                                        <li>• No compartas tu contraseña</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <form id="passwordForm" class="profile-form">
+                            <div class="profile-form-group">
+                                <label class="profile-label">Contraseña Actual *</label>
+                                <input type="password" id="currentPassword" required class="profile-input">
+                            </div>
+
+                            <div class="profile-form-group">
+                                <label class="profile-label">Nueva Contraseña *</label>
+                                <input type="password" id="newPassword" required minlength="6" class="profile-input">
+                                <p class="profile-hint">Mínimo 6 caracteres</p>
+                            </div>
+
+                            <div class="profile-form-group">
+                                <label class="profile-label">Confirmar Nueva Contraseña *</label>
+                                <input type="password" id="confirmPassword" required minlength="6" class="profile-input">
+                            </div>
+
+                            <div class="profile-actions">
+                                <button type="submit" class="cta-button">
+                                    <i class="fas fa-key"></i>
+                                    <span>Cambiar Contraseña</span>
+                                </button>
+                                <button type="button" onclick="document.getElementById('passwordForm').reset()" class="secondary-button">
+                                    <i class="fas fa-times"></i>
+                                    <span>Limpiar</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Mis Pedidos -->
+                    <div id="ordersSection" class="hidden profile-section">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                            <h2>
+                                <i class="fas fa-shopping-bag"></i>
+                                Mis Pedidos
+                            </h2>
+                            <button onclick="loadOrders()" class="secondary-button" style="padding: 8px 16px;">
+                                <i class="fas fa-sync-alt"></i>
+                                <span>Actualizar</span>
+                            </button>
+                        </div>
+                        
+                        <div id="ordersContainer">
+                            <div style="text-align: center; padding: 48px 0;">
+                                <i class="fas fa-spinner fa-spin" style="font-size: 3rem; color: var(--primary-green); margin-bottom: 16px;"></i>
+                                <p style="color: var(--medium-gray);">Cargando pedidos...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer template -->
+    <div id="footer-container"></div>
+
+    <!-- Modal detalle pedido -->
+    <div id="orderModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-6">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-800">Pedido #<span id="modalOrderId"></span></h3>
+                        <p class="text-gray-500">Fecha: <span id="modalDate"></span></p>
+                    </div>
+                    <button onclick="closeOrderModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+
+                <div class="mb-6">
+                    <span id="modalStatus" class="px-4 py-2 rounded-full text-sm font-semibold"></span>
+                </div>
+
+                <div class="mb-6">
+                    <h4 class="font-semibold text-gray-700 mb-3">Productos</h4>
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <table class="w-full">
+                            <thead class="text-sm text-gray-500 border-b">
+                                <tr>
+                                    <th class="text-left pb-2">Producto</th>
+                                    <th class="text-right pb-2">Cant.</th>
+                                    <th class="text-right pb-2">Precio</th>
+                                    <th class="text-right pb-2">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody id="modalItems" class="text-sm"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-4 mb-6">
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Subtotal:</span>
+                            <span id="modalSubtotal" class="font-semibold">$0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">IVA (19%):</span>
+                            <span id="modalTax" class="font-semibold">$0</span>
+                        </div>
+                        <div class="flex justify-between text-lg font-bold border-t pt-2">
+                            <span>Total:</span>
+                            <span id="modalTotal" class="text-green-600">$0</span>
+                        </div>
+                    </div>
+                </div>
+                <div id="modalPaymentBox" class="bg-white rounded-lg border border-gray-200 p-4 mt-4">
+                    <h4 class="font-semibold text-gray-700 mb-3">Pago</h4>
+                    <div class="flex items-center justify-between gap-4">
+                      <div class="text-sm text-gray-600">
+                        Método de pago:
+                        <strong id="modalPaymentMethod">—</strong>
+                        <span id="modalPaymentHint" class="ml-2 text-xs px-2 py-1 rounded-full bg-amber-100 text-amber-800 hidden">
+                          Pago en efectivo al entregar
+                        </span>
+                      </div>
+                      <div id="modalPaymentAction"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- Modal Transferencia -->
+<div id="transferModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" onclick="closeTransferModal(event)">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg" onclick="event.stopPropagation()">
+      <div class="px-6 py-4 border-b flex items-center justify-between">
+        <h3 class="text-xl font-bold"><i class="fas fa-receipt text-blue-600 mr-2"></i> Enviar Transferencia</h3>
+        <button class="text-gray-400 hover:text-gray-600" onclick="hideTransferModal()">
+          <i class="fas fa-times text-2xl"></i>
+        </button>
+      </div>
+      <form id="transferForm" class="p-6 space-y-4">
+        <input type="hidden" id="transferOrderId">
+        <div class="text-sm text-gray-600">Total a pagar: <strong id="transferAmountText"></strong></div>
+  
+        <div>
+          <label class="block text-sm font-medium mb-1">Banco Emisor *</label>
+          <input type="text" id="bankName" required class="w-full border rounded-lg px-3 py-2">
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">N° Operación / Referencia *</label>
+          <input type="text" id="reference" required class="w-full border rounded-lg px-3 py-2" placeholder="Ej: 123456789">
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Fecha de Transferencia *</label>
+          <input type="datetime-local" id="transferDate" required class="w-full border rounded-lg px-3 py-2">
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Monto Transferido (CLP) *</label>
+          <input type="number" id="amountPaid" min="1" step="1" required class="w-full border rounded-lg px-3 py-2">
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Comprobante (PDF/JPG/PNG) *</label>
+          <input type="file" id="receiptFile" accept=".pdf,.jpg,.jpeg,.png" required class="w-full">
+        </div>
+  
+        <div class="pt-2 flex items-center justify-end gap-3">
+          <button type="button" class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300" onclick="hideTransferModal()">Cancelar</button>
+          <button type="submit" class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white">
+            <i class="fas fa-paper-plane mr-2"></i> Enviar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+
+    <!-- Scripts -->
+    <script src="./js/config.js"></script>
+    <script src="./js/utils.js"></script>
+    <script src="./js/api/apiClient.js"></script>
+    <script src="./js/auth.js"></script>
+    <script src="./js/sessionManager.js"></script>
+    <script src="./js/notifications.js"></script>
+    <script defer src="./js/template.js"></script>
+    <script>
+        let currentOrderId = null;
+
+        // ============================================
+        // VERIFICAR QUE ES UN CLIENTE (NO ADMIN)
+        // ============================================
+        (function initClientProfile() {
+            console.log('🔍 Verificando autenticación de cliente...');
+            
+            if (!authManager.isAuthenticated()) {
+                notify.warning('Debes iniciar sesión para acceder a tu perfil', 'Acceso Requerido');
+                setTimeout(() => {
+                    window.location.href = './login.html?redirect=perfil';
+                }, 1500);
+                return;
+            }
+
+            // Verificar que NO sea admin
+            const user = authManager.getCurrentUser();
+            if (user && user.role === 'admin') {
+                console.log('⚠️ Usuario admin detectado, redirigiendo a panel admin...');
+                notify.info('Redirigiendo al panel de administración...');
+                setTimeout(() => {
+                    window.location.href = './admin/perfil.html';
+                }, 1000);
+                return;
+            }
+            
+            console.log('✅ Cliente autenticado, cargando perfil...');
+            loadProfile();
+        })();
+
+        // Cargar perfil
+        async function loadProfile() {
+            try {
+                const response = await api.getProfile();
+                
+                if (response && response.success) {
+                    const user = response.data.user || response.data;
+                    updateUIWithUser(user);
+                }
+            } catch (error) {
+                console.error('Error al cargar perfil:', error);
+                const currentUser = authManager.getCurrentUser();
+                if (currentUser) {
+                    updateUIWithUser(currentUser);
+                } else {
+                    notify.error('Error al cargar perfil');
+                }
+            }
+        }
+
+        // Actualizar UI con datos del usuario
+        function updateUIWithUser(user) {
+            document.getElementById('userName').textContent = user.name || 'Usuario';
+            document.getElementById('userEmail').textContent = user.email || '';
+            
+            document.getElementById('name').value = user.name || '';
+            document.getElementById('email').value = user.email || '';
+            document.getElementById('phone').value = user.phone || '';
+            document.getElementById('rut').value = user.rut || '';
+        }
+
+        // Actualizar perfil
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const data = {
+                name: document.getElementById('name').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                rut: document.getElementById('rut').value.trim()
+            };
+
+            if (!data.name || !data.email) {
+                notify.error('El nombre y email son obligatorios');
+                return;
+            }
+
+            try {
+                const response = await api.updateProfile(data);
+
+                if (response && response.success) {
+                    notify.success('Perfil actualizado correctamente');
+                    
+                    const updatedUser = response.data.user || response.data;
+                    const currentUser = authManager.getCurrentUser();
+                    authManager.currentUser = { ...currentUser, ...updatedUser };
+                    localStorage.setItem('currentUser', JSON.stringify(authManager.currentUser));
+                    
+                    loadProfile();
+                    
+                    if (authManager.updateUI) {
+                        authManager.updateUI();
+                    }
+                }
+            } catch (error) {
+                notify.error('Error al actualizar perfil: ' + error.message);
+            }
+        });
+
+        // Cambiar contraseña
+        document.getElementById('passwordForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                notify.error('Todos los campos son obligatorios');
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                notify.error('La nueva contraseña debe tener al menos 6 caracteres');
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                notify.error('Las contraseñas no coinciden');
+                return;
+            }
+
+            try {
+                const response = await api.request('/auth/change-password', {
+                    method: 'POST',
+                    body: JSON.stringify({ currentPassword, newPassword })
+                });
+
+                if (response && response.success) {
+                    notify.success('Contraseña cambiada correctamente');
+                    document.getElementById('passwordForm').reset();
+                }
+            } catch (error) {
+                notify.error('Error al cambiar contraseña: ' + error.message);
+            }
+        });
+
+        // ============================================
+        // CARGAR PEDIDOS
+        // ============================================
+        async function loadOrders() {
+            try {
+                console.log('📦 Cargando pedidos del cliente...');
+                const response = await api.request('/orders/my-orders?limit=20');
+                
+                if (response.success) {
+                    const orders = response.data.orders || [];
+                    displayOrders(orders);
+                }
+            } catch (error) {
+                console.error('❌ Error al cargar pedidos:', error);
+                document.getElementById('ordersContainer').innerHTML = `
+                    <div class="text-center py-12">
+                        <i class="fas fa-exclamation-triangle text-4xl text-red-500 mb-4"></i>
+                        <p class="text-gray-600">Error al cargar pedidos</p>
+                        <button onclick="loadOrders()" class="mt-4 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg">
+                            <i class="fas fa-refresh mr-2"></i>Reintentar
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // Mostrar pedidos
+        function displayOrders(orders) {
+            const container = document.getElementById('ordersContainer');
+            
+            if (orders.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12">
+                        <i class="fas fa-shopping-bag text-6xl text-gray-300 mb-4"></i>
+                        <h3 class="text-xl font-semibold text-gray-600 mb-2">No tienes pedidos aún</h3>
+                        <p class="text-gray-500 mb-6">Comienza a comprar en nuestro catálogo</p>
+                        <a href="./productos.html" class="inline-block bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition">
+                            <i class="fas fa-shopping-bag mr-2"></i>Ver Productos
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+
+            const statusConfig = {
+  pending_payment: { class: 'bg-amber-100 text-amber-800', label: 'Pendiente de pago', icon: 'fa-clock' },
+  processing:      { class: 'bg-blue-100 text-blue-800',   label: 'Procesando',       icon: 'fa-cog' },
+  shipped:         { class: 'bg-purple-100 text-purple-800',label: 'Enviado',         icon: 'fa-truck' },
+  delivered:       { class: 'bg-green-100 text-green-800', label: 'Entregado',       icon: 'fa-check-circle' },
+  cancelled:       { class: 'bg-red-100 text-red-800',     label: 'Cancelado',       icon: 'fa-times-circle' }
+};
+
+const baseStatus = statusConfig[order.status] || { class: 'bg-gray-100 text-gray-800', label: order.status, icon: 'fa-question' };
+const status = (order.status === 'pending_payment' && order.payment_method === 'cash')
+  ? { ...baseStatus, label: 'Pago en efectivo pendiente' }
+  : baseStatus;
+
+            container.innerHTML = `
+                <div class="space-y-4">
+                    ${orders.map(order => {
+                        const status = statusConfig[order.status] || { class: 'bg-gray-100 text-gray-800', label: order.status, icon: 'fa-question' };
+                        return `
+                            <div class="border border-gray-200 rounded-lg p-4 hover:shadow-lg transition">
+                                <div class="flex justify-between items-start mb-3">
+                                    <div>
+                                        <h4 class="font-bold text-gray-800">Pedido #${order.id}</h4>
+                                        <p class="text-sm text-gray-500">${new Date(order.created_at).toLocaleDateString('es-CL', {
+                                            year: 'numeric',
+                                            month: 'long',
+                                            day: 'numeric'
+                                        })}</p>
+                                    </div>
+                                    <span class="px-3 py-1 rounded-full text-xs font-semibold ${status.class}">
+                                        <i class="fas ${status.icon} mr-1"></i>${status.label}
+                                    </span>
+                                </div>
+<div class="flex justify-between items-center pt-3 border-t">
+  <span class="text-lg font-bold text-green-600">${Utils.formatPrice(order.total)}</span>
+  <div class="flex gap-2">
+    ${
+      order.status === 'pending_payment' && order.payment_method === 'transfer'
+        ? `
+        <button onclick="openTransferModal('${order.id}', ${order.total || 0})"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition"
+                title="Enviar transferencia">
+          <i class="fas fa-receipt mr-2"></i>Enviar transferencia
+        </button>
+        `
+        : ''
+    }
+    <button onclick="viewOrderDetails(${order.id})"
+            class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition">
+      <i class="fas fa-eye mr-1"></i>Ver Detalles
+    </button>
+  </div>
+</div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        // Ver detalles del pedido
+        async function viewOrderDetails(id) {
+            try {
+                const response = await api.request(`/orders/${id}`);
+                if (response.success) {
+                    showOrderModal(response.data.order);
+                }
+            } catch (error) {
+                notify.error('Error al cargar detalles del pedido');
+            }
+        }
+
+        // Mostrar modal de pedido
+        function showOrderModal(order) {
+  currentOrderId = order.id;
+
+  // Estados (mismos colores que orders):
+  const statusConfig = {
+  pending_payment: { class: 'bg-amber-100 text-amber-800', label: 'Pendiente de pago' },
+  processing: { class: 'bg-blue-100 text-blue-800', label: 'Procesando' },
+  shipped: { class: 'bg-purple-100 text-purple-800', label: 'Enviado' },
+  delivered: { class: 'bg-green-100 text-green-800', label: 'Entregado' },
+  cancelled: { class: 'bg-red-100 text-red-800', label: 'Cancelado' }
+};
+const baseStatus = statusConfig[order.status] || { class: 'bg-gray-100 text-gray-800', label: order.status };
+const status = (order.status === 'pending_payment' && order.payment_method === 'cash')
+  ? { ...baseStatus, label: 'Pago en efectivo pendiente' }
+  : baseStatus;
+
+  // Header modal
+  document.getElementById('modalOrderId').textContent = order.id;
+  document.getElementById('modalDate').textContent = new Date(order.created_at).toLocaleDateString('es-CL', {
+    year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+  });
+
+  // Badge de estado
+  const statusBadge = document.getElementById('modalStatus');
+  statusBadge.className = `px-4 py-2 rounded-full text-sm font-semibold ${status.class}`;
+  statusBadge.innerHTML = `<i class="fas fa-circle mr-2"></i>${status.label}`;
+  
+  // Productos
+  const itemsHtml = (order.items || []).map(item => `
+    <tr class="border-t">
+      <td class="py-2">${item.product_name}</td>
+      <td class="text-right">${item.quantity}</td>
+      <td class="text-right">${Utils.formatPrice(item.price)}</td>
+      <td class="text-right font-semibold">${Utils.formatPrice(item.quantity * item.price)}</td>
+    </tr>
+  `).join('');
+  document.getElementById('modalItems').innerHTML = itemsHtml;
+
+  // Totales
+  document.getElementById('modalSubtotal').textContent = Utils.formatPrice(order.subtotal);
+  document.getElementById('modalTax').textContent = Utils.formatPrice(order.tax);
+  document.getElementById('modalTotal').textContent = Utils.formatPrice(order.total);
+
+  // ====== NUEVO: método de pago + acción ======
+  const paymentMethodText =
+    order.payment_method === 'cash' ? 'Efectivo' :
+    order.payment_method === 'transfer' ? 'Transferencia' : '—';
+
+  const methodEl = document.getElementById('modalPaymentMethod');
+  const hintEl   = document.getElementById('modalPaymentHint');
+  const actionEl = document.getElementById('modalPaymentAction');
+
+  methodEl.textContent = paymentMethodText;
+  hintEl.classList.add('hidden');
+  actionEl.innerHTML = '';
+
+  if (order.payment_method === 'transfer') {
+    // Transferencia: permitir enviar comprobante si sigue pendiente
+    if (order.status === 'pending_payment') {
+      actionEl.innerHTML = `
+        <button class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm"
+                onclick="openTransferModal('${order.id}', ${order.total || 0})">
+          <i class="fas fa-receipt mr-2"></i> Enviar transferencia
+        </button>
+      `;
+    } else {
+      // otros estados: solo informativo
+      actionEl.innerHTML = `<span class="text-sm text-gray-500">No hay acciones disponibles</span>`;
+    }
+  } else if (order.payment_method === 'cash') {
+    // Efectivo: mostrar leyenda y sin botón (se paga al entregar)
+    hintEl.classList.remove('hidden');
+    actionEl.innerHTML = `<span class="text-sm text-gray-500">El pago se realizará al entregar</span>`;
+  } else {
+    // método desconocido
+    actionEl.innerHTML = `<span class="text-sm text-gray-400">—</span>`;
+  }
+  // ====== fin NUEVO ======
+
+  // Mostrar modal
+  document.getElementById('orderModal').classList.remove('hidden');
+}
+
+        function closeOrderModal() {
+            document.getElementById('orderModal').classList.add('hidden');
+            currentOrderId = null;
+        }
+
+        // Cambiar sección
+        function showSection(section) {
+            document.getElementById('infoSection').classList.add('hidden');
+            document.getElementById('passwordSection').classList.add('hidden');
+            document.getElementById('ordersSection').classList.add('hidden');
+
+            document.querySelectorAll('.section-btn').forEach(btn => {
+                btn.classList.remove('active', 'bg-green-100', 'text-green-700', 'font-semibold');
+            });
+
+            const clickedBtn = event.target.closest('.section-btn');
+            
+            if (section === 'info') {
+                document.getElementById('infoSection').classList.remove('hidden');
+            } else if (section === 'password') {
+                document.getElementById('passwordSection').classList.remove('hidden');
+            } else if (section === 'orders') {
+                document.getElementById('ordersSection').classList.remove('hidden');
+                loadOrders();
+            }
+
+            if (clickedBtn) {
+                clickedBtn.classList.add('active', 'bg-green-100', 'text-green-700', 'font-semibold');
+            }
+        }
+
+        // Cerrar modal con ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeOrderModal();
+        });
+
+        document.getElementById('orderModal').addEventListener('click', (e) => {
+            if (e.target.id === 'orderModal') closeOrderModal();
+        });
+
+        function openTransferModal(orderId, amount) {
+  document.getElementById('transferOrderId').value = orderId;
+  document.getElementById('amountPaid').value = Math.round(amount || 0);
+  document.getElementById('transferAmountText').textContent =
+    (amount || 0).toLocaleString('es-CL', { style:'currency', currency:'CLP' });
+
+  document.getElementById('transferModal').classList.remove('hidden');
+}
+
+function hideTransferModal() {
+  document.getElementById('transferForm').reset();
+  document.getElementById('transferModal').classList.add('hidden');
+}
+
+function closeTransferModal(e) {
+  if (e.target.id === 'transferModal') hideTransferModal();
+}
+
+document.getElementById('transferForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const orderId = document.getElementById('transferOrderId').value;
+  const bankName = document.getElementById('bankName').value.trim();
+  const reference = document.getElementById('reference').value.trim();
+  const transferDate = document.getElementById('transferDate').value;
+  const amountPaid = parseInt(document.getElementById('amountPaid').value, 10);
+  const file = document.getElementById('receiptFile').files[0];
+
+  if (!file) {
+    notify.warning('Adjunta el comprobante de transferencia');
+    return;
+  }
+
+  try {
+    // Construir FormData (multipart)
+    const fd = new FormData();
+    fd.append('orderId', orderId);
+    fd.append('bankName', bankName);
+    fd.append('reference', reference);
+    fd.append('transferDate', transferDate);
+    fd.append('amountPaid', amountPaid);
+    fd.append('receipt', file);
+
+    // Llamar API (nuevo endpoint — ver sección 3)
+    const res = await api.submitTransferProof(fd);
+
+    if (res && res.success) {
+      notify.success('¡Transferencia enviada! Quedará pendiente de validación.');
+      hideTransferModal();
+      // Refrescar pedidos para reflejar estado waiting_validation
+      loadOrders();
+    } else {
+      throw new Error(res?.message || 'No se pudo enviar la transferencia');
+    }
+  } catch (err) {
+    console.error(err);
+    notify.error('Error al enviar la transferencia');
+  }
+});
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" type="image/png" href="./assets/images/logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - Apexremedy</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./style/css_home.css">
+    <link rel="stylesheet" href="./style/registro.css">
+    <script src="./js/config.js"></script>
+    <script src="./js/utils.js"></script>
+    <script defer src="./js/template.js"></script>
+</head>
+<body class="register-page">
+    <!-- Header template -->
+    <div id="header-container"></div>
+
+    <!-- Formulario de Registro -->
+    <div class="register-container">
+        <div class="container register-form-wrapper">
+            <!-- Header -->
+            <div class="register-header">
+                <div class="register-icon-container">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                <h2>Crear Cuenta</h2>
+                <p>Únete a la comunidad de Apexremedy</p>
+            </div>
+
+            <!-- Formulario Multi-Step -->
+            <div class="about-card register-form-card">
+                <!-- Progress Steps -->
+                <div class="steps-container">
+                    <div class="steps-progress-line"></div>
+                    <div id="progressBar" class="progress-bar"></div>
+                    
+                    <div class="step-indicator active" data-step="1">
+                        <div class="step-circle">1</div>
+                        <p>Información Personal</p>
+                    </div>
+                    
+                    <div class="step-indicator" data-step="2">
+                        <div class="step-circle">2</div>
+                        <p>Documentos</p>
+                    </div>
+                </div>
+
+                <form id="registerForm">
+                    <!-- STEP 1: Información Personal -->
+                    <div id="step1" class="form-step">
+                        <h3>
+                            <i class="fas fa-user-circle"></i> Información Personal
+                        </h3>
+
+                        <div class="form-grid">
+                            <!-- Nombre -->
+                            <div>
+                                <label class="form-label">
+                                    Nombre Completo *
+                                </label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-user"></i>
+                                    <input type="text" 
+                                           id="name" 
+                                           name="name"
+                                           required
+                                           minlength="3"
+                                           placeholder="Juan Pérez">
+                                </div>
+                            </div>
+
+                            <!-- Email -->
+                            <div>
+                                <label class="form-label">
+                                    Correo Electrónico *
+                                </label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-envelope"></i>
+                                    <input type="email" 
+                                           id="email" 
+                                           name="email"
+                                           required
+                                           placeholder="tu@email.com">
+                                </div>
+                            </div>
+
+                            <!-- Teléfono y RUT -->
+                            <div class="form-grid-2">
+                                <div>
+                                    <label class="form-label">
+                                        Teléfono (opcional)
+                                    </label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-phone"></i>
+                                        <input type="tel" 
+                                               id="phone" 
+                                               name="phone"
+                                               placeholder="+56912345678">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="form-label">
+                                        RUT (opcional)
+                                    </label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-id-card"></i>
+                                        <input type="text" 
+                                               id="rut" 
+                                               name="rut"
+                                               placeholder="12345678-9">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Contraseña -->
+                            <div class="form-grid-2">
+                                <div>
+                                    <label class="form-label">
+                                        Contraseña *
+                                    </label>
+                                    <div class="input-with-icon password-input">
+                                        <i class="fas fa-lock"></i>
+                                        <input type="password" 
+                                               id="password" 
+                                               name="password"
+                                               required
+                                               minlength="6"
+                                               placeholder="••••••••">
+                                        <button type="button" 
+                                                id="togglePassword"
+                                                class="toggle-password-btn">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    <p class="password-hint">
+                                        Mínimo 6 caracteres
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <label class="form-label">
+                                        Confirmar Contraseña *
+                                    </label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-lock"></i>
+                                        <input type="password" 
+                                               id="confirmPassword" 
+                                               name="confirmPassword"
+                                               required
+                                               minlength="6"
+                                               placeholder="••••••••">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Términos -->
+                            <div style="margin-top: 10px;">
+                                <label class="terms-checkbox-label">
+                                    <input type="checkbox" 
+                                           id="terms"
+                                           required>
+                                    <span>
+                                        Acepto los <a href="#">términos y condiciones</a> y la <a href="#">política de privacidad</a>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="step-buttons">
+                            <button type="button" onclick="nextStep()" class="cta-button full-width">
+                                Siguiente: Documentos <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 2: Documentos -->
+                    <div id="step2" class="form-step" style="display: none;">
+                        <h3 class="document-section-title">
+                            <i class="fas fa-file-medical"></i> Documentación Requerida
+                        </h3>
+                        <p class="document-section-description">
+                            Para completar tu registro, necesitamos los siguientes documentos (formato PDF, JPG o PNG, máximo 5MB cada uno)
+                        </p>
+
+                        <!-- Documento 1: Receta Médica -->
+                        <div class="document-upload-area" style="margin-bottom: 24px;">
+                            <label style="display: block; font-weight: 600; margin-bottom: 12px; color: var(--accent-black); display: flex; align-items: center; gap: 8px;">
+                                <i class="fas fa-prescription" style="color: #10b981;"></i> Receta Médica *
+                            </label>
+                            <div class="upload-zone" id="uploadReceta" style="border: 2px dashed var(--light-gray); border-radius: var(--border-radius); padding: 30px; text-align: center; cursor: pointer; transition: all 0.3s; background: var(--white);">
+                                <input type="file" id="recetaFile" accept=".pdf,.jpg,.jpeg,.png" class="hidden" onchange="handleDocumentUpload(event, 'receta')">
+                                <div id="recetaPlaceholder">
+                                    <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: var(--medium-gray); margin-bottom: 12px; display: block;"></i>
+                                    <p style="color: var(--medium-gray); margin-bottom: 8px; font-weight: 600;">Arrastra tu receta médica aquí</p>
+                                    <p style="color: var(--medium-gray); font-size: 0.85rem; margin-bottom: 16px;">o haz clic para seleccionar</p>
+                                    <button type="button" onclick="document.getElementById('recetaFile').click()" class="secondary-button">
+                                        <i class="fas fa-folder-open" style="margin-right: 8px;"></i>Seleccionar Archivo
+                                    </button>
+                                </div>
+                                <div id="recetaPreview" style="display: none;">
+                                    <i class="fas fa-file-pdf" style="font-size: 3rem; color: var(--primary-green); margin-bottom: 12px; display: block;"></i>
+                                    <p id="recetaFileName" style="font-weight: 600; color: var(--primary-green); margin-bottom: 8px;"></p>
+                                    <p id="recetaFileSize" style="font-size: 0.85rem; color: var(--medium-gray); margin-bottom: 16px;"></p>
+                                    <button type="button" onclick="removeDocument('receta')" class="secondary-button" style="border-color: var(--error); color: var(--error);">
+                                        <i class="fas fa-trash" style="margin-right: 8px;"></i>Eliminar
+                                    </button>
+                                </div>
+                            </div>
+                            <input type="hidden" id="recetaData">
+                        </div>
+<!-- Documento 2: Carnet -->
+<div class="document-upload-area" style="margin-bottom: 24px;">
+    <label style="display: block; font-weight: 600; margin-bottom: 12px; color: var(--accent-black); display: flex; align-items: center; gap: 8px;">
+        <i class="fas fa-id-card" style="color: #3b82f6;"></i> Carnet de Identidad *
+    </label>
+    <div class="upload-zone" id="uploadCarnet" style="border: 2px dashed var(--light-gray); border-radius: var(--border-radius); padding: 30px; text-align: center; cursor: pointer; transition: all 0.3s; background: var(--white);">
+        <input type="file" id="carnetFile" accept=".pdf,.jpg,.jpeg,.png" class="hidden" onchange="handleDocumentUpload(event, 'carnet')">
+        <div id="carnetPlaceholder">
+            <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: var(--medium-gray); margin-bottom: 12px; display: block;"></i>
+            <p style="color: var(--medium-gray); margin-bottom: 8px; font-weight: 600;">Arrastra tu carnet aquí</p>
+            <p style="color: var(--medium-gray); font-size: 0.85rem; margin-bottom: 16px;">o haz clic para seleccionar</p>
+            <button type="button" onclick="document.getElementById('carnetFile').click()" class="secondary-button">
+                <i class="fas fa-folder-open" style="margin-right: 8px;"></i>Seleccionar Archivo
+            </button>
+        </div>
+        <div id="carnetPreview" style="display: none;">
+            <i class="fas fa-file-image" style="font-size: 3rem; color: var(--primary-green); margin-bottom: 12px; display: block;"></i>
+            <p id="carnetFileName" style="font-weight: 600; color: var(--primary-green); margin-bottom: 8px;"></p>
+            <p id="carnetFileSize" style="font-size: 0.85rem; color: var(--medium-gray); margin-bottom: 16px;"></p>
+            <button type="button" onclick="removeDocument('carnet')" class="secondary-button" style="border-color: var(--error); color: var(--error);">
+                <i class="fas fa-trash" style="margin-right: 8px;"></i>Eliminar
+            </button>
+        </div>
+    </div>
+    <input type="hidden" id="carnetData">
+</div>
+
+<!-- Documento 3: Certificado de Antecedentes -->
+<div class="document-upload-area" style="margin-bottom: 24px;">
+    <label style="display: block; font-weight: 600; margin-bottom: 12px; color: var(--accent-black); display: flex; align-items: center; gap: 8px;">
+        <i class="fas fa-certificate" style="color: #8b5cf6;"></i> Certificado de Antecedentes *
+    </label>
+    <div class="upload-zone" id="uploadCertificado" style="border: 2px dashed var(--light-gray); border-radius: var(--border-radius); padding: 30px; text-align: center; cursor: pointer; transition: all 0.3s; background: var(--white);">
+        <input type="file" id="certificadoFile" accept=".pdf,.jpg,.jpeg,.png" class="hidden" onchange="handleDocumentUpload(event, 'certificado')">
+        <div id="certificadoPlaceholder">
+            <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: var(--medium-gray); margin-bottom: 12px; display: block;"></i>
+            <p style="color: var(--medium-gray); margin-bottom: 8px; font-weight: 600;">Arrastra tu certificado aquí</p>
+            <p style="color: var(--medium-gray); font-size: 0.85rem; margin-bottom: 16px;">o haz clic para seleccionar</p>
+            <button type="button" onclick="document.getElementById('certificadoFile').click()" class="secondary-button">
+                <i class="fas fa-folder-open" style="margin-right: 8px;"></i>Seleccionar Archivo
+            </button>
+        </div>
+        <div id="certificadoPreview" style="display: none;">
+            <i class="fas fa-file-alt" style="font-size: 3rem; color: var(--primary-green); margin-bottom: 12px; display: block;"></i>
+            <p id="certificadoFileName" style="font-weight: 600; color: var(--primary-green); margin-bottom: 8px;"></p>
+            <p id="certificadoFileSize" style="font-size: 0.85rem; color: var(--medium-gray); margin-bottom: 16px;"></p>
+            <button type="button" onclick="removeDocument('certificado')" class="secondary-button" style="border-color: var(--error); color: var(--error);">
+                <i class="fas fa-trash" style="margin-right: 8px;"></i>Eliminar
+            </button>
+        </div>
+    </div>
+    <input type="hidden" id="certificadoData">
+</div>
+
+<div style="margin-top: 32px; display: flex; gap: 12px;">
+    <button type="button" onclick="prevStep()" class="secondary-button" style="flex: 1;">
+        <i class="fas fa-arrow-left" style="margin-right: 8px;"></i> Atrás
+    </button>
+    <button type="button" onclick="submitForm()" id="submitBtn" class="cta-button" style="flex: 2;">
+        <span id="btnText">Crear Cuenta</span>
+        <i id="btnLoader" style="display: none;" class="fas fa-spinner fa-spin" style="margin-left: 8px;"></i>
+    </button>
+</div>
+</div>
+</form>
+
+<!-- Login Link -->
+<div style="margin-top: 32px; text-align: center; padding-top: 24px; border-top: 1px solid var(--light-gray);">
+<p style="color: var(--medium-gray);">
+¿Ya tienes cuenta? 
+<a href="./login.html" style="color: var(--primary-green); font-weight: 600; text-decoration: none;">
+    Inicia Sesión
+</a>
+</p>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Footer template -->
+<div id="footer-container"></div>
+
+<!-- Scripts -->
+<script src="./js/api/apiClient.js"></script>
+<script src="./js/auth.js"></script>
+<script src="./js/notifications.js"></script>
+<script src="./js/db_articulos.js"></script>
+<script src="./js/carrito.js"></script>
+
+<script>
+// ===========================================
+// VARIABLES GLOBALES
+// ===========================================
+
+let currentStep = 1;
+const totalSteps = 2;
+
+// ===========================================
+// NAVEGACIÓN ENTRE PASOS
+// ===========================================
+
+function nextStep() {
+    if (validateStep1()) {
+        currentStep = 2;
+        updateStepDisplay();
+    }
+}
+
+function prevStep() {
+    currentStep = 1;
+    updateStepDisplay();
+}
+
+function updateStepDisplay() {
+    // Ocultar todos los steps
+    document.getElementById('step1').style.display = 'none';
+    document.getElementById('step2').style.display = 'none';
+
+    // Mostrar step actual
+    document.getElementById(`step${currentStep}`).style.display = 'block';
+
+    // Actualizar indicadores
+    document.querySelectorAll('.step-indicator').forEach((indicator, index) => {
+        const stepNum = index + 1;
+        const circle = indicator.querySelector('.step-circle');
+        const text = indicator.querySelector('p');
+
+        if (stepNum < currentStep) {
+            circle.style.background = '#8d523b';
+            circle.style.color = 'white';
+            text.style.color = '#8d523b';
+        } else if (stepNum === currentStep) {
+            circle.style.background = '#8d523b';
+            circle.style.color = 'white';
+            text.style.color = '#8d523b';
+        } else {
+            circle.style.background = '#f8f9fa';
+            circle.style.color = '#6c757d';
+            text.style.color = '#6c757d';
+        }
+    });
+
+    // Actualizar barra de progreso
+    const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
+    document.getElementById('progressBar').style.width = progress + '%';
+
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ===========================================
+// VALIDACIÓN PASO 1
+// ===========================================
+
+function validateStep1() {
+const name = document.getElementById('name').value.trim();
+const email = document.getElementById('email').value.trim();
+const password = document.getElementById('password').value;
+const confirmPassword = document.getElementById('confirmPassword').value;
+const terms = document.getElementById('terms').checked;
+
+if (!name || name.length < 3) {
+notify.warning('El nombre debe tener al menos 3 caracteres');
+return false;
+}
+
+if (!email) {
+notify.warning('Por favor ingresa tu correo electrónico');
+return false;
+}
+
+if (!password || password.length < 6) {
+notify.warning('La contraseña debe tener al menos 6 caracteres');
+return false;
+}
+
+if (password !== confirmPassword) {
+notify.warning('Las contraseñas no coinciden');
+return false;
+}
+
+if (!terms) {
+notify.warning('Debes aceptar los términos y condiciones');
+return false;
+}
+
+return true;
+}
+
+// ===========================================
+// MANEJO DE DOCUMENTOS
+// ===========================================
+
+function setupDragAndDrop() {
+const zones = ['uploadReceta', 'uploadCarnet', 'uploadCertificado'];
+
+zones.forEach(zoneId => {
+const zone = document.getElementById(zoneId);
+if (!zone) return;
+
+['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+zone.addEventListener(eventName, preventDefaults, false);
+});
+
+function preventDefaults(e) {
+e.preventDefault();
+e.stopPropagation();
+}
+
+['dragenter', 'dragover'].forEach(eventName => {
+zone.addEventListener(eventName, () => {
+zone.style.borderColor = '#8d523b';
+zone.style.background = 'rgba(141, 82, 59, 0.05)';
+}, false);
+});
+
+['dragleave', 'drop'].forEach(eventName => {
+zone.addEventListener(eventName, () => {
+zone.style.borderColor = '#f8f9fa';
+zone.style.background = '#fff';
+}, false);
+});
+
+zone.addEventListener('drop', (e) => {
+const docType = zoneId.replace('upload', '').toLowerCase();
+const file = e.dataTransfer.files[0];
+if (file) {
+processDocument(file, docType);
+}
+}, false);
+
+// Click en zona
+zone.addEventListener('click', (e) => {
+if (e.target.closest('button')) return;
+const docType = zoneId.replace('upload', '').toLowerCase();
+document.getElementById(`${docType}File`).click();
+});
+});
+}
+
+function handleDocumentUpload(event, type) {
+const file = event.target.files[0];
+if (file) {
+processDocument(file, type);
+}
+}
+
+function processDocument(file, type) {
+// Validar tipo de archivo
+const validTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+if (!validTypes.includes(file.type)) {
+notify.error('Formato no válido. Solo se permiten PDF, JPG y PNG');
+return;
+}
+
+// Validar tamaño (5MB)
+const maxSize = 5 * 1024 * 1024;
+if (file.size > maxSize) {
+notify.error('El archivo no debe superar 5MB');
+return;
+}
+
+// Leer archivo como Base64
+const reader = new FileReader();
+reader.onload = function(e) {
+const base64 = e.target.result;
+
+// Guardar en hidden input
+document.getElementById(`${type}Data`).value = base64;
+
+// Mostrar preview
+document.getElementById(`${type}Placeholder`).style.display = 'none';
+document.getElementById(`${type}Preview`).style.display = 'block';
+document.getElementById(`${type}FileName`).textContent = file.name;
+document.getElementById(`${type}FileSize`).textContent = formatFileSize(file.size);
+
+notify.success(`${getDocumentName(type)} cargado correctamente`);
+};
+
+reader.onerror = function() {
+notify.error('Error al leer el archivo');
+};
+
+reader.readAsDataURL(file);
+}
+
+function removeDocument(type) {
+            document.getElementById(`${type}File`).value = '';
+            document.getElementById(`${type}Data`).value = '';
+            document.getElementById(`${type}Placeholder`).style.display = 'block';
+            document.getElementById(`${type}Preview`).style.display = 'none';
+            
+            notify.info(`${getDocumentName(type)} eliminado`);
+        }
+        
+        function getDocumentName(type) {
+            const names = {
+                'receta': 'Receta Médica',
+                'carnet': 'Carnet de Identidad',
+                'certificado': 'Certificado de Antecedentes'
+            };
+            return names[type] || 'Documento';
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        // ===========================================
+        // UTILIDADES
+        // ===========================================
+        
+        // Toggle password visibility
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const icon = this.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+
+        // Formatear RUT mientras se escribe
+        document.getElementById('rut').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/[^0-9kK]/g, '');
+            if (value.length > 1) {
+                value = value.slice(0, -1) + '-' + value.slice(-1);
+            }
+            e.target.value = value;
+        });
+
+        // ===========================================
+        // SUBMIT DEL FORMULARIO
+        // ===========================================
+        
+        function submitForm() {
+            // Validar documentos
+            const receta = document.getElementById('recetaData').value;
+            const carnet = document.getElementById('carnetData').value;
+            const certificado = document.getElementById('certificadoData').value;
+            
+            if (!receta || !carnet || !certificado) {
+                notify.error('Debes cargar los 3 documentos requeridos');
+                return;
+            }
+            
+            handleSubmit();
+        }
+        
+        async function handleSubmit() {
+            
+            // Validar datos del formulario
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            
+            if (!name || !email || !password) {
+                notify.error('Por favor completa todos los campos requeridos');
+                return;
+            }
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            const btnLoader = document.getElementById('btnLoader');
+            
+            submitBtn.disabled = true;
+            btnText.textContent = 'Creando cuenta...';
+            btnLoader.style.display = 'inline-block';
+            
+            try {
+                // Separar nombre completo en first_name y last_name
+                const fullName = document.getElementById('name').value.trim();
+                const nameParts = fullName.split(' ');
+                const firstName = nameParts[0] || '';
+                const lastName = nameParts.slice(1).join(' ') || '';
+                
+                // Preparar datos según nueva estructura de base de datos
+                const userData = {
+                    email: document.getElementById('email').value.trim(),
+                    password: document.getElementById('password').value,
+                    first_name: firstName,
+                    last_name: lastName,
+                    phone: document.getElementById('phone').value.trim() || undefined,
+                    rut: document.getElementById('rut').value.trim() || undefined
+                };
+                
+                console.log('📤 Enviando registro...');
+                
+                // Intentar registro usando directamente la API
+                const response = await api.register(userData);
+                
+                if (response.success) {
+                    // Guardar documentos después de crear el usuario
+                    const userId = response.data.user.id;
+                    console.log('📄 Guardando documentos para usuario ID:', userId);
+                    
+                    const documentsData = [
+                        {
+                            document_type: 'receta_medica',
+                            file_data: document.getElementById('recetaData').value,
+                            file_name: 'receta_medica.pdf'
+                        },
+                        {
+                            document_type: 'carnet_identidad',
+                            file_data: document.getElementById('carnetData').value,
+                            file_name: 'carnet_identidad.pdf'
+                        },
+                        {
+                            document_type: 'certificado_antecedentes',
+                            file_data: document.getElementById('certificadoData').value,
+                            file_name: 'certificado_antecedentes.pdf'
+                        }
+                    ];
+                    
+                    // Enviar documentos
+                    await api.saveUserDocuments(userId, documentsData);
+                    
+                    notify.success('¡Cuenta creada exitosamente! Tu cuenta está pendiente de aprobación. Serás notificado cuando sea aprobada.', 'Cuenta pendiente de aprobación');
+                    
+                    setTimeout(() => {
+                        window.location.href = './login.html';
+                    }, 3000);
+                } else {
+                    notify.error(response.message || 'Error al crear la cuenta');
+                    submitBtn.disabled = false;
+                    btnText.textContent = 'Crear Cuenta';
+                    btnLoader.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error en registro:', error);
+                notify.error('Error al conectar con el servidor: ' + error.message);
+                submitBtn.disabled = false;
+                btnText.textContent = 'Crear Cuenta';
+                btnLoader.style.display = 'none';
+            }
+        }
+        
+        // Prevenir submit del formulario
+        document.getElementById('registerForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (currentStep === 2) {
+                submitForm();
+            }
+        });
+        
+        // ===========================================
+        // INICIALIZACIÓN
+        // ===========================================
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            // Redirigir si ya está autenticado
+            if (typeof authManager !== 'undefined' && authManager.isAuthenticated()) {
+                window.location.href = './index.html';
+                return;
+            }
+            
+            setupDragAndDrop();
+            updateStepDisplay();
+        });
+    </script>
+
+    <!-- Sidebar del carrito -->
+    <div id="cartSidebar" class="cart-sidebar">
+        <div class="cart-header">
+            <h3><i class="fas fa-shopping-cart"></i> Carrito de Compras</h3>
+            <button id="closeCart" class="cta-button" style="padding: 6px 12px;">Cerrar</button>
+        </div>
+        <div id="cartItems" class="cart-items"></div>
+        <div class="cart-total">
+            <div class="total-amount" id="cartTotal">Total: $0</div>
+            <a href="./carrito.html" class="cta-button full-width">Ver Carrito Completo</a>
+        </div>
+    </div>
+    <div id="cartOverlay" class="cart-overlay" style="display: none;"></div>
+
+</body>
+</html>
