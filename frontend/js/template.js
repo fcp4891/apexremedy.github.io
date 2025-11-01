@@ -445,30 +445,41 @@ if (profileLink) {
   let initInProgress = false;
   let initListenerAdded = false;
   let initPromise = null; // Cachear la promesa de init para evitar múltiples ejecuciones
+  let templateInitializationLock = false; // Lock global para prevenir cualquier inicialización
   
   async function init() {
-    // Prevenir múltiples inicializaciones
-    if (initCalled) {
+    // Protección más estricta: si ya se completó, nunca volver a ejecutar
+    if (initCalled || templateInitializationLock) {
       console.log('⚠️ Init ya fue completado, ignorando...');
-      return;
+      return true;
     }
     
+    // Si está en progreso, esperar la promesa existente
     if (initInProgress) {
       console.log('⚠️ Init ya está en progreso, esperando promesa existente...');
-      // Esperar a que termine la inicialización en progreso
       if (initPromise) {
         return await initPromise;
       }
-      return;
+      return true;
     }
     
+    // Activar lock inmediatamente
+    templateInitializationLock = true;
     initInProgress = true;
     console.log('🚀 Inicializando template.js...');
     
-    // Crear promesa para cachear
     initPromise = (async () => {
       try {
-        return await doInit();
+        const result = await doInit();
+        initCalled = true;
+        return result;
+      } catch (error) {
+        console.error('❌ Error en doInit:', error);
+        // Solo resetear lock si hay error crítico
+        if (error.message && error.message.includes('critical')) {
+          templateInitializationLock = false;
+        }
+        throw error;
       } finally {
         initInProgress = false;
       }
