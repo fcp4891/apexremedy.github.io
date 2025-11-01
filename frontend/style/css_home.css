@@ -817,6 +817,9 @@ body:has(.cart-sidebar.open) .cart-overlay{
   width:100%;
   overflow:hidden;
   animation:slideUp 0.3s ease-out;
+  position:relative;
+  /* Prevenir que clicks dentro del contenido se propaguen al backdrop */
+  pointer-events:auto;
 }
 
 .session-warning-header{

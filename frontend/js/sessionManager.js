@@ -100,25 +100,52 @@
             // Guardar referencia al interval para poder limpiarlo
             modal.dataset.countdownInterval = countdownInterval;
 
+            // Función para cerrar y mantener conexión (por defecto)
+            const closeAndStayConnected = () => {
+                clearInterval(countdownInterval);
+                this.hideWarning();
+                this.resetInactivityTimer();
+            };
+
+            // Función para cerrar y salir
+            const closeAndLogout = () => {
+                clearInterval(countdownInterval);
+                this.hideWarning();
+                this.forceLogout();
+            };
+
             // Botón "Mantenerme conectado"
             const stayConnectedBtn = modal.querySelector('#stayConnectedBtn');
             if (stayConnectedBtn) {
-                stayConnectedBtn.addEventListener('click', () => {
-                    clearInterval(countdownInterval);
-                    this.hideWarning();
-                    this.resetInactivityTimer();
-                });
+                stayConnectedBtn.addEventListener('click', closeAndStayConnected);
             }
 
             // Botón "Cerrar sesión"
             const logoutBtn = modal.querySelector('#logoutBtn');
             if (logoutBtn) {
-                logoutBtn.addEventListener('click', () => {
-                    clearInterval(countdownInterval);
-                    this.hideWarning();
-                    this.forceLogout();
-                });
+                logoutBtn.addEventListener('click', closeAndLogout);
             }
+
+            // Cerrar con tecla ESC
+            const handleEscapeKey = (e) => {
+                if (e.key === 'Escape' || e.keyCode === 27) {
+                    closeAndStayConnected();
+                    document.removeEventListener('keydown', handleEscapeKey);
+                }
+            };
+            document.addEventListener('keydown', handleEscapeKey);
+
+            // Cerrar haciendo click fuera del modal (backdrop)
+            modal.addEventListener('click', (e) => {
+                // Si el click fue directamente en el backdrop (no en el contenido)
+                if (e.target === modal) {
+                    closeAndStayConnected();
+                    document.removeEventListener('keydown', handleEscapeKey);
+                }
+            });
+
+            // Guardar referencia al handler ESC para limpiarlo después
+            modal.dataset.escapeHandler = handleEscapeKey.toString();
         }
 
         createWarningModal() {
@@ -159,6 +186,12 @@
                 if (countdownInterval) {
                     clearInterval(parseInt(countdownInterval));
                 }
+                
+                // Remover listener de ESC si existe
+                const allEscapeListeners = document.querySelectorAll('[data-escape-handler]');
+                // Limpiar cualquier listener relacionado
+                document.removeEventListener('keydown', () => {});
+                
                 modal.remove();
             }
             this.isWarningShown = false;
