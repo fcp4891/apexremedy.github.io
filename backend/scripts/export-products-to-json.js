@@ -31,7 +31,13 @@ async function exportProducts() {
                 if (productCount > 0 && !isEmptyMsg) {
                     console.log(`✅ JSON existente tiene ${productCount} productos - NO sobrescribir`);
                     console.log(`✅ Preservando JSON existente con productos`);
-                    return;
+                    return {
+                        success: true,
+                        productsCount: productCount,
+                        featuredCount: existingData?.data?.featured?.length || 0,
+                        categoriesCount: Object.keys(existingData?.data?.categories || {}).length || 0,
+                        preserved: true
+                    };
                 }
             } catch (error) {
                 console.warn('⚠️ Error al leer JSON existente, continuando con exportación...', error.message);
@@ -200,8 +206,7 @@ async function exportProducts() {
             console.log('📁 Directorio api creado:', apiDir);
         }
         
-        // Guardar productos completos
-        const productsFile = path.join(apiDir, 'products.json');
+        // Guardar productos completos (productsFile ya declarado arriba)
         fs.writeFileSync(productsFile, JSON.stringify(apiResponse, null, 2), 'utf8');
         console.log(`✅ Productos exportados: ${productsFile} (${normalizedProducts.length} productos)`);
         
