@@ -71,7 +71,10 @@
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
       const html = await response.text();
-      container.innerHTML = html;
+      // Prevenir actualizar si el contenido es el mismo (evita re-renderizado)
+      if (container.innerHTML.trim() !== html.trim()) {
+        container.innerHTML = html;
+      }
       return true;
     } catch (error) {
       return false;
@@ -358,43 +361,66 @@ if (profileLink) {
 /**
  * Inicialización principal con detección de área (admin/customer)
  */
+let initCalled = false;
+let initInProgress = false;
+
 async function init() {
-  // 1. Determinar si estamos en el área admin o customer
-  const isAdminArea = location.pathname.toLowerCase().includes('/admin/');
-  
-  // 2. Construir path de componentes (loadTemplate manejará el basePath)
-  const headerFile = isAdminArea ? 'header.html' : 'header-customer.html';
-  const footerFile = isAdminArea ? 'footer.html' : 'footer-customer.html';
-  const componentsPath = './components';
-
-  // 3. Cargar header y footer correctos (loadTemplate ajustará las rutas automáticamente)
-  const headerLoaded = await loadTemplate('#header-container', `${componentsPath}/${headerFile}`);
-  const footerLoaded = await loadTemplate('#footer-container', `${componentsPath}/${footerFile}`);
-
-  // 3. Configurar navegación y UI
-  setActiveNavLink();
-  setupMobileMenu();
-  setupCartSidebar();
-
-  // 4. Esperar a que DOM se estabilice antes de actualizar el carrito
-  setTimeout(updateCartCount, 150);
-
-  // 5. Actualizar UI de autenticación
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', updateAuthUI);
-  } else {
-    updateAuthUI();
+  // Prevenir múltiples inicializaciones
+  if (initCalled || initInProgress) {
+    console.log('⚠️ Init ya fue llamado o está en progreso, ignorando...');
+    return;
   }
+  
+  initInProgress = true;
+  console.log('🚀 Inicializando template.js...');
+  
+  try {
+    // 1. Determinar si estamos en el área admin o customer
+    const isAdminArea = location.pathname.toLowerCase().includes('/admin/');
+    
+    // 2. Construir path de componentes (loadTemplate manejará el basePath)
+    const headerFile = isAdminArea ? 'header.html' : 'header-customer.html';
+    const footerFile = isAdminArea ? 'footer.html' : 'footer-customer.html';
+    const componentsPath = './components';
 
-  // 6. Escuchar actualizaciones del carrito
-  window.addEventListener('cartUpdated', updateCartCount);
+    // 3. Cargar header y footer correctos (loadTemplate ajustará las rutas automáticamente)
+    const headerLoaded = await loadTemplate('#header-container', `${componentsPath}/${headerFile}`);
+    const footerLoaded = await loadTemplate('#footer-container', `${componentsPath}/${footerFile}`);
+
+    // 4. Configurar navegación y UI
+    setActiveNavLink();
+    setupMobileMenu();
+    setupCartSidebar();
+
+    // 5. Esperar a que DOM se estabilice antes de actualizar el carrito
+    setTimeout(updateCartCount, 150);
+
+    // 6. Actualizar UI de autenticación (solo una vez)
+    updateAuthUI();
+
+    // 7. Escuchar actualizaciones del carrito (solo una vez)
+    window.addEventListener('cartUpdated', updateCartCount);
+    
+    initCalled = true;
+    console.log('✅ Template.js inicializado correctamente');
+  } catch (error) {
+    console.error('❌ Error al inicializar template.js:', error);
+  } finally {
+    initInProgress = false;
+  }
 }
 
-  // Ejecutar cuando el DOM esté listo
+  // Ejecutar cuando el DOM esté listo (solo una vez)
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('DOMContentLoaded', function() {
+      if (!initCalled && !initInProgress) {
+        init();
+      }
+    }, { once: true });
   } else {
-    init();
+    if (!initCalled && !initInProgress) {
+      init();
+    }
   }
 
   // Exportar funciones útiles
