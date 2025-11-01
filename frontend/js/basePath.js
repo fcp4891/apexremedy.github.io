@@ -15,41 +15,44 @@
     if (isGitHubPages) {
         // Extraer el path base desde el pathname actual
         // pathname será algo como: /fcp4891/apexremedy.github.io/index.html
+        // O simplemente: /apexremedy.github.io/index.html
         // NOTA: El workflow despliega desde ./frontend, así que los archivos están en la raíz del sitio desplegado
-        const pathParts = window.location.pathname.split('/').filter(p => p);
+        const pathname = window.location.pathname;
+        const pathParts = pathname.split('/').filter(p => p);
         
         // Buscar el índice del repositorio en la URL
         // La estructura de GitHub Pages es: /username/repo-name/path
         let repoIndex = -1;
         for (let i = 0; i < pathParts.length; i++) {
-            if (pathParts[i] === repoName || pathParts[i] === 'apexremedy.github.io') {
+            if (pathParts[i] === repoName || pathParts[i].includes('apexremedy')) {
                 repoIndex = i;
                 break;
             }
         }
         
         if (repoIndex !== -1) {
-            // Construir ruta base: /username/apexremedy.github.io/
-            // O si es un usuario específico: /fcp4891/apexremedy.github.io/
-            const username = pathParts[0]; // Primer elemento suele ser el username
-            if (username && repoIndex > 0) {
-                basePath = '/' + pathParts.slice(0, repoIndex + 1).join('/') + '/';
-            } else {
-                basePath = '/' + repoName + '/';
-            }
+            // Construir ruta base incluyendo todo desde el inicio hasta el repo
+            // Ejemplo: pathname = "/fcp4891/apexremedy.github.io/login.html"
+            //          pathParts = ["fcp4891", "apexremedy.github.io", "login.html"]
+            //          repoIndex = 1
+            //          basePath = "/fcp4891/apexremedy.github.io/"
+            basePath = '/' + pathParts.slice(0, repoIndex + 1).join('/') + '/';
         } else {
-            // Si no encontramos el repo en el path, intentar construir desde el pathname
-            // pathname puede ser: /apexremedy.github.io/ o /fcp4891/apexremedy.github.io/
-            const pathname = window.location.pathname;
+            // Si no encontramos el repo, construir desde el pathname completo
+            // Intentar extraer hasta el primer segmento que parezca el repo
             if (pathname.includes(repoName)) {
-                const beforeRepo = pathname.substring(0, pathname.indexOf(repoName));
-                basePath = beforeRepo + repoName + '/';
+                // Encontrar la posición del repo en el pathname
+                const repoPos = pathname.indexOf(repoName);
+                // Extraer todo desde el inicio hasta el final del nombre del repo
+                basePath = pathname.substring(0, repoPos + repoName.length) + '/';
             } else {
-                // Fallback: construir desde el primer segmento del path
-                if (pathParts.length > 0) {
-                    basePath = '/' + pathParts[0] + '/' + repoName + '/';
+                // Fallback: si no encontramos el repo, usar el pathname completo sin el archivo
+                // Extraer el directorio del pathname actual
+                const lastSlash = pathname.lastIndexOf('/');
+                if (lastSlash > 0) {
+                    basePath = pathname.substring(0, lastSlash + 1);
                 } else {
-                    basePath = '/' + repoName + '/';
+                    basePath = '/';
                 }
             }
         }
@@ -57,6 +60,10 @@
         // IMPORTANTE: GitHub Pages despliega desde ./frontend, así que los archivos
         // están en la raíz del sitio desplegado, NO en /frontend/
         // Por lo tanto, NO agregamos 'frontend/' al basePath
+        
+        console.log('🔧 BasePath calculado:', basePath);
+        console.log('🔧 Pathname:', pathname);
+        console.log('🔧 PathParts:', pathParts);
     }
     
     // Función para obtener la ruta correcta
