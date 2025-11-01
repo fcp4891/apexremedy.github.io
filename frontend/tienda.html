@@ -1388,19 +1388,29 @@
             
             // Agregar categorías disponibles (evitar duplicados)
             const addedCategories = new Set();
+            const addedNames = new Set(); // Para evitar duplicados por nombre también
+            
             categories.forEach(cat => {
                 // Normalizar categoría para evitar duplicados
                 const normalizedCat = cat.toLowerCase().trim();
-                if (!addedCategories.has(normalizedCat)) {
+                const categoryName = productManager.categoriesMap && productManager.categoriesMap.has(cat)
+                    ? productManager.categoriesMap.get(cat)
+                    : formatCategoryName(cat);
+                const normalizedName = categoryName.toLowerCase().trim();
+                
+                // Verificar tanto por slug como por nombre para evitar duplicados
+                if (!addedCategories.has(normalizedCat) && !addedNames.has(normalizedName)) {
                     addedCategories.add(normalizedCat);
+                    addedNames.add(normalizedName);
                     const option = document.createElement('option');
-                    option.value = cat; // Usar el valor original para filtros
-                    option.textContent = formatCategoryName(cat);
+                    option.value = cat; // Usar el slug para filtros
+                    option.textContent = categoryName; // Usar el nombre formateado para mostrar
                     select.appendChild(option);
                 }
             });
             
             console.log('✅ Categorías cargadas:', categories);
+            console.log('📋 Categorías en select:', Array.from(select.options).map(opt => ({value: opt.value, text: opt.textContent})));
         }
         
         // Formatear nombre de categoría para mostrar

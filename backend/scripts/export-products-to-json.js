@@ -80,6 +80,39 @@ async function exportProducts() {
         console.log('📦 Obteniendo productos de la base de datos...');
         const products = await productModel.findAll();
         
+        // Obtener todas las marcas/breeders para mapear brand_id a breeder
+        console.log('🏷️ Obteniendo marcas/breeders...');
+        let brandsMap = {};
+        try {
+            const brands = await db.all('SELECT id, name FROM brands');
+            brands.forEach(brand => {
+                brandsMap[brand.id] = brand.name;
+            });
+        } catch (e) {
+            console.warn('⚠️ No se pudieron cargar marcas (puede ser normal si la tabla no existe):', e.message);
+        }
+        
+        // Obtener todas las variantes de precio para mapear product_id a price_variants
+        console.log('💰 Obteniendo variantes de precio...');
+        let priceVariantsMap = {};
+        try {
+            const priceVariants = await db.all(`
+                SELECT product_id, variant_name, variant_type, quantity, unit, price, is_default
+                FROM product_price_variants
+                WHERE status = 'active'
+                ORDER BY product_id, is_default DESC, quantity ASC
+            `);
+            priceVariants.forEach(variant => {
+                if (!priceVariantsMap[variant.product_id]) {
+                    priceVariantsMap[variant.product_id] = {};
+                }
+                const key = `${variant.quantity}${variant.unit}`;
+                priceVariantsMap[variant.product_id][key] = variant.price;
+            });
+        } catch (e) {
+            console.warn('⚠️ No se pudieron cargar variantes de precio (puede ser normal si la tabla no existe):', e.message);
+        }
+        
         // Normalizar productos para el frontend
         const normalizedProducts = products.map(product => {
             // Parsear JSON strings si existen
@@ -97,7 +130,10 @@ async function exportProducts() {
                 attributes = product.attributes;
             }
             
-            if (product.price_variants && typeof product.price_variants === 'string') {
+            // Intentar obtener price_variants desde la tabla product_price_variants primero
+            if (priceVariantsMap[product.id] && Object.keys(priceVariantsMap[product.id]).length > 0) {
+                priceVariants = priceVariantsMap[product.id];
+            } else if (product.price_variants && typeof product.price_variants === 'string') {
                 try {
                     priceVariants = JSON.parse(product.price_variants);
                 } catch (e) {
@@ -154,7 +190,8 @@ async function exportProducts() {
                 description: product.description || product.short_description || '',
                 short_description: product.short_description || product.description || '',
                 sku: product.sku,
-                breeder: product.breeder || null,
+                breeder: (product.brand_id && brandsMap[product.brand_id]) || null,
+                brand_id: product.brand_id || null,
                 category: product.category || '',
                 category_slug: product.category_slug || '',
                 category_id: product.category_id,
@@ -183,7 +220,13 @@ async function exportProducts() {
                 therapeutic_info: therapeuticInfo,
                 usage_info: usageInfo,
                 safety_info: safetyInfo,
-                specifications: specifications
+                specifications: specifications,
+                // Campos adicionales
+                medical_category: product.medical_category || null,
+                unit_type: product.unit_type || null,
+                base_unit: product.base_unit || null,
+                unit_size: product.unit_size || null,
+                status: product.status || 'active'
             };
             
             return normalized;

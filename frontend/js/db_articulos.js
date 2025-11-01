@@ -177,23 +177,43 @@ class ProductManager {
         if (this.products && this.products.length > 0) {
             const categoriesMap = new Map(); // Usar Map para asociar slug con nombre
             const seenSlugs = new Set(); // Para evitar duplicados
+            const seenNames = new Set(); // Para evitar duplicados por nombre también
             
             this.products.forEach(product => {
                 // Priorizar category_slug (es más consistente para filtros)
-                const slug = product.category_slug || product.category;
-                const name = product.category || product.category_slug;
+                let slug = product.category_slug || product.category;
+                let name = product.category || product.category_slug;
                 
-                if (slug && slug !== 'undefined' && !seenSlugs.has(slug.toLowerCase())) {
-                    seenSlugs.add(slug.toLowerCase());
-                    // Guardar el nombre más descriptivo
-                    if (!categoriesMap.has(slug) || (name && name.length > (categoriesMap.get(slug)?.length || 0))) {
-                        categoriesMap.set(slug, name || slug);
+                // Normalizar slug y name
+                if (slug) {
+                    slug = slug.toLowerCase().trim();
+                }
+                if (name) {
+                    name = name.trim();
+                }
+                
+                // Solo procesar si tenemos un slug válido y no es 'undefined'
+                if (slug && slug !== 'undefined' && slug !== '' && !seenSlugs.has(slug)) {
+                    seenSlugs.add(slug);
+                    
+                    // También verificar por nombre normalizado para evitar duplicados
+                    const normalizedName = name ? name.toLowerCase().trim() : slug;
+                    if (!seenNames.has(normalizedName)) {
+                        seenNames.add(normalizedName);
+                        // Guardar el nombre más descriptivo
+                        const currentName = categoriesMap.get(slug);
+                        if (!currentName || (name && name.length > currentName.length)) {
+                            categoriesMap.set(slug, name || slug);
+                        }
                     }
                 }
             });
             
-            // Convertir a array de slugs únicos (para filtros)
-            const categories = Array.from(categoriesMap.keys()).filter(cat => cat && cat !== 'undefined');
+            // Convertir a array de slugs únicos (para filtros), ordenados alfabéticamente
+            const categories = Array.from(categoriesMap.keys())
+                .filter(cat => cat && cat !== 'undefined' && cat !== '')
+                .sort(); // Ordenar alfabéticamente
+            
             console.log('✅ Categorías extraídas de productos (sin duplicados):', categories);
             console.log('📋 Mapa categorías:', Object.fromEntries(categoriesMap));
             this.categories = categories;

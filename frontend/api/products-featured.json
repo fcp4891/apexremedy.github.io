@@ -7,14 +7,19 @@
         "id": 7,
         "name": "Wax Purple Punch · 85% THC",
         "description": "Wax de alta pureza 85% THC. Extracción BHO purificada. Perfil terpénico preservado. Uso con vaporizador.",
+        "short_description": "Wax 85% THC para dolor severo",
         "sku": "MED-CONC-WAX-PP85",
+        "breeder": "Apex Remedy",
+        "brand_id": 1,
         "category": "Concentrados Medicinales",
         "category_slug": "medicinal-concentrados",
         "category_id": 3,
+        "product_type": "concentrate",
         "price": 45000,
         "base_price": 45000,
         "stock": 50,
         "stock_quantity": 50,
+        "stock_unit": "gramos",
         "image": "",
         "images": [
           {
@@ -34,24 +39,84 @@
         ],
         "featured": true,
         "active": false,
+        "is_medicinal": true,
+        "requires_prescription": true,
         "created_at": "2025-10-25T22:18:34.680Z",
         "updated_at": "2025-10-30T21:30:15.367Z",
         "attributes": null,
-        "price_variants": null,
-        "medicinal_info": null
+        "price_variants": {
+          "1g": 45000,
+          "0.5g": 24750.000000000004,
+          "2g": 85500
+        },
+        "medicinal_info": null,
+        "cannabinoid_profile": {
+          "thc": 85,
+          "cbd": 0.5,
+          "cbn": 2.5,
+          "cbg": 1
+        },
+        "terpene_profile": null,
+        "strain_info": {
+          "type": "Indica dominant concentrate",
+          "genetics": "Purple Punch",
+          "extraction": "BHO purificado"
+        },
+        "therapeutic_info": {
+          "conditions": [
+            "Dolor crónico severo",
+            "Insomnio severo",
+            "Espasticidad"
+          ],
+          "benefits": [
+            "Analgesia intensa",
+            "Sedación profunda"
+          ],
+          "effects": [
+            "Relajación profunda",
+            "Sedación",
+            "Euforia"
+          ]
+        },
+        "usage_info": {
+          "recommended_time": "Nocturno",
+          "dosage": {
+            "beginner": "0.01-0.02g",
+            "intermediate": "0.02-0.05g",
+            "advanced": "0.05-0.1g"
+          },
+          "administration": [
+            "Vaporización 315-370°C",
+            "Dabbing"
+          ],
+          "onset": "Inmediato",
+          "duration": "2-4 horas"
+        },
+        "safety_info": null,
+        "specifications": null,
+        "medical_category": "thc",
+        "unit_type": "weight",
+        "base_unit": "g",
+        "unit_size": 1,
+        "status": "active"
       },
       {
         "id": 8,
         "name": "Shatter GSC · 90% THC",
         "description": "Shatter cristalino 90% THC. Girl Scout Cookies. Máxima pureza. Extracción CO2 + Winterización.",
+        "short_description": "Shatter 90% THC ultra puro",
         "sku": "MED-CONC-SHATTER-GSC90",
+        "breeder": "Apex Remedy",
+        "brand_id": 1,
         "category": "Concentrados Medicinales",
         "category_slug": "medicinal-concentrados",
         "category_id": 3,
+        "product_type": "concentrate",
         "price": 55000,
         "base_price": 55000,
         "stock": 30,
         "stock_quantity": 30,
+        "stock_unit": "gramos",
         "image": "",
         "images": [
           {
@@ -71,24 +136,84 @@
         ],
         "featured": true,
         "active": false,
+        "is_medicinal": true,
+        "requires_prescription": true,
         "created_at": "2025-10-25T22:18:35.368Z",
         "updated_at": "2025-10-30T21:30:46.162Z",
         "attributes": null,
-        "price_variants": null,
-        "medicinal_info": null
+        "price_variants": {
+          "1g": 55000,
+          "0.5g": 30250.000000000004,
+          "2g": 104500
+        },
+        "medicinal_info": null,
+        "cannabinoid_profile": {
+          "thc": 90,
+          "cbd": 0.3,
+          "cbn": 1.8,
+          "cbg": 0.8
+        },
+        "terpene_profile": null,
+        "strain_info": {
+          "type": "Hybrid concentrate",
+          "genetics": "Girl Scout Cookies",
+          "extraction": "CO2 + Winterización"
+        },
+        "therapeutic_info": {
+          "conditions": [
+            "Dolor neuropático",
+            "Cáncer",
+            "Náuseas severas"
+          ],
+          "benefits": [
+            "Analgesia extrema",
+            "Antiemético potente"
+          ],
+          "effects": [
+            "Euforia intensa",
+            "Relajación",
+            "Sedación"
+          ]
+        },
+        "usage_info": {
+          "recommended_time": "Diurno",
+          "dosage": {
+            "beginner": "0.01g",
+            "intermediate": "0.03g",
+            "advanced": "0.05g"
+          },
+          "administration": [
+            "Dabbing",
+            "Vaporización alta temperatura"
+          ],
+          "onset": "Inmediato",
+          "duration": "3-5 horas"
+        },
+        "safety_info": null,
+        "specifications": null,
+        "medical_category": "thc",
+        "unit_type": "weight",
+        "base_unit": "g",
+        "unit_size": 1,
+        "status": "active"
       },
       {
         "id": 9,
         "name": "Northern Lights Auto · Royal Queen",
         "description": "Autofloreciente clásica. 100% Indica. Ciclo 65-75 días. Perfecta para principiantes. Resistente y productiva.",
+        "short_description": "Auto indica clásica para principiantes",
         "sku": "SEED-NL-AUTO-3PK",
+        "breeder": "Sensi Seeds",
+        "brand_id": 8,
         "category": "Semillas",
         "category_slug": "semillas",
         "category_id": 6,
+        "product_type": "seed",
         "price": 15000,
         "base_price": 15000,
         "stock": 200,
         "stock_quantity": 200,
+        "stock_unit": "packs",
         "image": "",
         "images": [
           {
@@ -108,6 +233,8 @@
         ],
         "featured": true,
         "active": false,
+        "is_medicinal": false,
+        "requires_prescription": false,
         "created_at": "2025-10-25T22:18:36.022Z",
         "updated_at": "2025-10-30T21:51:10.912Z",
         "attributes": {
@@ -116,20 +243,51 @@
           "effects": "Relajante, Sedante"
         },
         "price_variants": null,
-        "medicinal_info": null
+        "medicinal_info": null,
+        "cannabinoid_profile": null,
+        "terpene_profile": null,
+        "strain_info": {
+          "type": "Indica Auto",
+          "genetics": "Northern Lights x Ruderalis",
+          "flowering_time": "65-75 días desde semilla",
+          "yield": "400-450g/m²",
+          "thc": "14-18%",
+          "cbd": "<1%"
+        },
+        "therapeutic_info": null,
+        "usage_info": null,
+        "safety_info": null,
+        "specifications": {
+          "seeds_per_pack": 3,
+          "feminized": "Sí",
+          "autoflowering": "Sí",
+          "difficulty": "Fácil",
+          "height": "90-120cm",
+          "climate": "Interior/Exterior"
+        },
+        "medical_category": null,
+        "unit_type": "unit",
+        "base_unit": "pack",
+        "unit_size": 3,
+        "status": "active"
       },
       {
         "id": 10,
         "name": "Blue Dream Fem · Barney's Farm",
         "description": "Feminizada Sativa dominante. Legendaria cepa californiana. Alto rendimiento. 9-10 semanas floración.",
+        "short_description": "Sativa legendaria alto rendimiento",
         "sku": "SEED-BD-FEM-5PK",
+        "breeder": "Barney's Farm",
+        "brand_id": 9,
         "category": "Semillas",
         "category_slug": "semillas",
         "category_id": 6,
+        "product_type": "seed",
         "price": 25000,
         "base_price": 25000,
         "stock": 150,
         "stock_quantity": 150,
+        "stock_unit": "packs",
         "image": "",
         "images": [
           {
@@ -149,6 +307,8 @@
         ],
         "featured": true,
         "active": false,
+        "is_medicinal": false,
+        "requires_prescription": false,
         "created_at": "2025-10-25T22:18:36.191Z",
         "updated_at": "2025-10-30T21:51:44.740Z",
         "attributes": {
@@ -157,20 +317,51 @@
           "effects": "Eufórico, Creativo, Energético"
         },
         "price_variants": null,
-        "medicinal_info": null
+        "medicinal_info": null,
+        "cannabinoid_profile": null,
+        "terpene_profile": null,
+        "strain_info": {
+          "type": "Sativa dominant",
+          "genetics": "Blueberry x Haze",
+          "flowering_time": "9-10 semanas",
+          "yield": "600-650g/m²",
+          "thc": "19-24%",
+          "cbd": "0.1-0.2%"
+        },
+        "therapeutic_info": null,
+        "usage_info": null,
+        "safety_info": null,
+        "specifications": {
+          "seeds_per_pack": 5,
+          "feminized": "Sí",
+          "autoflowering": "No",
+          "difficulty": "Fácil",
+          "height": "120-180cm",
+          "climate": "Interior/Exterior cálido"
+        },
+        "medical_category": null,
+        "unit_type": "unit",
+        "base_unit": "pack",
+        "unit_size": 5,
+        "status": "active"
       },
       {
         "id": 11,
         "name": "PAX 3 · Dual Use",
         "description": "Vaporizador portátil premium. Doble uso: hierbas y concentrados. Calentamiento 15 segundos. Control por app.",
+        "short_description": "Premium dual use con app",
         "sku": "VAP-PAX3-BLACK",
+        "breeder": null,
+        "brand_id": null,
         "category": "Vaporizadores",
         "category_slug": "vaporizadores",
         "category_id": 7,
+        "product_type": "accessory",
         "price": 189990,
         "base_price": 189990,
         "stock": 15,
         "stock_quantity": 15,
+        "stock_unit": "unidades",
         "image": "",
         "images": [
           {
@@ -190,6 +381,8 @@
         ],
         "featured": true,
         "active": false,
+        "is_medicinal": false,
+        "requires_prescription": false,
         "created_at": "2025-10-25T22:18:36.391Z",
         "updated_at": "2025-10-30T22:04:02.309Z",
         "attributes": {
@@ -199,20 +392,43 @@
           "features": "Control App, Vibraciones"
         },
         "price_variants": null,
-        "medicinal_info": null
+        "medicinal_info": null,
+        "cannabinoid_profile": null,
+        "terpene_profile": null,
+        "strain_info": null,
+        "therapeutic_info": null,
+        "usage_info": null,
+        "safety_info": null,
+        "specifications": {
+          "material": "Hierbas secas y concentrados",
+          "heating": "Conducción",
+          "temp_range": "182-215°C",
+          "battery": "8-10 sesiones",
+          "warranty": "10 años"
+        },
+        "medical_category": null,
+        "unit_type": "unit",
+        "base_unit": "unidad",
+        "unit_size": 1,
+        "status": "active"
       },
       {
         "id": 12,
         "name": "Mighty+ · Storz & Bickel",
         "description": "El vaporizador portátil más potente. Tecnología médica alemana. Calidad excepcional. Batería mejorada.",
+        "short_description": "Top tier portátil alemán",
         "sku": "VAP-MIGHTY-PLUS",
+        "breeder": null,
+        "brand_id": null,
         "category": "Vaporizadores",
         "category_slug": "vaporizadores",
         "category_id": 7,
+        "product_type": "accessory",
         "price": 399990,
         "base_price": 399990,
         "stock": 8,
         "stock_quantity": 8,
+        "stock_unit": "unidades",
         "image": "",
         "images": [
           {
@@ -232,6 +448,8 @@
         ],
         "featured": true,
         "active": false,
+        "is_medicinal": false,
+        "requires_prescription": false,
         "created_at": "2025-10-25T22:18:36.579Z",
         "updated_at": "2025-10-30T22:03:50.336Z",
         "attributes": {
@@ -241,10 +459,28 @@
           "features": "Pantalla LED, USB-C, Cámara cerámica"
         },
         "price_variants": null,
-        "medicinal_info": null
+        "medicinal_info": null,
+        "cannabinoid_profile": null,
+        "terpene_profile": null,
+        "strain_info": null,
+        "therapeutic_info": null,
+        "usage_info": null,
+        "safety_info": null,
+        "specifications": {
+          "material": "Hierbas secas",
+          "heating": "Convección + Conducción",
+          "temp_range": "40-210°C",
+          "battery": "50% más capacidad",
+          "warranty": "3 años"
+        },
+        "medical_category": null,
+        "unit_type": "unit",
+        "base_unit": "unidad",
+        "unit_size": 1,
+        "status": "active"
       }
     ],
     "total": 6,
-    "timestamp": "2025-11-01T16:12:04.551Z"
+    "timestamp": "2025-11-01T16:45:46.638Z"
   }
 }
