@@ -83,8 +83,7 @@
                     this.showInactivityWarning();
                 }, this.inactivityTimeout);
             }
-        }
-
+            
             console.log('⏱️ Timer de inactividad reiniciado');
         }
 
