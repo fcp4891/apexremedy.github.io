@@ -13,6 +13,19 @@ async function exportProducts() {
     try {
         console.log('🚀 Iniciando exportación de productos a JSON...');
         
+        // Verificar que la base de datos existe
+        const fs = require('fs');
+        const path = require('path');
+        const dbPath = process.env.DB_PATH || path.join(__dirname, '../database/apexremedy.db');
+        
+        if (!fs.existsSync(dbPath)) {
+            console.error(`❌ Error: Base de datos no encontrada en: ${dbPath}`);
+            console.log('💡 Asegúrate de que la base de datos existe o configura DB_PATH');
+            throw new Error(`Base de datos no encontrada: ${dbPath}`);
+        }
+        
+        console.log(`📂 Usando base de datos: ${dbPath}`);
+        
         // Inicializar base de datos
         await initDatabase();
         const db = getDatabase();
