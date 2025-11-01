@@ -1,0 +1,6 @@
+# Este directorio contiene los JSON estáticos generados por GitHub Actions
+# Los archivos se generan automáticamente durante el build:
+# - products.json: Todos los productos
+# - products-featured.json: Solo productos destacados
+# - products-by-category.json: Productos agrupados por categoría
+

@@ -25,6 +25,36 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+      
+      - name: Install backend dependencies
+        working-directory: ./backend
+        run: |
+          npm ci
+          echo "✅ Dependencias del backend instaladas"
+      
+      - name: Export products to JSON (Static API)
+        working-directory: ./backend
+        run: |
+          echo "🚀 Exportando productos a JSON estático..."
+          node scripts/export-products-to-json.js
+          echo "✅ Exportación completada"
+      
+      - name: Verify JSON files
+        run: |
+          if [ -f "frontend/api/products.json" ]; then
+            echo "✅ products.json generado correctamente"
+            echo "📊 Tamaño del archivo: $(du -h frontend/api/products.json | cut -f1)"
+          else
+            echo "❌ Error: products.json no encontrado"
+            exit 1
+          fi
+      
       - name: Setup Pages
         uses: actions/configure-pages@v4
       

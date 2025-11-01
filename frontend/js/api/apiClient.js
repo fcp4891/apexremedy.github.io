@@ -148,32 +148,183 @@ if (typeof APIClient === 'undefined') {
             localStorage.removeItem('authToken');
         }
 
-        // Métodos de productos
-        async getProducts(filters = {}) {
-            const queryParams = new URLSearchParams();
-            
-            Object.keys(filters).forEach(key => {
-                if (filters[key] !== undefined && filters[key] !== null && filters[key] !== '') {
-                    queryParams.append(key, filters[key]);
-                }
-            });
+        // Método auxiliar para cargar JSON estático (fallback en producción)
+        async loadStaticJSON(filename) {
+            try {
+                const basePath = window.location.pathname.includes('/frontend/') 
+                    ? './api/' 
+                    : './frontend/api/';
+                const response = await fetch(`${basePath}${filename}`);
+                if (!response.ok) throw new Error('JSON no encontrado');
+                return await response.json();
+            } catch (error) {
+                console.warn(`⚠️ No se pudo cargar ${filename} estático:`, error.message);
+                return null;
+            }
+        }
 
-            const queryString = queryParams.toString();
-            const endpoint = queryString ? `/products?${queryString}` : '/products';
+        // Métodos de productos con fallback a JSON estático
+        async getProducts(filters = {}) {
+            const isProduction = window.location.hostname.includes('github.io') || 
+                                (window.location.hostname !== 'localhost' && 
+                                 window.location.hostname !== '127.0.0.1');
             
-            return await this.request(endpoint);
+            // En producción, intentar primero con JSON estático
+            if (isProduction) {
+                try {
+                    const staticData = await this.loadStaticJSON('products.json');
+                    if (staticData && staticData.success && staticData.data.products) {
+                        // Aplicar filtros localmente si existen
+                        let products = staticData.data.products;
+                        
+                        // Filtrar por búsqueda
+                        if (filters.search) {
+                            const searchLower = filters.search.toLowerCase();
+                            products = products.filter(p => 
+                                p.name.toLowerCase().includes(searchLower) ||
+                                (p.description && p.description.toLowerCase().includes(searchLower)) ||
+                                (p.sku && p.sku.toLowerCase().includes(searchLower))
+                            );
+                        }
+                        
+                        // Filtrar por categoría
+                        if (filters.category && filters.category !== 'all') {
+                            products = products.filter(p => 
+                                p.category_slug === filters.category || 
+                                p.category_id === parseInt(filters.category)
+                            );
+                        }
+                        
+                        // Filtrar por precio mínimo
+                        if (filters.minPrice) {
+                            products = products.filter(p => p.price >= parseFloat(filters.minPrice));
+                        }
+                        
+                        // Filtrar por precio máximo
+                        if (filters.maxPrice) {
+                            products = products.filter(p => p.price <= parseFloat(filters.maxPrice));
+                        }
+                        
+                        // Filtrar por stock
+                        if (filters.inStock) {
+                            products = products.filter(p => p.stock > 0);
+                        }
+                        
+                        // Filtrar por destacados
+                        if (filters.featured) {
+                            products = products.filter(p => p.featured === true);
+                        }
+                        
+                        // Limitar resultados
+                        if (filters.limit) {
+                            products = products.slice(0, parseInt(filters.limit));
+                        }
+                        
+                        console.log('✅ Productos cargados desde JSON estático:', products.length);
+                        return {
+                            success: true,
+                            data: { products },
+                            message: 'Productos cargados desde API estática'
+                        };
+                    }
+                } catch (error) {
+                    console.warn('⚠️ Error al cargar JSON estático, intentando API dinámica...', error);
+                }
+            }
+            
+            // Si no es producción o falló el JSON estático, usar API dinámica
+            try {
+                const queryParams = new URLSearchParams();
+                
+                Object.keys(filters).forEach(key => {
+                    if (filters[key] !== undefined && filters[key] !== null && filters[key] !== '') {
+                        queryParams.append(key, filters[key]);
+                    }
+                });
+
+                const queryString = queryParams.toString();
+                const endpoint = queryString ? `/products?${queryString}` : '/products';
+                
+                return await this.request(endpoint);
+            } catch (error) {
+                // Si la API dinámica también falla y estamos en producción, devolver JSON estático sin filtros
+                if (isProduction) {
+                    const staticData = await this.loadStaticJSON('products.json');
+                    if (staticData && staticData.success) {
+                        console.warn('⚠️ API dinámica no disponible, usando JSON estático sin filtros');
+                        return staticData;
+                    }
+                }
+                throw error;
+            }
         }
 
         async getProductById(id) {
+            const isProduction = window.location.hostname.includes('github.io') || 
+                                (window.location.hostname !== 'localhost' && 
+                                 window.location.hostname !== '127.0.0.1');
+            
+            // En producción, intentar primero con JSON estático
+            if (isProduction) {
+                try {
+                    const staticData = await this.loadStaticJSON('products.json');
+                    if (staticData && staticData.success && staticData.data.products) {
+                        const product = staticData.data.products.find(p => p.id === parseInt(id));
+                        if (product) {
+                            console.log('✅ Producto cargado desde JSON estático:', product.name);
+                            return {
+                                success: true,
+                                data: { product },
+                                message: 'Producto cargado desde API estática'
+                            };
+                        }
+                    }
+                } catch (error) {
+                    console.warn('⚠️ Error al cargar JSON estático, intentando API dinámica...', error);
+                }
+            }
+            
+            // Si no es producción o falló el JSON estático, usar API dinámica
             return await this.request(`/products/${id}`);
         }
 
         async searchProducts(query) {
-            return await this.request(`/products/search?q=${encodeURIComponent(query)}`);
+            // Para búsqueda, usar getProducts con filtro search
+            return await this.getProducts({ search: query });
         }
 
         async getFeaturedProducts() {
-            return await this.request('/products/featured');
+            const isProduction = window.location.hostname.includes('github.io') || 
+                                (window.location.hostname !== 'localhost' && 
+                                 window.location.hostname !== '127.0.0.1');
+            
+            // En producción, intentar primero con JSON estático
+            if (isProduction) {
+                try {
+                    const staticData = await this.loadStaticJSON('products-featured.json');
+                    if (staticData && staticData.success && staticData.data.products) {
+                        console.log('✅ Productos destacados cargados desde JSON estático:', staticData.data.products.length);
+                        return staticData;
+                    }
+                } catch (error) {
+                    console.warn('⚠️ Error al cargar JSON estático, intentando API dinámica...', error);
+                }
+            }
+            
+            // Si no es producción o falló el JSON estático, usar API dinámica
+            try {
+                return await this.request('/products/featured');
+            } catch (error) {
+                // Si la API dinámica también falla y estamos en producción, usar JSON estático
+                if (isProduction) {
+                    const staticData = await this.loadStaticJSON('products-featured.json');
+                    if (staticData && staticData.success) {
+                        console.warn('⚠️ API dinámica no disponible, usando JSON estático');
+                        return staticData;
+                    }
+                }
+                throw error;
+            }
         }
 
         async getCategories() {
