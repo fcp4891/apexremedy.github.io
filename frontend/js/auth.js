@@ -309,15 +309,26 @@ if (typeof AuthManager === 'undefined') {
 
         // Requerir rol admin (para páginas admin) - MEJORADO
         requireAdmin() {
+            // Función helper para construir rutas con basePath
+            const getFullPath = (path) => {
+                if (path.startsWith('http') || path.startsWith('//')) return path;
+                if (typeof window.BASE_PATH !== 'undefined' && window.BASE_PATH) {
+                    const cleanPath = path.startsWith('/') ? path.substring(1) : 
+                                     path.startsWith('../') ? path.substring(3) : path;
+                    return window.BASE_PATH + cleanPath;
+                }
+                return path;
+            };
+            
             if (!this.isAuthenticated()) {
               notify.warning('Debes iniciar sesión para acceder al panel admin');
-              window.location.href = '../login.html?redirect=admin';
+              window.location.href = getFullPath('../login.html?redirect=admin');
               return false;
             }
             const user = this.getCurrentUser();
             if (!user || user.role !== 'admin') {
               notify.error('Acceso denegado. Solo administradores.');
-              window.location.href = '../perfil.html';
+              window.location.href = getFullPath('../perfil.html');
               return false;
             }
             return true;
