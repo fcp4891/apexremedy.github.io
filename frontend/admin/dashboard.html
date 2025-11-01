@@ -816,10 +816,10 @@ function createOrdersChart() {
                     product.stock < 5 ? 'border-red-300 bg-red-50' : 'border-orange-300 bg-orange-50'
                 } rounded-lg">
                     <div class="flex items-center gap-4 flex-1">
-                        <img src="${product.image || 'https://via.placeholder.com/60'}" 
+                        <img src="${product.image || '../assets/images/placeholder.jpg'}" 
                              alt="${product.name}" 
                              class="w-16 h-16 object-cover rounded-lg"
-                             onerror="this.src='https://via.placeholder.com/60'">
+                             onerror="this.src='../assets/images/placeholder.jpg'">
                         <div>
                             <p class="font-bold text-gray-800">${product.name}</p>
                             <p class="text-sm text-gray-600">${product.category || 'Sin categoría'}</p>
