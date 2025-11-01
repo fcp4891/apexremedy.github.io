@@ -37,9 +37,22 @@
             }
         }
         
-        // SIEMPRE agregar /frontend/ porque los archivos están en esa carpeta
+        // Verificar si la URL actual incluye /frontend/
+        // Si NO incluye /frontend/, significa que GitHub Pages está sirviendo desde la raíz
+        // (lo cual es correcto cuando se usa GitHub Actions con path: './frontend')
+        // En ese caso, NO agregar /frontend/ al basePath
+        const currentPath = window.location.pathname;
+        const hasFrontendInPath = currentPath.includes('/frontend/') || currentPath.endsWith('/frontend');
+        
         if (repoPath) {
-            basePath = repoPath + 'frontend/';
+            if (hasFrontendInPath) {
+                // Si la URL incluye /frontend/, agregarlo al basePath
+                basePath = repoPath + 'frontend/';
+            } else {
+                // Si NO incluye /frontend/, GitHub Pages está sirviendo desde la raíz
+                // (archivos de frontend/ están en la raíz del sitio desplegado)
+                basePath = repoPath;
+            }
         }
     }
     
