@@ -1108,7 +1108,7 @@ body:has(.cart-sidebar.open) .cart-overlay{
   .filter-group{width:100%}
   .filter-select,.search-box{width:100%}
   
-  /* Cart - Solución para móvil: máximo 80% de la pantalla */
+  /* Cart - Solución para móvil: máximo 80% de ancho y alto */
   .cart-sidebar{
     width:80vw!important;
     max-width:80vw!important;
@@ -1116,10 +1116,10 @@ body:has(.cart-sidebar.open) .cart-overlay{
     visibility:hidden!important;
     opacity:0!important;
     position:fixed!important;
-    top:0!important;
+    top:10vh!important;
     left:auto!important;
-    height:100vh!important;
-    max-height:100vh!important;
+    height:80vh!important;
+    max-height:80vh!important;
     padding:0!important;
     margin:0!important;
     overflow:hidden!important;
@@ -1129,6 +1129,7 @@ body:has(.cart-sidebar.open) .cart-overlay{
     z-index:1100!important;
     transition:right .35s ease!important;
     box-shadow:-2px 0 12px rgba(0,0,0,.15)!important;
+    border-radius:12px 0 0 12px!important;
   }
   
   .cart-sidebar.open{
@@ -1171,7 +1172,7 @@ body:has(.cart-sidebar.open) .cart-overlay{
     min-height:0!important;
     -webkit-overflow-scrolling:touch!important;
     scrollbar-width:thin!important;
-    max-height:calc(100vh - 140px)!important;
+    max-height:calc(80vh - 120px)!important;
   }
   
   .cart-items::-webkit-scrollbar{
