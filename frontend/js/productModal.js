@@ -34,13 +34,48 @@ async function openProductModal(productId) {
     try {
         console.log('🔍 Cargando producto ID:', productId);
         
-        const response = await api.getProductById(productId);
+        let product = null;
         
-        if (!response.success) {
-            throw new Error('No se pudo cargar el producto');
+        // 🆕 INTENTAR PRIMERO USAR PRODUCTOS YA CARGADOS (para producción con JSON estático)
+        if (typeof productManager !== 'undefined' && productManager.products && productManager.products.length > 0) {
+            product = productManager.products.find(p => p.id === parseInt(productId));
+            if (product) {
+                console.log('✅ Producto encontrado en cache local:', product);
+            }
         }
         
-        const product = response.data.product || response.data;
+        // Si no está en cache, intentar cargar desde API
+        if (!product) {
+            try {
+                const response = await api.getProductById(productId);
+                if (response.success) {
+                    product = response.data.product || response.data;
+                    console.log('✅ Producto cargado desde API:', product);
+                }
+            } catch (apiError) {
+                console.warn('⚠️ No se pudo cargar producto desde API, intentando desde JSON estático...', apiError);
+                
+                // Fallback: Intentar cargar desde JSON estático
+                if (typeof api !== 'undefined' && api.loadStaticJSON) {
+                    try {
+                        const staticData = await api.loadStaticJSON('products.json');
+                        if (staticData && staticData.success && staticData.data && staticData.data.products) {
+                            product = staticData.data.products.find(p => p.id === parseInt(productId));
+                            if (product) {
+                                console.log('✅ Producto encontrado en JSON estático:', product);
+                            }
+                        }
+                    } catch (staticError) {
+                        console.error('❌ Error al cargar desde JSON estático:', staticError);
+                    }
+                }
+            }
+        }
+        
+        if (!product) {
+            throw new Error('No se pudo cargar el producto desde ninguna fuente');
+        }
+        
         currentProduct = product;
         
         console.log('✅ Producto cargado:', product);
@@ -176,48 +211,110 @@ function openMedicalFlowerModal(product, attrs) {
         return;
     }
     
+    console.log('🌿 Abriendo modal de flor medicinal:', product);
+    console.log('📊 Datos completos del producto:', JSON.stringify(product, null, 2));
+    
+    // Extraer información medicinal si está anidada
+    let medicinalInfo = {};
+    if (product.medicinal_info) {
+        try {
+            medicinalInfo = typeof product.medicinal_info === 'string' 
+                ? JSON.parse(product.medicinal_info) 
+                : product.medicinal_info;
+        } catch (e) {
+            console.warn('⚠️ Error parseando medicinal_info:', e);
+        }
+    }
+    
     // Datos básicos
-    document.getElementById('medFlowerName').textContent = product.name;
-    document.getElementById('medFlowerBreeder').textContent = product.breeder || 'Apexremedy';
-    document.getElementById('medFlowerSku').textContent = product.sku || 'N/A';
-    document.getElementById('medFlowerCategory').textContent = formatCategoryName(product.category);
+    const setName = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value || '';
+    };
+    
+    setName('medFlowerName', product.name);
+    setName('medFlowerBreeder', product.breeder || attrs?.breeder || 'Apexremedy');
+    setName('medFlowerSku', product.sku || 'N/A');
+    setName('medFlowerCategory', formatCategoryName(product.category || product.category_slug));
+    
+    // Descripción completa
+    const descEl = document.getElementById('medFlowerDescription');
+    if (descEl) {
+        descEl.textContent = product.description || product.short_description || 'Sin descripción disponible';
+    }
     
     // Imagen
     const image = document.getElementById('medFlowerImage');
-    setElementImageWithHover(image, product);
+    if (image) {
+        setElementImageWithHover(image, product);
+    }
     
     // Precio y stock
-    document.getElementById('medFlowerPrice').textContent = `$${formatPrice(product.base_price || product.price)}`;
-    document.getElementById('medFlowerStock').textContent = formatStock(product.stock_quantity || product.stock, product.stock_unit || 'g');
+    setName('medFlowerPrice', `$${formatPrice(product.base_price || product.price || 0)}`);
+    setName('medFlowerStock', formatStock(product.stock_quantity || product.stock || 0, product.stock_unit || 'g'));
+    
+    // 🆕 Extraer campos desde medicinal_info si existen
+    const cannabinoidProfile = product.cannabinoid_profile || medicinalInfo?.cannabinoid_profile || attrs?.cannabinoid_profile;
+    const terpeneProfile = product.terpene_profile || medicinalInfo?.terpene_profile || attrs?.terpene_profile;
+    const strainInfo = product.strain_info || medicinalInfo?.strain_info || attrs?.strain_info;
+    const therapeuticInfo = product.therapeutic_info || medicinalInfo?.therapeutic_info || attrs?.therapeutic_info;
+    const usageInfo = product.usage_info || medicinalInfo?.usage_info || attrs?.usage_info;
+    const safetyInfo = product.safety_info || medicinalInfo?.safety_info || attrs?.safety_info;
     
     // Perfil cannabinoide
-    if (product.cannabinoid_profile) {
-        fillCannabinoidProfile(product.cannabinoid_profile, 'medFlowerCannabinoids');
+    if (cannabinoidProfile) {
+        console.log('✅ Mostrando perfil cannabinoide:', cannabinoidProfile);
+        fillCannabinoidProfile(cannabinoidProfile, 'medFlowerCannabinoids');
+    } else {
+        console.warn('⚠️ No se encontró perfil cannabinoide');
     }
     
     // Perfil terpénico
-    if (product.terpene_profile) {
-        fillTerpeneProfile(product.terpene_profile, 'medFlowerTerpenes');
+    if (terpeneProfile) {
+        console.log('✅ Mostrando perfil terpénico:', terpeneProfile);
+        fillTerpeneProfile(terpeneProfile, 'medFlowerTerpenes');
     }
     
     // Información de cepa
-    if (product.strain_info) {
-        fillStrainInfo(product.strain_info, 'medFlowerStrain');
+    if (strainInfo) {
+        console.log('✅ Mostrando información de cepa:', strainInfo);
+        fillStrainInfo(strainInfo, 'medFlowerStrain');
     }
     
     // Información terapéutica
-    if (product.therapeutic_info) {
-        fillTherapeuticInfo(product.therapeutic_info, 'medFlowerTherapeutic');
+    if (therapeuticInfo) {
+        console.log('✅ Mostrando información terapéutica:', therapeuticInfo);
+        fillTherapeuticInfo(therapeuticInfo, 'medFlowerTherapeutic');
     }
     
     // Información de uso
-    if (product.usage_info) {
-        fillUsageInfo(product.usage_info, 'medFlowerUsage');
+    if (usageInfo) {
+        console.log('✅ Mostrando información de uso:', usageInfo);
+        fillUsageInfo(usageInfo, 'medFlowerUsage');
     }
     
     // Información de seguridad
-    if (product.safety_info) {
-        fillSafetyInfo(product.safety_info, 'medFlowerSafety');
+    if (safetyInfo) {
+        console.log('✅ Mostrando información de seguridad:', safetyInfo);
+        fillSafetyInfo(safetyInfo, 'medFlowerSafety');
+    }
+    
+    // 🆕 Información adicional desde attributes
+    if (attrs) {
+        if (attrs.cannabinoids) {
+            fillCannabinoidProfile(attrs.cannabinoids, 'medFlowerCannabinoids');
+        }
+        if (attrs.terpenes) {
+            fillTerpeneProfile(attrs.terpenes, 'medFlowerTerpenes');
+        }
+        if (attrs.effects) {
+            const effectsEl = document.getElementById('medFlowerEffects');
+            if (effectsEl) effectsEl.textContent = attrs.effects;
+        }
+        if (attrs.flavor) {
+            const flavorEl = document.getElementById('medFlowerFlavor');
+            if (flavorEl) flavorEl.textContent = attrs.flavor;
+        }
     }
     
     // Crear selector de gramaje si hay variantes de precio

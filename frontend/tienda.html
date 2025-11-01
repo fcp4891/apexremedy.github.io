@@ -1386,12 +1386,18 @@
             // Limpiar opciones existentes excepto "Todas"
             select.innerHTML = '<option value="all">Todas</option>';
             
-            // Agregar categorías disponibles
+            // Agregar categorías disponibles (evitar duplicados)
+            const addedCategories = new Set();
             categories.forEach(cat => {
-                const option = document.createElement('option');
-                option.value = cat;
-                option.textContent = formatCategoryName(cat);
-                select.appendChild(option);
+                // Normalizar categoría para evitar duplicados
+                const normalizedCat = cat.toLowerCase().trim();
+                if (!addedCategories.has(normalizedCat)) {
+                    addedCategories.add(normalizedCat);
+                    const option = document.createElement('option');
+                    option.value = cat; // Usar el valor original para filtros
+                    option.textContent = formatCategoryName(cat);
+                    select.appendChild(option);
+                }
             });
             
             console.log('✅ Categorías cargadas:', categories);

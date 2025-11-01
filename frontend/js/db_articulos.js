@@ -175,18 +175,29 @@ class ProductManager {
         
         // Fallback: Extraer categorías únicas de los productos ya cargados
         if (this.products && this.products.length > 0) {
-            const categoriesSet = new Set();
+            const categoriesMap = new Map(); // Usar Map para asociar slug con nombre
+            const seenSlugs = new Set(); // Para evitar duplicados
+            
             this.products.forEach(product => {
-                if (product.category) {
-                    categoriesSet.add(product.category);
-                }
-                if (product.category_slug) {
-                    categoriesSet.add(product.category_slug);
+                // Priorizar category_slug (es más consistente para filtros)
+                const slug = product.category_slug || product.category;
+                const name = product.category || product.category_slug;
+                
+                if (slug && slug !== 'undefined' && !seenSlugs.has(slug.toLowerCase())) {
+                    seenSlugs.add(slug.toLowerCase());
+                    // Guardar el nombre más descriptivo
+                    if (!categoriesMap.has(slug) || (name && name.length > (categoriesMap.get(slug)?.length || 0))) {
+                        categoriesMap.set(slug, name || slug);
+                    }
                 }
             });
-            const categories = Array.from(categoriesSet).filter(cat => cat && cat !== 'undefined');
-            console.log('✅ Categorías extraídas de productos:', categories);
+            
+            // Convertir a array de slugs únicos (para filtros)
+            const categories = Array.from(categoriesMap.keys()).filter(cat => cat && cat !== 'undefined');
+            console.log('✅ Categorías extraídas de productos (sin duplicados):', categories);
+            console.log('📋 Mapa categorías:', Object.fromEntries(categoriesMap));
             this.categories = categories;
+            this.categoriesMap = categoriesMap; // Guardar mapa para formatear nombres
             return categories;
         }
         
