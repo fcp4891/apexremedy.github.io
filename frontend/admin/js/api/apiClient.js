@@ -1,24 +1,73 @@
 // frontend/js/api/apiClient.js
 // Cliente API para comunicación con el backend
-// ✅ ACTUALIZADO CON SOPORTE MEDICINAL
+// ✅ ACTUALIZADO CON SOPORTE MEDICINAL Y JSON ESTÁTICO
 
 // Prevenir doble declaración
 if (typeof APIClient === 'undefined') {
     class APIClient {
         constructor() {
-            this.baseURL = 'http://localhost:3000/api';
+            // Detectar entorno y configurar URL de API
+            const isProduction = window.location.hostname.includes('github.io') || 
+                                (window.location.hostname !== 'localhost' && 
+                                 window.location.hostname !== '127.0.0.1');
+            
+            // ⚠️ IMPORTANTE: Configurar la URL de tu backend en producción
+            // Si tu backend está en Heroku/Railway/Render/etc, reemplaza la URL abajo
+            // Ejemplo: 'https://apexremedy-api.herokuapp.com/api'
+            // Ejemplo: 'https://api.apexremedy.com/api'
+            // Si no tienes backend en producción, déjalo como null para usar solo API estática
+            const PRODUCTION_API_URL = null; // ⚠️ Configurar URL real del backend o null para solo API estática
+            
+            // Si no hay URL de producción configurada, usar localhost como fallback o solo API estática
+            if (isProduction && !PRODUCTION_API_URL) {
+                console.warn('⚠️ No hay backend configurado en producción. Se usará solo API estática.');
+                this.baseURL = null; // null indica que solo se usará API estática
+            } else {
+                this.baseURL = isProduction 
+                    ? PRODUCTION_API_URL
+                    : 'http://localhost:3000/api';
+            }
+            
+            // Sincronizar token con localStorage al inicializar
             this.token = localStorage.getItem('authToken');
+            
+            // Log para debug
+            if (isProduction) {
+                console.log('🌐 Modo producción detectado');
+                console.log('🔗 API URL:', this.baseURL);
+            } else {
+                console.log('💻 Modo desarrollo detectado');
+                console.log('🔗 API URL:', this.baseURL);
+            }
+        }
+        
+        // Método para sincronizar token desde localStorage
+        syncToken() {
+            const storedToken = localStorage.getItem('authToken');
+            if (storedToken !== this.token) {
+                this.token = storedToken;
+            }
         }
 
         // Método auxiliar para hacer peticiones
         async request(endpoint, options = {}) {
+            // Verificar si hay backend configurado
+            if (!this.baseURL) {
+                const error = new Error('Backend no configurado. Por favor, configura la URL del backend en producción o usa el modo de desarrollo.');
+                error.code = 'NO_BACKEND_CONFIGURED';
+                throw error;
+            }
+            
+            // Sincronizar token antes de cada petición
+            this.syncToken();
+            
             const url = `${this.baseURL}${endpoint}`;
             const headers = {
                 'Content-Type': 'application/json',
                 ...options.headers
             };
 
-            // Agregar token si existe
+            // Agregar token si existe (sincronizado desde localStorage)
             if (this.token) {
                 headers['Authorization'] = `Bearer ${this.token}`;
             }
@@ -45,6 +94,13 @@ if (typeof APIClient === 'undefined') {
 
                 return data;
             } catch (error) {
+                // Si es un error de red (backend no disponible), proporcionar mensaje más claro
+                if (error.message.includes('Failed to fetch') || error.message.includes('ERR_NAME_NOT_RESOLVED')) {
+                    const friendlyError = new Error('No se pudo conectar con el servidor. Verifica que el backend esté configurado y disponible.');
+                    friendlyError.code = 'NETWORK_ERROR';
+                    friendlyError.originalError = error;
+                    throw friendlyError;
+                }
                 console.error('Error en petición:', error);
                 throw error;
             }
@@ -65,6 +121,11 @@ if (typeof APIClient === 'undefined') {
         }
 
         async login(credentials) {
+            // Si no hay backend configurado, usar autenticación estática
+            if (!this.baseURL) {
+                return await this.loginStatic(credentials);
+            }
+            
             const response = await this.request('/auth/login', {
                 method: 'POST',
                 body: JSON.stringify(credentials)
@@ -75,6 +136,108 @@ if (typeof APIClient === 'undefined') {
             }
 
             return response;
+        }
+        
+        // 🆕 Login usando JSON estático
+        async loginStatic(credentials) {
+            try {
+                const { email, password } = credentials;
+                
+                if (!email || !password) {
+                    return {
+                        success: false,
+                        message: 'Email y contraseña son requeridos'
+                    };
+                }
+                
+                // Cargar usuarios desde JSON estático
+                const usersData = await this.loadStaticJSON('users.json');
+                
+                if (!usersData || !usersData.success || !usersData.data || !usersData.data.users) {
+                    return {
+                        success: false,
+                        message: 'No se pudo cargar la información de usuarios'
+                    };
+                }
+                
+                const users = usersData.data.users;
+                
+                // Buscar usuario por email
+                const user = users.find(u => u.email && u.email.toLowerCase() === email.toLowerCase());
+                
+                if (!user) {
+                    return {
+                        success: false,
+                        message: 'Credenciales incorrectas'
+                    };
+                }
+                
+                // Verificar si el usuario está activo
+                if (!user.is_active) {
+                    return {
+                        success: false,
+                        message: 'Tu cuenta ha sido desactivada. Contacta al administrador.'
+                    };
+                }
+                
+                // Comparar contraseña usando SHA-256 (mismo método que seed_users.js)
+                const passwordHash = await this.hashPassword(password);
+                
+                if (user.password_hash !== passwordHash) {
+                    return {
+                        success: false,
+                        message: 'Credenciales incorrectas'
+                    };
+                }
+                
+                // Generar token simple (simulado)
+                const token = this.generateSimpleToken(user);
+                
+                // Preparar datos del usuario (sin password_hash)
+                const { password_hash, ...userData } = user;
+                
+                return {
+                    success: true,
+                    message: 'Login exitoso',
+                    data: {
+                        token: token,
+                        user: userData
+                    }
+                };
+                
+            } catch (error) {
+                console.error('Error en login estático:', error);
+                return {
+                    success: false,
+                    message: error.message || 'Error al iniciar sesión'
+                };
+            }
+        }
+        
+        // 🆕 Hash de contraseña usando SHA-256 (compatible con seed_users.js)
+        async hashPassword(password) {
+            // Usar Web Crypto API para SHA-256
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
+        
+        // 🆕 Generar token simple para autenticación estática
+        generateSimpleToken(user) {
+            // Crear un token simple usando base64
+            const payload = {
+                userId: user.id,
+                email: user.email,
+                role: user.role,
+                exp: Date.now() + (7 * 24 * 60 * 60 * 1000) // 7 días
+            };
+            
+            // Simular JWT con base64 (no es seguro, pero funciona para estático)
+            const payloadBase64 = btoa(JSON.stringify(payload));
+            return `static.${payloadBase64}.${Date.now()}`;
         }
 
         async getProfile() {
@@ -113,36 +276,365 @@ if (typeof APIClient === 'undefined') {
             localStorage.removeItem('authToken');
         }
 
-        // Métodos de productos
-        async getProducts(filters = {}) {
-            const queryParams = new URLSearchParams();
-            
-            Object.keys(filters).forEach(key => {
-                if (filters[key] !== undefined && filters[key] !== null && filters[key] !== '') {
-                    queryParams.append(key, filters[key]);
+        // Método auxiliar para cargar JSON estático (fallback en producción)
+        async loadStaticJSON(filename) {
+            try {
+                // Usar getBasePath si está disponible (de basePath.js)
+                let apiPath;
+                if (typeof window.getBasePath === 'function') {
+                    // Construir ruta usando getBasePath
+                    apiPath = window.getBasePath('api/' + filename);
+                } else if (window.BASE_PATH) {
+                    // Usar BASE_PATH global si existe
+                    apiPath = window.BASE_PATH + 'api/' + filename;
+                } else {
+                    // Fallback: detectar manualmente
+                    const isGitHubPages = window.location.hostname.includes('github.io');
+                    if (isGitHubPages) {
+                        // En GitHub Pages, construir ruta absoluta
+                        const pathParts = window.location.pathname.split('/').filter(p => p);
+                        const repoName = 'apexremedy.github.io';
+                        const repoIndex = pathParts.indexOf(repoName);
+                        
+                        if (repoIndex !== -1) {
+                            const repoPath = '/' + pathParts.slice(0, repoIndex + 1).join('/');
+                            const hasFrontend = window.location.pathname.includes('/frontend/');
+                            apiPath = repoPath + (hasFrontend ? '/frontend/api/' : '/api/') + filename;
+                        } else {
+                            // Fallback simple
+                            apiPath = window.location.pathname.includes('/frontend/') 
+                                ? './api/' + filename 
+                                : './frontend/api/' + filename;
+                        }
+                    } else {
+                        // Desarrollo local - para admin, la ruta es diferente
+                        const isAdminArea = window.location.pathname.includes('/admin/');
+                        if (isAdminArea) {
+                            // En admin, usar ../api/ para subir un nivel
+                            apiPath = '../api/' + filename;
+                        } else {
+                            apiPath = window.location.pathname.includes('/frontend/') 
+                                ? './api/' + filename 
+                                : './frontend/api/' + filename;
+                        }
+                    }
                 }
-            });
+                
+                // Asegurar que la ruta comience con / si es absoluta en GitHub Pages
+                if (window.location.hostname.includes('github.io') && !apiPath.startsWith('http') && !apiPath.startsWith('/')) {
+                    apiPath = '/' + apiPath;
+                }
+                
+                console.log('📂 Intentando cargar JSON estático desde:', apiPath);
+                const response = await fetch(apiPath);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                const data = await response.json();
+                console.log('✅ JSON estático cargado exitosamente:', filename);
+                return data;
+            } catch (error) {
+                console.warn(`⚠️ No se pudo cargar ${filename} estático:`, error.message);
+                return null;
+            }
+        }
 
-            const queryString = queryParams.toString();
-            const endpoint = queryString ? `/products?${queryString}` : '/products';
+        // Métodos de productos con fallback a JSON estático
+        async getProducts(filters = {}) {
+            // Helper para aplicar filtros a productos
+            const applyFiltersToProducts = (products, filters) => {
+                let filtered = [...products];
+                
+                // Filtrar por búsqueda
+                if (filters.search) {
+                    const searchLower = filters.search.toLowerCase();
+                    filtered = filtered.filter(p => 
+                        p.name.toLowerCase().includes(searchLower) ||
+                        (p.description && p.description.toLowerCase().includes(searchLower)) ||
+                        (p.sku && p.sku.toLowerCase().includes(searchLower))
+                    );
+                }
+                
+                // Filtrar por categoría
+                if (filters.category && filters.category !== 'all') {
+                    filtered = filtered.filter(p => 
+                        p.category_slug === filters.category || 
+                        p.category_id === parseInt(filters.category)
+                    );
+                }
+                
+                // Filtrar por precio mínimo
+                if (filters.minPrice) {
+                    filtered = filtered.filter(p => p.price >= parseFloat(filters.minPrice));
+                }
+                
+                // Filtrar por precio máximo
+                if (filters.maxPrice) {
+                    filtered = filtered.filter(p => p.price <= parseFloat(filters.maxPrice));
+                }
+                
+                // Filtrar por stock
+                if (filters.inStock) {
+                    filtered = filtered.filter(p => p.stock > 0);
+                }
+                
+                // Filtrar por destacados
+                if (filters.featured) {
+                    filtered = filtered.filter(p => p.featured === true);
+                }
+                
+                // Limitar resultados
+                if (filters.limit) {
+                    filtered = filtered.slice(0, parseInt(filters.limit));
+                }
+                
+                return filtered;
+            };
             
-            return await this.request(endpoint);
+            // SIEMPRE intentar JSON estático PRIMERO (más rápido y funciona sin backend)
+            try {
+                const staticData = await this.loadStaticJSON('products.json');
+                console.log('🔍 JSON estático cargado:', staticData);
+                if (staticData && staticData.success && staticData.data && staticData.data.products) {
+                    let products = applyFiltersToProducts(staticData.data.products, filters);
+                    console.log('✅ Productos cargados desde JSON estático:', products.length);
+                    console.log('📊 Primeros productos:', products.slice(0, 3).map(p => ({ id: p.id, name: p.name })));
+                    return {
+                        success: true,
+                        data: { products },
+                        message: 'Productos cargados desde API estática'
+                    };
+                }
+            } catch (error) {
+                console.warn('⚠️ Error al cargar JSON estático, intentando API dinámica...', error);
+            }
+            
+            // Solo si hay backend configurado Y el JSON falló, intentar API dinámica
+            if (this.baseURL) {
+                try {
+                    const queryParams = new URLSearchParams();
+                    
+                    Object.keys(filters).forEach(key => {
+                        if (filters[key] !== undefined && filters[key] !== null && filters[key] !== '') {
+                            queryParams.append(key, filters[key]);
+                        }
+                    });
+
+                    const queryString = queryParams.toString();
+                    const endpoint = queryString ? `/products?${queryString}` : '/products';
+                    
+                    return await this.request(endpoint);
+                } catch (error) {
+                    // Si la API dinámica falla, intentar JSON estático como último recurso
+                    console.warn('⚠️ API dinámica falló, intentando JSON estático como fallback...', error);
+                    try {
+                        const staticData = await this.loadStaticJSON('products.json');
+                        if (staticData && staticData.success && staticData.data && staticData.data.products) {
+                            let products = applyFiltersToProducts(staticData.data.products, filters);
+                            console.log('✅ Productos cargados desde JSON estático (fallback):', products.length);
+                            return {
+                                success: true,
+                                data: { products },
+                                message: 'Productos cargados desde API estática (fallback)'
+                            };
+                        }
+                    } catch (staticError) {
+                        console.error('❌ No se pudo cargar JSON estático como fallback:', staticError);
+                    }
+                    throw error;
+                }
+            } else {
+                // No hay backend y no se pudo cargar JSON estático
+                throw new Error('No se pudo cargar productos. Verifica que products.json esté disponible.');
+            }
         }
 
         async getProductById(id) {
-            return await this.request(`/products/${id}`);
+            const isProduction = window.location.hostname.includes('github.io') || 
+                                (window.location.hostname !== 'localhost' && 
+                                 window.location.hostname !== '127.0.0.1');
+            
+            // Si no hay backend configurado O estamos en producción, usar JSON estático
+            if (!this.baseURL || isProduction) {
+                try {
+                    const staticData = await this.loadStaticJSON('products.json');
+                    if (staticData && staticData.success && staticData.data.products) {
+                        const product = staticData.data.products.find(p => p.id === parseInt(id));
+                        if (product) {
+                            console.log('✅ Producto cargado desde JSON estático:', product.name);
+                            return {
+                                success: true,
+                                data: { product },
+                                message: 'Producto cargado desde API estática'
+                            };
+                        }
+                    }
+                } catch (error) {
+                    console.warn('⚠️ Error al cargar JSON estático, intentando API dinámica...', error);
+                }
+            }
+            
+            // Si hay backend, usar API dinámica
+            if (this.baseURL) {
+                try {
+                    return await this.request(`/products/${id}`);
+                } catch (error) {
+                    // Si la API dinámica falla, intentar JSON estático como último recurso
+                    console.warn('⚠️ API dinámica falló, intentando JSON estático...', error);
+                    const staticData = await this.loadStaticJSON('products.json');
+                    if (staticData && staticData.success && staticData.data.products) {
+                        const product = staticData.data.products.find(p => p.id === parseInt(id));
+                        if (product) {
+                            return {
+                                success: true,
+                                data: { product },
+                                message: 'Producto cargado desde API estática (fallback)'
+                            };
+                        }
+                    }
+                    throw error;
+                }
+            } else {
+                // No hay backend y no se encontró el producto en JSON
+                throw new Error(`Producto con ID ${id} no encontrado en productos.json`);
+            }
         }
 
         async searchProducts(query) {
-            return await this.request(`/products/search?q=${encodeURIComponent(query)}`);
+            // Para búsqueda, usar getProducts con filtro search
+            return await this.getProducts({ search: query });
         }
 
         async getFeaturedProducts() {
-            return await this.request('/products/featured');
+            const isProduction = window.location.hostname.includes('github.io') || 
+                                (window.location.hostname !== 'localhost' && 
+                                 window.location.hostname !== '127.0.0.1');
+            
+            // Si no hay backend configurado O estamos en producción, usar JSON estático
+            if (!this.baseURL || isProduction) {
+                try {
+                    const staticData = await this.loadStaticJSON('products-featured.json');
+                    if (staticData && staticData.success && staticData.data.products) {
+                        console.log('✅ Productos destacados cargados desde JSON estático:', staticData.data.products.length);
+                        return staticData;
+                    }
+                } catch (error) {
+                    console.warn('⚠️ Error al cargar JSON estático, intentando API dinámica...', error);
+                }
+            }
+            
+            // Si hay backend, usar API dinámica
+            if (this.baseURL) {
+                try {
+                    return await this.request('/products/featured');
+                } catch (error) {
+                    // Si la API dinámica falla, intentar JSON estático como último recurso
+                    console.warn('⚠️ API dinámica falló, intentando JSON estático...', error);
+                    const staticData = await this.loadStaticJSON('products-featured.json');
+                    if (staticData && staticData.success) {
+                        console.warn('⚠️ Usando JSON estático como fallback');
+                        return staticData;
+                    }
+                    throw error;
+                }
+            } else {
+                // No hay backend y no se pudo cargar JSON estático
+                // Intentar filtrar desde products.json
+                try {
+                    const staticData = await this.loadStaticJSON('products.json');
+                    if (staticData && staticData.success && staticData.data.products) {
+                        const featured = staticData.data.products.filter(p => p.featured === true);
+                        return {
+                            success: true,
+                            data: { products: featured },
+                            message: 'Productos destacados extraídos de products.json'
+                        };
+                    }
+                } catch (error) {
+                    // Ignorar error
+                }
+                throw new Error('No se pudieron cargar productos destacados. Verifica que products-featured.json esté disponible.');
+            }
         }
 
         async getCategories() {
-            return await this.request('/products/categories');
+            // Helper para extraer categorías del JSON
+            const extractCategoriesFromJSON = (staticData) => {
+                if (!staticData || !staticData.success || !staticData.data || !staticData.data.products) {
+                    return null;
+                }
+                
+                const categoriesMap = new Map();
+                const seenSlugs = new Set();
+                
+                staticData.data.products.forEach(product => {
+                    let slug = product.category_slug || product.category;
+                    let name = product.category || product.category_slug;
+                    
+                    if (slug) {
+                        slug = slug.toLowerCase().trim();
+                        name = name ? name.trim() : slug;
+                        
+                        if (slug && slug !== 'undefined' && !seenSlugs.has(slug)) {
+                            seenSlugs.add(slug);
+                            categoriesMap.set(slug, name);
+                        }
+                    }
+                });
+                
+                const categories = Array.from(categoriesMap.entries()).map(([slug, name]) => ({
+                    id: slug,
+                    name: name,
+                    slug: slug
+                }));
+                
+                return {
+                    success: true,
+                    data: { categories },
+                    message: 'Categorías cargadas desde API estática'
+                };
+            };
+            
+            // SIEMPRE intentar JSON estático PRIMERO (más rápido y funciona sin backend)
+            try {
+                const staticData = await this.loadStaticJSON('products.json');
+                const result = extractCategoriesFromJSON(staticData);
+                if (result) {
+                    console.log('✅ Categorías extraídas del JSON estático:', result.data.categories.length);
+                    return result;
+                }
+            } catch (error) {
+                console.warn('⚠️ No se pudo cargar JSON estático, intentando API dinámica...', error);
+            }
+            
+            // Solo si hay backend configurado Y el JSON falló, intentar API dinámica
+            if (this.baseURL) {
+                try {
+                    return await this.request('/products/categories');
+                } catch (error) {
+                    // Si la API dinámica falla, intentar JSON estático como último recurso
+                    console.warn('⚠️ API dinámica falló, intentando JSON estático como fallback...', error);
+                    try {
+                        const staticData = await this.loadStaticJSON('products.json');
+                        const result = extractCategoriesFromJSON(staticData);
+                        if (result) {
+                            console.log('✅ Categorías cargadas desde JSON estático (fallback)');
+                            return result;
+                        }
+                    } catch (staticError) {
+                        console.error('❌ No se pudo cargar JSON estático como fallback:', staticError);
+                    }
+                    throw error;
+                }
+            } else {
+                // No hay backend y no se pudo cargar JSON estático
+                console.warn('⚠️ No hay backend configurado y JSON estático no disponible');
+                return {
+                    success: true,
+                    data: { categories: [] },
+                    message: 'No se pudieron cargar categorías'
+                };
+            }
         }
 
         async getBestSellers(limit = 10) {
@@ -324,114 +816,113 @@ if (typeof APIClient === 'undefined') {
             });
         }
 
-// Subir comprobante de pago
-async uploadPaymentProof(orderId, file) {
-    const formData = new FormData();
-    formData.append('proof', file);
-    formData.append('orderId', orderId);
+        // Subir comprobante de pago
+        async uploadPaymentProof(orderId, file) {
+            const formData = new FormData();
+            formData.append('proof', file);
+            formData.append('orderId', orderId);
 
-    const url = `${this.baseURL}/orders/${orderId}/payment-proof`;
-    const headers = {};
+            const url = `${this.baseURL}/orders/${orderId}/payment-proof`;
+            const headers = {};
 
-    // Agregar token si existe
-    if (this.token) {
-        headers['Authorization'] = `Bearer ${this.token}`;
-    }
+            // Agregar token si existe
+            if (this.token) {
+                headers['Authorization'] = `Bearer ${this.token}`;
+            }
 
-    try {
-        const response = await fetch(url, {
-            method: 'POST',
-            headers,
-            body: formData // No incluir Content-Type, el navegador lo manejará
-        });
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers,
+                    body: formData // No incluir Content-Type, el navegador lo manejará
+                });
 
-        const data = await response.json();
+                const data = await response.json();
 
-        if (!response.ok) {
-            throw new Error(data.message || 'Error al subir comprobante');
+                if (!response.ok) {
+                    throw new Error(data.message || 'Error al subir comprobante');
+                }
+
+                return data;
+            } catch (error) {
+                console.error('Error al subir comprobante:', error);
+                throw error;
+            }
         }
 
-        return data;
-    } catch (error) {
-        console.error('Error al subir comprobante:', error);
-        throw error;
-    }
-}
+        // Verificar estado de pago
+        async checkPaymentStatus(orderId) {
+            return await this.request(`/orders/${orderId}/payment-status`);
+        }
 
-// Verificar estado de pago
-async checkPaymentStatus(orderId) {
-    return await this.request(`/orders/${orderId}/payment-status`);
-}
+        // Confirmar pago (ADMIN)
+        async confirmPayment(orderId, notes = '') {
+            return await this.request(`/orders/${orderId}/confirm-payment`, {
+                method: 'POST',
+                body: JSON.stringify({ admin_notes: notes })
+            });
+        }
 
-// Confirmar pago (ADMIN)
-async confirmPayment(orderId, notes = '') {
-    return await this.request(`/orders/${orderId}/confirm-payment`, {
-        method: 'POST',
-        body: JSON.stringify({ admin_notes: notes })
-    });
-}
+        // Rechazar pago (ADMIN)
+        async rejectPayment(orderId, reason) {
+            return await this.request(`/orders/${orderId}/reject-payment`, {
+                method: 'POST',
+                body: JSON.stringify({ rejection_reason: reason })
+            });
+        }
 
-// Rechazar pago (ADMIN)
-async rejectPayment(orderId, reason) {
-    return await this.request(`/orders/${orderId}/reject-payment`, {
-        method: 'POST',
-        body: JSON.stringify({ rejection_reason: reason })
-    });
-}
+        // Obtener órdenes pendientes de pago (ADMIN)
+        async getPendingPayments() {
+            return await this.request('/orders/pending-payments');
+        }
 
-// Obtener órdenes pendientes de pago (ADMIN)
-async getPendingPayments() {
-    return await this.request('/orders/pending-payments');
-}
+        // Obtener comprobante de pago
+        async getPaymentProof(orderId) {
+            return await this.request(`/orders/${orderId}/payment-proof`);
+        }
 
-// Obtener comprobante de pago
-async getPaymentProof(orderId) {
-    return await this.request(`/orders/${orderId}/payment-proof`);
-}
+        // ============================================
+        // PAGOS (Transferencias)
+        // ============================================
 
-// ============================================
-// PAGOS (Transferencias)
-// ============================================
+        // Enviar transferencia (cliente) con FormData (no usar this.request por Content-Type)
+        async submitTransferProof(formData) {
+            const url = `${this.baseURL}/payments/bank-transfer`;
+            const headers = {};
 
-// Enviar transferencia (cliente) con FormData (no usar this.request por Content-Type)
-async submitTransferProof(formData) {
-    const url = `${this.baseURL}/payments/bank-transfer`;
-    const headers = {};
+            // token
+            if (this.token) headers['Authorization'] = `Bearer ${this.token}`;
 
-    // token
-    if (this.token) headers['Authorization'] = `Bearer ${this.token}`;
+            const response = await fetch(url, {
+                method: 'POST',
+                headers,          // sin Content-Type; fetch lo define por boundary
+                body: formData
+            });
 
-    const response = await fetch(url, {
-        method: 'POST',
-        headers,          // sin Content-Type; fetch lo define por boundary
-        body: formData
-    });
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.message || 'Error al enviar transferencia');
+            }
+            return data;
+        }
 
-    const data = await response.json();
-    if (!response.ok) {
-        throw new Error(data.message || 'Error al enviar transferencia');
-    }
-    return data;
-}
+        // Listar transferencias pendientes (admin)
+        async getPendingTransfers() {
+            return await this.request('/payments/pending');
+        }
 
-// Listar transferencias pendientes (admin)
-async getPendingTransfers() {
-    return await this.request('/payments/pending');
-}
+        // Obtener una transferencia por ID (admin)
+        async getTransferById(id) {
+            return await this.request(`/payments/${id}`);
+        }
 
-// Obtener una transferencia por ID (admin)
-async getTransferById(id) {
-    return await this.request(`/payments/${id}`);
-}
-
-// Validar transferencia (admin): approved=true/false
-async validateTransfer(id, approved) {
-    return await this.request(`/payments/${id}/validate`, {
-        method: 'POST',
-        body: JSON.stringify({ approved })
-    });
-}
-
+        // Validar transferencia (admin): approved=true/false
+        async validateTransfer(id, approved) {
+            return await this.request(`/payments/${id}/validate`, {
+                method: 'POST',
+                body: JSON.stringify({ approved })
+            });
+        }
 
     }
 
@@ -447,5 +938,4 @@ async validateTransfer(id, approved) {
     
 }
 
-console.log('✅ API Client cargado con soporte medicinal');
-
+console.log('✅ API Client cargado con soporte medicinal y JSON estático');
