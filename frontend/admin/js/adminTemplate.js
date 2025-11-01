@@ -141,18 +141,19 @@
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = html;
                 
-                // Actualizar rutas en links (./ significa desde admin/)
-                tempDiv.querySelectorAll('a[href]').forEach(link => {
-                    const href = link.getAttribute('href');
-                    if (href && !href.startsWith('http') && !href.startsWith('//') && !href.startsWith('#') && !href.startsWith('mailto:')) {
-                        if (href.startsWith('./')) {
+                // Actualizar rutas en links e imágenes (./ significa desde admin/, ../ sale de admin/)
+                tempDiv.querySelectorAll('a[href], img[src], link[href]').forEach(element => {
+                    const attr = element.hasAttribute('href') ? 'href' : 'src';
+                    const path = element.getAttribute(attr);
+                    if (path && !path.startsWith('http') && !path.startsWith('//') && !path.startsWith('#') && !path.startsWith('mailto:') && !path.startsWith('data:')) {
+                        if (path.startsWith('./')) {
                             // Ruta relativa desde admin/, mantener admin/ en la ruta
-                            const cleanHref = href.substring(2);
-                            link.setAttribute('href', window.BASE_PATH + 'admin/' + cleanHref);
-                        } else if (href.startsWith('../')) {
+                            const cleanPath = path.substring(2);
+                            element.setAttribute(attr, window.BASE_PATH + 'admin/' + cleanPath);
+                        } else if (path.startsWith('../')) {
                             // Ruta relativa que sale de admin/, remover admin/ del path
-                            const cleanHref = href.substring(3);
-                            link.setAttribute('href', window.BASE_PATH + cleanHref);
+                            const cleanPath = path.substring(3);
+                            element.setAttribute(attr, window.BASE_PATH + cleanPath);
                         }
                     }
                 });
@@ -251,18 +252,19 @@
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = html;
                 
-                // Actualizar rutas en links (./ significa desde admin/)
-                tempDiv.querySelectorAll('a[href]').forEach(link => {
-                    const href = link.getAttribute('href');
-                    if (href && !href.startsWith('http') && !href.startsWith('//') && !href.startsWith('#') && !href.startsWith('mailto:')) {
-                        if (href.startsWith('./')) {
+                // Actualizar rutas en links e imágenes (./ significa desde admin/, ../ sale de admin/)
+                tempDiv.querySelectorAll('a[href], img[src], link[href]').forEach(element => {
+                    const attr = element.hasAttribute('href') ? 'href' : 'src';
+                    const path = element.getAttribute(attr);
+                    if (path && !path.startsWith('http') && !path.startsWith('//') && !path.startsWith('#') && !path.startsWith('mailto:') && !path.startsWith('data:')) {
+                        if (path.startsWith('./')) {
                             // Ruta relativa desde admin/, mantener admin/ en la ruta
-                            const cleanHref = href.substring(2);
-                            link.setAttribute('href', window.BASE_PATH + 'admin/' + cleanHref);
-                        } else if (href.startsWith('../')) {
+                            const cleanPath = path.substring(2);
+                            element.setAttribute(attr, window.BASE_PATH + 'admin/' + cleanPath);
+                        } else if (path.startsWith('../')) {
                             // Ruta relativa que sale de admin/, remover admin/ del path
-                            const cleanHref = href.substring(3);
-                            link.setAttribute('href', window.BASE_PATH + cleanHref);
+                            const cleanPath = path.substring(3);
+                            element.setAttribute(attr, window.BASE_PATH + cleanPath);
                         }
                     }
                 });
