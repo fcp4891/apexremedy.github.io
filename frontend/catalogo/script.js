@@ -358,34 +358,11 @@ function showToast(message, type = 'success') {
     }, 3000);
 }
 
-// Convertir imágenes a base64 para evitar problemas CORS
-async function convertImagesToBase64() {
-    const images = document.querySelectorAll('img');
-    const promises = [];
-    
-    images.forEach(img => {
-        const promise = new Promise((resolve) => {
-            if (!img.complete) {
-                img.onload = resolve;
-                img.onerror = resolve;
-            } else {
-                resolve();
-            }
-        });
-        promises.push(promise);
-    });
-    
-    await Promise.all(promises);
-}
-
 // Descargar PDF
 async function downloadPDF() {
     showToast('Preparando contenido para PDF...', 'info');
     
     try {
-        // Convertir imágenes antes de generar PDF
-        await convertImagesToBase64();
-        
         // Ocultar navegación
         const nav = document.querySelector('.floating-nav');
         const scrollIndicators = document.querySelectorAll('.scroll-indicator');
@@ -423,11 +400,14 @@ async function downloadPDF() {
         });
         
         // Esperar a que se renderice
-        await new Promise(resolve => setTimeout(resolve, 300));
+        await new Promise(resolve => setTimeout(resolve, 500));
         
         showToast('Generando PDF...', 'info');
         
-        // Configuración de html2pdf
+        // Obtener contenedor
+        const catalogContainer = document.getElementById('catalogContainer');
+        
+        // Configuración optimizada de html2pdf
         const opt = {
             margin: 0,
             filename: 'catalogo-apexremedy-2025.pdf',
@@ -437,30 +417,21 @@ async function downloadPDF() {
             },
             html2canvas: { 
                 scale: 2,
-                useCORS: false,
-                allowTaint: true,
-                logging: false,
-                letterRendering: true,
-                backgroundColor: '#1a1a2e',
-                foreignObjectRendering: false,
-                imageTimeout: 0,
-                removeContainer: true
+                logging: true,
+                backgroundColor: '#1a1a2e'
             },
             jsPDF: { 
                 unit: 'mm', 
                 format: 'a4', 
-                orientation: 'portrait',
-                compress: true
+                orientation: 'portrait'
             },
             pagebreak: { 
-                mode: ['avoid-all', 'css'],
-                before: '.catalog-page',
-                after: '.catalog-page'
+                mode: 'avoid-all',
+                before: '.catalog-page'
             }
         };
         
         // Generar PDF desde el contenedor original
-        const catalogContainer = document.getElementById('catalogContainer');
         await html2pdf().set(opt).from(catalogContainer).save();
         
         // Restaurar estados

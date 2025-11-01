@@ -49,20 +49,45 @@ async function exportOrders() {
         // Crear instancias de los modelos
         const orderModel = new Order();
         const orderItemModel = new OrderItem();
+        const User = require('../src/models/User');
+        const userModel = new User();
         
-        // Obtener todos los pedidos
+        // Obtener todos los pedidos usando findAllWithFilters
         console.log('📦 Obteniendo pedidos de la base de datos...');
-        const orders = await orderModel.getAll({});
+        const orders = await orderModel.findAllWithFilters({ limit: 10000 });
         
         console.log(`📦 ${orders.length} pedidos encontrados`);
         
-        // Para cada pedido, obtener sus items
-        console.log('🔄 Obteniendo items de pedidos...');
+        // Para cada pedido, obtener sus items y datos del cliente
+        console.log('🔄 Obteniendo items de pedidos y datos de clientes...');
         const ordersWithItems = await Promise.all(
             orders.map(async (order) => {
                 try {
                     // Obtener items del pedido
-                    const items = await orderItemModel.findByOrderId(order.id);
+                    let items = [];
+                    try {
+                        items = await orderItemModel.findByOrderId(order.id);
+                    } catch (itemError) {
+                        console.warn(`⚠️ Error al obtener items del pedido ${order.id}:`, itemError.message);
+                    }
+                    
+                    // Obtener datos del cliente desde users si user_id existe
+                    let customer_name = order.customer_name || null;
+                    let customer_email = order.customer_email || null;
+                    let customer_phone = order.customer_phone || null;
+                    
+                    if (order.user_id && (!customer_name || !customer_email)) {
+                        try {
+                            const user = await userModel.findById(order.user_id);
+                            if (user) {
+                                customer_name = customer_name || user.name || `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.email;
+                                customer_email = customer_email || user.email;
+                                customer_phone = customer_phone || user.phone || null;
+                            }
+                        } catch (userError) {
+                            console.warn(`⚠️ Error al obtener datos del usuario ${order.user_id}:`, userError.message);
+                        }
+                    }
                     
                     // Normalizar pedido
                     const normalizedOrder = {
@@ -81,17 +106,17 @@ async function exportOrders() {
                         discount: parseFloat(order.discount) || 0,
                         total: parseFloat(order.total) || 0,
                         notes: order.notes || null,
-                        prescription_verified: order.prescription_verified === 1 || order.prescription_verified === true,
+                        prescription_verified: order.prescription_verified === 1 || order.prescription_verified === true || order.prescription_verified === '1',
                         prescription_file: order.prescription_file || null,
                         tracking_number: order.tracking_number || null,
                         shipped_at: order.shipped_at || null,
                         delivered_at: order.delivered_at || null,
                         created_at: order.created_at,
                         updated_at: order.updated_at,
-                        // Información del cliente (si está disponible en la orden)
-                        customer_name: order.customer_name || null,
-                        customer_email: order.customer_email || null,
-                        customer_phone: order.customer_phone || null,
+                        // Información del cliente
+                        customer_name: customer_name,
+                        customer_email: customer_email,
+                        customer_phone: customer_phone,
                         shipping_address: order.shipping_address || null,
                         // Items del pedido
                         items: items.map(item => ({
@@ -102,15 +127,15 @@ async function exportOrders() {
                             quantity: parseFloat(item.quantity) || 0,
                             unit_price: parseFloat(item.unit_price) || 0,
                             subtotal: parseFloat(item.subtotal) || 0,
-                            requires_prescription: item.requires_prescription === 1 || item.requires_prescription === true,
+                            requires_prescription: item.requires_prescription === 1 || item.requires_prescription === true || item.requires_prescription === '1',
                             created_at: item.created_at
                         }))
                     };
                     
                     return normalizedOrder;
                 } catch (error) {
-                    console.warn(`⚠️ Error al obtener items del pedido ${order.id}:`, error.message);
-                    // Retornar pedido sin items si hay error
+                    console.warn(`⚠️ Error al procesar pedido ${order.id}:`, error.message);
+                    // Retornar pedido mínimo si hay error
                     return {
                         id: order.id,
                         order_number: order.order_number || `ORD-${order.id}`,
@@ -126,6 +151,9 @@ async function exportOrders() {
                         total: parseFloat(order.total) || 0,
                         created_at: order.created_at,
                         updated_at: order.updated_at,
+                        customer_name: order.customer_name || null,
+                        customer_email: order.customer_email || null,
+                        customer_phone: order.customer_phone || null,
                         items: []
                     };
                 }

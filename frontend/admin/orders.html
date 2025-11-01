@@ -426,7 +426,13 @@
                     filteredOrders = [];
                     updateStatistics();
                     displayOrders([]);
-                    notify.warning('No se pudieron cargar los pedidos. Verifica la conexión o el archivo orders.json');
+                    
+                    // Verificar si el mensaje indica JSON vacío
+                    if (response?.message?.includes('JSON vacío') || response?.message?.includes('No hay pedidos')) {
+                        notify.warning('El archivo orders.json está vacío. Ejecuta el script de exportación: node backend/scripts/export-orders-to-json.js', 'JSON Vacío');
+                    } else {
+                        notify.warning('No se pudieron cargar los pedidos. Verifica la conexión o el archivo orders.json');
+                    }
                 }
             } catch (error) {
                 console.error('❌ Error al cargar pedidos:', error);
@@ -569,7 +575,13 @@
                     <tr>
                         <td colspan="6" class="px-6 py-12 text-center">
                             <i class="fas fa-inbox text-6xl text-gray-300 mb-4"></i>
-                            <p class="text-gray-600">No hay pedidos para mostrar</p>
+                            <p class="text-gray-600 font-semibold mb-2">No hay pedidos para mostrar</p>
+                            <p class="text-sm text-gray-500 mb-4">El archivo orders.json está vacío o no contiene pedidos</p>
+                            <div class="text-xs text-gray-400 space-y-1">
+                                <p>💡 Para generar orders.json con datos:</p>
+                                <p class="font-mono bg-gray-100 p-2 rounded mt-2">node backend/scripts/export-orders-to-json.js</p>
+                                <p class="text-xs mt-2">Asegúrate de tener la base de datos en backend/database/apexremedy.db</p>
+                            </div>
                         </td>
                     </tr>
                 `;
