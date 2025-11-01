@@ -1340,6 +1340,32 @@
     </div>
   </div>
 
+    <!-- Modal de Filtros para Móvil -->
+    <div id="filtersModal" class="filters-modal hidden">
+        <div class="filters-modal-overlay" onclick="closeFiltersModal()"></div>
+        <div class="filters-modal-content">
+            <div class="filters-modal-header">
+                <h2>
+                    <i class="fas fa-filter mr-2"></i>Filtros y Búsqueda
+                </h2>
+                <button onclick="closeFiltersModal()" class="filters-modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="filters-modal-body" id="filtersModalBody">
+                <!-- El contenido de los filtros se copiará aquí dinámicamente -->
+            </div>
+            <div class="filters-modal-footer">
+                <button onclick="clearFilters(); closeFiltersModal();" class="secondary-button">
+                    Limpiar
+                </button>
+                <button onclick="applyFilters(); closeFiltersModal();" class="cta-button">
+                    Aplicar Filtros
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="./js/api/apiClient.js"></script>
     <script src="./js/auth.js"></script>
@@ -1469,6 +1495,49 @@
             }
         }
 
+        // Funciones para modal de filtros en móvil
+        function openFiltersModal() {
+            const modal = document.getElementById('filtersModal');
+            const modalBody = document.getElementById('filtersModalBody');
+            const filtersCard = document.getElementById('filtersCard');
+            
+            if (modal && filtersCard) {
+                // Copiar contenido del sidebar al modal (sin el h2 que ya está en el header)
+                const filtersContent = filtersCard.cloneNode(true);
+                // Remover el título ya que está en el header del modal
+                const title = filtersContent.querySelector('h2');
+                if (title) title.remove();
+                // Remover los botones ya que están en el footer del modal
+                const buttons = filtersContent.querySelectorAll('button');
+                buttons.forEach(btn => {
+                    if (btn.textContent.includes('Aplicar') || btn.textContent.includes('Limpiar') || btn.id === 'refreshAccessBtn') {
+                        btn.remove();
+                    }
+                });
+                
+                modalBody.innerHTML = '';
+                modalBody.appendChild(filtersContent);
+                
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; // Prevenir scroll del body
+            }
+        }
+        
+        function closeFiltersModal() {
+            const modal = document.getElementById('filtersModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                document.body.style.overflow = ''; // Restaurar scroll del body
+            }
+        }
+        
+        // Cerrar modal con ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeFiltersModal();
+            }
+        });
+
         // Inicializar
         document.addEventListener('DOMContentLoaded', async () => {
             await loadCategories();
@@ -1476,6 +1545,21 @@
             
             // Verificar botón de acceso después de cargar
             setTimeout(checkAccessButton, 1000);
+            
+            // Mostrar/ocultar botón de filtros según tamaño de pantalla
+            function toggleFiltersButton() {
+                const btn = document.getElementById('openFiltersBtn');
+                if (btn) {
+                    if (window.innerWidth <= 767) {
+                        btn.style.display = 'flex';
+                    } else {
+                        btn.style.display = 'none';
+                    }
+                }
+            }
+            
+            toggleFiltersButton();
+            window.addEventListener('resize', toggleFiltersButton);
         });
     </script>
 <script>
