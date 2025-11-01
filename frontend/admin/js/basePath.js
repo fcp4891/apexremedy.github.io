@@ -159,9 +159,20 @@
         const currentBasePath = window.BASE_PATH || basePath;
         if (!currentBasePath || !isGitHubPages) return;
         
-        // Actualizar links
+        // NO procesar elementos dentro de contenedores que ya fueron procesados por adminTemplate.js
+        // Estos contenedores son dinámicos y sus rutas ya fueron corregidas
+        const excludedContainers = ['#header-container', '#footer-container'];
+        
+        // Actualizar links (excluyendo los que están en contenedores procesados)
         document.querySelectorAll('a[href]').forEach(link => {
-            updateElementPath(link, 'href');
+            // Verificar si el link está dentro de un contenedor excluido
+            const isInExcludedContainer = excludedContainers.some(selector => {
+                const container = document.querySelector(selector);
+                return container && container.contains(link);
+            });
+            if (!isInExcludedContainer) {
+                updateElementPath(link, 'href');
+            }
         });
         
         // Actualizar scripts (excepto los que ya tienen src absoluto)
@@ -169,9 +180,16 @@
             updateElementPath(script, 'src');
         });
         
-        // Actualizar imágenes
+        // Actualizar imágenes (excluyendo las que están en contenedores procesados)
         document.querySelectorAll('img[src]').forEach(img => {
-            updateElementPath(img, 'src');
+            // Verificar si la imagen está dentro de un contenedor excluido
+            const isInExcludedContainer = excludedContainers.some(selector => {
+                const container = document.querySelector(selector);
+                return container && container.contains(img);
+            });
+            if (!isInExcludedContainer) {
+                updateElementPath(img, 'src');
+            }
         });
         
         // Actualizar CSS
