@@ -13,37 +13,33 @@
     // Si estamos en GitHub Pages y la URL incluye el nombre del repo
     let basePath = '';
     if (isGitHubPages) {
-        // Extraer el path base: /fcp4891/apexremedy.github.io/
-        const pathParts = window.location.pathname.split('/').filter(p => p);
-        const repoIndex = pathParts.indexOf(repoName);
-        
+        // Construir el path base desde el hostname siempre
+        // hostname será algo como: fcp4891.github.io
+        const hostParts = window.location.hostname.split('.');
         let repoPath = '';
-        if (repoIndex !== -1) {
-            repoPath = '/' + pathParts.slice(0, repoIndex + 1).join('/') + '/';
+        
+        if (hostParts.length >= 2) {
+            const username = hostParts[0]; // fcp4891
+            repoPath = '/' + username + '/' + repoName + '/';
         } else {
-            // Si no encontramos el repoName en el path, construir desde el hostname
-            // hostname será algo como: fcp4891.github.io
-            const hostParts = window.location.hostname.split('.');
-            if (hostParts.length >= 2) {
-                const username = hostParts[0];
-                repoPath = '/' + username + '/' + repoName + '/';
+            // Fallback: intentar extraer del pathname si el hostname no tiene el formato esperado
+            const pathParts = window.location.pathname.split('/').filter(p => p);
+            const repoIndex = pathParts.indexOf(repoName);
+            if (repoIndex > 0) {
+                // Si encontramos el repoName y hay algo antes, usar eso como usuario
+                repoPath = '/' + pathParts.slice(0, repoIndex + 1).join('/') + '/';
+            } else if (repoIndex === 0) {
+                // Si el repoName está en el índice 0, construir desde hostname
+                const fallbackHostParts = window.location.hostname.split('.');
+                if (fallbackHostParts.length >= 2) {
+                    repoPath = '/' + fallbackHostParts[0] + '/' + repoName + '/';
+                }
             }
         }
         
-        // Verificar si la URL actual incluye /frontend/
-        const currentPath = window.location.pathname;
-        const hasFrontendInPath = currentPath.includes('/frontend/') || currentPath.endsWith('/frontend');
-        
-        // Como GitHub Pages está sirviendo desde la raíz del repo (no desde /frontend/),
-        // SIEMPRE agregar /frontend/ al basePath para que las rutas funcionen correctamente
+        // SIEMPRE agregar /frontend/ porque los archivos están en esa carpeta
         if (repoPath) {
-            if (!hasFrontendInPath) {
-                // GitHub Pages está sirviendo desde la raíz, agregar /frontend/
-                basePath = repoPath + 'frontend/';
-            } else {
-                // Si la URL ya incluye /frontend/, usar el repoPath tal cual
-                basePath = repoPath;
-            }
+            basePath = repoPath + 'frontend/';
         }
     }
     
@@ -73,10 +69,11 @@
     // Exportar basePath globalmente
     window.BASE_PATH = basePath;
     
-    // Debug: mostrar el basePath calculado (solo en desarrollo)
-    if (basePath && window.location.hostname.includes('github.io')) {
+    // Debug: mostrar el basePath calculado
+    if (basePath) {
         console.log('🔧 BasePath calculado:', basePath);
         console.log('🔧 URL actual:', window.location.pathname);
+        console.log('🔧 Hostname:', window.location.hostname);
     }
     
     // Función para actualizar rutas en un elemento
@@ -113,7 +110,9 @@
     
     // Actualizar rutas en el DOM al cargar
     function updateAllPaths() {
-        if (!basePath) return; // Solo hacer si estamos en GitHub Pages
+        // Solo hacer si estamos en GitHub Pages y tenemos un basePath válido
+        const currentBasePath = window.BASE_PATH || basePath;
+        if (!currentBasePath || !isGitHubPages) return;
         
         // Actualizar links
         document.querySelectorAll('a[href]').forEach(link => {
