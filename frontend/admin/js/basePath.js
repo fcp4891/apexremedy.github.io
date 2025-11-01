@@ -93,29 +93,43 @@
             !currentPath.startsWith('tel:')) {
             
             // Solo actualizar rutas relativas (evitar rutas absolutas que ya tienen el path completo)
-            if (currentPath.startsWith('./') || (!currentPath.startsWith('/') && currentPath.length > 0)) {
+            if (currentPath.startsWith('./') || currentPath.startsWith('../') || (!currentPath.startsWith('/') && currentPath.length > 0)) {
                 // Asegurarse de que tenemos un basePath válido
                 const currentBasePath = window.BASE_PATH || basePath;
                 if (currentBasePath) {
                     let cleanPath = currentPath;
-                    // Eliminar ./ si existe
-                    if (cleanPath.startsWith('./')) {
-                        cleanPath = cleanPath.substring(2);
-                    }
+                    let subdirectory = '';
                     
                     // Detectar si estamos en un subdirectorio (como /admin/)
                     const currentUrl = window.location.pathname;
-                    let subdirectory = '';
-                    if (currentUrl.includes('/admin/')) {
-                        subdirectory = 'admin/';
+                    const isInAdmin = currentUrl.includes('/admin/');
+                    
+                    // Manejar diferentes tipos de rutas relativas
+                    if (cleanPath.startsWith('../')) {
+                        // Ruta que sale del directorio actual (../ significa salir de admin/)
+                        // Ejemplo: ../assets/images/logo.png desde /admin/ → /frontend/assets/images/logo.png
+                        cleanPath = cleanPath.substring(3); // Remover ../
+                        subdirectory = ''; // No agregar admin/ porque estamos saliendo
+                    } else if (cleanPath.startsWith('./')) {
+                        // Ruta relativa al directorio actual (./ significa desde admin/)
+                        // Ejemplo: ./style/css_admin.css desde /admin/ → /frontend/admin/style/css_admin.css
+                        cleanPath = cleanPath.substring(2); // Remover ./
+                        if (isInAdmin) {
+                            subdirectory = 'admin/';
+                        }
+                    } else if (!cleanPath.startsWith('/')) {
+                        // Ruta relativa sin prefijo (asumimos que es desde el directorio actual)
+                        if (isInAdmin) {
+                            subdirectory = 'admin/';
+                        }
                     }
                     
                     // Construir la nueva ruta completa
                     // El basePath ya incluye el path completo desde la raíz del dominio GitHub Pages
                     // Ejemplo: basePath = "/apexremedy.github.io/frontend/"
-                    // subdirectory = "admin/"
-                    // cleanPath = "style/css_admin.css"
-                    // newPath = "/apexremedy.github.io/frontend/admin/style/css_admin.css"
+                    // subdirectory = "admin/" o ""
+                    // cleanPath = "style/css_admin.css" o "assets/images/logo.png"
+                    // newPath = "/apexremedy.github.io/frontend/admin/style/css_admin.css" o "/apexremedy.github.io/frontend/assets/images/logo.png"
                     let newPath = currentBasePath + subdirectory + cleanPath;
                     
                     // Asegurarse de que la ruta comience con / para que sea absoluta desde el dominio
