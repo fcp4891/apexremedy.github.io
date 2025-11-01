@@ -19,17 +19,17 @@
         const repoIndex = pathParts.indexOf(repoName);
         
         let repoPath = '';
-        if (repoIndex !== -1) {
-            // Si encontramos el repoName en el pathname, usar todo hasta ese punto
+        // SIEMPRE construir desde el hostname para obtener el usuario correcto
+        // hostname será algo como: fcp4891.github.io
+        const hostParts = window.location.hostname.split('.');
+        if (hostParts.length >= 2) {
+            const username = hostParts[0]; // fcp4891
+            repoPath = '/' + username + '/' + repoName + '/';
+        } else if (repoIndex !== -1 && repoIndex > 0) {
+            // Fallback: si el hostname no tiene el formato esperado, usar el pathname
+            // Si encontramos el repoName en el pathname Y hay algo antes (el usuario),
+            // usar todo hasta ese punto
             repoPath = '/' + pathParts.slice(0, repoIndex + 1).join('/') + '/';
-        } else {
-            // Fallback: construir desde el hostname
-            // hostname será algo como: fcp4891.github.io
-            const hostParts = window.location.hostname.split('.');
-            if (hostParts.length >= 2) {
-                const username = hostParts[0]; // fcp4891
-                repoPath = '/' + username + '/' + repoName + '/';
-            }
         }
         
         // Verificar si la URL actual incluye /frontend/
