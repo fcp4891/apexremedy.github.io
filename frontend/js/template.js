@@ -21,7 +21,13 @@
       const repoIndex = pathParts.indexOf(repoName);
       
       if (repoIndex !== -1) {
-        return '/' + pathParts.slice(0, repoIndex + 1).join('/') + '/';
+        const repoPath = '/' + pathParts.slice(0, repoIndex + 1).join('/') + '/';
+        // Verificar si necesitamos agregar /frontend/
+        const currentPath = window.location.pathname;
+        if (!currentPath.includes('/frontend/') && !currentPath.endsWith('/frontend')) {
+          return repoPath + 'frontend/';
+        }
+        return repoPath;
       }
     }
     return '';
