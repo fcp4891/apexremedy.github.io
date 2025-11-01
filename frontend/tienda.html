@@ -239,6 +239,14 @@
 
             <!-- Grid de Productos -->
             <main>
+                <!-- Botón para abrir filtros en móvil -->
+                <button id="openFiltersBtn" 
+                        class="filters-mobile-btn"
+                        onclick="openFiltersModal()"
+                        style="display: none; width: 100%; margin-bottom: 20px; padding: 14px 20px; background: var(--primary-green); color: white; border: none; border-radius: var(--border-radius); font-weight: 600; cursor: pointer; box-shadow: var(--box-shadow);">
+                    <i class="fas fa-filter mr-2"></i>Filtros y Búsqueda
+                </button>
+                
                 <!-- Contador de resultados -->
                 <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
                     <p id="resultCount" style="color: var(--medium-gray); font-size: 0.95rem;">
