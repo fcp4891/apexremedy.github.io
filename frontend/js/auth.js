@@ -169,18 +169,30 @@ if (typeof AuthManager === 'undefined') {
             // Actualizar UI
             this.updateUI();
             
+            // Función helper para construir rutas con basePath
+            const getFullPath = (path) => {
+                if (path.startsWith('http') || path.startsWith('//')) return path;
+                if (typeof window.BASE_PATH !== 'undefined' && window.BASE_PATH) {
+                    const cleanPath = path.startsWith('/') ? path.substring(1) : 
+                                     path.startsWith('../') ? path.substring(3) : 
+                                     path.startsWith('./') ? path.substring(2) : path;
+                    return window.BASE_PATH + cleanPath;
+                }
+                return path;
+            };
+            
             // Redirigir según tipo de usuario
             if (wasAdmin) {
                 if (window.location.pathname.includes('admin')) {
-                    window.location.href = '../login.html';
+                    window.location.href = getFullPath('../login.html');
                 } else {
-                    window.location.href = './login.html';
+                    window.location.href = getFullPath('./login.html');
                 }
             } else {
                 if (window.location.pathname.includes('admin')) {
-                    window.location.href = '../index.html';
+                    window.location.href = getFullPath('../index.html');
                 } else {
-                    window.location.href = './index.html';
+                    window.location.href = getFullPath('./index.html');
                 }
             }
         }

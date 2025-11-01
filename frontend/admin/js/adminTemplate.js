@@ -318,7 +318,17 @@
         } else {
             localStorage.clear();
             sessionStorage.clear();
-            window.location.href = '../login.html';
+            // Función helper para construir rutas con basePath
+            const getFullPath = (path) => {
+                if (path.startsWith('http') || path.startsWith('//')) return path;
+                if (typeof window.BASE_PATH !== 'undefined' && window.BASE_PATH) {
+                    const cleanPath = path.startsWith('/') ? path.substring(1) : 
+                                     path.startsWith('../') ? path.substring(3) : path;
+                    return window.BASE_PATH + cleanPath;
+                }
+                return path;
+            };
+            window.location.href = getFullPath('../login.html');
         }
     };
     
