@@ -135,17 +135,19 @@
             };
             document.addEventListener('keydown', handleEscapeKey);
 
+            // Guardar referencia al handler para limpiarlo después
+            modal._escapeHandler = handleEscapeKey;
+
             // Cerrar haciendo click fuera del modal (backdrop)
             modal.addEventListener('click', (e) => {
                 // Si el click fue directamente en el backdrop (no en el contenido)
                 if (e.target === modal) {
                     closeAndStayConnected();
-                    document.removeEventListener('keydown', handleEscapeKey);
+                    if (modal._escapeHandler) {
+                        document.removeEventListener('keydown', modal._escapeHandler);
+                    }
                 }
             });
-
-            // Guardar referencia al handler ESC para limpiarlo después
-            modal.dataset.escapeHandler = handleEscapeKey.toString();
         }
 
         createWarningModal() {
@@ -188,9 +190,10 @@
                 }
                 
                 // Remover listener de ESC si existe
-                const allEscapeListeners = document.querySelectorAll('[data-escape-handler]');
-                // Limpiar cualquier listener relacionado
-                document.removeEventListener('keydown', () => {});
+                if (modal._escapeHandler) {
+                    document.removeEventListener('keydown', modal._escapeHandler);
+                    delete modal._escapeHandler;
+                }
                 
                 modal.remove();
             }
