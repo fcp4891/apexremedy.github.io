@@ -19,17 +19,16 @@
         const repoIndex = pathParts.indexOf(repoName);
         
         let repoPath = '';
-        // SIEMPRE construir desde el hostname para obtener el usuario correcto
-        // hostname será algo como: fcp4891.github.io
-        const hostParts = window.location.hostname.split('.');
-        if (hostParts.length >= 2) {
-            const username = hostParts[0]; // fcp4891
-            repoPath = '/' + username + '/' + repoName + '/';
-        } else if (repoIndex !== -1 && repoIndex > 0) {
-            // Fallback: si el hostname no tiene el formato esperado, usar el pathname
-            // Si encontramos el repoName en el pathname Y hay algo antes (el usuario),
-            // usar todo hasta ese punto
-            repoPath = '/' + pathParts.slice(0, repoIndex + 1).join('/') + '/';
+        // El pathname ya incluye el repo completo: /apexremedy.github.io/frontend/index.html
+        // NO necesitamos agregar el usuario porque las rutas absolutas son relativas al dominio actual
+        // El dominio es fcp4891.github.io, entonces /apexremedy.github.io/ es correcto
+        if (repoIndex !== -1) {
+            // Usar solo el repoName desde el pathname (sin el usuario)
+            repoPath = '/' + repoName + '/';
+        } else {
+            // Fallback: construir desde el pathname completo si no encontramos el repoName
+            // Pero esto no debería pasar normalmente
+            repoPath = '/' + repoName + '/';
         }
         
         // Verificar si la URL actual incluye /frontend/
@@ -103,16 +102,19 @@
                         cleanPath = cleanPath.substring(2);
                     }
                     // Construir la nueva ruta completa
-                    // El basePath ya incluye el path completo, solo agregar la ruta relativa
+                    // El basePath ya incluye el path completo desde la raíz del dominio GitHub Pages
+                    // Ejemplo: basePath = "/fcp4891/apexremedy.github.io/frontend/"
+                    // cleanPath = "style/css_home.css"
+                    // newPath = "/fcp4891/apexremedy.github.io/frontend/style/css_home.css"
                     let newPath = currentBasePath + cleanPath;
                     
-                    // Asegurarse de que la ruta comience con / para que sea absoluta
+                    // Asegurarse de que la ruta comience con / para que sea absoluta desde el dominio
                     if (!newPath.startsWith('/')) {
                         newPath = '/' + newPath;
                     }
                     
-                    // Solo actualizar si el nuevo path es diferente
-                    if (newPath && newPath !== currentPath) {
+                    // Solo actualizar si el nuevo path es diferente y válido
+                    if (newPath && newPath !== currentPath && newPath.startsWith('/')) {
                         element.setAttribute(attribute, newPath);
                     }
                 }
