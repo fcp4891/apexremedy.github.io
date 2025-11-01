@@ -363,6 +363,31 @@ class ProductManager {
             ? product.description 
             : 'Sin descripción disponible';
         
+        // Información adicional
+        const skuDisplay = product.sku ? `<div class="product-sku" style="font-size: 0.85rem; color: var(--medium-gray); margin-top: 4px;">SKU: ${product.sku}</div>` : '';
+        const breederDisplay = product.breeder ? `<div class="product-breeder" style="font-size: 0.9rem; color: var(--primary-green); font-weight: 500; margin-top: 4px;"><i class="fas fa-seedling"></i> ${product.breeder}</div>` : '';
+        
+        // Atributos adicionales si existen
+        let attributesDisplay = '';
+        if (product.attributes) {
+            try {
+                const attrs = typeof product.attributes === 'string' ? JSON.parse(product.attributes) : product.attributes;
+                if (attrs.strain_type) {
+                    attributesDisplay += `<div class="product-strain" style="font-size: 0.85rem; color: var(--accent-black); margin-top: 4px;"><i class="fas fa-cannabis"></i> ${attrs.strain_type}</div>`;
+                }
+                if (attrs.rarity && product.category === 'semillas_coleccion') {
+                    attributesDisplay += `<div class="product-rarity" style="font-size: 0.85rem; color: var(--primary-green); margin-top: 4px;"><i class="fas fa-gem"></i> ${attrs.rarity}</div>`;
+                }
+            } catch (e) {
+                // Error silencioso al parsear atributos
+            }
+        }
+        
+        // Descripción truncada para la tarjeta
+        const descriptionTruncated = descriptionDisplay.length > 100 
+            ? descriptionDisplay.substring(0, 100) + '...' 
+            : descriptionDisplay;
+        
         return `
             <div class="product-card" data-product-id="${product.id}">
                 ${product.featured ? '<div class="product-badge">Destacado</div>' : ''}
@@ -376,9 +401,12 @@ class ProductManager {
                 <div class="product-info">
                     <span class="product-category" style="display: block;">${categoryDisplay}</span>
                     <h3 class="product-name">${product.name}</h3>
-                    <p class="product-description">${descriptionDisplay}</p>
-                    <div class="product-price">${priceDisplay}</div>
-                    <div class="product-stock" style="${stockClass}">${stockText}</div>
+                    ${breederDisplay}
+                    ${attributesDisplay}
+                    <p class="product-description" style="font-size: 0.9rem; line-height: 1.4;">${descriptionTruncated}</p>
+                    ${skuDisplay}
+                    <div class="product-price" style="font-size: 1.2rem; font-weight: 700; color: var(--primary-green); margin: 8px 0;">${priceDisplay}</div>
+                    <div class="product-stock" style="${stockClass}; font-size: 0.9rem; margin-bottom: 8px;">${stockText}</div>
                     <div class="product-actions">
                         <button onclick="productManager.viewProduct(${product.id})" 
                                 class="cta-button">
