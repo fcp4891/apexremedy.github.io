@@ -92,10 +92,17 @@
             !currentPath.startsWith('mailto:') &&
             !currentPath.startsWith('tel:')) {
             
+            // NO procesar rutas que ya están siendo procesadas por adminTemplate.js
+            // Si la ruta ya incluye el basePath completo, no procesarla de nuevo
+            const currentBasePath = window.BASE_PATH || basePath;
+            if (currentBasePath && currentPath.startsWith(currentBasePath)) {
+                // La ruta ya fue procesada, no hacer nada
+                return;
+            }
+            
             // Solo actualizar rutas relativas (evitar rutas absolutas que ya tienen el path completo)
             if (currentPath.startsWith('./') || currentPath.startsWith('../') || (!currentPath.startsWith('/') && currentPath.length > 0)) {
                 // Asegurarse de que tenemos un basePath válido
-                const currentBasePath = window.BASE_PATH || basePath;
                 if (currentBasePath) {
                     let cleanPath = currentPath;
                     let subdirectory = '';
