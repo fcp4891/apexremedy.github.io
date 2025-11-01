@@ -1386,11 +1386,26 @@
             // Limpiar opciones existentes excepto "Todas"
             select.innerHTML = '<option value="all">Todas</option>';
             
+            // 🆕 Verificar si el usuario puede ver productos medicinales
+            const canViewMedicinal = productManager.canViewMedicinal();
+            
             // Agregar categorías disponibles (evitar duplicados)
             const addedCategories = new Set();
             const addedNames = new Set(); // Para evitar duplicados por nombre también
             
             categories.forEach(cat => {
+                // 🆕 FILTRAR categorías medicinales si el usuario no tiene acceso
+                if (!canViewMedicinal) {
+                    const isMedicinalCategory = cat === 'medicinal' ||
+                                               cat === 'medicinal-flores' ||
+                                               cat === 'medicinal-aceites' ||
+                                               cat === 'medicinal-concentrados' ||
+                                               (cat && cat.toLowerCase().includes('medicinal'));
+                    if (isMedicinalCategory) {
+                        return; // Saltar esta categoría
+                    }
+                }
+                
                 // Normalizar categoría para evitar duplicados
                 const normalizedCat = cat.toLowerCase().trim();
                 const categoryName = productManager.categoriesMap && productManager.categoriesMap.has(cat)

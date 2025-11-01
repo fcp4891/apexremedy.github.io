@@ -1061,10 +1061,12 @@ body:has(.cart-sidebar.open) .cart-overlay{
     padding: 20px 16px !important;
   }
   
-  /* Products grid mantiene su comportamiento normal */
-  .products-grid {
+  /* Products grid - Una tarjeta por fila en móvil */
+  .products-grid,
+  #productsGrid,
+  #featuredProducts {
     display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important;
+    grid-template-columns: 1fr !important; /* Una tarjeta por fila */
     gap: 16px !important;
     visibility: visible !important;
     opacity: 1 !important;

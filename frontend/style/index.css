@@ -48,11 +48,11 @@
         padding: 40px 0;
     }
     
-    /* Asegurar que el grid de productos sea visible en móvil */
+    /* Asegurar que el grid de productos sea visible en móvil - Una tarjeta por fila */
     .products-grid,
     #featuredProducts {
         display: grid !important;
-        grid-template-columns: repeat(2, 1fr) !important;
+        grid-template-columns: 1fr !important; /* Una tarjeta por fila */
         gap: 16px !important;
         visibility: visible !important;
         opacity: 1 !important;

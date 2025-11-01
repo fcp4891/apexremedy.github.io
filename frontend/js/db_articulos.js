@@ -199,7 +199,24 @@ class ProductManager {
             const seenSlugs = new Set(); // Para evitar duplicados
             const seenNames = new Set(); // Para evitar duplicados por nombre también
             
+            // 🆕 Verificar si el usuario puede ver productos medicinales
+            const canViewMedicinal = this.canViewMedicinal();
+            
             this.products.forEach(product => {
+                // 🆕 FILTRAR productos medicinales si el usuario no tiene acceso
+                if (!canViewMedicinal) {
+                    const isMedicinal = product.requires_prescription === true || 
+                                       product.is_medicinal === true ||
+                                       product.category_slug === 'medicinal' ||
+                                       product.category_slug === 'medicinal-flores' ||
+                                       product.category_slug === 'medicinal-aceites' ||
+                                       product.category_slug === 'medicinal-concentrados' ||
+                                       (product.category && product.category.toLowerCase().includes('medicinal'));
+                    if (isMedicinal) {
+                        return; // Saltar este producto
+                    }
+                }
+                
                 // Priorizar category_slug (es más consistente para filtros)
                 let slug = product.category_slug || product.category;
                 let name = product.category || product.category_slug;
