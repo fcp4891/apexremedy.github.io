@@ -212,6 +212,27 @@
     <script>
         let currentOrderId = null;
         let allOrders = []; // Almacenar pedidos cargados globalmente
+        let allProducts = []; // Almacenar productos para mapear nombres
+
+        // Cargar productos para mapear nombres en items
+        async function loadProductsForMapping() {
+            try {
+                const response = await api.getProducts({ limit: 1000 });
+                if (response.success) {
+                    allProducts = response.data?.products || response.data || [];
+                    console.log(`✅ ${allProducts.length} productos cargados para mapeo de nombres`);
+                }
+            } catch (error) {
+                console.warn('⚠️ No se pudieron cargar productos para mapeo:', error.message);
+            }
+        }
+
+        // Función helper para obtener nombre de producto desde product_id
+        function getProductName(productId) {
+            if (!productId) return 'Producto eliminado';
+            const product = allProducts.find(p => p.id === productId || p.id === parseInt(productId));
+            return product ? (product.name || product.title || `Producto #${productId}`) : `Producto #${productId}`;
+        }
 
         // Verificar autenticación - CORREGIDO
         (function initPage() {
@@ -228,7 +249,10 @@
             }
             
             console.log('✅ Usuario autenticado, cargando pedidos...');
-            loadOrders();
+            // Cargar productos primero para mapeo de nombres
+            loadProductsForMapping().then(() => {
+                loadOrders();
+            });
         })();
 
         // Cargar pedidos
@@ -446,21 +470,36 @@ function showOrderModal(order) {
   statusBadge.className = `order-status ${status.class}`;
   statusBadge.innerHTML = `<i class="fas fa-circle"></i> ${status.label}`;
 
-  // Items
-  const itemsHtml = (order.items || []).map(item => `
+  // Items - Obtener nombres de productos desde allProducts
+  const itemsHtml = (order.items || []).map(item => {
+    // Obtener nombre del producto
+    const productName = item.product_name || getProductName(item.product_id);
+    
+    // Obtener precio (puede ser unit_price o price)
+    const price = item.unit_price || item.price || 0;
+    
+    // Calcular subtotal (puede venir calculado o calcularse)
+    const subtotal = item.subtotal || (parseFloat(item.quantity) * parseFloat(price));
+    
+    return `
     <tr>
-      <td>${item.product_name}</td>
-      <td class="text-right">${item.quantity}</td>
-      <td class="text-right">${Utils.formatPrice(item.price)}</td>
-      <td class="text-right font-semibold">${Utils.formatPrice(item.quantity * item.price)}</td>
+      <td>${productName}</td>
+      <td class="text-right">${item.quantity || 1}</td>
+      <td class="text-right">${typeof Utils !== 'undefined' && Utils.formatPrice ? Utils.formatPrice(price) : `$${parseFloat(price).toLocaleString('es-CL')}`}</td>
+      <td class="text-right font-semibold">${typeof Utils !== 'undefined' && Utils.formatPrice ? Utils.formatPrice(subtotal) : `$${parseFloat(subtotal).toLocaleString('es-CL')}`}</td>
     </tr>
-  `).join('');
+  `;
+  }).join('');
   document.getElementById('modalItems').innerHTML = itemsHtml;
 
-  // Totales
-  document.getElementById('modalSubtotal').textContent = Utils.formatPrice(order.subtotal);
-  document.getElementById('modalTax').textContent     = Utils.formatPrice(order.tax);
-  document.getElementById('modalTotal').textContent   = Utils.formatPrice(order.total);
+  // Totales - Usar formatPrice si está disponible, sino formato manual
+  const formatPrice = typeof Utils !== 'undefined' && Utils.formatPrice 
+    ? Utils.formatPrice 
+    : (val) => `$${parseFloat(val || 0).toLocaleString('es-CL')}`;
+  
+  document.getElementById('modalSubtotal').textContent = formatPrice(order.subtotal || 0);
+  document.getElementById('modalTax').textContent     = formatPrice(order.tax || 0);
+  document.getElementById('modalTotal').textContent   = formatPrice(order.total || 0);
 
   // Estado de pago informativo (si lo usas)
   const paymentInfo = document.getElementById('paymentInfo');
