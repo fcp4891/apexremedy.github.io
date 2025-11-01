@@ -15,11 +15,18 @@ if (typeof APIClient === 'undefined') {
             // Si tu backend está en Heroku/Railway/Render/etc, reemplaza la URL abajo
             // Ejemplo: 'https://apexremedy-api.herokuapp.com/api'
             // Ejemplo: 'https://api.apexremedy.com/api'
-            const PRODUCTION_API_URL = 'https://tu-backend-en-produccion.com/api'; // ⚠️ CAMBIAR ESTA URL
+            // Si no tienes backend en producción, déjalo como null para usar solo API estática
+            const PRODUCTION_API_URL = null; // ⚠️ Configurar URL real del backend o null para solo API estática
             
-            this.baseURL = isProduction 
-                ? PRODUCTION_API_URL
-                : 'http://localhost:3000/api';
+            // Si no hay URL de producción configurada, usar localhost como fallback o solo API estática
+            if (isProduction && !PRODUCTION_API_URL) {
+                console.warn('⚠️ No hay backend configurado en producción. Se usará solo API estática.');
+                this.baseURL = null; // null indica que solo se usará API estática
+            } else {
+                this.baseURL = isProduction 
+                    ? PRODUCTION_API_URL
+                    : 'http://localhost:3000/api';
+            }
             
             // Sincronizar token con localStorage al inicializar
             this.token = localStorage.getItem('authToken');
@@ -44,6 +51,13 @@ if (typeof APIClient === 'undefined') {
 
         // Método auxiliar para hacer peticiones
         async request(endpoint, options = {}) {
+            // Verificar si hay backend configurado
+            if (!this.baseURL) {
+                const error = new Error('Backend no configurado. Por favor, configura la URL del backend en producción o usa el modo de desarrollo.');
+                error.code = 'NO_BACKEND_CONFIGURED';
+                throw error;
+            }
+            
             // Sincronizar token antes de cada petición
             this.syncToken();
             
@@ -80,6 +94,13 @@ if (typeof APIClient === 'undefined') {
 
                 return data;
             } catch (error) {
+                // Si es un error de red (backend no disponible), proporcionar mensaje más claro
+                if (error.message.includes('Failed to fetch') || error.message.includes('ERR_NAME_NOT_RESOLVED')) {
+                    const friendlyError = new Error('No se pudo conectar con el servidor. Verifica que el backend esté configurado y disponible.');
+                    friendlyError.code = 'NETWORK_ERROR';
+                    friendlyError.originalError = error;
+                    throw friendlyError;
+                }
                 console.error('Error en petición:', error);
                 throw error;
             }
