@@ -221,6 +221,16 @@
     function openCart(e) {
       if (cartSidebar && cartOverlay) {
         e?.preventDefault();
+        
+        // Actualizar el sidebar con los items actuales del carrito
+        if (typeof cart !== 'undefined') {
+          if (typeof cart.updateCartSidebar === 'function') {
+            cart.updateCartSidebar();
+          } else if (typeof cart.refreshSidebar === 'function') {
+            cart.refreshSidebar();
+          }
+        }
+        
         cartSidebar.classList.add('open');
         cartOverlay.style.display = 'block';
         cartOverlay.style.visibility = 'visible';
@@ -228,6 +238,9 @@
         // Prevenir scroll del body cuando el carrito está abierto
         document.body.style.overflow = 'hidden';
         return;
+      } else {
+        // Si no existe el sidebar, redirigir a la página del carrito
+        window.location.href = './carrito.html';
       }
     }
 
