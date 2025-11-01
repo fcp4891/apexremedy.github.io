@@ -14,37 +14,24 @@
     let basePath = '';
     if (isGitHubPages) {
         // Extraer el path base desde el pathname actual
-        // pathname será algo como: /apexremedy.github.io/frontend/index.html
+        // pathname será algo como: /apexremedy.github.io/index.html
+        // NOTA: El workflow despliega desde ./frontend, así que los archivos están en la raíz del sitio
         const pathParts = window.location.pathname.split('/').filter(p => p);
         const repoIndex = pathParts.indexOf(repoName);
         
         let repoPath = '';
-        // El pathname ya incluye el repo completo: /apexremedy.github.io/frontend/index.html
-        // NO necesitamos agregar el usuario porque las rutas absolutas son relativas al dominio actual
-        // El dominio es fcp4891.github.io, entonces /apexremedy.github.io/ es correcto
         if (repoIndex !== -1) {
-            // Usar solo el repoName desde el pathname (sin el usuario)
+            // Construir ruta base: /apexremedy.github.io/
             repoPath = '/' + repoName + '/';
         } else {
-            // Fallback: construir desde el pathname completo si no encontramos el repoName
-            // Pero esto no debería pasar normalmente
+            // Fallback: usar el repoName directamente
             repoPath = '/' + repoName + '/';
         }
         
-        // Verificar si la URL actual incluye /frontend/
-        const currentPath = window.location.pathname;
-        const hasFrontendInPath = currentPath.includes('/frontend/') || currentPath.endsWith('/frontend');
-        
-        if (repoPath) {
-            if (hasFrontendInPath) {
-                // Si la URL incluye /frontend/, agregarlo al basePath
-                basePath = repoPath + 'frontend/';
-            } else {
-                // Si NO incluye /frontend/, GitHub Pages está sirviendo desde la raíz
-                // (archivos de frontend/ están en la raíz del sitio desplegado)
-                basePath = repoPath;
-            }
-        }
+        // IMPORTANTE: GitHub Pages despliega desde ./frontend, así que los archivos
+        // están en la raíz del sitio desplegado, NO en /frontend/
+        // Por lo tanto, NO agregamos 'frontend/' al basePath
+        basePath = repoPath;
     }
     
     // Función para obtener la ruta correcta
