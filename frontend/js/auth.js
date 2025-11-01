@@ -85,15 +85,31 @@ if (typeof AuthManager === 'undefined') {
                     const urlParams = new URLSearchParams(window.location.search);
                     const redirect = urlParams.get('redirect');
                     
+                    // Función helper para construir rutas con basePath
+                    const getFullPath = (path) => {
+                        // Si ya es una URL completa, devolverla tal cual
+                        if (path.startsWith('http') || path.startsWith('//')) {
+                            return path;
+                        }
+                        // Si tenemos basePath (GitHub Pages), usarlo
+                        if (typeof window.BASE_PATH !== 'undefined' && window.BASE_PATH) {
+                            // Si la ruta comienza con /, removerlo antes de agregar basePath
+                            const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+                            return window.BASE_PATH + cleanPath;
+                        }
+                        // Si no hay basePath (local), usar la ruta tal cual
+                        return path;
+                    };
+                    
                     if (redirect) {
-                        const redirectPath = redirect.startsWith('/') ? redirect :
+                        const redirectPath = redirect.startsWith('/') ? getFullPath(redirect) :
                                              redirect.startsWith('./') ? redirect :
                                              `./${redirect}`;
                         window.location.href = redirectPath;
                       } else if (user.role === 'admin') {
-                        window.location.href = '/admin/perfil.html';
+                        window.location.href = getFullPath('/admin/perfil.html');
                       } else {
-                        window.location.href = '/perfil.html';
+                        window.location.href = getFullPath('/perfil.html');
                       }
                     
                     return { success: true, user };
