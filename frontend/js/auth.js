@@ -319,9 +319,11 @@ if (typeof AuthManager === 'undefined') {
                     if (isAdminUser) {
                         adminMenuItem.style.display = '';
                         adminMenuItem.classList.remove('hidden');
+                        adminMenuItem.classList.add('admin-visible'); // Para CSS móvil
                     } else {
                         adminMenuItem.style.display = 'none';
                         adminMenuItem.classList.add('hidden');
+                        adminMenuItem.classList.remove('admin-visible'); // Quitar clase CSS
                     }
                 }
             } else {
@@ -347,6 +349,7 @@ if (typeof AuthManager === 'undefined') {
                 if (adminMenuItem) {
                     adminMenuItem.style.display = 'none';
                     adminMenuItem.classList.add('hidden');
+                    adminMenuItem.classList.remove('admin-visible'); // Asegurar que no tenga la clase CSS
                 }
             }
         }

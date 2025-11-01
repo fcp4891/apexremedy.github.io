@@ -293,7 +293,15 @@ if (profileLink) {
       userMenuDesktop.style.display = isAuth ? 'flex' : 'none';
     }
     if (adminMenuItem) {
-      adminMenuItem.style.display = isAdmin ? 'block' : 'none';
+      if (isAdmin) {
+        adminMenuItem.style.display = 'block';
+        adminMenuItem.classList.add('admin-visible'); // Para CSS móvil
+        adminMenuItem.classList.remove('hidden');
+      } else {
+        adminMenuItem.style.display = 'none';
+        adminMenuItem.classList.remove('admin-visible'); // Quitar clase CSS
+        adminMenuItem.classList.add('hidden');
+      }
     }
 
     // Actualizar nombre de usuario

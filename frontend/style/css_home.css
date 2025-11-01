@@ -992,7 +992,17 @@ body:has(.cart-sidebar.open) .cart-overlay{
     gap:0!important;
   }
   
-  #guestMenuDesktop,#guestMenuDesktop2,#adminMenuItem{
+  #guestMenuDesktop,#guestMenuDesktop2{
+    display:block!important;
+  }
+  
+  /* Admin menu: oculto por defecto, solo visible si el usuario es admin */
+  #adminMenuItem{
+    display:none!important;
+  }
+  
+  /* Mostrar admin solo si tiene la clase 'admin-visible' (agregada por JS) */
+  #adminMenuItem.admin-visible{
     display:block!important;
   }
   
