@@ -497,8 +497,8 @@ if (typeof APIClient === 'undefined') {
                                 (window.location.hostname !== 'localhost' && 
                                  window.location.hostname !== '127.0.0.1');
             
-            // En producción, intentar primero con JSON estático
-            if (isProduction) {
+            // Si no hay backend configurado O estamos en producción, usar JSON estático
+            if (!this.baseURL || isProduction) {
                 try {
                     const staticData = await this.loadStaticJSON('products-featured.json');
                     if (staticData && staticData.success && staticData.data.products) {
@@ -510,19 +510,37 @@ if (typeof APIClient === 'undefined') {
                 }
             }
             
-            // Si no es producción o falló el JSON estático, usar API dinámica
-            try {
-                return await this.request('/products/featured');
-            } catch (error) {
-                // Si la API dinámica también falla y estamos en producción, usar JSON estático
-                if (isProduction) {
+            // Si hay backend, usar API dinámica
+            if (this.baseURL) {
+                try {
+                    return await this.request('/products/featured');
+                } catch (error) {
+                    // Si la API dinámica falla, intentar JSON estático como último recurso
+                    console.warn('⚠️ API dinámica falló, intentando JSON estático...', error);
                     const staticData = await this.loadStaticJSON('products-featured.json');
                     if (staticData && staticData.success) {
-                        console.warn('⚠️ API dinámica no disponible, usando JSON estático');
+                        console.warn('⚠️ Usando JSON estático como fallback');
                         return staticData;
                     }
+                    throw error;
                 }
-                throw error;
+            } else {
+                // No hay backend y no se pudo cargar JSON estático
+                // Intentar filtrar desde products.json
+                try {
+                    const staticData = await this.loadStaticJSON('products.json');
+                    if (staticData && staticData.success && staticData.data.products) {
+                        const featured = staticData.data.products.filter(p => p.featured === true);
+                        return {
+                            success: true,
+                            data: { products: featured },
+                            message: 'Productos destacados extraídos de products.json'
+                        };
+                    }
+                } catch (error) {
+                    // Ignorar error
+                }
+                throw new Error('No se pudieron cargar productos destacados. Verifica que products-featured.json esté disponible.');
             }
         }
 
