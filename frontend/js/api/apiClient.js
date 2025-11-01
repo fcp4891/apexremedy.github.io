@@ -215,9 +215,11 @@ if (typeof APIClient === 'undefined') {
             if (isProduction) {
                 try {
                     const staticData = await this.loadStaticJSON('products.json');
-                    if (staticData && staticData.success && staticData.data.products) {
+                    console.log('🔍 JSON estático cargado:', staticData);
+                    if (staticData && staticData.success && staticData.data && staticData.data.products) {
                         // Aplicar filtros localmente si existen
                         let products = staticData.data.products;
+                        console.log('📦 Productos extraídos del JSON:', products.length);
                         
                         // Filtrar por búsqueda
                         if (filters.search) {
