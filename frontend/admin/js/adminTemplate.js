@@ -41,24 +41,38 @@
      * Obtener path base para GitHub Pages (usa el global si existe)
      */
     function getBasePath() {
-        // Usar el basePath global si está disponible
+        // Usar el basePath global si está disponible (de basePath.js)
         if (typeof window.BASE_PATH !== 'undefined') {
             return window.BASE_PATH;
         }
-        // Fallback: calcularlo manualmente
+        // Fallback: calcularlo manualmente usando la misma lógica que basePath.js
         if (window.location.hostname.includes('github.io')) {
             const pathParts = window.location.pathname.split('/').filter(p => p);
             const repoName = 'apexremedy.github.io';
             const repoIndex = pathParts.indexOf(repoName);
             
+            let repoPath = '';
+            // El pathname ya incluye el repo completo: /apexremedy.github.io/frontend/admin/index.html
+            // NO necesitamos agregar el usuario porque las rutas absolutas son relativas al dominio actual
             if (repoIndex !== -1) {
-                const repoPath = '/' + pathParts.slice(0, repoIndex + 1).join('/') + '/';
-                // Verificar si necesitamos agregar /frontend/
-                const currentPath = window.location.pathname;
-                if (!currentPath.includes('/frontend/') && !currentPath.endsWith('/frontend')) {
+                // Usar solo el repoName desde el pathname (sin el usuario)
+                repoPath = '/' + repoName + '/';
+            } else {
+                repoPath = '/' + repoName + '/';
+            }
+            
+            // Verificar si la URL actual incluye /frontend/
+            const currentPath = window.location.pathname;
+            const hasFrontendInPath = currentPath.includes('/frontend/') || currentPath.endsWith('/frontend');
+            
+            if (repoPath) {
+                if (hasFrontendInPath) {
+                    // Si la URL incluye /frontend/, agregarlo al basePath
                     return repoPath + 'frontend/';
+                } else {
+                    // Si NO incluye /frontend/, GitHub Pages está sirviendo desde la raíz
+                    return repoPath;
                 }
-                return repoPath;
             }
         }
         return '';
@@ -68,8 +82,8 @@
      * Obtener la ruta del header según el rol
      */
     function getHeaderPath() {
-        // Usar ruta relativa, loadAdminHeader ajustará automáticamente
-        return './components/header.html'; // Siempre admin header en esta sección
+        // Usar ruta relativa desde admin/, necesitamos ir a ../components/
+        return '../components/header.html'; // Siempre admin header en esta sección
     }
     
     // ============================================
@@ -98,8 +112,16 @@
                 // Si comienza con / pero no con basePath, agregar basePath al inicio
                 headerPath = basePath + headerPath.substring(1);
             } else {
-                // Si es relativa (./ o sin /), reemplazar ./ y agregar basePath
-                headerPath = basePath + headerPath.replace('./', '');
+                // Si es relativa (../ o ./), procesar correctamente
+                if (headerPath.startsWith('../')) {
+                    // Para rutas ../ desde admin/, necesitamos construir correctamente
+                    // ../components/header.html desde admin/ = components/header.html en frontend/
+                    headerPath = basePath + headerPath.substring(3); // Remover ../
+                } else if (headerPath.startsWith('./')) {
+                    headerPath = basePath + headerPath.substring(2); // Remover ./
+                } else {
+                    headerPath = basePath + headerPath;
+                }
             }
         }
         
@@ -162,7 +184,7 @@
             return;
         }
         
-        let footerPath = './components/footer.html';
+        let footerPath = '../components/footer.html';
         
         // Ajustar URL para GitHub Pages si es necesario
         const basePath = getBasePath();
@@ -174,8 +196,16 @@
                 // Si comienza con / pero no con basePath, agregar basePath al inicio
                 footerPath = basePath + footerPath.substring(1);
             } else {
-                // Si es relativa (./ o sin /), reemplazar ./ y agregar basePath
-                footerPath = basePath + footerPath.replace('./', '');
+                // Si es relativa (../ o ./), procesar correctamente
+                if (footerPath.startsWith('../')) {
+                    // Para rutas ../ desde admin/, necesitamos construir correctamente
+                    // ../components/footer.html desde admin/ = components/footer.html en frontend/
+                    footerPath = basePath + footerPath.substring(3); // Remover ../
+                } else if (footerPath.startsWith('./')) {
+                    footerPath = basePath + footerPath.substring(2); // Remover ./
+                } else {
+                    footerPath = basePath + footerPath;
+                }
             }
         }
         
