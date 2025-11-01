@@ -747,13 +747,13 @@ function openGrowShopModal(product, attrs) {
     const elements = {
         'growShopProductName': product.name,
         'growShopProductBreeder': product.breeder || '',
-        'growShopCategoryBadge': formatCategoryName(product.category),
-        'growShopDescription': product.description || 'Sin descripción disponible',
+        'growShopCategoryBadge': formatCategoryName(product.category || product.category_slug),
+        'growShopDescription': product.description || product.short_description || 'Sin descripción disponible',
         'growShopSku': product.sku || 'N/A',
-        'growShopCategory': formatCategoryName(product.category),
-        'growShopProductPrice': `${formatPrice(product.price)}`,
-        'growShopProductStock': formatStock(product.stock, 'unid'),
-        'growShopStockInfo': (product.stock && product.stock > 0) ? 'Disponible' : 'Agotado'
+        'growShopCategory': formatCategoryName(product.category || product.category_slug),
+        'growShopProductPrice': `$${formatPrice(product.base_price || product.price || 0)}`,
+        'growShopProductStock': formatStock(product.stock_quantity || product.stock || 0, product.stock_unit || 'unidades'),
+        'growShopStockInfo': ((product.stock_quantity || product.stock || 0) > 0) ? 'Disponible' : 'Agotado'
     };
     
     // Establecer textContent solo si el elemento existe
@@ -782,13 +782,17 @@ function openGrowShopModal(product, attrs) {
         }
     }
     
+    // 🆕 Extraer especificaciones y atributos
+    const specifications = product.specifications || attrs?.specifications;
+    const productAttributes = product.attributes || attrs || {};
+    
     // Información del producto
     const infoContainer = document.getElementById('growShopProductInfo');
     if (infoContainer) {
         infoContainer.innerHTML = `
             <div class="flex justify-between items-center pb-2 border-b border-gray-200">
                 <span class="text-sm text-gray-600 font-medium">Categoría</span>
-                <span class="text-sm font-semibold text-gray-900">${formatCategoryName(product.category)}</span>
+                <span class="text-sm font-semibold text-gray-900">${formatCategoryName(product.category || product.category_slug)}</span>
             </div>
             ${product.sku ? `
             <div class="flex justify-between items-center pb-2 border-b border-gray-200">
@@ -802,15 +806,25 @@ function openGrowShopModal(product, attrs) {
             </div>` : ''}
             <div class="flex justify-between items-center pb-2 border-b border-gray-200">
                 <span class="text-sm text-gray-600 font-medium">Precio</span>
-                <span class="text-lg font-bold text-green-600">${formatPrice(product.price)}</span>
+                <span class="text-lg font-bold text-green-600">$${formatPrice(product.base_price || product.price || 0)}</span>
             </div>
             <div class="flex justify-between items-center">
                 <span class="text-sm text-gray-600 font-medium">Disponibilidad</span>
-                <span class="text-sm font-semibold ${product.stock > 0 ? 'text-green-600' : 'text-red-600'}">
-                    ${formatStock(product.stock, 'unidades')}
+                <span class="text-sm font-semibold ${(product.stock_quantity || product.stock || 0) > 0 ? 'text-green-600' : 'text-red-600'}">
+                    ${formatStock(product.stock_quantity || product.stock || 0, product.stock_unit || 'unidades')}
                 </span>
             </div>
         `;
+    }
+    
+    // 🆕 Mostrar especificaciones si existen
+    if (specifications) {
+        fillSpecifications(specifications, 'growShopSpecs');
+    }
+    
+    // 🆕 Mostrar atributos si existen
+    if (productAttributes && Object.keys(productAttributes).length > 0) {
+        fillAttributes(productAttributes, 'growShopAttributes');
     }
     
     // Mostrar modal de Grow Shop

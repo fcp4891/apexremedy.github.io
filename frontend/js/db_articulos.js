@@ -125,8 +125,28 @@ class ProductManager {
             
             if (response && response.success && response.data && response.data.products) {
                 // Mapear campos del backend al formato esperado por el frontend
-                const products = this.mapProductFields(response.data.products.slice(0, limit));
-                console.log(`✅ ${products.length} productos destacados mapeados`);
+                let products = this.mapProductFields(response.data.products);
+                
+                // 🆕 FILTRAR productos medicinales si el usuario no tiene acceso
+                if (!this.canViewMedicinal()) {
+                    const beforeFilter = products.length;
+                    products = products.filter(p => {
+                        // Excluir productos medicinales y categoría medicinal
+                        const isMedicinal = p.requires_prescription === true || 
+                                          p.is_medicinal === true ||
+                                          p.category_slug === 'medicinal' ||
+                                          p.category_slug === 'medicinal-flores' ||
+                                          p.category_slug === 'medicinal-aceites' ||
+                                          p.category_slug === 'medicinal-concentrados' ||
+                                          (p.category && p.category.toLowerCase().includes('medicinal'));
+                        return !isMedicinal;
+                    });
+                    console.log(`🔒 Productos medicinales filtrados (${beforeFilter} → ${products.length})`);
+                }
+                
+                // Limitar resultados después del filtro
+                products = products.slice(0, limit);
+                console.log(`✅ ${products.length} productos destacados mapeados y filtrados`);
                 return products;
             }
             
@@ -243,7 +263,11 @@ class ProductManager {
             filtered = filtered.filter(p => {
                 // Excluir productos medicinales y categoría medicinal
                 const isMedicinal = p.requires_prescription === true || 
+                                   p.is_medicinal === true ||
                                    p.category_slug === 'medicinal' ||
+                                   p.category_slug === 'medicinal-flores' ||
+                                   p.category_slug === 'medicinal-aceites' ||
+                                   p.category_slug === 'medicinal-concentrados' ||
                                    (p.category && p.category.toLowerCase().includes('medicinal'));
                 return !isMedicinal;
             });
