@@ -275,6 +275,30 @@ if (typeof APIClient === 'undefined') {
             return hashHex;
         }
         
+        // 🆕 Verificar si un hash es bcrypt (empieza con $2a$, $2b$, o $2y$)
+        isBcryptHash(hash) {
+            return hash && (hash.startsWith('$2a$') || hash.startsWith('$2b$') || hash.startsWith('$2y$'));
+        }
+        
+        // 🆕 Comparar contraseña con hash (soporta SHA-256 y bcrypt)
+        async comparePassword(password, storedHash) {
+            // Si el hash es bcrypt, necesitamos usar una librería externa
+            // Por ahora, solo soportamos SHA-256 en frontend
+            // Si encontramos bcrypt, necesitamos que el backend lo maneje o re-hashear en la BD
+            
+            if (this.isBcryptHash(storedHash)) {
+                // Bcrypt no se puede verificar fácilmente en frontend sin una librería
+                // Para desarrollo, retornar false y mostrar mensaje
+                console.warn('⚠️ Hash bcrypt detectado. Este tipo de hash requiere verificación en el backend.');
+                console.warn('💡 Solución: Reescribir el password_hash en la base de datos usando SHA-256');
+                return false;
+            }
+            
+            // Para SHA-256, calcular y comparar
+            const calculatedHash = await this.hashPassword(password);
+            return calculatedHash === storedHash;
+        }
+        
         // 🆕 Generar token simple para autenticación estática
         generateSimpleToken(user) {
             // Crear un token simple usando base64

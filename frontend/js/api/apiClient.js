@@ -173,9 +173,27 @@ if (typeof APIClient === 'undefined') {
                 }
                 
                 // Comparar contraseña PRIMERO antes de verificar estado (para no revelar si el usuario existe)
-                const passwordHash = await this.hashPassword(password);
+                // Usar método mejorado que soporta SHA-256 y detecta bcrypt
+                const passwordMatch = await this.comparePassword(password, user.password_hash);
                 
-                if (user.password_hash !== passwordHash) {
+                // Log para depuración (solo en desarrollo)
+                if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                    console.log('🔐 Debug login:', {
+                        email: email,
+                        passwordHashStored: user.password_hash,
+                        isBcrypt: this.isBcryptHash(user.password_hash),
+                        match: passwordMatch
+                    });
+                }
+                
+                if (!passwordMatch) {
+                    // Si es bcrypt, dar mensaje más específico
+                    if (this.isBcryptHash(user.password_hash)) {
+                        return {
+                            success: false,
+                            message: 'Error de configuración: El hash de contraseña no es compatible. Contacta al administrador.'
+                        };
+                    }
                     return {
                         success: false,
                         message: 'Credenciales incorrectas'
@@ -273,6 +291,47 @@ if (typeof APIClient === 'undefined') {
             const hashArray = Array.from(new Uint8Array(hashBuffer));
             const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
             return hashHex;
+        }
+        
+        // 🆕 Verificar si un hash es bcrypt (empieza con $2a$, $2b$, o $2y$)
+        isBcryptHash(hash) {
+            return hash && (hash.startsWith('$2a$') || hash.startsWith('$2b$') || hash.startsWith('$2y$'));
+        }
+        
+        // 🆕 Comparar contraseña con hash (soporta SHA-256 y bcrypt)
+        async comparePassword(password, storedHash) {
+            if (this.isBcryptHash(storedHash)) {
+                // Intentar usar bcryptjs si está disponible (cargado desde CDN)
+                if (typeof bcryptjs !== 'undefined') {
+                    try {
+                        // bcryptjs.compare es síncrono en algunas versiones, async en otras
+                        // Intentar ambos métodos
+                        if (typeof bcryptjs.compareSync === 'function') {
+                            return bcryptjs.compareSync(password, storedHash);
+                        } else if (typeof bcryptjs.compare === 'function') {
+                            // Si es async, necesitamos esperar (pero bcryptjs es generalmente sync)
+                            const result = bcryptjs.compare(password, storedHash);
+                            return typeof result === 'boolean' ? result : await result;
+                        } else {
+                            console.warn('⚠️ bcryptjs disponible pero sin método compare');
+                            return false;
+                        }
+                    } catch (error) {
+                        console.error('❌ Error al comparar con bcryptjs:', error);
+                        return false;
+                    }
+                } else {
+                    // bcryptjs no está cargado, mostrar mensaje claro
+                    console.warn('⚠️ Hash bcrypt detectado pero bcryptjs no está disponible.');
+                    console.warn('💡 Solución 1: Cargar bcryptjs desde CDN');
+                    console.warn('💡 Solución 2: Reescribir el password_hash en la BD usando SHA-256');
+                    return false;
+                }
+            }
+            
+            // Para SHA-256, calcular y comparar
+            const calculatedHash = await this.hashPassword(password);
+            return calculatedHash === storedHash;
         }
         
         // 🆕 Generar token simple para autenticación estática
