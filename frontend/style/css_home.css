@@ -1193,8 +1193,8 @@ body:has(.cart-sidebar.open) .cart-overlay{
     background:#059669!important;
   }
   
-  /* Footer del carrito - POSITION FIXED para siempre visible cuando está abierto */
-  .cart-sidebar .cart-total{
+  /* Footer del carrito - POSITION FIXED para siempre visible cuando está abierto (solo en móvil) */
+  .cart-sidebar.open .cart-total{
     position:fixed!important;
     bottom:0!important;
     left:0!important;
