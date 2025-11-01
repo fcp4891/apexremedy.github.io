@@ -14,24 +14,49 @@
     let basePath = '';
     if (isGitHubPages) {
         // Extraer el path base desde el pathname actual
-        // pathname será algo como: /apexremedy.github.io/index.html
-        // NOTA: El workflow despliega desde ./frontend, así que los archivos están en la raíz del sitio
+        // pathname será algo como: /fcp4891/apexremedy.github.io/index.html
+        // NOTA: El workflow despliega desde ./frontend, así que los archivos están en la raíz del sitio desplegado
         const pathParts = window.location.pathname.split('/').filter(p => p);
-        const repoIndex = pathParts.indexOf(repoName);
         
-        let repoPath = '';
+        // Buscar el índice del repositorio en la URL
+        // La estructura de GitHub Pages es: /username/repo-name/path
+        let repoIndex = -1;
+        for (let i = 0; i < pathParts.length; i++) {
+            if (pathParts[i] === repoName || pathParts[i] === 'apexremedy.github.io') {
+                repoIndex = i;
+                break;
+            }
+        }
+        
         if (repoIndex !== -1) {
-            // Construir ruta base: /apexremedy.github.io/
-            repoPath = '/' + repoName + '/';
+            // Construir ruta base: /username/apexremedy.github.io/
+            // O si es un usuario específico: /fcp4891/apexremedy.github.io/
+            const username = pathParts[0]; // Primer elemento suele ser el username
+            if (username && repoIndex > 0) {
+                basePath = '/' + pathParts.slice(0, repoIndex + 1).join('/') + '/';
+            } else {
+                basePath = '/' + repoName + '/';
+            }
         } else {
-            // Fallback: usar el repoName directamente
-            repoPath = '/' + repoName + '/';
+            // Si no encontramos el repo en el path, intentar construir desde el pathname
+            // pathname puede ser: /apexremedy.github.io/ o /fcp4891/apexremedy.github.io/
+            const pathname = window.location.pathname;
+            if (pathname.includes(repoName)) {
+                const beforeRepo = pathname.substring(0, pathname.indexOf(repoName));
+                basePath = beforeRepo + repoName + '/';
+            } else {
+                // Fallback: construir desde el primer segmento del path
+                if (pathParts.length > 0) {
+                    basePath = '/' + pathParts[0] + '/' + repoName + '/';
+                } else {
+                    basePath = '/' + repoName + '/';
+                }
+            }
         }
         
         // IMPORTANTE: GitHub Pages despliega desde ./frontend, así que los archivos
         // están en la raíz del sitio desplegado, NO en /frontend/
         // Por lo tanto, NO agregamos 'frontend/' al basePath
-        basePath = repoPath;
     }
     
     // Función para obtener la ruta correcta
@@ -109,46 +134,71 @@
         }
     }
     
+    // Flag para prevenir ejecuciones múltiples
+    let pathsUpdated = false;
+    
     // Actualizar rutas en el DOM al cargar
     function updateAllPaths() {
         // Solo hacer si estamos en GitHub Pages y tenemos un basePath válido
         const currentBasePath = window.BASE_PATH || basePath;
         if (!currentBasePath || !isGitHubPages) return;
         
-        // Actualizar links
-        document.querySelectorAll('a[href]').forEach(link => {
-            updateElementPath(link, 'href');
-        });
+        // Prevenir ejecuciones múltiples que causan parpadeo
+        if (pathsUpdated) return;
+        pathsUpdated = true;
         
-        // Actualizar scripts (excepto los que ya tienen src absoluto)
-        document.querySelectorAll('script[src]').forEach(script => {
-            updateElementPath(script, 'src');
-        });
-        
-        // Actualizar imágenes
-        document.querySelectorAll('img[src]').forEach(img => {
-            updateElementPath(img, 'src');
-        });
-        
-        // Actualizar CSS
-        document.querySelectorAll('link[href]').forEach(link => {
-            updateElementPath(link, 'href');
-        });
-        
-        // Actualizar form actions
-        document.querySelectorAll('form[action]').forEach(form => {
-            updateElementPath(form, 'action');
-        });
+        try {
+            // Actualizar links (solo rutas relativas, no absolutas)
+            document.querySelectorAll('a[href]').forEach(link => {
+                const href = link.getAttribute('href');
+                // Solo actualizar si no es una URL absoluta y no comienza con #
+                if (href && !href.startsWith('http') && !href.startsWith('//') && !href.startsWith('#') && !href.startsWith('mailto:') && !href.startsWith('tel:')) {
+                    updateElementPath(link, 'href');
+                }
+            });
+            
+            // NO actualizar scripts dinámicamente - causa parpadeo
+            // Los scripts ya fueron cargados antes de este punto
+            
+            // Actualizar imágenes
+            document.querySelectorAll('img[src]').forEach(img => {
+                const src = img.getAttribute('src');
+                if (src && !src.startsWith('http') && !src.startsWith('//') && !src.startsWith('data:')) {
+                    updateElementPath(img, 'src');
+                }
+            });
+            
+            // NO actualizar CSS dinámicamente - causa parpadeo
+            // Los CSS ya fueron cargados antes de este punto
+            
+            // Actualizar form actions
+            document.querySelectorAll('form[action]').forEach(form => {
+                const action = form.getAttribute('action');
+                if (action && !action.startsWith('http') && !action.startsWith('//')) {
+                    updateElementPath(form, 'action');
+                }
+            });
+        } catch (error) {
+            console.warn('⚠️ Error al actualizar rutas:', error);
+            pathsUpdated = false; // Permitir reintentar si hay error
+        }
     }
     
-    // Ejecutar cuando el DOM esté listo
+    // Ejecutar SOLO una vez cuando el DOM esté listo
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', updateAllPaths);
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ejecutar solo una vez
+            if (!pathsUpdated) {
+                updateAllPaths();
+            }
+        }, { once: true });
     } else {
-        updateAllPaths();
+        // Si ya está listo, ejecutar inmediatamente (solo una vez)
+        if (!pathsUpdated) {
+            updateAllPaths();
+        }
     }
     
-    // También ejecutar después de un pequeño delay para elementos dinámicos
-    setTimeout(updateAllPaths, 100);
+    // NO ejecutar después de delay - causa parpadeo
 })();
 
