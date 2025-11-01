@@ -151,12 +151,54 @@ if (typeof APIClient === 'undefined') {
         // Método auxiliar para cargar JSON estático (fallback en producción)
         async loadStaticJSON(filename) {
             try {
-                const basePath = window.location.pathname.includes('/frontend/') 
-                    ? './api/' 
-                    : './frontend/api/';
-                const response = await fetch(`${basePath}${filename}`);
-                if (!response.ok) throw new Error('JSON no encontrado');
-                return await response.json();
+                // Usar getBasePath si está disponible (de basePath.js)
+                let apiPath;
+                if (typeof window.getBasePath === 'function') {
+                    // Construir ruta usando getBasePath
+                    apiPath = window.getBasePath('api/' + filename);
+                } else if (window.BASE_PATH) {
+                    // Usar BASE_PATH global si existe
+                    apiPath = window.BASE_PATH + 'api/' + filename;
+                } else {
+                    // Fallback: detectar manualmente
+                    const isGitHubPages = window.location.hostname.includes('github.io');
+                    if (isGitHubPages) {
+                        // En GitHub Pages, construir ruta absoluta
+                        const pathParts = window.location.pathname.split('/').filter(p => p);
+                        const repoName = 'apexremedy.github.io';
+                        const repoIndex = pathParts.indexOf(repoName);
+                        
+                        if (repoIndex !== -1) {
+                            const repoPath = '/' + pathParts.slice(0, repoIndex + 1).join('/');
+                            const hasFrontend = window.location.pathname.includes('/frontend/');
+                            apiPath = repoPath + (hasFrontend ? '/frontend/api/' : '/api/') + filename;
+                        } else {
+                            // Fallback simple
+                            apiPath = window.location.pathname.includes('/frontend/') 
+                                ? './api/' + filename 
+                                : './frontend/api/' + filename;
+                        }
+                    } else {
+                        // Desarrollo local
+                        apiPath = window.location.pathname.includes('/frontend/') 
+                            ? './api/' + filename 
+                            : './frontend/api/' + filename;
+                    }
+                }
+                
+                // Asegurar que la ruta comience con / si es absoluta en GitHub Pages
+                if (window.location.hostname.includes('github.io') && !apiPath.startsWith('http') && !apiPath.startsWith('/')) {
+                    apiPath = '/' + apiPath;
+                }
+                
+                console.log('📂 Intentando cargar JSON estático desde:', apiPath);
+                const response = await fetch(apiPath);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                const data = await response.json();
+                console.log('✅ JSON estático cargado exitosamente:', filename);
+                return data;
             } catch (error) {
                 console.warn(`⚠️ No se pudo cargar ${filename} estático:`, error.message);
                 return null;
