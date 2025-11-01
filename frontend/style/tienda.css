@@ -28,9 +28,16 @@ div.container[style*="max-width"] {
     padding: 0;
 }
 
-.tienda-filters-sidebar .about-card {
+.tienda-filters-sidebar .about-card,
+.tienda-filter-card {
     box-sizing: border-box;
     width: 100%;
+}
+
+/* Override del padding por defecto de about-card para el sidebar de filtros */
+.tienda-filters-sidebar .about-card,
+.tienda-filter-card {
+    padding: 24px !important;
 }
 
 @keyframes spin {
@@ -60,6 +67,8 @@ div.container[style*="max-width"] {
     div.container[style*="max-width"] {
         max-width: 100% !important;
         padding: 30px 20px !important;
+        padding-left: 20px !important;
+        padding-right: 20px !important;
         box-sizing: border-box !important;
     }
     
@@ -83,6 +92,7 @@ div.container[style*="max-width"] {
     
     .tienda-filters-sidebar .about-card {
         width: 100% !important;
+        padding: 20px !important;
         box-sizing: border-box !important;
     }
     
@@ -127,6 +137,8 @@ div.container[style*="max-width"] {
     div.container[style*="max-width"] {
         max-width: 100% !important;
         padding: 20px 16px !important;
+        padding-left: 16px !important;
+        padding-right: 16px !important;
         box-sizing: border-box !important;
     }
     
@@ -149,11 +161,25 @@ div.container[style*="max-width"] {
         box-sizing: border-box !important;
     }
     
-    .tienda-filters-sidebar .about-card {
-        padding: 20px 16px !important;
+    /* El about-card NO debe tener padding horizontal en móvil */
+    /* El contenedor ya tiene padding: 20px 16px, así que el card solo necesita padding vertical */
+    .tienda-filters-sidebar .about-card,
+    .tienda-filter-card,
+    #filtersCard {
+        padding-top: 20px !important;
+        padding-bottom: 20px !important;
+        padding-left: 0 !important; /* Sin padding izquierdo - el contenedor ya tiene 16px */
+        padding-right: 0 !important; /* Sin padding derecho - el contenedor ya tiene 16px */
         margin: 0 !important;
         width: 100% !important;
+        max-width: 100% !important;
         box-sizing: border-box !important;
+    }
+    
+    /* Asegurar que todos los elementos internos respeten el box-sizing */
+    .tienda-filters-sidebar .about-card *,
+    .tienda-filter-card * {
+        box-sizing: border-box;
     }
     
     .container > div {
