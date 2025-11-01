@@ -63,7 +63,7 @@ class ShoppingCart {
                         ${productName} se agregó a tu carrito
                     </div>
                     <div style="display: flex; gap: 8px; margin-top: 8px;">
-                        <button onclick="cart.openCart(); notify.remove('${notificationId}');" 
+                        <button onclick="notify.remove('${notificationId}'); window.location.href='./carrito.html';" 
                                 style="flex: 1; padding: 8px 12px; background: var(--primary-green); color: white; border: none; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: opacity 0.2s;">
                             <i class="fas fa-shopping-cart mr-1"></i> Ver Carrito
                         </button>
