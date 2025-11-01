@@ -335,77 +335,75 @@ if (typeof APIClient === 'undefined') {
 
         // Métodos de productos con fallback a JSON estático
         async getProducts(filters = {}) {
-            const isProduction = window.location.hostname.includes('github.io') || 
-                                (window.location.hostname !== 'localhost' && 
-                                 window.location.hostname !== '127.0.0.1');
-            
-            // Si no hay backend configurado O estamos en producción, usar JSON estático
-            if (!this.baseURL || isProduction) {
-                try {
-                    const staticData = await this.loadStaticJSON('products.json');
-                    console.log('🔍 JSON estático cargado:', staticData);
-                    if (staticData && staticData.success && staticData.data && staticData.data.products) {
-                        // Aplicar filtros localmente si existen
-                        let products = staticData.data.products;
-                        console.log('📦 Productos extraídos del JSON:', products.length);
-                        
-                        // Filtrar por búsqueda
-                        if (filters.search) {
-                            const searchLower = filters.search.toLowerCase();
-                            products = products.filter(p => 
-                                p.name.toLowerCase().includes(searchLower) ||
-                                (p.description && p.description.toLowerCase().includes(searchLower)) ||
-                                (p.sku && p.sku.toLowerCase().includes(searchLower))
-                            );
-                        }
-                        
-                        // Filtrar por categoría
-                        if (filters.category && filters.category !== 'all') {
-                            products = products.filter(p => 
-                                p.category_slug === filters.category || 
-                                p.category_id === parseInt(filters.category)
-                            );
-                        }
-                        
-                        // Filtrar por precio mínimo
-                        if (filters.minPrice) {
-                            products = products.filter(p => p.price >= parseFloat(filters.minPrice));
-                        }
-                        
-                        // Filtrar por precio máximo
-                        if (filters.maxPrice) {
-                            products = products.filter(p => p.price <= parseFloat(filters.maxPrice));
-                        }
-                        
-                        // Filtrar por stock
-                        if (filters.inStock) {
-                            products = products.filter(p => p.stock > 0);
-                        }
-                        
-                        // Filtrar por destacados
-                        if (filters.featured) {
-                            products = products.filter(p => p.featured === true);
-                        }
-                        
-                        // Limitar resultados
-                        if (filters.limit) {
-                            products = products.slice(0, parseInt(filters.limit));
-                        }
-                        
-                        console.log('✅ Productos cargados desde JSON estático:', products.length);
-                        console.log('📊 Primeros productos:', products.slice(0, 3).map(p => ({ id: p.id, name: p.name })));
-                        return {
-                            success: true,
-                            data: { products },
-                            message: 'Productos cargados desde API estática'
-                        };
-                    }
-                } catch (error) {
-                    console.warn('⚠️ Error al cargar JSON estático, intentando API dinámica...', error);
+            // Helper para aplicar filtros a productos
+            const applyFiltersToProducts = (products, filters) => {
+                let filtered = [...products];
+                
+                // Filtrar por búsqueda
+                if (filters.search) {
+                    const searchLower = filters.search.toLowerCase();
+                    filtered = filtered.filter(p => 
+                        p.name.toLowerCase().includes(searchLower) ||
+                        (p.description && p.description.toLowerCase().includes(searchLower)) ||
+                        (p.sku && p.sku.toLowerCase().includes(searchLower))
+                    );
                 }
+                
+                // Filtrar por categoría
+                if (filters.category && filters.category !== 'all') {
+                    filtered = filtered.filter(p => 
+                        p.category_slug === filters.category || 
+                        p.category_id === parseInt(filters.category)
+                    );
+                }
+                
+                // Filtrar por precio mínimo
+                if (filters.minPrice) {
+                    filtered = filtered.filter(p => p.price >= parseFloat(filters.minPrice));
+                }
+                
+                // Filtrar por precio máximo
+                if (filters.maxPrice) {
+                    filtered = filtered.filter(p => p.price <= parseFloat(filters.maxPrice));
+                }
+                
+                // Filtrar por stock
+                if (filters.inStock) {
+                    filtered = filtered.filter(p => p.stock > 0);
+                }
+                
+                // Filtrar por destacados
+                if (filters.featured) {
+                    filtered = filtered.filter(p => p.featured === true);
+                }
+                
+                // Limitar resultados
+                if (filters.limit) {
+                    filtered = filtered.slice(0, parseInt(filters.limit));
+                }
+                
+                return filtered;
+            };
+            
+            // SIEMPRE intentar JSON estático PRIMERO (más rápido y funciona sin backend)
+            try {
+                const staticData = await this.loadStaticJSON('products.json');
+                console.log('🔍 JSON estático cargado:', staticData);
+                if (staticData && staticData.success && staticData.data && staticData.data.products) {
+                    let products = applyFiltersToProducts(staticData.data.products, filters);
+                    console.log('✅ Productos cargados desde JSON estático:', products.length);
+                    console.log('📊 Primeros productos:', products.slice(0, 3).map(p => ({ id: p.id, name: p.name })));
+                    return {
+                        success: true,
+                        data: { products },
+                        message: 'Productos cargados desde API estática'
+                    };
+                }
+            } catch (error) {
+                console.warn('⚠️ Error al cargar JSON estático, intentando API dinámica...', error);
             }
             
-            // Si no es producción o falló el JSON estático, usar API dinámica (solo si hay backend)
+            // Solo si hay backend configurado Y el JSON falló, intentar API dinámica
             if (this.baseURL) {
                 try {
                     const queryParams = new URLSearchParams();
@@ -421,12 +419,21 @@ if (typeof APIClient === 'undefined') {
                     
                     return await this.request(endpoint);
                 } catch (error) {
-                    // Si la API dinámica también falla, intentar JSON estático como último recurso
+                    // Si la API dinámica falla, intentar JSON estático como último recurso
                     console.warn('⚠️ API dinámica falló, intentando JSON estático como fallback...', error);
-                    const staticData = await this.loadStaticJSON('products.json');
-                    if (staticData && staticData.success) {
-                        console.warn('⚠️ Usando JSON estático como fallback');
-                        return staticData;
+                    try {
+                        const staticData = await this.loadStaticJSON('products.json');
+                        if (staticData && staticData.success && staticData.data && staticData.data.products) {
+                            let products = applyFiltersToProducts(staticData.data.products, filters);
+                            console.log('✅ Productos cargados desde JSON estático (fallback):', products.length);
+                            return {
+                                success: true,
+                                data: { products },
+                                message: 'Productos cargados desde API estática (fallback)'
+                            };
+                        }
+                    } catch (staticError) {
+                        console.error('❌ No se pudo cargar JSON estático como fallback:', staticError);
                     }
                     throw error;
                 }
@@ -545,101 +552,83 @@ if (typeof APIClient === 'undefined') {
         }
 
         async getCategories() {
-            const isProduction = window.location.hostname.includes('github.io') || 
-                                (window.location.hostname !== 'localhost' && 
-                                 window.location.hostname !== '127.0.0.1');
-            
-            // Si no hay backend configurado O estamos en producción, extraer categorías del JSON
-            if (!this.baseURL || isProduction) {
-                try {
-                    const staticData = await this.loadStaticJSON('products.json');
-                    if (staticData && staticData.success && staticData.data.products) {
-                        // Extraer categorías únicas de los productos
-                        const categoriesMap = new Map();
-                        const seenSlugs = new Set();
-                        
-                        staticData.data.products.forEach(product => {
-                            let slug = product.category_slug || product.category;
-                            let name = product.category || product.category_slug;
-                            
-                            if (slug) {
-                                slug = slug.toLowerCase().trim();
-                                name = name ? name.trim() : slug;
-                                
-                                if (slug && slug !== 'undefined' && !seenSlugs.has(slug)) {
-                                    seenSlugs.add(slug);
-                                    categoriesMap.set(slug, name);
-                                }
-                            }
-                        });
-                        
-                        const categories = Array.from(categoriesMap.entries()).map(([slug, name]) => ({
-                            id: slug,
-                            name: name,
-                            slug: slug
-                        }));
-                        
-                        console.log('✅ Categorías extraídas del JSON estático:', categories.length);
-                        return {
-                            success: true,
-                            data: { categories },
-                            message: 'Categorías cargadas desde API estática'
-                        };
-                    }
-                } catch (error) {
-                    console.warn('⚠️ Error al cargar categorías desde JSON estático, intentando API dinámica...', error);
+            // Helper para extraer categorías del JSON
+            const extractCategoriesFromJSON = (staticData) => {
+                if (!staticData || !staticData.success || !staticData.data || !staticData.data.products) {
+                    return null;
                 }
+                
+                const categoriesMap = new Map();
+                const seenSlugs = new Set();
+                
+                staticData.data.products.forEach(product => {
+                    let slug = product.category_slug || product.category;
+                    let name = product.category || product.category_slug;
+                    
+                    if (slug) {
+                        slug = slug.toLowerCase().trim();
+                        name = name ? name.trim() : slug;
+                        
+                        if (slug && slug !== 'undefined' && !seenSlugs.has(slug)) {
+                            seenSlugs.add(slug);
+                            categoriesMap.set(slug, name);
+                        }
+                    }
+                });
+                
+                const categories = Array.from(categoriesMap.entries()).map(([slug, name]) => ({
+                    id: slug,
+                    name: name,
+                    slug: slug
+                }));
+                
+                return {
+                    success: true,
+                    data: { categories },
+                    message: 'Categorías cargadas desde API estática'
+                };
+            };
+            
+            // SIEMPRE intentar JSON estático PRIMERO (más rápido y funciona sin backend)
+            try {
+                const staticData = await this.loadStaticJSON('products.json');
+                const result = extractCategoriesFromJSON(staticData);
+                if (result) {
+                    console.log('✅ Categorías extraídas del JSON estático:', result.data.categories.length);
+                    return result;
+                }
+            } catch (error) {
+                console.warn('⚠️ No se pudo cargar JSON estático, intentando API dinámica...', error);
             }
             
-            // Si hay backend, usar API dinámica
+            // Solo si hay backend configurado Y el JSON falló, intentar API dinámica
             if (this.baseURL) {
                 try {
                     return await this.request('/products/categories');
                 } catch (error) {
                     // Si la API dinámica falla, intentar JSON estático como último recurso
-                    console.warn('⚠️ API dinámica falló, intentando JSON estático...', error);
-                    const staticData = await this.loadStaticJSON('products.json');
-                    if (staticData && staticData.success && staticData.data.products) {
-                        const categoriesMap = new Map();
-                        const seenSlugs = new Set();
-                        
-                        staticData.data.products.forEach(product => {
-                            let slug = product.category_slug || product.category;
-                            let name = product.category || product.category_slug;
-                            
-                            if (slug) {
-                                slug = slug.toLowerCase().trim();
-                                name = name ? name.trim() : slug;
-                                
-                                if (slug && slug !== 'undefined' && !seenSlugs.has(slug)) {
-                                    seenSlugs.add(slug);
-                                    categoriesMap.set(slug, name);
-                                }
-                            }
-                        });
-                        
-                        const categories = Array.from(categoriesMap.entries()).map(([slug, name]) => ({
-                            id: slug,
-                            name: name,
-                            slug: slug
-                        }));
-                        
-                        return {
-                            success: true,
-                            data: { categories },
-                            message: 'Categorías cargadas desde API estática (fallback)'
-                        };
+                    console.warn('⚠️ API dinámica falló, intentando JSON estático como fallback...', error);
+                    try {
+                        const staticData = await this.loadStaticJSON('products.json');
+                        const result = extractCategoriesFromJSON(staticData);
+                        if (result) {
+                            console.log('✅ Categorías cargadas desde JSON estático (fallback)');
+                            return result;
+                        }
+                    } catch (staticError) {
+                        console.error('❌ No se pudo cargar JSON estático como fallback:', staticError);
                     }
                     throw error;
                 }
-            } else {
-                // No hay backend y no se pudo cargar JSON estático
-                return {
-                    success: true,
-                    data: { categories: [] },
-                    message: 'No se pudieron cargar categorías'
-                };
             }
+            
+            // No hay backend y no se pudo cargar JSON estático
+            console.warn('⚠️ No hay backend configurado y JSON estático no disponible');
+            return {
+                success: true,
+                data: { categories: [] },
+                message: 'No se pudieron cargar categorías'
+            };
         }
 
         async getBestSellers(limit = 10) {
