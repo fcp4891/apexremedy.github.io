@@ -52,17 +52,23 @@ class ProductManager {
             this.loading = true;
             const response = await api.getProducts(filters);
             
-            if (response.success) {
-                this.products = this.mapProductFields(response.data.products);
+            console.log('📦 Respuesta de getProducts:', response);
+            
+            if (response && response.success && response.data && response.data.products) {
+                const mappedProducts = this.mapProductFields(response.data.products);
+                console.log(`✅ ${mappedProducts.length} productos cargados y mapeados`);
+                this.products = mappedProducts;
                 return this.products;
             }
             
-            throw new Error(response.message || 'Error al cargar productos');
+            console.warn('⚠️ Respuesta sin productos:', response);
+            this.products = [];
+            return [];
         } catch (error) {
+            console.error('❌ Error al cargar productos:', error);
             console.warn('⚠️ No se pudieron cargar productos desde el backend:', error.message);
             console.info('💡 Verifica que el backend esté configurado y corriendo');
-            // No mostrar error crítico, solo devolver array vacío
-            // this.showError('Error al cargar productos');
+            this.products = [];
             return [];
         } finally {
             this.loading = false;
@@ -117,14 +123,17 @@ class ProductManager {
         try {
             const response = await api.getFeaturedProducts();
             
-            if (response.success) {
+            if (response && response.success && response.data && response.data.products) {
                 // Mapear campos del backend al formato esperado por el frontend
                 const products = this.mapProductFields(response.data.products.slice(0, limit));
+                console.log(`✅ ${products.length} productos destacados mapeados`);
                 return products;
             }
             
+            console.warn('⚠️ No se encontraron productos destacados en la respuesta:', response);
             return [];
         } catch (error) {
+            console.error('❌ Error al obtener productos destacados:', error);
             return [];
         }
     }
@@ -215,7 +224,10 @@ class ProductManager {
             return;
         }
         
+        console.log(`🎨 Renderizando ${products.length} productos en contenedor: ${containerId}`);
+        
         if (products.length === 0) {
+            console.warn('⚠️ No hay productos para renderizar');
             container.innerHTML = `
                 <div class="col-span-full text-center py-12">
                     <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -233,13 +245,34 @@ class ProductManager {
         container.style.visibility = 'visible';
         container.style.opacity = '1';
         
-        container.innerHTML = products.map(product => this.createProductCard(product)).join('');
-        
-        // Agregar event listeners a botones
-        this.attachProductEventListeners(container);
-        
-        // Forzar reflow para asegurar renderizado en móvil
-        container.offsetHeight;
+        try {
+            const cardsHTML = products.map(product => {
+                try {
+                    return this.createProductCard(product);
+                } catch (error) {
+                    console.error('❌ Error al crear card para producto:', product.id, error);
+                    return '';
+                }
+            }).filter(html => html).join('');
+            
+            console.log(`✅ Generadas ${products.length} tarjetas de productos`);
+            container.innerHTML = cardsHTML;
+            
+            // Agregar event listeners a botones
+            this.attachProductEventListeners(container);
+            
+            // Forzar reflow para asegurar renderizado en móvil
+            container.offsetHeight;
+            
+            console.log('✅ Productos renderizados exitosamente');
+        } catch (error) {
+            console.error('❌ Error al renderizar productos:', error);
+            container.innerHTML = `
+                <div class="col-span-full text-center py-12">
+                    <p class="text-red-600">Error al renderizar productos: ${error.message}</p>
+                </div>
+            `;
+        }
     }
 
     // Crear card de producto

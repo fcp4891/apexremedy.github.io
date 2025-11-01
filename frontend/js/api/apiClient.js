@@ -263,6 +263,7 @@ if (typeof APIClient === 'undefined') {
                         }
                         
                         console.log('✅ Productos cargados desde JSON estático:', products.length);
+                        console.log('📊 Primeros productos:', products.slice(0, 3).map(p => ({ id: p.id, name: p.name })));
                         return {
                             success: true,
                             data: { products },
