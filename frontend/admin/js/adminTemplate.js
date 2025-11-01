@@ -82,8 +82,8 @@
      * Obtener la ruta del header según el rol
      */
     function getHeaderPath() {
-        // Usar ruta relativa desde admin/, necesitamos ir a ../components/
-        return '../components/header.html'; // Siempre admin header en esta sección
+        // Usar ruta relativa desde admin/, el header de admin está en ./components/
+        return './components/header.html'; // Siempre admin header en esta sección
     }
     
     // ============================================
@@ -118,9 +118,12 @@
                     // ../components/header.html desde admin/ = components/header.html en frontend/
                     headerPath = basePath + headerPath.substring(3); // Remover ../
                 } else if (headerPath.startsWith('./')) {
-                    headerPath = basePath + headerPath.substring(2); // Remover ./
+                    // Para rutas ./ desde admin/, mantener admin/ en la ruta
+                    // ./components/header.html desde admin/ = admin/components/header.html en frontend/
+                    const cleanPath = headerPath.substring(2); // Remover ./
+                    headerPath = basePath + 'admin/' + cleanPath;
                 } else {
-                    headerPath = basePath + headerPath;
+                    headerPath = basePath + 'admin/' + headerPath;
                 }
             }
         }
@@ -218,7 +221,7 @@
             return;
         }
         
-        let footerPath = '../components/footer.html';
+        let footerPath = './components/footer.html';
         
         // Ajustar URL para GitHub Pages si es necesario
         const basePath = getBasePath();
@@ -236,9 +239,12 @@
                     // ../components/footer.html desde admin/ = components/footer.html en frontend/
                     footerPath = basePath + footerPath.substring(3); // Remover ../
                 } else if (footerPath.startsWith('./')) {
-                    footerPath = basePath + footerPath.substring(2); // Remover ./
+                    // Para rutas ./ desde admin/, mantener admin/ en la ruta
+                    // ./components/footer.html desde admin/ = admin/components/footer.html en frontend/
+                    const cleanPath = footerPath.substring(2); // Remover ./
+                    footerPath = basePath + 'admin/' + cleanPath;
                 } else {
-                    footerPath = basePath + footerPath;
+                    footerPath = basePath + 'admin/' + footerPath;
                 }
             }
         }
