@@ -36,6 +36,9 @@
   /**
    * Cargar template HTML en un contenedor
    */
+  const templateCache = new Map(); // Cache de templates cargados
+  const loadingTemplates = new Set(); // Set para prevenir cargas simultáneas del mismo template
+  
   async function loadTemplate(selector, url) {
     const container = document.querySelector(selector);
     if (!container) {
@@ -46,6 +49,33 @@
     if (location.protocol === 'file:') {
       return false;
     }
+
+    // Verificar si este template ya se está cargando
+    const cacheKey = `${selector}:${url}`;
+    if (loadingTemplates.has(cacheKey)) {
+      console.log('⚠️ Template ya se está cargando, esperando...', cacheKey);
+      // Esperar a que termine la carga anterior
+      return new Promise((resolve) => {
+        const checkInterval = setInterval(() => {
+          if (!loadingTemplates.has(cacheKey)) {
+            clearInterval(checkInterval);
+            resolve(templateCache.get(cacheKey) || false);
+          }
+        }, 50);
+      });
+    }
+
+    // Verificar si ya está en cache y el contenedor ya tiene contenido
+    if (templateCache.has(cacheKey) && container.innerHTML.trim().length > 0) {
+      const cachedContent = templateCache.get(cacheKey);
+      if (container.innerHTML.trim() === cachedContent.trim()) {
+        console.log('✅ Template ya cargado y contenido coincide:', cacheKey);
+        return true;
+      }
+    }
+
+    // Marcar como cargando
+    loadingTemplates.add(cacheKey);
 
     // Ajustar URL para GitHub Pages
     // Si la URL ya es absoluta (comienza con /), no agregar basePath dos veces
@@ -71,12 +101,27 @@
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
       const html = await response.text();
+      
       // Prevenir actualizar si el contenido es el mismo (evita re-renderizado)
-      if (container.innerHTML.trim() !== html.trim()) {
-        container.innerHTML = html;
+      const trimmedHtml = html.trim();
+      const trimmedInner = container.innerHTML.trim();
+      
+      if (trimmedInner === trimmedHtml) {
+        console.log('✅ Template contenido idéntico, no actualizando:', cacheKey);
+        templateCache.set(cacheKey, trimmedHtml);
+        loadingTemplates.delete(cacheKey);
+        return true;
       }
+      
+      // Solo actualizar si realmente es diferente
+      container.innerHTML = trimmedHtml;
+      templateCache.set(cacheKey, trimmedHtml);
+      loadingTemplates.delete(cacheKey);
+      console.log('✅ Template cargado y actualizado:', cacheKey);
       return true;
     } catch (error) {
+      console.warn('⚠️ Error cargando template:', cacheKey, error.message);
+      loadingTemplates.delete(cacheKey);
       return false;
     }
   }
@@ -363,6 +408,7 @@ if (profileLink) {
  */
 let initCalled = false;
 let initInProgress = false;
+let initListenerAdded = false;
 
 async function init() {
   // Prevenir múltiples inicializaciones
@@ -384,22 +430,34 @@ async function init() {
     const componentsPath = './components';
 
     // 3. Cargar header y footer correctos (loadTemplate ajustará las rutas automáticamente)
-    const headerLoaded = await loadTemplate('#header-container', `${componentsPath}/${headerFile}`);
-    const footerLoaded = await loadTemplate('#footer-container', `${componentsPath}/${footerFile}`);
+    // Usar Promise.all para cargar ambos en paralelo pero esperar que ambos terminen
+    const [headerLoaded, footerLoaded] = await Promise.all([
+      loadTemplate('#header-container', `${componentsPath}/${headerFile}`),
+      loadTemplate('#footer-container', `${componentsPath}/${footerFile}`)
+    ]);
 
-    // 4. Configurar navegación y UI
-    setActiveNavLink();
-    setupMobileMenu();
-    setupCartSidebar();
+    // 4. Solo configurar UI si los templates se cargaron correctamente
+    if (headerLoaded || footerLoaded) {
+      // Pequeño delay para asegurar que el DOM se ha actualizado
+      await new Promise(resolve => setTimeout(resolve, 50));
+      
+      // 5. Configurar navegación y UI
+      setActiveNavLink();
+      setupMobileMenu();
+      setupCartSidebar();
 
-    // 5. Esperar a que DOM se estabilice antes de actualizar el carrito
-    setTimeout(updateCartCount, 150);
+      // 6. Esperar a que DOM se estabilice antes de actualizar el carrito
+      setTimeout(updateCartCount, 150);
 
-    // 6. Actualizar UI de autenticación (solo una vez)
-    updateAuthUI();
+      // 7. Actualizar UI de autenticación (solo una vez)
+      updateAuthUI();
 
-    // 7. Escuchar actualizaciones del carrito (solo una vez)
-    window.addEventListener('cartUpdated', updateCartCount);
+      // 8. Escuchar actualizaciones del carrito (solo una vez)
+      if (!window.cartUpdatedListenerAdded) {
+        window.addEventListener('cartUpdated', updateCartCount);
+        window.cartUpdatedListenerAdded = true;
+      }
+    }
     
     initCalled = true;
     console.log('✅ Template.js inicializado correctamente');
@@ -411,15 +469,23 @@ async function init() {
 }
 
   // Ejecutar cuando el DOM esté listo (solo una vez)
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() {
-      if (!initCalled && !initInProgress) {
-        init();
-      }
-    }, { once: true });
-  } else {
-    if (!initCalled && !initInProgress) {
-      init();
+  // Asegurar que solo agregamos el listener una vez
+  if (!initListenerAdded) {
+    initListenerAdded = true;
+    
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() {
+        if (!initCalled && !initInProgress) {
+          init();
+        }
+      }, { once: true });
+    } else {
+      // Si ya está listo, ejecutar después de un pequeño delay para evitar conflictos
+      setTimeout(() => {
+        if (!initCalled && !initInProgress) {
+          init();
+        }
+      }, 10);
     }
   }
 
