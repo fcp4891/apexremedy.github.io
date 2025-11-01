@@ -6,19 +6,54 @@
 if (typeof APIClient === 'undefined') {
     class APIClient {
         constructor() {
-            this.baseURL = 'http://localhost:3000/api';
+            // Detectar entorno y configurar URL de API
+            const isProduction = window.location.hostname.includes('github.io') || 
+                                (window.location.hostname !== 'localhost' && 
+                                 window.location.hostname !== '127.0.0.1');
+            
+            // ⚠️ IMPORTANTE: Configurar la URL de tu backend en producción
+            // Si tu backend está en Heroku/Railway/Render/etc, reemplaza la URL abajo
+            // Ejemplo: 'https://apexremedy-api.herokuapp.com/api'
+            // Ejemplo: 'https://api.apexremedy.com/api'
+            const PRODUCTION_API_URL = 'https://tu-backend-en-produccion.com/api'; // ⚠️ CAMBIAR ESTA URL
+            
+            this.baseURL = isProduction 
+                ? PRODUCTION_API_URL
+                : 'http://localhost:3000/api';
+            
+            // Sincronizar token con localStorage al inicializar
             this.token = localStorage.getItem('authToken');
+            
+            // Log para debug
+            if (isProduction) {
+                console.log('🌐 Modo producción detectado');
+                console.log('🔗 API URL:', this.baseURL);
+            } else {
+                console.log('💻 Modo desarrollo detectado');
+                console.log('🔗 API URL:', this.baseURL);
+            }
+        }
+        
+        // Método para sincronizar token desde localStorage
+        syncToken() {
+            const storedToken = localStorage.getItem('authToken');
+            if (storedToken !== this.token) {
+                this.token = storedToken;
+            }
         }
 
         // Método auxiliar para hacer peticiones
         async request(endpoint, options = {}) {
+            // Sincronizar token antes de cada petición
+            this.syncToken();
+            
             const url = `${this.baseURL}${endpoint}`;
             const headers = {
                 'Content-Type': 'application/json',
                 ...options.headers
             };
 
-            // Agregar token si existe
+            // Agregar token si existe (sincronizado desde localStorage)
             if (this.token) {
                 headers['Authorization'] = `Bearer ${this.token}`;
             }

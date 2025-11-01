@@ -59,7 +59,10 @@ class ProductManager {
             
             throw new Error(response.message || 'Error al cargar productos');
         } catch (error) {
-            this.showError('Error al cargar productos');
+            console.warn('⚠️ No se pudieron cargar productos desde el backend:', error.message);
+            console.info('💡 Verifica que el backend esté configurado y corriendo');
+            // No mostrar error crítico, solo devolver array vacío
+            // this.showError('Error al cargar productos');
             return [];
         } finally {
             this.loading = false;

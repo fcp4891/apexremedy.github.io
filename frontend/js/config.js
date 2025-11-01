@@ -1,9 +1,21 @@
 // frontend/js/config.js
 // Configuración del frontend
 
+// Detectar entorno
+const isProduction = typeof window !== 'undefined' && (
+    window.location.hostname.includes('github.io') || 
+    (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1')
+);
+
+// ⚠️ IMPORTANTE: Configurar la URL de tu backend en producción
+// Si tu backend está en Heroku/Railway/Render/etc, reemplaza la URL abajo
+const PRODUCTION_API_URL = 'https://tu-backend-en-produccion.com/api'; // ⚠️ CAMBIAR ESTA URL
+
 const CONFIG = {
-    // URLs de la API
-    API_BASE_URL: 'http://localhost:3000/api',
+    // URLs de la API - Auto-detectar entorno
+    API_BASE_URL: isProduction 
+        ? PRODUCTION_API_URL
+        : 'http://localhost:3000/api',
     
     // Configuración de la aplicación
     APP_NAME: 'Apexremedy',

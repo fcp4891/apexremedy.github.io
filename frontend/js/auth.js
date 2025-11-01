@@ -199,12 +199,24 @@ if (typeof AuthManager === 'undefined') {
 
         // Verificar si está autenticado
         isAuthenticated() {
-            return this.token !== null && this.currentUser !== null;
+            // Verificar que existan ambos: token y usuario
+            if (!this.token || !this.currentUser) {
+                return false;
+            }
+            // Verificar que el usuario tenga estructura válida
+            if (!this.currentUser.id || !this.currentUser.email) {
+                return false;
+            }
+            return true;
         }
 
         // Verificar si es admin
         isAdmin() {
-            return this.isAuthenticated() && this.currentUser.role === 'admin';
+            if (!this.isAuthenticated() || !this.currentUser) {
+                return false;
+            }
+            // Verificar explícitamente que el rol sea 'admin'
+            return this.currentUser.role === 'admin';
         }
 
         // Obtener usuario actual
@@ -269,34 +281,73 @@ if (typeof AuthManager === 'undefined') {
             const userNameDisplay = document.getElementById('userNameDisplay');
             const adminMenuItem = document.getElementById('adminMenuItem');
 
-            if (this.isAuthenticated()) {
+            // Verificar autenticación de forma más robusta
+            const isAuth = this.isAuthenticated();
+            const user = this.getCurrentUser();
+
+            if (isAuth && user) {
                 // Mostrar menú de usuario
-                if (userMenuDesktop) userMenuDesktop.classList.remove('hidden');
-                if (userMenuMobile) userMenuMobile.classList.remove('hidden');
-                if (guestMenuDesktop) guestMenuDesktop.classList.add('hidden');
-                if (guestMenuMobile) guestMenuMobile.classList.add('hidden');
-                
-                // Mostrar nombre de usuario
-                if (userNameDisplay) {
-                    userNameDisplay.textContent = this.currentUser.name.split(' ')[0];
+                if (userMenuDesktop) {
+                    userMenuDesktop.style.display = '';
+                    userMenuDesktop.classList.remove('hidden');
+                }
+                if (userMenuMobile) {
+                    userMenuMobile.style.display = '';
+                    userMenuMobile.classList.remove('hidden');
+                }
+                if (guestMenuDesktop) {
+                    guestMenuDesktop.style.display = 'none';
+                    guestMenuDesktop.classList.add('hidden');
+                }
+                if (guestMenuMobile) {
+                    guestMenuMobile.style.display = 'none';
+                    guestMenuMobile.classList.add('hidden');
                 }
                 
-                // Mostrar menú admin si es admin
+                // Mostrar nombre de usuario (manejar diferentes formatos)
+                if (userNameDisplay) {
+                    const firstName = user.first_name || 
+                                    (user.name ? user.name.split(' ')[0] : null) || 
+                                    user.email?.split('@')[0] || 
+                                    'Usuario';
+                    userNameDisplay.textContent = firstName;
+                }
+                
+                // Mostrar menú admin SOLO si realmente es admin
                 if (adminMenuItem) {
-                    if (this.isAdmin()) {
+                    const isAdminUser = user.role === 'admin';
+                    if (isAdminUser) {
+                        adminMenuItem.style.display = '';
                         adminMenuItem.classList.remove('hidden');
                     } else {
+                        adminMenuItem.style.display = 'none';
                         adminMenuItem.classList.add('hidden');
                     }
                 }
             } else {
-                // Mostrar menú de invitado
-                if (userMenuDesktop) userMenuDesktop.classList.add('hidden');
-                if (userMenuMobile) userMenuMobile.classList.add('hidden');
-                if (guestMenuDesktop) guestMenuDesktop.classList.remove('hidden');
-                if (guestMenuMobile) guestMenuMobile.classList.remove('hidden');
+                // No autenticado: mostrar menú de invitado y ocultar todo lo de usuario
+                if (userMenuDesktop) {
+                    userMenuDesktop.style.display = 'none';
+                    userMenuDesktop.classList.add('hidden');
+                }
+                if (userMenuMobile) {
+                    userMenuMobile.style.display = 'none';
+                    userMenuMobile.classList.add('hidden');
+                }
+                if (guestMenuDesktop) {
+                    guestMenuDesktop.style.display = '';
+                    guestMenuDesktop.classList.remove('hidden');
+                }
+                if (guestMenuMobile) {
+                    guestMenuMobile.style.display = '';
+                    guestMenuMobile.classList.remove('hidden');
+                }
                 
-                if (adminMenuItem) adminMenuItem.classList.add('hidden');
+                // Ocultar menú admin siempre cuando no hay usuario
+                if (adminMenuItem) {
+                    adminMenuItem.style.display = 'none';
+                    adminMenuItem.classList.add('hidden');
+                }
             }
         }
 

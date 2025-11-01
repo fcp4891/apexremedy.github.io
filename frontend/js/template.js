@@ -300,7 +300,13 @@ if (profileLink) {
     const userNameDisplay = document.getElementById('userNameDisplay');
     if (userNameDisplay && isAuth) {
       const user = authManager.getCurrentUser();
-      userNameDisplay.textContent = user?.name?.split(' ')[0] || 'Usuario';
+      if (user) {
+        const firstName = user.first_name || 
+                         (user.name ? user.name.split(' ')[0] : null) || 
+                         user.email?.split('@')[0] || 
+                         'Usuario';
+        userNameDisplay.textContent = firstName;
+      }
     }
 
     // Configurar botón de logout

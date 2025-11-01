@@ -151,15 +151,37 @@
         // Cargar productos
         async function loadProducts() {
             try {
-                const response = await api.request('/products?limit=100');
-                if (response.success) {
-                    allProducts = response.data.products || response.data;
+                // Usar productManager si está disponible, sino usar API directamente
+                if (typeof productManager !== 'undefined') {
+                    allProducts = await productManager.loadProducts({ limit: 100 });
                     filteredProducts = [...allProducts];
                     applyFilters();
+                } else {
+                    // Fallback: usar API directamente
+                    const response = await api.getProducts({ limit: 100 });
+                    if (response.success) {
+                        allProducts = response.data.products || response.data || [];
+                        filteredProducts = [...allProducts];
+                        applyFilters();
+                    } else {
+                        throw new Error(response.message || 'Error al cargar productos');
+                    }
                 }
             } catch (error) {
-                console.error('Error al cargar productos:', error);
-                showError('Error al cargar productos');
+                console.warn('⚠️ Error al cargar productos:', error);
+                // No mostrar error crítico en producción, solo mensaje informativo
+                const isProduction = window.location.hostname.includes('github.io');
+                if (!isProduction) {
+                    showError('Error al cargar productos. Verifica que el servidor esté corriendo.');
+                }
+                // Mostrar mensaje informativo en el grid
+                document.getElementById('productsGrid').innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <i class="fas fa-box-open text-4xl text-gray-400 mb-4"></i>
+                        <p class="text-gray-600">No hay productos disponibles en este momento</p>
+                        <p class="text-sm text-gray-500 mt-2">Los productos se cargarán cuando el backend esté configurado</p>
+                    </div>
+                `;
             }
         }
 

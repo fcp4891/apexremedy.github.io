@@ -14,7 +14,47 @@ const PORT = process.env.PORT || 3000;
 // MIDDLEWARE
 // ============================================
 
-app.use(cors());
+// Configurar CORS para producción y desarrollo
+const corsOptions = {
+    origin: function (origin, callback) {
+        // Permitir requests sin origin (mobile apps, Postman, etc.)
+        if (!origin) return callback(null, true);
+        
+        // Lista de orígenes permitidos
+        const allowedOrigins = [
+            'http://localhost:5500',
+            'http://127.0.0.1:5500',
+            'http://localhost:3000',
+            'http://127.0.0.1:3000',
+            // GitHub Pages (producción)
+            /^https:\/\/.*\.github\.io$/,
+            // Dominio de producción (actualizar con tu dominio real)
+            // 'https://apexremedy.com',
+            // 'https://www.apexremedy.com'
+        ];
+        
+        // Verificar si el origen está permitido
+        const isAllowed = allowedOrigins.some(allowed => {
+            if (typeof allowed === 'string') {
+                return origin === allowed;
+            } else if (allowed instanceof RegExp) {
+                return allowed.test(origin);
+            }
+            return false;
+        });
+        
+        if (isAllowed || process.env.NODE_ENV === 'development') {
+            callback(null, true);
+        } else {
+            console.warn(`⚠️ CORS bloqueado desde: ${origin}`);
+            callback(new Error('No permitido por CORS'));
+        }
+    },
+    credentials: true,
+    optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
 app.use(express.json({ limit: '10mb' })); // Para imágenes base64
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
