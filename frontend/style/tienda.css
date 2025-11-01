@@ -17,11 +17,14 @@
 @media (min-width: 768px) and (max-width: 1023px) {
     .container {
         padding: 30px 20px !important;
+        max-width: 1200px !important;
+        margin: 0 auto !important;
     }
     
     .tienda-layout {
         grid-template-columns: 240px 1fr !important;
         gap: 24px !important;
+        width: 100% !important;
     }
     
     .tienda-filters-sidebar {
@@ -59,17 +62,21 @@
 @media (max-width: 767px) {
     .container {
         padding: 20px 16px !important;
+        max-width: 1200px !important;
+        margin: 0 auto !important;
     }
     
     .tienda-layout {
         grid-template-columns: 1fr !important;
         gap: 24px !important;
+        width: 100% !important;
     }
     
     .tienda-filters-sidebar {
         position: static !important;
         order: -1; /* Filtros arriba en móvil */
         width: 100% !important;
+        max-width: 100% !important;
     }
     
     .tienda-filters-sidebar .about-card {
