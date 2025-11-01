@@ -102,12 +102,21 @@
                     if (cleanPath.startsWith('./')) {
                         cleanPath = cleanPath.substring(2);
                     }
+                    
+                    // Detectar si estamos en un subdirectorio (como /admin/)
+                    const currentUrl = window.location.pathname;
+                    let subdirectory = '';
+                    if (currentUrl.includes('/admin/')) {
+                        subdirectory = 'admin/';
+                    }
+                    
                     // Construir la nueva ruta completa
                     // El basePath ya incluye el path completo desde la raíz del dominio GitHub Pages
                     // Ejemplo: basePath = "/apexremedy.github.io/frontend/"
+                    // subdirectory = "admin/"
                     // cleanPath = "style/css_admin.css"
-                    // newPath = "/apexremedy.github.io/frontend/style/css_admin.css"
-                    let newPath = currentBasePath + cleanPath;
+                    // newPath = "/apexremedy.github.io/frontend/admin/style/css_admin.css"
+                    let newPath = currentBasePath + subdirectory + cleanPath;
                     
                     // Asegurarse de que la ruta comience con / para que sea absoluta desde el dominio
                     if (!newPath.startsWith('/')) {
