@@ -1113,8 +1113,8 @@ body:has(.cart-sidebar.open) .cart-overlay{
     position:fixed!important;
     top:0!important;
     bottom:0!important;
-    height:100%!important;
-    max-height:100%!important;
+    height:100vh!important;
+    max-height:100vh!important;
     padding:0!important;
     margin:0!important;
     overflow:hidden!important;
@@ -1130,7 +1130,7 @@ body:has(.cart-sidebar.open) .cart-overlay{
   }
   
   /* Header del carrito - altura fija medida */
-  .cart-header{
+  .cart-sidebar.open .cart-header{
     flex:none!important;
     flex-shrink:0!important;
     flex-grow:0!important;
@@ -1147,20 +1147,20 @@ body:has(.cart-sidebar.open) .cart-overlay{
     position:relative!important;
   }
   
-  .cart-header h3{
+  .cart-sidebar.open .cart-header h3{
     margin:0!important;
     font-size:1rem!important;
     font-weight:600!important;
   }
   
-  .cart-header button{
+  .cart-sidebar.open .cart-header button{
     flex-shrink:0!important;
     padding:6px 12px!important;
     font-size:0.85rem!important;
   }
   
   /* Items del carrito - scrollable con padding bottom para footer */
-  .cart-items{
+  .cart-sidebar.open .cart-items{
     flex:1 1 0!important;
     overflow-y:auto!important;
     overflow-x:hidden!important;
@@ -1175,21 +1175,21 @@ body:has(.cart-sidebar.open) .cart-overlay{
     z-index:10!important;
   }
   
-  .cart-items::-webkit-scrollbar{
+  .cart-sidebar.open .cart-items::-webkit-scrollbar{
     width:8px!important;
   }
   
-  .cart-items::-webkit-scrollbar-track{
+  .cart-sidebar.open .cart-items::-webkit-scrollbar-track{
     background:var(--light-gray)!important;
     border-radius:4px!important;
   }
   
-  .cart-items::-webkit-scrollbar-thumb{
+  .cart-sidebar.open .cart-items::-webkit-scrollbar-thumb{
     background:var(--primary-green)!important;
     border-radius:4px!important;
   }
   
-  .cart-items::-webkit-scrollbar-thumb:hover{
+  .cart-sidebar.open .cart-items::-webkit-scrollbar-thumb:hover{
     background:#059669!important;
   }
   
