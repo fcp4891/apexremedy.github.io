@@ -15,7 +15,7 @@
     <!-- Cargar antes de los otros scripts para asegurar disponibilidad -->
     <script src="https://cdn.jsdelivr.net/npm/bcryptjs@2.4.3/dist/bcrypt.min.js" 
             onerror="console.error('❌ Error cargando bcryptjs desde CDN')"
-            onload="console.log('✅ bcryptjs cargado correctamente'); window.bcryptjsReady = true;"></script>
+            onload="console.log('✅ bcryptjs cargado correctamente'); window.bcryptjsReady = true; window.bcryptjs = bcryptjs || window.bcryptjs;"></script>
     
     <script src="./js/basePath.js"></script>
     <script src="./js/config.js"></script>

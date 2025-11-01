@@ -302,10 +302,48 @@ if (typeof APIClient === 'undefined') {
         async comparePassword(password, storedHash) {
             if (this.isBcryptHash(storedHash)) {
                 // Intentar usar bcryptjs si está disponible (cargado desde CDN)
-                // Verificar múltiples formas en que puede estar disponible
-                const bcrypt = window.bcryptjs || window.bcrypt || (typeof bcryptjs !== 'undefined' ? bcryptjs : null);
+                // Verificar múltiples formas en que puede estar disponible y esperar si es necesario
+                let bcrypt = null;
                 
-                if (bcrypt && (typeof bcrypt.compareSync === 'function' || typeof bcrypt.compare === 'function')) {
+                // Función helper para obtener bcryptjs
+                const getBcrypt = () => {
+                    // Probar diferentes formas de acceso
+                    if (typeof window !== 'undefined') {
+                        if (window.bcryptjs && typeof window.bcryptjs.compareSync === 'function') {
+                            return window.bcryptjs;
+                        }
+                        if (window.bcrypt && typeof window.bcrypt.compareSync === 'function') {
+                            return window.bcrypt;
+                        }
+                    }
+                    // Probar variable global sin window
+                    if (typeof bcryptjs !== 'undefined' && bcryptjs && typeof bcryptjs.compareSync === 'function') {
+                        return bcryptjs;
+                    }
+                    return null;
+                };
+                
+                // Intentar obtener bcrypt inmediatamente
+                bcrypt = getBcrypt();
+                
+                // Si no está disponible, esperar un poco (bcryptjs puede estar cargándose)
+                if (!bcrypt) {
+                    console.log('⏳ Esperando que bcryptjs termine de cargar...');
+                    // Esperar hasta 2 segundos en intervalos de 100ms
+                    for (let i = 0; i < 20; i++) {
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                        bcrypt = getBcrypt();
+                        if (bcrypt) {
+                            console.log('✅ bcryptjs disponible después de esperar', i * 100, 'ms');
+                            break;
+                        }
+                    }
+                    if (!bcrypt) {
+                        console.warn('⚠️ bcryptjs no está disponible después de esperar 2 segundos');
+                    }
+                }
+                
+                if (bcrypt) {
                     try {
                         // Intentar compareSync primero (más común en bcryptjs)
                         if (typeof bcrypt.compareSync === 'function') {

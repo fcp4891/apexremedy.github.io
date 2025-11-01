@@ -20,10 +20,9 @@ async function fixPilarPassword() {
         await initDatabase();
         const db = getDatabase();
         
-        // Contraseña conocida para Pilar (asumiendo que es la misma)
-        // Si no conoces la contraseña, tendrás que resetearla primero
+        // Contraseña conocida para Pilar
         const pilarEmail = 'pila@123.com';
-        const pilarPassword = 'pilar123'; // ⚠️ Cambiar esto por la contraseña correcta
+        const pilarPassword = '123456789'; // Contraseña proporcionada por el usuario
         
         // Generar hash SHA-256
         const sha256Hash = hashPassword(pilarPassword);
