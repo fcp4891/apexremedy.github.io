@@ -35,7 +35,70 @@ class ShoppingCart {
 
         this.saveToStorage();
         this.updateUI();
+        
+        // 🆕 Mostrar notificación personalizada
+        this.showAddToCartNotification(name, image);
+        
         return true;
+    }
+    
+    // 🆕 Notificación personalizada al agregar producto al carrito
+    showAddToCartNotification(productName, productImage) {
+        if (typeof notify === 'undefined') {
+            // Fallback si no hay sistema de notificaciones
+            alert(`✅ ${productName} agregado al carrito`);
+            return;
+        }
+        
+        // Crear notificación personalizada con botones de acción
+        const notificationId = 'cart-notification-' + Date.now();
+        const notificationHTML = `
+            <div id="${notificationId}" class="notification success" style="max-width: 380px;">
+                <div class="notification-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="notification-content" style="flex: 1;">
+                    <div class="notification-title">¡Producto agregado!</div>
+                    <div class="notification-message" style="margin-bottom: 12px;">
+                        ${productName} se agregó a tu carrito
+                    </div>
+                    <div style="display: flex; gap: 8px; margin-top: 8px;">
+                        <button onclick="cart.openCart(); notify.remove('${notificationId}');" 
+                                style="flex: 1; padding: 8px 12px; background: var(--primary-green); color: white; border: none; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: opacity 0.2s;">
+                            <i class="fas fa-shopping-cart mr-1"></i> Ver Carrito
+                        </button>
+                        <button onclick="notify.remove('${notificationId}')" 
+                                style="flex: 1; padding: 8px 12px; background: var(--light-gray); color: var(--accent-black); border: none; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: opacity 0.2s;">
+                            Seguir Comprando
+                        </button>
+                    </div>
+                </div>
+                <button class="notification-close" onclick="notify.remove('${notificationId}')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        `;
+        
+        // Agregar al contenedor de notificaciones
+        let container = document.getElementById('notificationContainer');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'notificationContainer';
+            document.body.appendChild(container);
+        }
+        
+        container.insertAdjacentHTML('beforeend', notificationHTML);
+        
+        // Auto-remover después de 5 segundos
+        setTimeout(() => {
+            const notif = document.getElementById(notificationId);
+            if (notif) {
+                notif.style.animation = 'slideOutRight 0.3s ease-out';
+                setTimeout(() => {
+                    notif.remove();
+                }, 300);
+            }
+        }, 5000);
     }
 
     async addProduct(productId, quantity = 1) {

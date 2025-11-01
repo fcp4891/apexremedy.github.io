@@ -266,6 +266,17 @@
                 opacity: 0;
             }
         }
+        
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
 
         /* Responsive */
         @media (max-width: 640px) {
@@ -511,6 +522,14 @@
                 cancelText: 'Cancelar',
                 confirmClass: 'primary'
             });
+        },
+        
+        // 🆕 Remover notificación por ID
+        remove: (notificationId) => {
+            const notification = document.getElementById(notificationId);
+            if (notification) {
+                closeNotification(notification);
+            }
         }
     };
 

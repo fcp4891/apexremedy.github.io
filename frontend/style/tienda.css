@@ -263,7 +263,7 @@ div.container.tienda-container {
     }
     
     .product-image {
-        height: 180px;
+        height: 160px !important; /* Imagen más pequeña en móvil */
     }
     
     /* Botones */
