@@ -339,8 +339,8 @@ if (typeof APIClient === 'undefined') {
                                 (window.location.hostname !== 'localhost' && 
                                  window.location.hostname !== '127.0.0.1');
             
-            // En producción, intentar primero con JSON estático
-            if (isProduction) {
+            // Si no hay backend configurado O estamos en producción, usar JSON estático
+            if (!this.baseURL || isProduction) {
                 try {
                     const staticData = await this.loadStaticJSON('products.json');
                     console.log('🔍 JSON estático cargado:', staticData);
@@ -405,30 +405,34 @@ if (typeof APIClient === 'undefined') {
                 }
             }
             
-            // Si no es producción o falló el JSON estático, usar API dinámica
-            try {
-                const queryParams = new URLSearchParams();
-                
-                Object.keys(filters).forEach(key => {
-                    if (filters[key] !== undefined && filters[key] !== null && filters[key] !== '') {
-                        queryParams.append(key, filters[key]);
-                    }
-                });
+            // Si no es producción o falló el JSON estático, usar API dinámica (solo si hay backend)
+            if (this.baseURL) {
+                try {
+                    const queryParams = new URLSearchParams();
+                    
+                    Object.keys(filters).forEach(key => {
+                        if (filters[key] !== undefined && filters[key] !== null && filters[key] !== '') {
+                            queryParams.append(key, filters[key]);
+                        }
+                    });
 
-                const queryString = queryParams.toString();
-                const endpoint = queryString ? `/products?${queryString}` : '/products';
-                
-                return await this.request(endpoint);
-            } catch (error) {
-                // Si la API dinámica también falla y estamos en producción, devolver JSON estático sin filtros
-                if (isProduction) {
+                    const queryString = queryParams.toString();
+                    const endpoint = queryString ? `/products?${queryString}` : '/products';
+                    
+                    return await this.request(endpoint);
+                } catch (error) {
+                    // Si la API dinámica también falla, intentar JSON estático como último recurso
+                    console.warn('⚠️ API dinámica falló, intentando JSON estático como fallback...', error);
                     const staticData = await this.loadStaticJSON('products.json');
                     if (staticData && staticData.success) {
-                        console.warn('⚠️ API dinámica no disponible, usando JSON estático sin filtros');
+                        console.warn('⚠️ Usando JSON estático como fallback');
                         return staticData;
                     }
+                    throw error;
                 }
-                throw error;
+            } else {
+                // No hay backend y no se pudo cargar JSON estático
+                throw new Error('No se pudo cargar productos. Verifica que products.json esté disponible.');
             }
         }
 
@@ -437,8 +441,8 @@ if (typeof APIClient === 'undefined') {
                                 (window.location.hostname !== 'localhost' && 
                                  window.location.hostname !== '127.0.0.1');
             
-            // En producción, intentar primero con JSON estático
-            if (isProduction) {
+            // Si no hay backend configurado O estamos en producción, usar JSON estático
+            if (!this.baseURL || isProduction) {
                 try {
                     const staticData = await this.loadStaticJSON('products.json');
                     if (staticData && staticData.success && staticData.data.products) {
@@ -457,8 +461,30 @@ if (typeof APIClient === 'undefined') {
                 }
             }
             
-            // Si no es producción o falló el JSON estático, usar API dinámica
-            return await this.request(`/products/${id}`);
+            // Si hay backend, usar API dinámica
+            if (this.baseURL) {
+                try {
+                    return await this.request(`/products/${id}`);
+                } catch (error) {
+                    // Si la API dinámica falla, intentar JSON estático como último recurso
+                    console.warn('⚠️ API dinámica falló, intentando JSON estático...', error);
+                    const staticData = await this.loadStaticJSON('products.json');
+                    if (staticData && staticData.success && staticData.data.products) {
+                        const product = staticData.data.products.find(p => p.id === parseInt(id));
+                        if (product) {
+                            return {
+                                success: true,
+                                data: { product },
+                                message: 'Producto cargado desde API estática (fallback)'
+                            };
+                        }
+                    }
+                    throw error;
+                }
+            } else {
+                // No hay backend y no se encontró el producto en JSON
+                throw new Error(`Producto con ID ${id} no encontrado en productos.json`);
+            }
         }
 
         async searchProducts(query) {
@@ -501,7 +527,101 @@ if (typeof APIClient === 'undefined') {
         }
 
         async getCategories() {
-            return await this.request('/products/categories');
+            const isProduction = window.location.hostname.includes('github.io') || 
+                                (window.location.hostname !== 'localhost' && 
+                                 window.location.hostname !== '127.0.0.1');
+            
+            // Si no hay backend configurado O estamos en producción, extraer categorías del JSON
+            if (!this.baseURL || isProduction) {
+                try {
+                    const staticData = await this.loadStaticJSON('products.json');
+                    if (staticData && staticData.success && staticData.data.products) {
+                        // Extraer categorías únicas de los productos
+                        const categoriesMap = new Map();
+                        const seenSlugs = new Set();
+                        
+                        staticData.data.products.forEach(product => {
+                            let slug = product.category_slug || product.category;
+                            let name = product.category || product.category_slug;
+                            
+                            if (slug) {
+                                slug = slug.toLowerCase().trim();
+                                name = name ? name.trim() : slug;
+                                
+                                if (slug && slug !== 'undefined' && !seenSlugs.has(slug)) {
+                                    seenSlugs.add(slug);
+                                    categoriesMap.set(slug, name);
+                                }
+                            }
+                        });
+                        
+                        const categories = Array.from(categoriesMap.entries()).map(([slug, name]) => ({
+                            id: slug,
+                            name: name,
+                            slug: slug
+                        }));
+                        
+                        console.log('✅ Categorías extraídas del JSON estático:', categories.length);
+                        return {
+                            success: true,
+                            data: { categories },
+                            message: 'Categorías cargadas desde API estática'
+                        };
+                    }
+                } catch (error) {
+                    console.warn('⚠️ Error al cargar categorías desde JSON estático, intentando API dinámica...', error);
+                }
+            }
+            
+            // Si hay backend, usar API dinámica
+            if (this.baseURL) {
+                try {
+                    return await this.request('/products/categories');
+                } catch (error) {
+                    // Si la API dinámica falla, intentar JSON estático como último recurso
+                    console.warn('⚠️ API dinámica falló, intentando JSON estático...', error);
+                    const staticData = await this.loadStaticJSON('products.json');
+                    if (staticData && staticData.success && staticData.data.products) {
+                        const categoriesMap = new Map();
+                        const seenSlugs = new Set();
+                        
+                        staticData.data.products.forEach(product => {
+                            let slug = product.category_slug || product.category;
+                            let name = product.category || product.category_slug;
+                            
+                            if (slug) {
+                                slug = slug.toLowerCase().trim();
+                                name = name ? name.trim() : slug;
+                                
+                                if (slug && slug !== 'undefined' && !seenSlugs.has(slug)) {
+                                    seenSlugs.add(slug);
+                                    categoriesMap.set(slug, name);
+                                }
+                            }
+                        });
+                        
+                        const categories = Array.from(categoriesMap.entries()).map(([slug, name]) => ({
+                            id: slug,
+                            name: name,
+                            slug: slug
+                        }));
+                        
+                        return {
+                            success: true,
+                            data: { categories },
+                            message: 'Categorías cargadas desde API estática (fallback)'
+                        };
+                    }
+                    throw error;
+                }
+            } else {
+                // No hay backend y no se pudo cargar JSON estático
+                return {
+                    success: true,
+                    data: { categories: [] },
+                    message: 'No se pudieron cargar categorías'
+                };
+            }
         }
 
         async getBestSellers(limit = 10) {
