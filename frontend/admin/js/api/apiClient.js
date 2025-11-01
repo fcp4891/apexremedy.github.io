@@ -747,17 +747,33 @@ if (typeof APIClient === 'undefined') {
             try {
                 const staticData = await this.loadStaticJSON('orders.json');
                 console.log('🔍 JSON estático de orders cargado:', staticData);
-                if (staticData && staticData.success && staticData.data && staticData.data.orders) {
-                    let orders = applyFiltersToOrders(staticData.data.orders, filters);
-                    console.log('✅ Pedidos cargados desde JSON estático:', orders.length);
-                    return {
-                        success: true,
-                        data: { orders },
-                        message: 'Pedidos cargados desde API estática'
-                    };
+                if (staticData && staticData.success && staticData.data) {
+                    // Verificar si tiene orders directamente o dentro de data
+                    const ordersArray = staticData.data.orders || staticData.data || [];
+                    if (Array.isArray(ordersArray) && ordersArray.length > 0) {
+                        let orders = applyFiltersToOrders(ordersArray, filters);
+                        console.log('✅ Pedidos cargados desde JSON estático:', orders.length);
+                        console.log('📊 Primeros pedidos:', orders.slice(0, 3).map(o => ({ id: o.id, status: o.status, total: o.total })));
+                        return {
+                            success: true,
+                            data: { orders },
+                            message: 'Pedidos cargados desde API estática'
+                        };
+                    } else if (Array.isArray(ordersArray)) {
+                        // Array vacío, pero válido
+                        console.log('⚠️ JSON estático tiene array vacío de pedidos');
+                        return {
+                            success: true,
+                            data: { orders: [] },
+                            message: 'No hay pedidos disponibles'
+                        };
+                    }
+                } else {
+                    console.warn('⚠️ JSON estático no tiene formato válido:', staticData);
                 }
             } catch (error) {
-                console.warn('⚠️ Error al cargar JSON estático de orders, intentando API dinámica...', error);
+                console.warn('⚠️ Error al cargar JSON estático de orders:', error.message);
+                console.warn('⚠️ Intentando API dinámica...');
             }
             
             // Solo si hay backend configurado Y el JSON falló, intentar API dinámica
@@ -780,14 +796,17 @@ if (typeof APIClient === 'undefined') {
                     console.warn('⚠️ API dinámica falló, intentando JSON estático como fallback...', error);
                     try {
                         const staticData = await this.loadStaticJSON('orders.json');
-                        if (staticData && staticData.success && staticData.data && staticData.data.orders) {
-                            let orders = applyFiltersToOrders(staticData.data.orders, filters);
-                            console.log('✅ Pedidos cargados desde JSON estático (fallback):', orders.length);
-                            return {
-                                success: true,
-                                data: { orders },
-                                message: 'Pedidos cargados desde API estática (fallback)'
-                            };
+                        if (staticData && staticData.success && staticData.data) {
+                            const ordersArray = staticData.data.orders || staticData.data || [];
+                            if (Array.isArray(ordersArray)) {
+                                let orders = applyFiltersToOrders(ordersArray, filters);
+                                console.log('✅ Pedidos cargados desde JSON estático (fallback):', orders.length);
+                                return {
+                                    success: true,
+                                    data: { orders },
+                                    message: 'Pedidos cargados desde API estática (fallback)'
+                                };
+                            }
                         }
                     } catch (staticError) {
                         console.error('❌ No se pudo cargar JSON estático como fallback:', staticError);
@@ -797,10 +816,28 @@ if (typeof APIClient === 'undefined') {
             } else {
                 // No hay backend y no se pudo cargar JSON estático
                 console.warn('⚠️ No hay backend y JSON estático no disponible para orders');
+                // Intentar una última vez cargar el JSON
+                try {
+                    const staticData = await this.loadStaticJSON('orders.json');
+                    if (staticData && staticData.success && staticData.data) {
+                        const ordersArray = staticData.data.orders || staticData.data || [];
+                        if (Array.isArray(ordersArray)) {
+                            let orders = applyFiltersToOrders(ordersArray, filters);
+                            console.log('✅ Pedidos cargados desde JSON estático (último intento):', orders.length);
+                            return {
+                                success: true,
+                                data: { orders },
+                                message: 'Pedidos cargados desde API estática'
+                            };
+                        }
+                    }
+                } catch (finalError) {
+                    console.error('❌ Error final al cargar JSON estático:', finalError);
+                }
                 return {
                     success: true,
                     data: { orders: [] },
-                    message: 'No se pudieron cargar pedidos'
+                    message: 'No se pudieron cargar pedidos. Verifica que orders.json exista en /api/'
                 };
             }
         }

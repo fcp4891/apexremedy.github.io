@@ -380,12 +380,32 @@
                 console.log('📦 Cargando todos los pedidos...');
                 const response = await api.getAllOrders({ limit: 1000 });
                 
-                if (response.success) {
-                    allOrders = response.data.orders || [];
+                console.log('📊 Respuesta completa:', response);
+                console.log('📊 response.success:', response?.success);
+                console.log('📊 response.data:', response?.data);
+                console.log('📊 response.data.orders:', response?.data?.orders);
+                
+                if (response && response.success) {
+                    allOrders = response.data?.orders || response.data || [];
+                    console.log(`✅ ${allOrders.length} pedidos cargados desde API`);
+                    
+                    if (allOrders.length === 0) {
+                        console.warn('⚠️ No se encontraron pedidos en la respuesta');
+                        // Mostrar mensaje pero continuar con el flujo
+                    }
                     
                     filteredOrders = allOrders.map(order => {
                         const displayOrder = { ...order };
                         
+                        // Asegurar que tenemos datos mínimos
+                        if (!displayOrder.customer_name && displayOrder.customer_email) {
+                            displayOrder.customer_name = displayOrder.customer_email.split('@')[0];
+                        }
+                        if (!displayOrder.created_at && displayOrder.date) {
+                            displayOrder.created_at = displayOrder.date;
+                        }
+                        
+                        // Normalizar estado de pago
                         if (displayOrder.status === 'pending_payment' || displayOrder.status === 'pending') {
                             if (displayOrder.payment_method === 'transfer') {
                                 displayOrder.status = 'pending_transfer';
@@ -397,11 +417,24 @@
                         return displayOrder;
                     });
                     
+                    console.log(`✅ ${filteredOrders.length} pedidos procesados para mostrar`);
                     updateStatistics();
                     displayOrders(filteredOrders);
+                } else {
+                    console.error('❌ Respuesta no exitosa:', response);
+                    allOrders = [];
+                    filteredOrders = [];
+                    updateStatistics();
+                    displayOrders([]);
+                    notify.warning('No se pudieron cargar los pedidos. Verifica la conexión o el archivo orders.json');
                 }
             } catch (error) {
                 console.error('❌ Error al cargar pedidos:', error);
+                console.error('❌ Detalles del error:', error.message, error.stack);
+                allOrders = [];
+                filteredOrders = [];
+                updateStatistics();
+                displayOrders([]);
                 notify.error('Error al cargar pedidos: ' + error.message);
             }
         }

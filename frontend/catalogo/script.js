@@ -2,7 +2,7 @@
 
 // Variables globales
 let currentPage = 1;
-const totalPages = 7;
+const totalPages = 8;
 let currentTab = 'products';
 
 // Inicializar cuando el DOM esté listo
@@ -358,96 +358,24 @@ function showToast(message, type = 'success') {
     }, 3000);
 }
 
-// Crear layout plano para PDF sin scroll
-function createFlatLayoutForPDF() {
-    const pages = document.querySelectorAll('.catalog-page');
-    const pagesData = [];
+// Convertir imágenes a base64 para evitar problemas CORS
+async function convertImagesToBase64() {
+    const images = document.querySelectorAll('img');
+    const promises = [];
     
-    pages.forEach((page, index) => {
-        // Extraer información de la página
-        const scrollContainer = page.querySelector('.page-scroll-container');
-        const coverContent = page.querySelector('.cover-content');
-        const background = page.querySelector('.page-background, .products-background, .cover-background .cover-image');
-        
-        let content = null;
-        if (scrollContainer) {
-            content = scrollContainer.cloneNode(true);
-        } else if (coverContent) {
-            // Portada sin scroll container
-            content = coverContent.cloneNode(true);
-        }
-        
-        if (content) {
-            pagesData.push({
-                background: background ? background.style.backgroundImage : null,
-                content: content
-            });
-        }
+    images.forEach(img => {
+        const promise = new Promise((resolve) => {
+            if (!img.complete) {
+                img.onload = resolve;
+                img.onerror = resolve;
+            } else {
+                resolve();
+            }
+        });
+        promises.push(promise);
     });
     
-    return pagesData;
-}
-
-// Crear contenedor temporal para PDF
-function createPDFContainer(pagesData) {
-    const container = document.createElement('div');
-    container.id = 'pdf-container-temp';
-    container.style.width = '210mm'; // A4 width
-    container.style.backgroundColor = '#1a1a2e';
-    container.style.position = 'relative';
-    
-    pagesData.forEach((pageData, index) => {
-        const pageDiv = document.createElement('div');
-        pageDiv.className = 'pdf-page';
-        pageDiv.style.position = 'relative';
-        pageDiv.style.width = '100%';
-        pageDiv.style.minHeight = '297mm'; // A4 height
-        pageDiv.style.marginBottom = '10px';
-        pageDiv.style.pageBreakAfter = 'always';
-        pageDiv.style.backgroundColor = '#1a1a2e';
-        pageDiv.style.boxSizing = 'border-box';
-        
-        // Agregar imagen de fondo
-        if (pageData.background) {
-            const bgDiv = document.createElement('div');
-            bgDiv.className = 'pdf-page-background';
-            bgDiv.style.position = 'absolute';
-            bgDiv.style.top = '0';
-            bgDiv.style.left = '0';
-            bgDiv.style.width = '100%';
-            bgDiv.style.height = '100%';
-            bgDiv.style.backgroundImage = pageData.background;
-            bgDiv.style.backgroundSize = 'cover';
-            bgDiv.style.backgroundPosition = 'center center';
-            bgDiv.style.filter = 'brightness(0.4)';
-            bgDiv.style.zIndex = '0';
-            pageDiv.appendChild(bgDiv);
-        }
-        
-        // Agregar contenido
-        const contentDiv = pageData.content.cloneNode(true);
-        contentDiv.style.position = 'relative';
-        contentDiv.style.zIndex = '1';
-        contentDiv.style.height = 'auto';
-        contentDiv.style.maxHeight = 'none';
-        contentDiv.style.overflow = 'visible';
-        contentDiv.style.padding = '60px';
-        contentDiv.style.boxSizing = 'border-box';
-        pageDiv.appendChild(contentDiv);
-        
-        container.appendChild(pageDiv);
-    });
-    
-    document.body.appendChild(container);
-    return container;
-}
-
-// Limpiar contenedor temporal
-function cleanupPDFContainer() {
-    const tempContainer = document.getElementById('pdf-container-temp');
-    if (tempContainer) {
-        tempContainer.remove();
-    }
+    await Promise.all(promises);
 }
 
 // Descargar PDF
@@ -455,6 +383,9 @@ async function downloadPDF() {
     showToast('Preparando contenido para PDF...', 'info');
     
     try {
+        // Convertir imágenes antes de generar PDF
+        await convertImagesToBase64();
+        
         // Ocultar navegación
         const nav = document.querySelector('.floating-nav');
         const scrollIndicators = document.querySelectorAll('.scroll-indicator');
@@ -506,21 +437,25 @@ async function downloadPDF() {
             },
             html2canvas: { 
                 scale: 2,
-                useCORS: true,
+                useCORS: false,
                 allowTaint: true,
-                logging: true,
+                logging: false,
                 letterRendering: true,
                 backgroundColor: '#1a1a2e',
-                windowWidth: window.innerWidth,
-                windowHeight: window.innerHeight
+                foreignObjectRendering: false,
+                imageTimeout: 0,
+                removeContainer: true
             },
             jsPDF: { 
                 unit: 'mm', 
                 format: 'a4', 
-                orientation: 'portrait'
+                orientation: 'portrait',
+                compress: true
             },
             pagebreak: { 
-                mode: 'avoid-all'
+                mode: ['avoid-all', 'css'],
+                before: '.catalog-page',
+                after: '.catalog-page'
             }
         };
         
