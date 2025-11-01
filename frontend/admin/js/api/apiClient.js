@@ -317,6 +317,13 @@ if (typeof APIClient === 'undefined') {
             return await this.request('/users/pending');
         }
 
+        async createUser(userData) {
+            return await this.request('/users', {
+                method: 'POST',
+                body: JSON.stringify(userData)
+            });
+        }
+
 // Subir comprobante de pago
 async uploadPaymentProof(orderId, file) {
     const formData = new FormData();

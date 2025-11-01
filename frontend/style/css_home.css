@@ -575,12 +575,18 @@ body.register-page {
   height:100vh;
   background:var(--white);
   box-shadow:-2px 0 12px rgba(0,0,0,.15);
-  transition:transform .35s ease, right .35s ease;
+  transition:right .35s ease, visibility .35s ease, opacity .35s ease;
   z-index:1100;
   padding-bottom:80px;
+  visibility:hidden;
+  opacity:0;
 }
 
-.cart-sidebar.open{right:0}
+.cart-sidebar.open{
+  right:0;
+  visibility:visible;
+  opacity:1;
+}
 
 .cart-header{
   display:flex;
@@ -611,6 +617,17 @@ body.register-page {
   inset:0;
   background:rgba(0,0,0,.35);
   z-index:1000;
+  display:none;
+  visibility:hidden;
+  opacity:0;
+  transition:opacity .35s ease, visibility .35s ease;
+}
+
+.cart-sidebar.open ~ .cart-overlay,
+body:has(.cart-sidebar.open) .cart-overlay{
+  display:block;
+  visibility:visible;
+  opacity:1;
 }
 
 /* ============================================
@@ -943,7 +960,11 @@ body.register-page {
     z-index:999;
   }
   
-  .nav-menu.open,.nav-menu[style*="display: flex"]{
+  /* Cuando el menú está abierto o tiene display flex, mostrarlo */
+  .nav-menu.open,
+  .nav-menu[style*="display: flex"],
+  .nav-menu[style*="display:flex"],
+  .nav-menu[style*="display:flex;"]{
     display:flex!important;
   }
   
@@ -996,8 +1017,17 @@ body.register-page {
   
   /* Grids */
   .about-grid,.products-grid{
-    grid-template-columns:1fr;
-    gap:16px;
+    display:grid!important;
+    grid-template-columns:repeat(2,1fr)!important;
+    gap:16px!important;
+    visibility:visible!important;
+    opacity:1!important;
+  }
+  
+  .products-grid .product-card{
+    display:block!important;
+    visibility:visible!important;
+    opacity:1!important;
   }
   
   .about-card,.product-card,.legal-card{
@@ -1020,8 +1050,27 @@ body.register-page {
   
   /* Cart */
   .cart-sidebar{
-    width:100vw;
-    max-width:100vw;
+    width:100vw!important;
+    max-width:100vw!important;
+    right:-100vw!important;
+    visibility:hidden!important;
+    opacity:0!important;
+  }
+  
+  .cart-sidebar.open{
+    right:0!important;
+    visibility:visible!important;
+    opacity:1!important;
+  }
+  
+  .cart-overlay{
+    z-index:1000!important;
+    display:none!important;
+  }
+  
+  .cart-sidebar.open ~ .cart-overlay,
+  .cart-sidebar.open + .cart-overlay{
+    display:block!important;
   }
   
   /* Footer */

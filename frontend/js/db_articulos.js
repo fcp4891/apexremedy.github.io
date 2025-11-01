@@ -207,7 +207,10 @@ class ProductManager {
     // Renderizar productos en grid
     renderProducts(products, containerId = 'productsGrid') {
         const container = document.getElementById(containerId);
-        if (!container) return;
+        if (!container) {
+            console.error(`❌ Contenedor ${containerId} no encontrado`);
+            return;
+        }
         
         if (products.length === 0) {
             container.innerHTML = `
@@ -222,10 +225,18 @@ class ProductManager {
             return;
         }
         
+        // Asegurar que el contenedor sea visible
+        container.style.display = 'grid';
+        container.style.visibility = 'visible';
+        container.style.opacity = '1';
+        
         container.innerHTML = products.map(product => this.createProductCard(product)).join('');
         
         // Agregar event listeners a botones
         this.attachProductEventListeners(container);
+        
+        // Forzar reflow para asegurar renderizado en móvil
+        container.offsetHeight;
     }
 
     // Crear card de producto

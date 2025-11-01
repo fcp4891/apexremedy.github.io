@@ -108,11 +108,17 @@
     if (!hamburger || !navMenu) return;
 
     hamburger.addEventListener('click', () => {
-      // Toggle del menú
-      const isOpen = navMenu.style.display === 'flex';
+      // Toggle del menú - usar breakpoint consistente con CSS (767px)
+      const isOpen = navMenu.style.display === 'flex' || navMenu.classList.contains('open');
       
-      if (window.innerWidth <= 900) {
-        navMenu.style.display = isOpen ? 'none' : 'flex';
+      if (window.innerWidth <= 767) {
+        if (isOpen) {
+          navMenu.style.display = 'none';
+          navMenu.classList.remove('open');
+        } else {
+          navMenu.style.display = 'flex';
+          navMenu.classList.add('open');
+        }
       }
       
       // Animar hamburguesa
@@ -122,30 +128,37 @@
     // Cerrar menú al hacer click en un link (móvil)
     navMenu.querySelectorAll('.nav-link').forEach(link => {
       link.addEventListener('click', () => {
-        if (window.innerWidth <= 900) {
+        if (window.innerWidth <= 767) {
           navMenu.style.display = 'none';
+          navMenu.classList.remove('open');
           hamburger.classList.remove('active');
         }
       });
     });
 
-    // Manejar resize de ventana
+    // Manejar resize de ventana - usar breakpoint consistente (767px)
     window.addEventListener('resize', () => {
-      if (window.innerWidth > 900) {
+      if (window.innerWidth > 767) {
+        // Desktop: mostrar menú siempre
         navMenu.style.display = 'flex';
+        navMenu.classList.remove('open');
         hamburger.classList.remove('active');
       } else {
-        navMenu.style.display = 'none';
+        // Móvil: ocultar menú si no está abierto
+        if (!navMenu.classList.contains('open')) {
+          navMenu.style.display = 'none';
+        }
         hamburger.classList.remove('active');
       }
     });
     
-    // Asegurar estado inicial correcto
-    if (window.innerWidth > 900) {
-      navMenu.style.display = 'flex';
-    } else {
+    // Asegurar estado inicial correcto - usar breakpoint consistente (767px)
+    // NO establecer estilo inline en desktop - dejar que CSS lo maneje
+    if (window.innerWidth <= 767) {
       navMenu.style.display = 'none';
+      navMenu.classList.remove('open');
     }
+    // En desktop, no establecer estilo inline - CSS manejará display:flex por defecto
   }
 
   /**
@@ -162,14 +175,38 @@
         e?.preventDefault();
         cartSidebar.classList.add('open');
         cartOverlay.style.display = 'block';
+        cartOverlay.style.visibility = 'visible';
+        cartOverlay.style.opacity = '1';
+        // Prevenir scroll del body cuando el carrito está abierto
+        document.body.style.overflow = 'hidden';
         return;
       }
     }
 
     function closeCartFn(e) {
       e?.preventDefault();
-      if (cartSidebar) cartSidebar.classList.remove('open');
-      if (cartOverlay) cartOverlay.style.display = 'none';
+      if (cartSidebar) {
+        cartSidebar.classList.remove('open');
+      }
+      if (cartOverlay) {
+        cartOverlay.style.display = 'none';
+        cartOverlay.style.visibility = 'hidden';
+        cartOverlay.style.opacity = '0';
+      }
+      // Restaurar scroll del body
+      document.body.style.overflow = '';
+    }
+    
+    // Asegurar que el carrito esté oculto por defecto
+    if (cartSidebar) {
+      cartSidebar.classList.remove('open');
+      cartSidebar.style.visibility = 'hidden';
+      cartSidebar.style.opacity = '0';
+    }
+    if (cartOverlay) {
+      cartOverlay.style.display = 'none';
+      cartOverlay.style.visibility = 'hidden';
+      cartOverlay.style.opacity = '0';
     }
 
     if (cartToggle) {

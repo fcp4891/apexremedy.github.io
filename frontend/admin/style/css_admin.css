@@ -1034,8 +1034,98 @@
     }
 }
 
+/* Hamburger Menu Admin */
+.admin-hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    z-index: 1001;
+    padding: 4px;
+}
+
+.admin-hamburger span {
+    display: block;
+    width: 100%;
+    height: 3px;
+    background: var(--admin-white);
+    border-radius: 2px;
+    transition: var(--admin-transition);
+}
+
+.admin-hamburger.active span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.admin-hamburger.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.admin-hamburger.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -6px);
+}
+
 /* Mobile */
-@media (max-width: 768px) {
+@media (max-width: 767px) {
+    .admin-hamburger {
+        display: flex;
+    }
+    
+    .admin-nav-container {
+        padding: 0 16px;
+        height: auto;
+        min-height: 70px;
+    }
+    
+    .admin-nav-menu {
+        display: none !important;
+        position: fixed;
+        top: 70px;
+        left: 0;
+        right: 0;
+        background: linear-gradient(135deg, var(--admin-primary-red), var(--admin-dark-red));
+        flex-direction: column;
+        gap: 0;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        max-height: calc(100vh - 70px);
+        overflow-y: auto;
+        z-index: 999;
+        width: 100%;
+    }
+    
+    .admin-nav-menu.open,
+    .admin-nav-menu[style*="display: flex"] {
+        display: flex !important;
+    }
+    
+    .admin-nav-link {
+        width: 100%;
+        padding: 15px 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        justify-content: flex-start;
+    }
+    
+    .admin-nav-link:last-child {
+        border-bottom: none;
+    }
+    
+    .admin-nav-user {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .admin-nav-user-info {
+        display: none !important;
+    }
+    
+    .admin-nav-user-dropdown {
+        width: calc(100vw - 32px);
+        right: 16px;
+    }
+    
     .admin-container {
         padding: 0 16px;
     }
@@ -1056,11 +1146,6 @@
     .admin-grid-3,
     .admin-grid-4 {
         grid-template-columns: 1fr;
-    }
-    
-    .admin-nav-menu {
-        flex-direction: column;
-        gap: 8px;
     }
     
     .admin-stat-value {

@@ -48,6 +48,23 @@
         padding: 40px 0;
     }
     
+    /* Asegurar que el grid de productos sea visible en móvil */
+    .products-grid,
+    #featuredProducts {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 16px !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+    
+    .products-grid .product-card,
+    #featuredProducts .product-card {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+    
     /* Modales de productos */
     .product-modal-content {
         max-width: 95vw;

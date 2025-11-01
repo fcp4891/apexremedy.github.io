@@ -25,10 +25,16 @@
                 <h1 class="text-3xl font-bold text-gray-800">Gestión de Usuarios</h1>
                 <p class="text-gray-600 mt-1">Administra y aprueba cuentas de usuario</p>
             </div>
-            <button onclick="showApprovalGuide()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg font-semibold transition flex items-center gap-2" title="Guía de aprobación de usuarios">
-                <i class="fas fa-info-circle"></i>
-                <span>Guía de Aprobación</span>
-            </button>
+            <div class="flex gap-3">
+                <button onclick="openAddUserModal()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg font-semibold transition flex items-center gap-2" title="Agregar nuevo usuario">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Agregar Usuario</span>
+                </button>
+                <button onclick="showApprovalGuide()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg font-semibold transition flex items-center gap-2" title="Guía de aprobación de usuarios">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Guía de Aprobación</span>
+                </button>
+            </div>
         </div>
 
         <!-- Estadísticas -->
@@ -327,6 +333,311 @@
         </div>
     </div>
 </div>
+
+    <!-- Modal Agregar Usuario -->
+    <div id="addUserModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">Agregar Nuevo Usuario</h2>
+                    <button onclick="closeAddUserModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+
+                <!-- Pestañas -->
+                <div class="flex border-b border-gray-200 mb-6">
+                    <button onclick="switchUserTab('customer')" id="tabCustomer" class="flex-1 px-6 py-3 text-center font-semibold text-gray-700 border-b-2 border-green-600 transition">
+                        <i class="fas fa-user mr-2"></i>Cliente
+                    </button>
+                    <button onclick="switchUserTab('admin')" id="tabAdmin" class="flex-1 px-6 py-3 text-center font-semibold text-gray-500 border-b-2 border-transparent transition">
+                        <i class="fas fa-user-shield mr-2"></i>Administrador
+                    </button>
+                </div>
+
+                <!-- Formulario Cliente -->
+                <form id="addCustomerForm" class="user-form-tab">
+                    <div class="space-y-6">
+                        <!-- Información Personal -->
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                                <i class="fas fa-user-circle text-green-600"></i>
+                                Información Personal
+                            </h3>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Nombre Completo -->
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Nombre Completo *</label>
+                                    <div class="relative">
+                                        <i class="fas fa-user absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                        <input type="text" id="customerName" required
+                                               class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                               placeholder="Juan Pérez">
+                                    </div>
+                                </div>
+
+                                <!-- Email -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Correo Electrónico *</label>
+                                    <div class="relative">
+                                        <i class="fas fa-envelope absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                        <input type="email" id="customerEmail" required
+                                               class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                               placeholder="tu@email.com">
+                                    </div>
+                                </div>
+
+                                <!-- Teléfono -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Teléfono (opcional)</label>
+                                    <div class="relative">
+                                        <i class="fas fa-phone absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                        <input type="tel" id="customerPhone"
+                                               class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                               placeholder="+56912345678">
+                                    </div>
+                                </div>
+
+                                <!-- RUT -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">RUT (opcional)</label>
+                                    <div class="relative">
+                                        <i class="fas fa-id-card absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                        <input type="text" id="customerRut"
+                                               class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                               placeholder="12345678-9">
+                                    </div>
+                                </div>
+
+                                <!-- Contraseña -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Contraseña *</label>
+                                    <div class="relative">
+                                        <i class="fas fa-lock absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                        <input type="password" id="customerPassword" required minlength="6"
+                                               class="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                               placeholder="••••••••">
+                                        <button type="button" onclick="togglePasswordVisibility('customerPassword', 'toggleCustomerPassword')" 
+                                                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                                            <i id="toggleCustomerPassword" class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-1">Mínimo 6 caracteres</p>
+                                </div>
+
+                                <!-- Confirmar Contraseña -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Confirmar Contraseña *</label>
+                                    <div class="relative">
+                                        <i class="fas fa-lock absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                        <input type="password" id="customerConfirmPassword" required minlength="6"
+                                               class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                               placeholder="••••••••">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Documentos -->
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                                <i class="fas fa-file-medical text-green-600"></i>
+                                Documentación Requerida
+                            </h3>
+                            <p class="text-sm text-gray-600 mb-4">Formatos aceptados: PDF, JPG, PNG (máx. 5MB cada uno)</p>
+
+                            <!-- Receta Médica -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                                    <i class="fas fa-prescription text-green-600"></i>
+                                    Receta Médica *
+                                </label>
+                                <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-green-500 transition" 
+                                     id="uploadRecetaZone" onclick="document.getElementById('recetaFileInput').click()">
+                                    <input type="file" id="recetaFileInput" accept=".pdf,.jpg,.jpeg,.png" class="hidden" onchange="handleDocumentUpload(event, 'receta')">
+                                    <div id="recetaPlaceholderContent">
+                                        <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-3"></i>
+                                        <p class="text-gray-600 font-semibold">Arrastra tu receta médica aquí</p>
+                                        <p class="text-sm text-gray-500 mt-1">o haz clic para seleccionar</p>
+                                    </div>
+                                    <div id="recetaPreviewContent" class="hidden">
+                                        <i class="fas fa-file-pdf text-4xl text-green-600 mb-3"></i>
+                                        <p id="recetaFileName" class="font-semibold text-green-600"></p>
+                                        <p id="recetaFileSize" class="text-sm text-gray-500"></p>
+                                        <button type="button" onclick="removeDocument('receta')" class="mt-2 text-red-600 hover:text-red-800 text-sm">
+                                            <i class="fas fa-trash mr-1"></i>Eliminar
+                                        </button>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="recetaData">
+                            </div>
+
+                            <!-- Carnet de Identidad -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                                    <i class="fas fa-id-card text-blue-600"></i>
+                                    Carnet de Identidad *
+                                </label>
+                                <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-blue-500 transition" 
+                                     id="uploadCarnetZone" onclick="document.getElementById('carnetFileInput').click()">
+                                    <input type="file" id="carnetFileInput" accept=".pdf,.jpg,.jpeg,.png" class="hidden" onchange="handleDocumentUpload(event, 'carnet')">
+                                    <div id="carnetPlaceholderContent">
+                                        <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-3"></i>
+                                        <p class="text-gray-600 font-semibold">Arrastra tu carnet aquí</p>
+                                        <p class="text-sm text-gray-500 mt-1">o haz clic para seleccionar</p>
+                                    </div>
+                                    <div id="carnetPreviewContent" class="hidden">
+                                        <i class="fas fa-file-image text-4xl text-blue-600 mb-3"></i>
+                                        <p id="carnetFileName" class="font-semibold text-blue-600"></p>
+                                        <p id="carnetFileSize" class="text-sm text-gray-500"></p>
+                                        <button type="button" onclick="removeDocument('carnet')" class="mt-2 text-red-600 hover:text-red-800 text-sm">
+                                            <i class="fas fa-trash mr-1"></i>Eliminar
+                                        </button>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="carnetData">
+                            </div>
+
+                            <!-- Certificado de Antecedentes -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                                    <i class="fas fa-certificate text-purple-600"></i>
+                                    Certificado de Antecedentes *
+                                </label>
+                                <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-purple-500 transition" 
+                                     id="uploadCertificadoZone" onclick="document.getElementById('certificadoFileInput').click()">
+                                    <input type="file" id="certificadoFileInput" accept=".pdf,.jpg,.jpeg,.png" class="hidden" onchange="handleDocumentUpload(event, 'certificado')">
+                                    <div id="certificadoPlaceholderContent">
+                                        <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-3"></i>
+                                        <p class="text-gray-600 font-semibold">Arrastra tu certificado aquí</p>
+                                        <p class="text-sm text-gray-500 mt-1">o haz clic para seleccionar</p>
+                                    </div>
+                                    <div id="certificadoPreviewContent" class="hidden">
+                                        <i class="fas fa-file-alt text-4xl text-purple-600 mb-3"></i>
+                                        <p id="certificadoFileName" class="font-semibold text-purple-600"></p>
+                                        <p id="certificadoFileSize" class="text-sm text-gray-500"></p>
+                                        <button type="button" onclick="removeDocument('certificado')" class="mt-2 text-red-600 hover:text-red-800 text-sm">
+                                            <i class="fas fa-trash mr-1"></i>Eliminar
+                                        </button>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="certificadoData">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3 mt-6">
+                        <button type="button" onclick="closeAddUserModal()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 rounded-lg font-semibold transition">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold transition">
+                            <i class="fas fa-user-plus mr-2"></i>Crear Cliente
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Formulario Administrador -->
+                <form id="addAdminForm" class="user-form-tab hidden">
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                                <i class="fas fa-user-shield text-red-600"></i>
+                                Información del Administrador
+                            </h3>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Nombre Completo -->
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Nombre Completo *</label>
+                                    <div class="relative">
+                                        <i class="fas fa-user absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                        <input type="text" id="adminName" required
+                                               class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                                               placeholder="Juan Pérez">
+                                    </div>
+                                </div>
+
+                                <!-- Email -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Correo Electrónico *</label>
+                                    <div class="relative">
+                                        <i class="fas fa-envelope absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                        <input type="email" id="adminEmail" required
+                                               class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                                               placeholder="admin@apexremedy.local">
+                                    </div>
+                                </div>
+
+                                <!-- Teléfono -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Teléfono (opcional)</label>
+                                    <div class="relative">
+                                        <i class="fas fa-phone absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                        <input type="tel" id="adminPhone"
+                                               class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                                               placeholder="+56912345678">
+                                    </div>
+                                </div>
+
+                                <!-- Contraseña -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Contraseña *</label>
+                                    <div class="relative">
+                                        <i class="fas fa-lock absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                        <input type="password" id="adminPassword" required minlength="6"
+                                               class="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                                               placeholder="••••••••">
+                                        <button type="button" onclick="togglePasswordVisibility('adminPassword', 'toggleAdminPassword')" 
+                                                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                                            <i id="toggleAdminPassword" class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-1">Mínimo 6 caracteres</p>
+                                </div>
+
+                                <!-- Confirmar Contraseña -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Confirmar Contraseña *</label>
+                                    <div class="relative">
+                                        <i class="fas fa-lock absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                        <input type="password" id="adminConfirmPassword" required minlength="6"
+                                               class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                                               placeholder="••••••••">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Info adicional -->
+                            <div class="bg-red-50 border border-red-200 rounded-lg p-4 mt-4">
+                                <div class="flex items-start gap-3">
+                                    <i class="fas fa-info-circle text-red-600 text-xl mt-1"></i>
+                                    <div class="text-sm text-red-800">
+                                        <p class="font-semibold mb-1">Nota sobre Administradores</p>
+                                        <ul class="space-y-1">
+                                            <li>• Los administradores tienen acceso completo al panel de administración</li>
+                                            <li>• No requieren aprobación para iniciar sesión</li>
+                                            <li>• Pueden gestionar productos, pedidos y usuarios</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3 mt-6">
+                        <button type="button" onclick="closeAddUserModal()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 rounded-lg font-semibold transition">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-semibold transition">
+                            <i class="fas fa-user-shield mr-2"></i>Crear Administrador
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <div id="footer-container"></div>
 
@@ -966,33 +1277,42 @@ document.getElementById('editForm').addEventListener('submit', async (e) => {
         enableOverlayToClose('editModal', window.closeEditModal);
       }
     
-      // Cerrar con ESC el primer modal abierto que encontremos
-      document.addEventListener('keydown', (e) => {
-        if (e.key !== 'Escape') return;
-    
-        const modalOrder = document.getElementById('orderModal');
-        const modalProduct = document.getElementById('productModal');
-        const modalDocs = document.getElementById('documentsModal');
-        const modalApprove = document.getElementById('approveModal');
-        const modalReject = document.getElementById('rejectModal');
-        const modalEdit = document.getElementById('editModal');
-    
-        const closers = [
-          [modalOrder, window.closeModal],
-          [modalProduct, window.closeModal],
-          [modalDocs, window.closeDocumentsModal],
-          [modalApprove, window.closeApproveModal],
-          [modalReject, window.closeRejectModal],
-          [modalEdit, window.closeEditModal],
-        ];
-    
-        for (const [m, fn] of closers) {
-          if (m && !m.classList.contains('hidden')) {
-            if (typeof fn === 'function') fn(); else m.classList.add('hidden');
-            break; // cierra solo uno
-          }
-        }
-      });
+        // Cerrar con ESC el primer modal abierto que encontremos
+        document.addEventListener('keydown', (e) => {
+            if (e.key !== 'Escape') return;
+
+            // Prioridad: primero guía de aprobación, luego otros modales
+            const approvalGuideModal = document.getElementById('approvalGuideModal');
+            if (approvalGuideModal) {
+                closeApprovalGuide();
+                return;
+            }
+
+            const modalOrder = document.getElementById('orderModal');
+            const modalProduct = document.getElementById('productModal');
+            const modalDocs = document.getElementById('documentsModal');
+            const modalApprove = document.getElementById('approveModal');
+            const modalReject = document.getElementById('rejectModal');
+            const modalEdit = document.getElementById('editModal');
+            const addUserModal = document.getElementById('addUserModal');
+
+            const closers = [
+                [modalOrder, window.closeModal],
+                [modalProduct, window.closeModal],
+                [modalDocs, window.closeDocumentsModal],
+                [modalApprove, window.closeApproveModal],
+                [modalReject, window.closeRejectModal],
+                [modalEdit, window.closeEditModal],
+                [addUserModal, closeAddUserModal],
+            ];
+
+            for (const [m, fn] of closers) {
+                if (m && !m.classList.contains('hidden')) {
+                    if (typeof fn === 'function') fn(); else m.classList.add('hidden');
+                    break; // cierra solo uno
+                }
+            }
+        });
     })();
 
     /**
@@ -1000,8 +1320,8 @@ document.getElementById('editForm').addEventListener('submit', async (e) => {
      */
     function showApprovalGuide() {
         const guideHTML = `
-            <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" id="approvalGuideModal">
-                <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl mx-4 max-h-screen overflow-y-auto">
+            <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" id="approvalGuideModal" onclick="handleApprovalGuideClick(event)">
+                <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl mx-4 max-h-screen overflow-y-auto" onclick="event.stopPropagation()">
                     <div class="p-6">
                         <div class="flex justify-between items-center mb-6">
                             <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-3">
@@ -1157,6 +1477,326 @@ document.getElementById('editForm').addEventListener('submit', async (e) => {
         }
     }
 
+    // Manejar clic fuera del modal de guía
+    function handleApprovalGuideClick(event) {
+        if (event.target.id === 'approvalGuideModal') {
+            closeApprovalGuide();
+        }
+    }
+
+
+    </script>
+
+    <!-- Script para agregar usuario -->
+    <script>
+        let currentUserTab = 'customer';
+
+        // Abrir modal
+        function openAddUserModal() {
+            document.getElementById('addUserModal').classList.remove('hidden');
+            switchUserTab('customer'); // Resetear a cliente por defecto
+        }
+
+        // Cerrar modal
+        function closeAddUserModal() {
+            document.getElementById('addUserModal').classList.add('hidden');
+            // Limpiar formularios
+            document.getElementById('addCustomerForm').reset();
+            document.getElementById('addAdminForm').reset();
+            // Limpiar documentos
+            clearAllDocuments();
+        }
+
+        // Cambiar pestaña
+        function switchUserTab(tab) {
+            currentUserTab = tab;
+            
+            // Actualizar botones de pestaña
+            const tabCustomer = document.getElementById('tabCustomer');
+            const tabAdmin = document.getElementById('tabAdmin');
+            
+            if (tab === 'customer') {
+                tabCustomer.classList.add('border-green-600', 'text-gray-700');
+                tabCustomer.classList.remove('border-transparent', 'text-gray-500');
+                tabAdmin.classList.add('border-transparent', 'text-gray-500');
+                tabAdmin.classList.remove('border-red-600', 'text-gray-700');
+                
+                document.getElementById('addCustomerForm').classList.remove('hidden');
+                document.getElementById('addAdminForm').classList.add('hidden');
+            } else {
+                tabAdmin.classList.add('border-red-600', 'text-gray-700');
+                tabAdmin.classList.remove('border-transparent', 'text-gray-500');
+                tabCustomer.classList.add('border-transparent', 'text-gray-500');
+                tabCustomer.classList.remove('border-green-600', 'text-gray-700');
+                
+                document.getElementById('addAdminForm').classList.remove('hidden');
+                document.getElementById('addCustomerForm').classList.add('hidden');
+            }
+        }
+
+        // Toggle password visibility
+        function togglePasswordVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        // Manejar upload de documentos
+        function handleDocumentUpload(event, type) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // Validar tipo
+            const validTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+            if (!validTypes.includes(file.type)) {
+                notify.error('Formato no válido. Solo se permiten PDF, JPG y PNG');
+                return;
+            }
+
+            // Validar tamaño (5MB)
+            const maxSize = 5 * 1024 * 1024;
+            if (file.size > maxSize) {
+                notify.error('El archivo no debe superar 5MB');
+                return;
+            }
+
+            // Leer como Base64
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64 = e.target.result;
+                document.getElementById(`${type}Data`).value = base64;
+                
+                // Mostrar preview
+                document.getElementById(`${type}PlaceholderContent`).classList.add('hidden');
+                document.getElementById(`${type}PreviewContent`).classList.remove('hidden');
+                document.getElementById(`${type}FileName`).textContent = file.name;
+                document.getElementById(`${type}FileSize`).textContent = formatFileSize(file.size);
+                
+                notify.success(`${getDocumentName(type)} cargado correctamente`);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Remover documento
+        function removeDocument(type) {
+            document.getElementById(`${type}FileInput`).value = '';
+            document.getElementById(`${type}Data`).value = '';
+            document.getElementById(`${type}PlaceholderContent`).classList.remove('hidden');
+            document.getElementById(`${type}PreviewContent`).classList.add('hidden');
+            notify.info(`${getDocumentName(type)} eliminado`);
+        }
+
+        // Limpiar todos los documentos
+        function clearAllDocuments() {
+            ['receta', 'carnet', 'certificado'].forEach(type => {
+                removeDocument(type);
+            });
+        }
+
+        // Nombre del documento
+        function getDocumentName(type) {
+            const names = {
+                'receta': 'Receta Médica',
+                'carnet': 'Carnet de Identidad',
+                'certificado': 'Certificado de Antecedentes'
+            };
+            return names[type] || 'Documento';
+        }
+
+        // Formatear tamaño de archivo
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        // Crear cliente
+        document.getElementById('addCustomerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('customerName').value.trim();
+            const email = document.getElementById('customerEmail').value.trim();
+            const password = document.getElementById('customerPassword').value;
+            const confirmPassword = document.getElementById('customerConfirmPassword').value;
+            const phone = document.getElementById('customerPhone').value.trim();
+            const rut = document.getElementById('customerRut').value.trim();
+            
+            // Validaciones
+            if (!name || !email || !password) {
+                notify.error('Por favor completa todos los campos requeridos');
+                return;
+            }
+            
+            if (password.length < 6) {
+                notify.error('La contraseña debe tener al menos 6 caracteres');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                notify.error('Las contraseñas no coinciden');
+                return;
+            }
+            
+            // Validar documentos
+            const receta = document.getElementById('recetaData').value;
+            const carnet = document.getElementById('carnetData').value;
+            const certificado = document.getElementById('certificadoData').value;
+            
+            if (!receta || !carnet || !certificado) {
+                notify.error('Debes cargar los 3 documentos requeridos');
+                return;
+            }
+            
+            // Separar nombre
+            const nameParts = name.split(' ');
+            const firstName = nameParts[0] || '';
+            const lastName = nameParts.slice(1).join(' ') || '';
+            
+            try {
+                // Crear usuario
+                const userData = {
+                    email,
+                    password,
+                    first_name: firstName,
+                    last_name: lastName,
+                    phone: phone || undefined,
+                    rut: rut || undefined,
+                    role: 'customer'
+                };
+                
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Creando...';
+                
+                const response = await window.api.createUser(userData);
+                
+                if (response.success) {
+                    const userId = response.data.user.id;
+                    
+                    // Guardar documentos
+                    const documentsData = [
+                        {
+                            document_type: 'receta_medica',
+                            file_data: receta,
+                            file_name: 'receta_medica.pdf'
+                        },
+                        {
+                            document_type: 'carnet_identidad',
+                            file_data: carnet,
+                            file_name: 'carnet_identidad.pdf'
+                        },
+                        {
+                            document_type: 'certificado_antecedentes',
+                            file_data: certificado,
+                            file_name: 'certificado_antecedentes.pdf'
+                        }
+                    ];
+                    
+                    await window.api.saveUserDocuments(userId, documentsData);
+                    
+                    notify.success('Cliente creado exitosamente');
+                    closeAddUserModal();
+                    loadUsers();
+                } else {
+                    throw new Error(response.message || 'Error al crear cliente');
+                }
+            } catch (error) {
+                console.error('Error al crear cliente:', error);
+                notify.error('Error al crear cliente: ' + error.message);
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-user-plus mr-2"></i>Crear Cliente';
+            }
+        });
+
+        // Crear administrador
+        document.getElementById('addAdminForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('adminName').value.trim();
+            const email = document.getElementById('adminEmail').value.trim();
+            const password = document.getElementById('adminPassword').value;
+            const confirmPassword = document.getElementById('adminConfirmPassword').value;
+            const phone = document.getElementById('adminPhone').value.trim();
+            
+            // Validaciones
+            if (!name || !email || !password) {
+                notify.error('Por favor completa todos los campos requeridos');
+                return;
+            }
+            
+            if (password.length < 6) {
+                notify.error('La contraseña debe tener al menos 6 caracteres');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                notify.error('Las contraseñas no coinciden');
+                return;
+            }
+            
+            // Separar nombre
+            const nameParts = name.split(' ');
+            const firstName = nameParts[0] || '';
+            const lastName = nameParts.slice(1).join(' ') || '';
+            
+            try {
+                const userData = {
+                    email,
+                    password,
+                    first_name: firstName,
+                    last_name: lastName,
+                    phone: phone || undefined,
+                    role: 'admin',
+                    account_status: 'approved' // Los admins se aprueban automáticamente
+                };
+                
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Creando...';
+                
+                const response = await window.api.createUser(userData);
+                
+                if (response.success) {
+                    notify.success('Administrador creado exitosamente');
+                    closeAddUserModal();
+                    loadUsers();
+                } else {
+                    throw new Error(response.message || 'Error al crear administrador');
+                }
+            } catch (error) {
+                console.error('Error al crear administrador:', error);
+                notify.error('Error al crear administrador: ' + error.message);
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-user-shield mr-2"></i>Crear Administrador';
+            }
+        });
+
+        // Cerrar modal al hacer clic fuera
+        document.getElementById('addUserModal')?.addEventListener('click', (e) => {
+            if (e.target.id === 'addUserModal') {
+                closeAddUserModal();
+            }
+        });
+
+        // Cerrar con ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !document.getElementById('addUserModal').classList.contains('hidden')) {
+                closeAddUserModal();
+            }
+        });
     </script>
     
 </body>

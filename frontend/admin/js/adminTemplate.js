@@ -315,6 +315,69 @@
     // ============================================
     
     /**
+     * Configurar menú hamburguesa móvil para admin
+     */
+    function setupAdminMobileMenu() {
+        const hamburger = document.getElementById('adminHamburgerBtn');
+        const navMenu = document.getElementById('adminNavMenu');
+        
+        if (!hamburger || !navMenu) {
+            console.warn('⚠️ Elementos del menú móvil admin no encontrados');
+            return;
+        }
+
+        hamburger.addEventListener('click', () => {
+            const isOpen = navMenu.style.display === 'flex' || navMenu.classList.contains('open');
+            
+            if (window.innerWidth <= 767) {
+                if (isOpen) {
+                    navMenu.style.display = 'none';
+                    navMenu.classList.remove('open');
+                } else {
+                    navMenu.style.display = 'flex';
+                    navMenu.classList.add('open');
+                }
+            }
+            
+            hamburger.classList.toggle('active');
+        });
+
+        // Cerrar menú al hacer click en un link (móvil)
+        navMenu.querySelectorAll('.admin-nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 767) {
+                    navMenu.style.display = 'none';
+                    navMenu.classList.remove('open');
+                    hamburger.classList.remove('active');
+                }
+            });
+        });
+
+        // Manejar resize de ventana
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 767) {
+                navMenu.style.display = 'flex';
+                navMenu.classList.remove('open');
+                hamburger.classList.remove('active');
+            } else {
+                if (!navMenu.classList.contains('open')) {
+                    navMenu.style.display = 'none';
+                }
+                hamburger.classList.remove('active');
+            }
+        });
+        
+        // Asegurar estado inicial correcto
+        if (window.innerWidth > 767) {
+            navMenu.style.display = 'flex';
+            navMenu.classList.remove('open');
+        } else {
+            navMenu.style.display = 'none';
+            navMenu.classList.remove('open');
+        }
+    }
+
+    /**
      * Inicializar el header después de cargarlo
      */
     function initializeHeader() {
@@ -323,6 +386,7 @@
         setCurrentPageTitle();
         markActiveLink();
         loadUserInfo();
+        setupAdminMobileMenu(); // Agregar menú móvil
         
         console.log('✅ Header inicializado');
     }

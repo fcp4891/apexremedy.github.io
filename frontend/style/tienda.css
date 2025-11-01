@@ -15,6 +15,19 @@
 
 /* ===== TABLET (768px - 1023px) ===== */
 @media (min-width: 768px) and (max-width: 1023px) {
+    .container {
+        padding: 30px 20px !important;
+    }
+    
+    .tienda-layout {
+        grid-template-columns: 240px 1fr !important;
+        gap: 24px !important;
+    }
+    
+    .tienda-filters-sidebar {
+        position: static !important;
+    }
+    
     .container > div {
         grid-template-columns: 1fr 1fr !important;
         gap: 20px;
@@ -44,6 +57,25 @@
 
 /* ===== MOBILE (hasta 767px) ===== */
 @media (max-width: 767px) {
+    .container {
+        padding: 20px 16px !important;
+    }
+    
+    .tienda-layout {
+        grid-template-columns: 1fr !important;
+        gap: 24px !important;
+    }
+    
+    .tienda-filters-sidebar {
+        position: static !important;
+        order: -1; /* Filtros arriba en móvil */
+        width: 100% !important;
+    }
+    
+    .tienda-filters-sidebar .about-card {
+        padding: 20px 16px !important;
+    }
+    
     .container > div {
         grid-template-columns: 1fr !important;
         gap: 16px;
@@ -60,8 +92,19 @@
     .grid.grid-cols-2,
     .grid.grid-cols-3,
     .grid.grid-cols-4 {
+        display: grid !important;
         grid-template-columns: repeat(2, 1fr) !important;
-        gap: 16px;
+        gap: 16px !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+    
+    .products-grid .product-card,
+    #productsGrid .product-card,
+    #featuredProducts .product-card {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
     }
     
     /* Filtros en móvil */
