@@ -52,25 +52,38 @@ jobs:
             echo "⚠️ Continuando sin exportar productos (JSON estático no se generará)"
           fi
       
+      - name: Check existing JSON files
+        run: |
+          if [ -f "frontend/api/products.json" ]; then
+            PRODUCT_COUNT=$(cat frontend/api/products.json | grep -o '"total":[0-9]*' | grep -o '[0-9]*' | head -1)
+            if [ -n "$PRODUCT_COUNT" ] && [ "$PRODUCT_COUNT" -gt 0 ]; then
+              echo "✅ JSON existente tiene $PRODUCT_COUNT productos"
+              echo "PRODUCTS_EXIST=true" >> $GITHUB_ENV
+            else
+              echo "⚠️ JSON existente está vacío o no tiene productos"
+              echo "PRODUCTS_EXIST=false" >> $GITHUB_ENV
+            fi
+          else
+            echo "⚠️ JSON no existe"
+            echo "PRODUCTS_EXIST=false" >> $GITHUB_ENV
+          fi
+      
       - name: Export products to JSON (Static API)
         working-directory: ./backend
         continue-on-error: true
         run: |
+          # Si ya hay productos en el JSON, no hacer nada
+          if [ "$PRODUCTS_EXIST" = "true" ]; then
+            echo "✅ Manteniendo JSON existente con productos"
+            exit 0
+          fi
+          
           if [ -f "../database/apexremedy.db" ] || [ -f "database/apexremedy.db" ]; then
             echo "🚀 Exportando productos a JSON estático..."
             DB_PATH=${DB_PATH:-database/apexremedy.db} node scripts/export-products-to-json.js
             echo "✅ Exportación completada"
           else
-            echo "⚠️ Base de datos no encontrada"
-            # Verificar si los JSON ya existen y tienen productos
-            if [ -f "../frontend/api/products.json" ]; then
-              PRODUCT_COUNT=$(cat ../frontend/api/products.json | grep -o '"total":[0-9]*' | grep -o '[0-9]*' | head -1)
-              if [ -n "$PRODUCT_COUNT" ] && [ "$PRODUCT_COUNT" -gt 0 ]; then
-                echo "✅ JSON existente tiene $PRODUCT_COUNT productos, manteniendo archivos existentes"
-                exit 0
-              fi
-            fi
-            # Solo crear JSON vacío si no existe o está vacío
+            echo "⚠️ Base de datos no encontrada y no hay JSON con productos"
             echo "⚠️ Creando JSON vacío para evitar errores..."
             mkdir -p ../frontend/api
             echo '{"success":true,"message":"JSON vacío - base de datos no disponible","data":{"products":[],"total":0,"timestamp":"'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"}}' > ../frontend/api/products.json
