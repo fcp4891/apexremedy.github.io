@@ -584,7 +584,6 @@ body.register-page {
   box-shadow:-2px 0 12px rgba(0,0,0,.15);
   transition:right .35s ease, visibility .35s ease, opacity .35s ease;
   z-index:1100;
-  padding-bottom:80px;
   visibility:hidden;
   opacity:0;
   display:flex;
