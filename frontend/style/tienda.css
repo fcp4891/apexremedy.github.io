@@ -3,7 +3,8 @@
 /* Asegurar que el contenedor principal tenga el mismo ancho que header/footer */
 .tienda .container,
 .tienda > .container,
-div.container[style*="max-width"] {
+.tienda-container,
+div.container.tienda-container {
     max-width: 1200px !important;
     margin: 0 auto !important;
     padding: 40px 20px !important;
@@ -64,11 +65,15 @@ div.container[style*="max-width"] {
     }
     
     /* Contenedor específico de tienda */
+    .tienda-container,
+    div.container.tienda-container,
     div.container[style*="max-width"] {
         max-width: 100% !important;
         padding: 30px 20px !important;
         padding-left: 20px !important;
         padding-right: 20px !important;
+        padding-top: 30px !important;
+        padding-bottom: 30px !important;
         box-sizing: border-box !important;
     }
     
@@ -134,11 +139,15 @@ div.container[style*="max-width"] {
     }
     
     /* Contenedor específico de tienda - mismo ancho que header/footer */
+    .tienda-container,
+    div.container.tienda-container,
     div.container[style*="max-width"] {
         max-width: 100% !important;
         padding: 20px 16px !important;
         padding-left: 16px !important;
         padding-right: 16px !important;
+        padding-top: 20px !important;
+        padding-bottom: 20px !important;
         box-sizing: border-box !important;
     }
     
