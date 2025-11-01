@@ -163,7 +163,14 @@
             
             container.innerHTML = html;
             
-            console.log('✅ Header cargado correctamente');
+            // Debug: verificar que el HTML se insertó correctamente
+            const insertedNav = container.querySelector('.admin-nav');
+            if (insertedNav) {
+                console.log('✅ Header cargado correctamente - HTML insertado');
+            } else {
+                console.error('❌ Header HTML vacío o sin .admin-nav');
+                console.log('HTML recibido:', html.substring(0, 200));
+            }
             
             // Inicializar después de cargar
             setTimeout(initializeHeader, 100);
@@ -273,7 +280,15 @@
             }
             
             container.innerHTML = html;
-            console.log('✅ Footer cargado correctamente');
+            
+            // Debug: verificar que el HTML se insertó correctamente
+            const insertedFooter = container.querySelector('.admin-footer');
+            if (insertedFooter) {
+                console.log('✅ Footer cargado correctamente - HTML insertado');
+            } else {
+                console.error('❌ Footer HTML vacío o sin .admin-footer');
+                console.log('HTML recibido:', html.substring(0, 200));
+            }
             
         } catch (error) {
             console.warn('⚠️ No se pudo cargar footer:', error.message);
