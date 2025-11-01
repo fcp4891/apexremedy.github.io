@@ -38,10 +38,14 @@
     }
     
     /**
-     * Obtener path base para GitHub Pages
+     * Obtener path base para GitHub Pages (usa el global si existe)
      */
     function getBasePath() {
-        // Detectar si estamos en GitHub Pages
+        // Usar el basePath global si está disponible
+        if (typeof window.BASE_PATH !== 'undefined') {
+            return window.BASE_PATH;
+        }
+        // Fallback: calcularlo manualmente
         if (window.location.hostname.includes('github.io')) {
             const pathParts = window.location.pathname.split('/').filter(p => p);
             const repoName = 'apexremedy.github.io';
@@ -58,9 +62,8 @@
      * Obtener la ruta del header según el rol
      */
     function getHeaderPath() {
-        const basePath = getBasePath();
-        const componentsPath = basePath ? basePath + 'components/' : './components';
-        return `${componentsPath}/header.html`; // Siempre admin header en esta sección
+        // Usar ruta relativa, loadAdminHeader ajustará automáticamente
+        return './components/header.html'; // Siempre admin header en esta sección
     }
     
     // ============================================
@@ -77,7 +80,22 @@
             return;
         }
         
-        const headerPath = getHeaderPath();
+        let headerPath = getHeaderPath();
+        
+        // Ajustar URL para GitHub Pages si es necesario
+        const basePath = getBasePath();
+        if (basePath) {
+            // Si la URL ya comienza con el basePath, no duplicar
+            if (headerPath.startsWith(basePath)) {
+                // Ya está ajustado
+            } else if (headerPath.startsWith('/')) {
+                // Si comienza con / pero no con basePath, agregar basePath al inicio
+                headerPath = basePath + headerPath.substring(1);
+            } else {
+                // Si es relativa (./ o sin /), reemplazar ./ y agregar basePath
+                headerPath = basePath + headerPath.replace('./', '');
+            }
+        }
         
         try {
             console.log(`📥 Cargando header: ${headerPath}`);
@@ -138,9 +156,22 @@
             return;
         }
         
+        let footerPath = './components/footer.html';
+        
+        // Ajustar URL para GitHub Pages si es necesario
         const basePath = getBasePath();
-        const componentsPath = basePath ? basePath + 'components/' : './components';
-        const footerPath = `${componentsPath}/footer.html`;
+        if (basePath) {
+            // Si la URL ya comienza con el basePath, no duplicar
+            if (footerPath.startsWith(basePath)) {
+                // Ya está ajustado
+            } else if (footerPath.startsWith('/')) {
+                // Si comienza con / pero no con basePath, agregar basePath al inicio
+                footerPath = basePath + footerPath.substring(1);
+            } else {
+                // Si es relativa (./ o sin /), reemplazar ./ y agregar basePath
+                footerPath = basePath + footerPath.replace('./', '');
+            }
+        }
         
         try {
             console.log(`📥 Cargando footer: ${footerPath}`);

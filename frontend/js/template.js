@@ -7,18 +7,21 @@
   'use strict';
 
   /**
-   * Obtener path base para GitHub Pages
+   * Obtener path base para GitHub Pages (usa el global si existe)
    */
   function getBasePath() {
-    // Detectar si estamos en GitHub Pages
+    // Usar el basePath global si está disponible
+    if (typeof window.BASE_PATH !== 'undefined') {
+      return window.BASE_PATH;
+    }
+    // Fallback: calcularlo manualmente
     if (window.location.hostname.includes('github.io')) {
-      const pathParts = window.location.pathname.split('/');
+      const pathParts = window.location.pathname.split('/').filter(p => p);
       const repoName = 'apexremedy.github.io';
       const repoIndex = pathParts.indexOf(repoName);
       
       if (repoIndex !== -1) {
-        // Construir el path base: /fcp4891/apexremedy.github.io/
-        return pathParts.slice(0, repoIndex + 1).join('/') + '/';
+        return '/' + pathParts.slice(0, repoIndex + 1).join('/') + '/';
       }
     }
     return '';
@@ -39,8 +42,22 @@
     }
 
     // Ajustar URL para GitHub Pages
+    // Si la URL ya es absoluta (comienza con /), no agregar basePath dos veces
+    let fullUrl = url;
     const basePath = getBasePath();
-    const fullUrl = basePath ? basePath + url.replace('./', '') : url;
+    
+    if (basePath) {
+      // Si la URL ya comienza con el basePath, no duplicar
+      if (url.startsWith(basePath)) {
+        fullUrl = url;
+      } else if (url.startsWith('/')) {
+        // Si comienza con / pero no con basePath, agregar basePath al inicio
+        fullUrl = basePath + url.substring(1);
+      } else {
+        // Si es relativa (./ o sin /), reemplazar ./ y agregar basePath
+        fullUrl = basePath + url.replace('./', '');
+      }
+    }
 
     try {
       const response = await fetch(fullUrl, { cache: 'no-store' });
