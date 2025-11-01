@@ -305,13 +305,25 @@ if (typeof AuthManager === 'undefined') {
             if (!this.isAuthenticated()) {
                 notify.warning('Debes iniciar sesión para acceder a esta página', 'Autenticación requerida');
                 
+                // Función helper para construir rutas con basePath
+                const getFullPath = (path) => {
+                    if (path.startsWith('http') || path.startsWith('//')) return path;
+                    if (typeof window.BASE_PATH !== 'undefined' && window.BASE_PATH) {
+                        const cleanPath = path.startsWith('/') ? path.substring(1) : 
+                                         path.startsWith('../') ? path.substring(3) : 
+                                         path.startsWith('./') ? path.substring(2) : path;
+                        return window.BASE_PATH + cleanPath;
+                    }
+                    return path;
+                };
+                
                 const currentPath = window.location.pathname;
                 const currentPage = currentPath.split('/').pop();
                 
                 if (currentPath.includes('admin')) {
-                    window.location.href = `../${redirectPath}?redirect=${currentPage}`;
+                    window.location.href = getFullPath(`../${redirectPath}?redirect=${currentPage}`);
                 } else {
-                    window.location.href = `./${redirectPath}?redirect=${currentPage}`;
+                    window.location.href = getFullPath(`./${redirectPath}?redirect=${currentPage}`);
                 }
                 return false;
             }
