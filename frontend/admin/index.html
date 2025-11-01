@@ -250,12 +250,12 @@
                 // 1. Usuarios
                 console.log('📥 Solicitando usuarios...');
                 try {
-                    const usersResponse = await api.request('/users');
+                    const usersResponse = await api.getUsers();
                     console.log('📊 Respuesta usuarios:', usersResponse);
                     
                     if (usersResponse.success) {
                         const users = usersResponse.data?.users || usersResponse.data || [];
-                        const count = Array.isArray(users) ? users.length : usersResponse.count || 0;
+                        const count = Array.isArray(users) ? users.length : usersResponse.total || usersResponse.count || 0;
                         document.getElementById('totalUsers').textContent = count;
                         console.log('✔️ Usuarios:', count);
                     } else {
@@ -270,7 +270,7 @@
                 // 2. Productos
                 console.log('📥 Solicitando productos...');
                 try {
-                    const productsResponse = await api.request('/products', 'GET');
+                    const productsResponse = await api.getProducts({ limit: 500 });
                     console.log('📊 Respuesta productos:', productsResponse);
                     
                     if (productsResponse.success) {
@@ -288,12 +288,12 @@
                 // 3. Pedidos
                 console.log('📥 Solicitando pedidos...');
                 try {
-                    const ordersResponse = await api.request('/orders', 'GET');
+                    const ordersResponse = await api.getAllOrders({ limit: 1000 });
                     console.log('📊 Respuesta pedidos:', ordersResponse);
                     
                     if (ordersResponse.success) {
                         const orders = ordersResponse.data?.orders || ordersResponse.data || [];
-                        const pending = orders.filter(o => o.status === 'pending').length;
+                        const pending = orders.filter(o => o.status === 'pending' || o.status === 'pending_payment').length;
                         document.getElementById('pendingOrders').textContent = pending;
                         
                         const today = new Date().toISOString().split('T')[0];

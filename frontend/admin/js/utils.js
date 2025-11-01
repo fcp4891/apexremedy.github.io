@@ -298,3 +298,5 @@ class Utils {
 // Exportar para uso global
 window.Utils = Utils;
 
+
+

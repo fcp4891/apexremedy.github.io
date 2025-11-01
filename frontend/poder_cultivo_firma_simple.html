@@ -1,0 +1,334 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Poder Simple – Traspaso de Derechos de Cultivo (Ley 20.000, Chile)</title>
+<link rel="icon" href="./favicon.png">
+<style>
+  :root{
+    --c1:#0f766e; /* teal-700 */
+    --c2:#115e59; /* teal-800 */
+    --bg:#f8fafc; /* slate-50 */
+    --text:#0f172a; /* slate-900 */
+    --muted:#475569; /* slate-600 */
+    --card:#ffffff;
+    --border:#e2e8f0;
+  }
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial,'Noto Sans',sans-serif;line-height:1.4}
+  .container{max-width:1024px;margin:24px auto;padding:0 16px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:0 8px 24px rgba(2,6,23,.05)}
+  .header{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;gap:12px;align-items:center;justify-content:space-between}
+  .title{margin:0;font-size:clamp(18px,3vw,22px);font-weight:800;color:var(--c2)}
+  .subtitle{margin:2px 0 0 0;color:var(--muted);font-size:13px}
+  .content{padding:18px 20px;display:grid;grid-template-columns:1fr;gap:14px}
+  .grid{display:grid;gap:12px}
+  @media(min-width:780px){.grid-2{grid-template-columns:1fr 1fr}.grid-3{grid-template-columns:repeat(3,1fr)}}
+  label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px}
+  input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:#fff;font-size:14px}
+  textarea{min-height:96px;resize:vertical}
+  .row{display:grid;gap:12px}
+  .hint{font-size:12px;color:#64748b}
+  .badge{display:inline-flex;gap:8px;align-items:center;padding:8px 12px;border-radius:999px;background:#ecfeff;color:#0e7490;border:1px solid #a5f3fc;font-size:12px;font-weight:600}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;padding:12px 20px;border-top:1px solid var(--border);background:linear-gradient(#fff, #fafafa)}
+  .btn{appearance:none;border:1px solid var(--border);background:#fff;color:#0f172a;padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:700}
+  .btn:hover{background:#f8fafc}
+  .btn.primary{background:var(--c1);border-color:var(--c1);color:#fff}
+  .btn.primary:hover{background:#0b5952}
+  .sig-wrap{border:1px dashed #cbd5e1;border-radius:12px;background:#ffffff;display:grid;gap:8px;padding:10px}
+  .sig-head{display:flex;align-items:center;justify-content:space-between}
+  .sig-head span{font-size:12px;color:#64748b}
+  canvas{width:100%;height:180px;border-radius:8px;background:#f1f5f9}
+  .flex{display:flex;gap:12px;align-items:center}
+  .switch{display:flex;gap:8px;align-items:center}
+  .footer-note{font-size:12px;color:#475569;padding:10px 20px}
+  .logo{display:flex; gap:10px; align-items:center}
+  .logo b{color:var(--c2)}
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="header">
+        <div class="logo">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M3 5h18M5 8h14v10a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8z" stroke="#0f766e" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M9 3v2M15 3v2" stroke="#0f766e" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <div>
+            <h1 class="title">Poder simple – Traspaso de derechos de cultivo</h1>
+            <p class="subtitle">Conforme Ley 20.000 (uso personal/medicinal/científico)</p>
+          </div>
+        </div>
+        <span class="badge">Firma electrónica simple</span>
+      </div>
+
+      <form id="poderForm" class="content">
+        <div class="grid grid-2">
+          <div>
+            <label>Finalidad permitida (art. 8 Ley 20.000)</label>
+            <select name="finalidad" required>
+              <option value="personal">Uso personal</option>
+              <option value="medicinal">Uso medicinal</option>
+              <option value="cientifico">Uso científico</option>
+            </select>
+          </div>
+          <div>
+            <label>Vigencia del poder</label>
+            <select name="vigencia">
+              <option value="fijo">Fija (con fecha término)</option>
+              <option value="indefinido">Indefinida</option>
+            </select>
+          </div>
+        </div>
+
+        <h3 style="margin:6px 0 0 0;color:#0f172a">Datos del Cedente</h3>
+        <div class="grid grid-2">
+          <div><label>Nombres y Apellidos</label><input name="cedente_nombre" required /></div>
+          <div><label>RUT</label><input name="cedente_rut" required placeholder="12.345.678-9" /></div>
+          <div><label>Domicilio</label><input name="cedente_domicilio" required /></div>
+          <div><label>Correo electrónico</label><input name="cedente_email" type="email" required /></div>
+        </div>
+
+        <h3 style="margin:6px 0 0 0;color:#0f172a">Datos del Cesionario/Autorizado</h3>
+        <div class="grid grid-2">
+          <div><label>Nombres y Apellidos</label><input name="cesionario_nombre" required /></div>
+          <div><label>RUT</label><input name="cesionario_rut" required placeholder="12.345.678-9" /></div>
+          <div><label>Domicilio</label><input name="cesionario_domicilio" required /></div>
+          <div><label>Correo electrónico</label><input name="cesionario_email" type="email" required /></div>
+        </div>
+
+        <h3 style="margin:6px 0 0 0;color:#0f172a">Lugar de cultivo</h3>
+        <div class="grid grid-2">
+          <div><label>Dirección completa</label><input name="direccion_cultivo" required /></div>
+          <div><label>Comuna / Región</label><input name="comuna_region" required /></div>
+        </div>
+
+        <div class="grid grid-3">
+          <div><label>Fecha de inicio</label><input name="fecha_inicio" type="date" required /></div>
+          <div><label>Fecha de término</label><input name="fecha_termino" type="date" /></div>
+          <div>
+            <label>Cantidad estimada de plantas</label>
+            <input name="cantidad_plantas" type="number" min="1" placeholder="Opcional" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>Declaración de fines (se inserta en el documento)</label>
+            <textarea name="declaracion">Declaro que la presente autorización se otorga exclusivamente para fines personales y/o medicinales y/o científicos, sin ánimo de lucro, tráfico ni comercialización, conforme al artículo 8 de la Ley 20.000. Ambas partes se obligan a cumplir la normativa aplicable y conocen las sanciones legales en caso de incumplimiento.</textarea>
+            <p class="hint">Puedes ajustar el texto según tu caso. Evita referencias a compraventa o lucro.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-2">
+          <div class="sig-wrap">
+            <div class="sig-head">
+              <strong>Firma Cedente</strong>
+              <div class="flex">
+                <button type="button" class="btn" onclick="clearCanvas('sigCedente')">Limpiar</button>
+              </div>
+            </div>
+            <canvas id="sigCedente"></canvas>
+            <span>Firme con el mouse o dedo (móvil).</span>
+          </div>
+          <div class="sig-wrap">
+            <div class="sig-head">
+              <strong>Firma Cesionario</strong>
+              <div class="flex">
+                <button type="button" class="btn" onclick="clearCanvas('sigCesionario')">Limpiar</button>
+              </div>
+            </div>
+            <canvas id="sigCesionario"></canvas>
+            <span>Firme con el mouse o dedo (móvil).</span>
+          </div>
+        </div>
+
+        <div class="row switch">
+          <input type="checkbox" id="acepto" required />
+          <label for="acepto">Confirmo que la información es veraz y acepto firmar electrónicamente (firma electrónica simple).</label>
+        </div>
+      </form>
+
+      <div class="actions">
+        <button class="btn" onclick="previewDoc()">Vista previa</button>
+        <button class="btn primary" onclick="generateDoc()">Generar documento (imprimir a PDF)</button>
+      </div>
+      <div class="footer-note">
+        <strong>Nota:</strong> Este flujo implementa firma electrónica simple (captura de firma manuscrita en canvas + consentimiento). 
+        Para firma avanzada con certificado (Ley 19.799), integra un proveedor externo y adjunta su comprobante.
+      </div>
+    </div>
+  </div>
+
+<script>
+// ---- Firma en canvas (sin librerías externas) ----
+function setupSignatureCanvas(id){
+  const canvas = document.getElementById(id);
+  const ctx = canvas.getContext('2d');
+  // Ajuste de tamaño para alta densidad
+  function resize(){
+    const ratio = Math.max(window.devicePixelRatio || 1, 1);
+    const w = canvas.clientWidth;
+    const h = canvas.clientHeight;
+    canvas.width = w * ratio;
+    canvas.height = h * ratio;
+    ctx.scale(ratio, ratio);
+    ctx.lineWidth = 2;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = '#0f172a';
+  }
+  resize(); new ResizeObserver(resize).observe(canvas);
+
+  let drawing=false, prev=null;
+
+  function pos(e){
+    if (e.touches && e.touches.length){ 
+      const r = canvas.getBoundingClientRect();
+      return {x:e.touches[0].clientX - r.left, y:e.touches[0].clientY - r.top};
+    } else {
+      const r = canvas.getBoundingClientRect();
+      return {x:e.clientX - r.left, y:e.clientY - r.top};
+    }
+  }
+
+  function start(e){ drawing=true; prev=pos(e); e.preventDefault(); }
+  function move(e){
+    if(!drawing) return;
+    const p = pos(e);
+    ctx.beginPath();
+    ctx.moveTo(prev.x, prev.y);
+    ctx.lineTo(p.x, p.y);
+    ctx.stroke();
+    prev=p;
+    e.preventDefault();
+  }
+  function end(){ drawing=false; prev=null; }
+
+  canvas.addEventListener('mousedown', start);
+  canvas.addEventListener('mousemove', move);
+  window.addEventListener('mouseup', end);
+
+  canvas.addEventListener('touchstart', start, {passive:false});
+  canvas.addEventListener('touchmove', move, {passive:false});
+  window.addEventListener('touchend', end);
+}
+
+function clearCanvas(id){
+  const c = document.getElementById(id);
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+}
+
+setupSignatureCanvas('sigCedente');
+setupSignatureCanvas('sigCesionario');
+
+// ---- Generación del documento (HTML imprimible) ----
+function gatherData(){
+  const form = document.getElementById('poderForm');
+  const data = Object.fromEntries(new FormData(form).entries());
+  data.acepto = document.getElementById('acepto').checked;
+  data.sigCedente = document.getElementById('sigCedente').toDataURL('image/png');
+  data.sigCesionario = document.getElementById('sigCesionario').toDataURL('image/png');
+  // Fechas legibles
+  const fmt = (v) => v ? new Date(v+'T12:00:00').toLocaleDateString('es-CL') : '';
+  data.fecha_inicio_fmt = fmt(data.fecha_inicio);
+  data.fecha_termino_fmt = fmt(data.fecha_termino);
+  data.hoy = new Date().toLocaleDateString('es-CL');
+  return data;
+}
+
+function buildPrintableHTML(d){
+  const vigenciaTexto = d.vigencia==='indefinido'?'indefinida':`desde ${d.fecha_inicio_fmt} hasta ${d.fecha_termino_fmt || '________'}`;
+  return `<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8">
+<title>Poder simple – Traspaso de derechos de cultivo</title>
+<style>
+  body{font-family: Georgia, 'Times New Roman', serif; color:#0f172a; margin:40px}
+  h1{font-size:20px;margin:0 0 4px}
+  .muted{color:#334155}
+  .box{border:1px solid #cbd5e1;padding:14px;border-radius:8px;margin:10px 0}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .sep{height:1px;background:#e2e8f0;margin:18px 0}
+  .sign{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:24px}
+  .sign-box{border-top:1px solid #94a3b8;padding-top:6px;text-align:center}
+  img.sig{width:100%;max-height:120px;object-fit:contain}
+  .small{font-size:12px;color:#475569}
+</style>
+</head><body>
+  <h1>Poder simple – Traspaso de derechos de cultivo</h1>
+  <div class="muted">Conforme Ley 20.000 (uso personal, medicinal o científico). Fecha: ${d.hoy}</div>
+
+  <div class="box">
+    <strong>Finalidad:</strong> ${d.finalidad}. 
+    <strong>Vigencia:</strong> ${vigenciaTexto}.
+  </div>
+
+  <h3>1) Cedente</h3>
+  <div class="grid box">
+    <div><strong>Nombre:</strong> ${d.cedente_nombre}</div>
+    <div><strong>RUT:</strong> ${d.cedente_rut}</div>
+    <div><strong>Domicilio:</strong> ${d.cedente_domicilio}</div>
+    <div><strong>Email:</strong> ${d.cedente_email}</div>
+  </div>
+
+  <h3>2) Cesionario/Autorizado</h3>
+  <div class="grid box">
+    <div><strong>Nombre:</strong> ${d.cesionario_nombre}</div>
+    <div><strong>RUT:</strong> ${d.cesionario_rut}</div>
+    <div><strong>Domicilio:</strong> ${d.cesionario_domicilio}</div>
+    <div><strong>Email:</strong> ${d.cesionario_email}</div>
+  </div>
+
+  <h3>3) Lugar de cultivo</h3>
+  <div class="box">
+    <div><strong>Dirección:</strong> ${d.direccion_cultivo}</div>
+    <div><strong>Comuna/Región:</strong> ${d.comuna_region}</div>
+    <div><strong>Cantidad estimada de plantas:</strong> ${d.cantidad_plantas || 'No especificado'}</div>
+  </div>
+
+  <div class="sep"></div>
+
+  <h3>Declaración</h3>
+  <div class="box">${(d.declaracion || '').replace(/</g,'&lt;')}</div>
+
+  <p class="small">
+    Este documento se firma electrónicamente (firma simple) por medio de la traza de firma manuscrita y la aceptación expresa de las partes.
+    Para elevar el estándar probatorio puede usarse firma electrónica avanzada y/o registro notarial/digital complementario.
+  </p>
+
+  <div class="sign">
+    <div>
+      <img class="sig" src="${d.sigCedente}" alt="Firma Cedente" />
+      <div class="sign-box">
+        ${d.cedente_nombre} · RUT ${d.cedente_rut}<br/>
+        Cedente
+      </div>
+    </div>
+    <div>
+      <img class="sig" src="${d.sigCesionario}" alt="Firma Cesionario" />
+      <div class="sign-box">
+        ${d.cesionario_nombre} · RUT ${d.cesionario_rut}<br/>
+        Cesionario/Autorizado
+      </div>
+    </div>
+  </div>
+</body></html>`;
+}
+
+function previewDoc(){
+  const d = gatherData();
+  if(!d.acepto){ alert('Debes aceptar la firma electrónica simple.'); return; }
+  const html = buildPrintableHTML(d);
+  const w = window.open('', '_blank');
+  w.document.open(); w.document.write(html); w.document.close();
+}
+
+function generateDoc(){
+  previewDoc(); // abre en nueva pestaña con diseño listo para imprimir a PDF
+  // El usuario puede usar Ctrl/Cmd+P para guardar como PDF. Esto evita dependencias externas.
+}
+</script>
+</body></html>

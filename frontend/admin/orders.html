@@ -378,7 +378,7 @@
         async function loadOrders() {
             try {
                 console.log('📦 Cargando todos los pedidos...');
-                const response = await api.request('/orders?limit=1000');
+                const response = await api.getAllOrders({ limit: 1000 });
                 
                 if (response.success) {
                     allOrders = response.data.orders || [];
@@ -408,7 +408,7 @@
 
         async function loadCustomers() {
             try {
-                const response = await api.request('/users?role=customer');
+                const response = await api.getUsers({ role: 'customer' });
                 
                 if (response.success) {
                     const users = response.data.users || [];

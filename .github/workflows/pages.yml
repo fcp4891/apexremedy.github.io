@@ -129,6 +129,23 @@ jobs:
             fi
           fi
       
+      - name: Export orders to JSON (Static API)
+        working-directory: ./backend
+        continue-on-error: true
+        run: |
+          if [ -f "../database/apexremedy.db" ] || [ -f "database/apexremedy.db" ]; then
+            echo "🚀 Exportando pedidos a JSON estático..."
+            DB_PATH=${DB_PATH:-database/apexremedy.db} node scripts/export-orders-to-json.js
+            echo "✅ Exportación de pedidos completada"
+          else
+            echo "⚠️ Base de datos no encontrada, creando JSON vacío de pedidos..."
+            mkdir -p ../frontend/api
+            if [ ! -f "../frontend/api/orders.json" ]; then
+              echo '{"success":true,"message":"JSON vacío - base de datos no disponible","data":{"orders":[],"total":0,"timestamp":"'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"}}' > ../frontend/api/orders.json
+              echo "✅ JSON vacío de pedidos creado"
+            fi
+          fi
+      
       - name: Verify JSON files
         run: |
           if [ -f "frontend/api/products.json" ]; then
@@ -156,6 +173,16 @@ jobs:
             fi
           else
             echo "⚠️ Advertencia: users.json no encontrado"
+          fi
+          if [ -f "frontend/api/orders.json" ]; then
+            echo "✅ orders.json encontrado"
+            echo "📊 Tamaño del archivo: $(du -h frontend/api/orders.json | cut -f1)"
+            ORDER_COUNT=$(cat frontend/api/orders.json | grep -o '"total":[0-9]*' | grep -o '[0-9]*' | head -1)
+            if [ -n "$ORDER_COUNT" ]; then
+              echo "📦 Pedidos en JSON: $ORDER_COUNT"
+            fi
+          else
+            echo "⚠️ Advertencia: orders.json no encontrado"
           fi
       
       - name: Setup Pages

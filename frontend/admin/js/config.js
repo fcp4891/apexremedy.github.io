@@ -70,3 +70,4 @@ const CONFIG = {
 // Exportar para uso global
 window.CONFIG = CONFIG;
 
+

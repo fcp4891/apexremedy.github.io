@@ -703,18 +703,106 @@ if (typeof APIClient === 'undefined') {
 
         // Métodos de pedidos (ADMIN)
         async getAllOrders(filters = {}) {
-            const queryParams = new URLSearchParams();
-            
-            Object.keys(filters).forEach(key => {
-                if (filters[key]) {
-                    queryParams.append(key, filters[key]);
+            // Helper para aplicar filtros a orders
+            const applyFiltersToOrders = (orders, filters) => {
+                let filtered = [...orders];
+                
+                // Filtrar por estado
+                if (filters.status && filters.status !== 'all') {
+                    filtered = filtered.filter(o => o.status === filters.status);
                 }
-            });
-
-            const queryString = queryParams.toString();
-            const endpoint = queryString ? `/orders?${queryString}` : '/orders';
+                
+                // Filtrar por cliente
+                if (filters.customer_id) {
+                    filtered = filtered.filter(o => o.customer_id === parseInt(filters.customer_id));
+                }
+                
+                // Filtrar por fecha desde
+                if (filters.date_from) {
+                    filtered = filtered.filter(o => {
+                        const orderDate = new Date(o.created_at || o.date);
+                        const filterDate = new Date(filters.date_from);
+                        return orderDate >= filterDate;
+                    });
+                }
+                
+                // Filtrar por fecha hasta
+                if (filters.date_to) {
+                    filtered = filtered.filter(o => {
+                        const orderDate = new Date(o.created_at || o.date);
+                        const filterDate = new Date(filters.date_to);
+                        return orderDate <= filterDate;
+                    });
+                }
+                
+                // Limitar resultados
+                if (filters.limit) {
+                    filtered = filtered.slice(0, parseInt(filters.limit));
+                }
+                
+                return filtered;
+            };
             
-            return await this.request(endpoint);
+            // SIEMPRE intentar JSON estático PRIMERO (más rápido y funciona sin backend)
+            try {
+                const staticData = await this.loadStaticJSON('orders.json');
+                console.log('🔍 JSON estático de orders cargado:', staticData);
+                if (staticData && staticData.success && staticData.data && staticData.data.orders) {
+                    let orders = applyFiltersToOrders(staticData.data.orders, filters);
+                    console.log('✅ Pedidos cargados desde JSON estático:', orders.length);
+                    return {
+                        success: true,
+                        data: { orders },
+                        message: 'Pedidos cargados desde API estática'
+                    };
+                }
+            } catch (error) {
+                console.warn('⚠️ Error al cargar JSON estático de orders, intentando API dinámica...', error);
+            }
+            
+            // Solo si hay backend configurado Y el JSON falló, intentar API dinámica
+            if (this.baseURL) {
+                try {
+                    const queryParams = new URLSearchParams();
+                    
+                    Object.keys(filters).forEach(key => {
+                        if (filters[key]) {
+                            queryParams.append(key, filters[key]);
+                        }
+                    });
+
+                    const queryString = queryParams.toString();
+                    const endpoint = queryString ? `/orders?${queryString}` : '/orders';
+                    
+                    return await this.request(endpoint);
+                } catch (error) {
+                    // Si la API dinámica falla, intentar JSON estático como último recurso
+                    console.warn('⚠️ API dinámica falló, intentando JSON estático como fallback...', error);
+                    try {
+                        const staticData = await this.loadStaticJSON('orders.json');
+                        if (staticData && staticData.success && staticData.data && staticData.data.orders) {
+                            let orders = applyFiltersToOrders(staticData.data.orders, filters);
+                            console.log('✅ Pedidos cargados desde JSON estático (fallback):', orders.length);
+                            return {
+                                success: true,
+                                data: { orders },
+                                message: 'Pedidos cargados desde API estática (fallback)'
+                            };
+                        }
+                    } catch (staticError) {
+                        console.error('❌ No se pudo cargar JSON estático como fallback:', staticError);
+                    }
+                    throw error;
+                }
+            } else {
+                // No hay backend y no se pudo cargar JSON estático
+                console.warn('⚠️ No hay backend y JSON estático no disponible para orders');
+                return {
+                    success: true,
+                    data: { orders: [] },
+                    message: 'No se pudieron cargar pedidos'
+                };
+            }
         }
 
         async updateOrderStatus(id, status) {
@@ -746,18 +834,102 @@ if (typeof APIClient === 'undefined') {
         // ============================================
         
         async getUsers(filters = {}) {
-            const queryParams = new URLSearchParams();
-            
-            Object.keys(filters).forEach(key => {
-                if (filters[key]) {
-                    queryParams.append(key, filters[key]);
+            // Helper para aplicar filtros a users
+            const applyFiltersToUsers = (users, filters) => {
+                let filtered = [...users];
+                
+                // Filtrar por rol
+                if (filters.role && filters.role !== 'all') {
+                    filtered = filtered.filter(u => u.role === filters.role);
                 }
-            });
-
-            const queryString = queryParams.toString();
-            const endpoint = queryString ? `/users?${queryString}` : '/users';
+                
+                // Filtrar por estado de cuenta
+                if (filters.account_status) {
+                    filtered = filtered.filter(u => u.account_status === filters.account_status);
+                }
+                
+                // Filtrar por búsqueda
+                if (filters.search) {
+                    const searchLower = filters.search.toLowerCase();
+                    filtered = filtered.filter(u => 
+                        (u.name && u.name.toLowerCase().includes(searchLower)) ||
+                        (u.email && u.email.toLowerCase().includes(searchLower)) ||
+                        (u.first_name && u.first_name.toLowerCase().includes(searchLower)) ||
+                        (u.last_name && u.last_name.toLowerCase().includes(searchLower))
+                    );
+                }
+                
+                // Limitar resultados
+                if (filters.limit) {
+                    filtered = filtered.slice(0, parseInt(filters.limit));
+                }
+                
+                return filtered;
+            };
             
-            return await this.request(endpoint);
+            // SIEMPRE intentar JSON estático PRIMERO (más rápido y funciona sin backend)
+            try {
+                const staticData = await this.loadStaticJSON('users.json');
+                console.log('🔍 JSON estático de users cargado:', staticData);
+                if (staticData && staticData.success && staticData.data && staticData.data.users) {
+                    let users = applyFiltersToUsers(staticData.data.users, filters);
+                    console.log('✅ Usuarios cargados desde JSON estático:', users.length);
+                    return {
+                        success: true,
+                        data: { users },
+                        total: users.length,
+                        message: 'Usuarios cargados desde API estática'
+                    };
+                }
+            } catch (error) {
+                console.warn('⚠️ Error al cargar JSON estático de users, intentando API dinámica...', error);
+            }
+            
+            // Solo si hay backend configurado Y el JSON falló, intentar API dinámica
+            if (this.baseURL) {
+                try {
+                    const queryParams = new URLSearchParams();
+                    
+                    Object.keys(filters).forEach(key => {
+                        if (filters[key]) {
+                            queryParams.append(key, filters[key]);
+                        }
+                    });
+
+                    const queryString = queryParams.toString();
+                    const endpoint = queryString ? `/users?${queryString}` : '/users';
+                    
+                    return await this.request(endpoint);
+                } catch (error) {
+                    // Si la API dinámica falla, intentar JSON estático como último recurso
+                    console.warn('⚠️ API dinámica falló, intentando JSON estático como fallback...', error);
+                    try {
+                        const staticData = await this.loadStaticJSON('users.json');
+                        if (staticData && staticData.success && staticData.data && staticData.data.users) {
+                            let users = applyFiltersToUsers(staticData.data.users, filters);
+                            console.log('✅ Usuarios cargados desde JSON estático (fallback):', users.length);
+                            return {
+                                success: true,
+                                data: { users },
+                                total: users.length,
+                                message: 'Usuarios cargados desde API estática (fallback)'
+                            };
+                        }
+                    } catch (staticError) {
+                        console.error('❌ No se pudo cargar JSON estático como fallback:', staticError);
+                    }
+                    throw error;
+                }
+            } else {
+                // No hay backend y no se pudo cargar JSON estático
+                console.warn('⚠️ No hay backend y JSON estático no disponible para users');
+                return {
+                    success: true,
+                    data: { users: [] },
+                    total: 0,
+                    message: 'No se pudieron cargar usuarios'
+                };
+            }
         }
 
         async getUserById(id) {
