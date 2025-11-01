@@ -99,8 +99,15 @@
         console.log('🔧 Hostname:', window.location.hostname);
     }
     
-    // Función para actualizar rutas en un elemento
+    // Función para actualizar rutas en un elemento (con protección contra actualizaciones múltiples)
+    const updatedElements = new WeakSet(); // Track elementos ya actualizados
+    
     function updateElementPath(element, attribute) {
+        // Prevenir actualizaciones múltiples del mismo elemento
+        if (updatedElements.has(element)) {
+            return;
+        }
+        
         const currentPath = element.getAttribute(attribute);
         if (currentPath && 
             !currentPath.startsWith('http') && 
@@ -121,10 +128,6 @@
                         cleanPath = cleanPath.substring(2);
                     }
                     // Construir la nueva ruta completa
-                    // El basePath ya incluye el path completo desde la raíz del dominio GitHub Pages
-                    // Ejemplo: basePath = "/fcp4891/apexremedy.github.io/frontend/"
-                    // cleanPath = "style/css_home.css"
-                    // newPath = "/fcp4891/apexremedy.github.io/frontend/style/css_home.css"
                     let newPath = currentBasePath + cleanPath;
                     
                     // Asegurarse de que la ruta comience con / para que sea absoluta desde el dominio
@@ -135,6 +138,7 @@
                     // Solo actualizar si el nuevo path es diferente y válido
                     if (newPath && newPath !== currentPath && newPath.startsWith('/')) {
                         element.setAttribute(attribute, newPath);
+                        updatedElements.add(element); // Marcar como actualizado
                     }
                 }
             }

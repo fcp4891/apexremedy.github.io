@@ -540,18 +540,27 @@ if (profileLink) {
       initListenerAdded = true;
       
       const executeInit = () => {
-        if (!initCalled && !initInProgress) {
+        // Protección doble: verificar tanto initCalled como templateInitializationLock
+        if (!initCalled && !initInProgress && !templateInitializationLock) {
           init().catch(error => {
             console.error('❌ Error en init():', error);
+            // En caso de error, permitir reintento solo si es crítico
+            if (error.message && !error.message.includes('critical')) {
+              templateInitializationLock = true; // Mantener lock para prevenir loops
+            }
           });
+        } else {
+          console.log('⚠️ Template init ya fue ejecutado o está en progreso, saltando...');
         }
       };
       
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', executeInit, { once: true });
       } else {
-        // Si ya está listo, ejecutar después de un pequeño delay para evitar conflictos
-        setTimeout(executeInit, 10);
+        // Si ya está listo, ejecutar inmediatamente pero solo una vez
+        if (!templateInitializationLock && !initCalled && !initInProgress) {
+          executeInit();
+        }
       }
     }
 
