@@ -279,8 +279,7 @@
     // Asegurar que el carrito esté oculto por defecto
     if (cartSidebar) {
       cartSidebar.classList.remove('open');
-      cartSidebar.style.visibility = 'hidden';
-      cartSidebar.style.opacity = '0';
+      // NO establecer estilos inline que sobrescriban CSS
     }
     if (cartOverlay) {
       cartOverlay.style.display = 'none';

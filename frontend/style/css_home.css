@@ -586,7 +586,7 @@ body.register-page {
   z-index:1100;
   visibility:hidden;
   opacity:0;
-  display:flex;
+  display:none;
   flex-direction:column;
 }
 
@@ -594,6 +594,7 @@ body.register-page {
   right:0;
   visibility:visible;
   opacity:1;
+  display:flex;
 }
 
 .cart-header{
@@ -1107,26 +1108,27 @@ body:has(.cart-sidebar.open) .cart-overlay{
   .filter-group{width:100%}
   .filter-select,.search-box{width:100%}
   
-  /* Cart - Solución simplificada para móvil usando flexbox */
+  /* Cart - Solución para móvil: máximo 80% de la pantalla */
   .cart-sidebar{
-    width:100vw!important;
-    max-width:100vw!important;
-    right:-100vw!important;
+    width:80vw!important;
+    max-width:80vw!important;
+    right:-80vw!important;
     visibility:hidden!important;
     opacity:0!important;
     position:fixed!important;
     top:0!important;
-    left:0!important;
+    left:auto!important;
     height:100vh!important;
     max-height:100vh!important;
     padding:0!important;
     margin:0!important;
     overflow:hidden!important;
     box-sizing:border-box!important;
-    display:flex!important;
+    display:none!important;
     flex-direction:column!important;
     z-index:1100!important;
     transition:right .35s ease!important;
+    box-shadow:-2px 0 12px rgba(0,0,0,.15)!important;
   }
   
   .cart-sidebar.open{
