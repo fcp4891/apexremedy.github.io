@@ -212,7 +212,17 @@
   /**
    * Configurar sidebar del carrito
    */
+  // Flag para prevenir múltiples configuraciones del carrito
+  let cartSidebarSetup = false;
+  let cartEscHandler = null;
+
   function setupCartSidebar() {
+    // Prevenir múltiples configuraciones
+    if (cartSidebarSetup) {
+      return;
+    }
+    cartSidebarSetup = true;
+
     const cartToggle = document.getElementById('cartToggle');
     const cartSidebar = document.getElementById('cartSidebar');
     const cartOverlay = document.getElementById('cartOverlay');
@@ -280,10 +290,15 @@
       cartOverlay.addEventListener('click', closeCartFn);
     }
 
-    // Cerrar con ESC
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeCartFn();
-    });
+    // Cerrar con ESC (solo una vez)
+    if (!cartEscHandler) {
+      cartEscHandler = (e) => {
+        if (e.key === 'Escape' && cartSidebar && cartSidebar.classList.contains('open')) {
+          closeCartFn();
+        }
+      };
+      document.addEventListener('keydown', cartEscHandler);
+    }
   }
 
   /**
@@ -483,6 +498,11 @@ if (profileLink) {
         setupMobileMenu();
         setupCartSidebar();
         window.templateUIInitialized = true;
+      } else {
+        // Si ya se inicializó, solo configurar el carrito si no está configurado
+        if (!cartSidebarSetup) {
+          setupCartSidebar();
+        }
       }
 
       // 6. Esperar a que DOM se estabilice antes de actualizar el carrito
