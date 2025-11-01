@@ -72,23 +72,30 @@ jobs:
         working-directory: ./backend
         continue-on-error: true
         run: |
-          # Si ya hay productos en el JSON, no hacer nada
+          # Si ya hay productos en el JSON, NO hacer nada - preservar el JSON existente
           if [ "$PRODUCTS_EXIST" = "true" ]; then
-            echo "✅ Manteniendo JSON existente con productos"
+            echo "✅ JSON existente tiene productos, preservando archivos"
+            echo "✅ NO se ejecutará exportación para mantener los productos existentes"
             exit 0
           fi
           
+          # Solo exportar si NO hay productos existentes
           if [ -f "../database/apexremedy.db" ] || [ -f "database/apexremedy.db" ]; then
             echo "🚀 Exportando productos a JSON estático..."
             DB_PATH=${DB_PATH:-database/apexremedy.db} node scripts/export-products-to-json.js
             echo "✅ Exportación completada"
           else
             echo "⚠️ Base de datos no encontrada y no hay JSON con productos"
-            echo "⚠️ Creando JSON vacío para evitar errores..."
+            echo "⚠️ Creando JSON vacío SOLO porque no hay productos existentes..."
             mkdir -p ../frontend/api
-            echo '{"success":true,"message":"JSON vacío - base de datos no disponible","data":{"products":[],"total":0,"timestamp":"'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"}}' > ../frontend/api/products.json
-            echo '{"success":true,"message":"JSON vacío - base de datos no disponible","data":{"products":[],"total":0,"timestamp":"'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"}}' > ../frontend/api/products-featured.json
-            echo "✅ JSON vacío creado"
+            # Solo crear JSON vacío si realmente no existe uno con productos
+            if [ ! -f "../frontend/api/products.json" ]; then
+              echo '{"success":true,"message":"JSON vacío - base de datos no disponible","data":{"products":[],"total":0,"timestamp":"'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"}}' > ../frontend/api/products.json
+              echo '{"success":true,"message":"JSON vacío - base de datos no disponible","data":{"products":[],"total":0,"timestamp":"'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"}}' > ../frontend/api/products-featured.json
+              echo "✅ JSON vacío creado"
+            else
+              echo "⚠️ JSON ya existe, no sobrescribiendo"
+            fi
           fi
       
       - name: Verify JSON files
