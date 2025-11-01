@@ -180,39 +180,69 @@ class ProductManager {
     filterProducts(filters) {
         let filtered = [...this.products];
         
+        console.log('🔍 Filtros aplicados:', filters);
+        console.log('📦 Productos antes de filtrar:', filtered.length);
+        
+        // Filtrar productos medicinales PRIMERO si el usuario no tiene acceso
+        if (!this.canViewMedicinal()) {
+            const beforeMedicinal = filtered.length;
+            filtered = filtered.filter(p => {
+                // Excluir productos medicinales y categoría medicinal
+                const isMedicinal = p.requires_prescription === true || 
+                                   p.category_slug === 'medicinal' ||
+                                   (p.category && p.category.toLowerCase().includes('medicinal'));
+                return !isMedicinal;
+            });
+            console.log(`   → Después de filtrar productos medicinales (${beforeMedicinal} → ${filtered.length})`);
+        }
+        
         if (filters.category && filters.category !== 'all') {
-            filtered = filtered.filter(p => p.category === filters.category);
-        }
-        
-        if (filters.minPrice) {
-            filtered = filtered.filter(p => p.price >= filters.minPrice);
-        }
-        
-        if (filters.maxPrice) {
-            filtered = filtered.filter(p => p.price <= filters.maxPrice);
-        }
-        
-        if (filters.inStock) {
-            filtered = filtered.filter(p => this.formatStock(p.stock) > 0);
-        }
-        
-        if (filters.featured !== undefined) {
-            filtered = filtered.filter(p => p.featured === filters.featured);
+            const beforeCategory = filtered.length;
+            filtered = filtered.filter(p => {
+                const matches = p.category === filters.category || 
+                               p.category_slug === filters.category ||
+                               p.category_id === parseInt(filters.category);
+                return matches;
+            });
+            console.log(`   → Después de filtrar por categoría "${filters.category}" (${beforeCategory} → ${filtered.length})`);
         }
         
         if (filters.search) {
-            const search = filters.search.toLowerCase();
+            const beforeSearch = filtered.length;
+            const searchLower = filters.search.toLowerCase();
             filtered = filtered.filter(p => 
-                p.name.toLowerCase().includes(search) ||
-                (p.description && p.description.toLowerCase().includes(search))
+                (p.name && p.name.toLowerCase().includes(searchLower)) ||
+                (p.description && p.description.toLowerCase().includes(searchLower)) ||
+                (p.sku && p.sku.toLowerCase().includes(searchLower))
             );
+            console.log(`   → Después de filtrar por búsqueda "${filters.search}" (${beforeSearch} → ${filtered.length})`);
         }
         
-        // 🆕 Filtrar productos medicinales si el usuario no tiene acceso
-        if (!this.canViewMedicinal()) {
-            filtered = filtered.filter(p => !p.requires_prescription);
+        if (filters.minPrice) {
+            const beforeMinPrice = filtered.length;
+            filtered = filtered.filter(p => (p.price || 0) >= filters.minPrice);
+            console.log(`   → Después de filtrar por precio mínimo ${filters.minPrice} (${beforeMinPrice} → ${filtered.length})`);
         }
         
+        if (filters.maxPrice) {
+            const beforeMaxPrice = filtered.length;
+            filtered = filtered.filter(p => (p.price || 0) <= filters.maxPrice);
+            console.log(`   → Después de filtrar por precio máximo ${filters.maxPrice} (${beforeMaxPrice} → ${filtered.length})`);
+        }
+        
+        if (filters.inStock) {
+            const beforeStock = filtered.length;
+            filtered = filtered.filter(p => this.formatStock(p.stock) > 0);
+            console.log(`   → Después de filtrar por stock (${beforeStock} → ${filtered.length})`);
+        }
+        
+        if (filters.featured !== undefined && filters.featured) {
+            const beforeFeatured = filtered.length;
+            filtered = filtered.filter(p => p.featured === true);
+            console.log(`   → Después de filtrar por destacados (${beforeFeatured} → ${filtered.length})`);
+        }
+        
+        console.log('✅ Productos después de todos los filtros:', filtered.length);
         return filtered;
     }
 
