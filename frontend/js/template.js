@@ -406,21 +406,44 @@ if (profileLink) {
 /**
  * Inicialización principal con detección de área (admin/customer)
  */
-let initCalled = false;
-let initInProgress = false;
-let initListenerAdded = false;
-
-async function init() {
-  // Prevenir múltiples inicializaciones
-  if (initCalled || initInProgress) {
-    console.log('⚠️ Init ya fue llamado o está en progreso, ignorando...');
-    return;
+  let initCalled = false;
+  let initInProgress = false;
+  let initListenerAdded = false;
+  let initPromise = null; // Cachear la promesa de init para evitar múltiples ejecuciones
+  
+  async function init() {
+    // Prevenir múltiples inicializaciones
+    if (initCalled) {
+      console.log('⚠️ Init ya fue completado, ignorando...');
+      return;
+    }
+    
+    if (initInProgress) {
+      console.log('⚠️ Init ya está en progreso, esperando promesa existente...');
+      // Esperar a que termine la inicialización en progreso
+      if (initPromise) {
+        return await initPromise;
+      }
+      return;
+    }
+    
+    initInProgress = true;
+    console.log('🚀 Inicializando template.js...');
+    
+    // Crear promesa para cachear
+    initPromise = (async () => {
+      try {
+        return await doInit();
+      } finally {
+        initInProgress = false;
+      }
+    })();
+    
+    return await initPromise;
   }
   
-  initInProgress = true;
-  console.log('🚀 Inicializando template.js...');
-  
-  try {
+  async function doInit() {
+    try {
     // 1. Determinar si estamos en el área admin o customer
     const isAdminArea = location.pathname.toLowerCase().includes('/admin/');
     
@@ -441,10 +464,13 @@ async function init() {
       // Pequeño delay para asegurar que el DOM se ha actualizado
       await new Promise(resolve => setTimeout(resolve, 50));
       
-      // 5. Configurar navegación y UI
-      setActiveNavLink();
-      setupMobileMenu();
-      setupCartSidebar();
+      // 5. Configurar navegación y UI (solo si no se ha hecho antes)
+      if (!window.templateUIInitialized) {
+        setActiveNavLink();
+        setupMobileMenu();
+        setupCartSidebar();
+        window.templateUIInitialized = true;
+      }
 
       // 6. Esperar a que DOM se estabilice antes de actualizar el carrito
       setTimeout(updateCartCount, 150);
@@ -459,35 +485,35 @@ async function init() {
       }
     }
     
-    initCalled = true;
-    console.log('✅ Template.js inicializado correctamente');
-  } catch (error) {
-    console.error('❌ Error al inicializar template.js:', error);
-  } finally {
-    initInProgress = false;
-  }
-}
-
-  // Ejecutar cuando el DOM esté listo (solo una vez)
-  // Asegurar que solo agregamos el listener una vez
-  if (!initListenerAdded) {
-    initListenerAdded = true;
-    
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', function() {
-        if (!initCalled && !initInProgress) {
-          init();
-        }
-      }, { once: true });
-    } else {
-      // Si ya está listo, ejecutar después de un pequeño delay para evitar conflictos
-      setTimeout(() => {
-        if (!initCalled && !initInProgress) {
-          init();
-        }
-      }, 10);
+      initCalled = true;
+      console.log('✅ Template.js inicializado correctamente');
+      return true;
+    } catch (error) {
+      console.error('❌ Error al inicializar template.js:', error);
+      throw error;
     }
   }
+
+    // Ejecutar cuando el DOM esté listo (solo una vez)
+    // Asegurar que solo agregamos el listener una vez
+    if (!initListenerAdded) {
+      initListenerAdded = true;
+      
+      const executeInit = () => {
+        if (!initCalled && !initInProgress) {
+          init().catch(error => {
+            console.error('❌ Error en init():', error);
+          });
+        }
+      };
+      
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', executeInit, { once: true });
+      } else {
+        // Si ya está listo, ejecutar después de un pequeño delay para evitar conflictos
+        setTimeout(executeInit, 10);
+      }
+    }
 
   // Exportar funciones útiles
   window.templateSystem = {
