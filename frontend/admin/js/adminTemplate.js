@@ -133,7 +133,33 @@
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
             
-            const html = await response.text();
+            let html = await response.text();
+            
+            // Actualizar rutas relativas en el contenido cargado si estamos en GitHub Pages
+            if (typeof window.BASE_PATH !== 'undefined' && window.BASE_PATH && window.location.hostname.includes('github.io')) {
+                // Crear un parser temporal para actualizar rutas
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = html;
+                
+                // Actualizar rutas en links (./ significa desde admin/)
+                tempDiv.querySelectorAll('a[href]').forEach(link => {
+                    const href = link.getAttribute('href');
+                    if (href && !href.startsWith('http') && !href.startsWith('//') && !href.startsWith('#') && !href.startsWith('mailto:')) {
+                        if (href.startsWith('./')) {
+                            // Ruta relativa desde admin/, mantener admin/ en la ruta
+                            const cleanHref = href.substring(2);
+                            link.setAttribute('href', window.BASE_PATH + 'admin/' + cleanHref);
+                        } else if (href.startsWith('../')) {
+                            // Ruta relativa que sale de admin/, remover admin/ del path
+                            const cleanHref = href.substring(3);
+                            link.setAttribute('href', window.BASE_PATH + cleanHref);
+                        }
+                    }
+                });
+                
+                html = tempDiv.innerHTML;
+            }
+            
             container.innerHTML = html;
             
             console.log('✅ Header cargado correctamente');
@@ -217,7 +243,33 @@
                 throw new Error(`HTTP ${response.status}`);
             }
             
-            const html = await response.text();
+            let html = await response.text();
+            
+            // Actualizar rutas relativas en el contenido cargado si estamos en GitHub Pages
+            if (typeof window.BASE_PATH !== 'undefined' && window.BASE_PATH && window.location.hostname.includes('github.io')) {
+                // Crear un parser temporal para actualizar rutas
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = html;
+                
+                // Actualizar rutas en links (./ significa desde admin/)
+                tempDiv.querySelectorAll('a[href]').forEach(link => {
+                    const href = link.getAttribute('href');
+                    if (href && !href.startsWith('http') && !href.startsWith('//') && !href.startsWith('#') && !href.startsWith('mailto:')) {
+                        if (href.startsWith('./')) {
+                            // Ruta relativa desde admin/, mantener admin/ en la ruta
+                            const cleanHref = href.substring(2);
+                            link.setAttribute('href', window.BASE_PATH + 'admin/' + cleanHref);
+                        } else if (href.startsWith('../')) {
+                            // Ruta relativa que sale de admin/, remover admin/ del path
+                            const cleanHref = href.substring(3);
+                            link.setAttribute('href', window.BASE_PATH + cleanHref);
+                        }
+                    }
+                });
+                
+                html = tempDiv.innerHTML;
+            }
+            
             container.innerHTML = html;
             console.log('✅ Footer cargado correctamente');
             
