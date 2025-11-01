@@ -13,12 +13,38 @@ async function exportProducts() {
     try {
         console.log('🚀 Iniciando exportación de productos a JSON...');
         
+        // VERIFICAR PRIMERO si ya existe un JSON con productos
+        const apiDir = path.join(__dirname, '../../frontend/api');
+        const productsFile = path.join(apiDir, 'products.json');
+        
+        if (fs.existsSync(productsFile)) {
+            try {
+                const existingData = JSON.parse(fs.readFileSync(productsFile, 'utf8'));
+                const productCount = existingData?.data?.total || 0;
+                const isEmptyMsg = existingData?.message?.includes('JSON vacío') || false;
+                
+                console.log(`📄 JSON existente encontrado`);
+                console.log(`📊 Productos en JSON existente: ${productCount}`);
+                console.log(`⚠️ Es mensaje vacío: ${isEmptyMsg}`);
+                
+                // Si el JSON tiene productos Y no es un mensaje vacío, NO sobrescribir
+                if (productCount > 0 && !isEmptyMsg) {
+                    console.log(`✅ JSON existente tiene ${productCount} productos - NO sobrescribir`);
+                    console.log(`✅ Preservando JSON existente con productos`);
+                    return;
+                }
+            } catch (error) {
+                console.warn('⚠️ Error al leer JSON existente, continuando con exportación...', error.message);
+            }
+        }
+        
         // Verificar que la base de datos existe
         const dbPath = process.env.DB_PATH || path.join(__dirname, '../database/apexremedy.db');
         
         if (!fs.existsSync(dbPath)) {
             console.error(`❌ Error: Base de datos no encontrada en: ${dbPath}`);
             console.log('💡 Asegúrate de que la base de datos existe o configura DB_PATH');
+            // NO crear JSON vacío aquí - dejar que el workflow lo maneje
             throw new Error(`Base de datos no encontrada: ${dbPath}`);
         }
         
