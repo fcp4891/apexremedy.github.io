@@ -1025,23 +1025,59 @@ body:has(.cart-sidebar.open) .cart-overlay{
     padding:40px 0;
   }
   
-  /* Grids */
-  .about-grid,.products-grid{
-    display:grid!important;
-    grid-template-columns:repeat(2,1fr)!important;
-    gap:16px!important;
-    visibility:visible!important;
-    opacity:1!important;
+  /* Tarjetas en filas horizontales con scroll en móvil */
+  .about-grid {
+    display: flex !important;
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    gap: 16px !important;
+    padding-bottom: 8px !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: thin !important;
   }
   
-  .products-grid .product-card{
-    display:block!important;
-    visibility:visible!important;
-    opacity:1!important;
+  .about-grid::-webkit-scrollbar {
+    height: 6px !important;
   }
   
-  .about-card,.product-card,.legal-card{
-    padding:20px 16px;
+  .about-grid::-webkit-scrollbar-track {
+    background: var(--light-gray) !important;
+    border-radius: 10px !important;
+  }
+  
+  .about-grid::-webkit-scrollbar-thumb {
+    background: var(--primary-green) !important;
+    border-radius: 10px !important;
+  }
+  
+  .about-card,
+  .legal-card {
+    flex: 0 0 85% !important;
+    min-width: 85% !important;
+    max-width: 85% !important;
+    scroll-snap-align: start !important;
+    padding: 20px 16px !important;
+  }
+  
+  /* Products grid mantiene su comportamiento normal */
+  .products-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 16px !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  .products-grid .product-card {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  .product-card {
+    padding: 20px 16px;
   }
   
   .contact-grid{

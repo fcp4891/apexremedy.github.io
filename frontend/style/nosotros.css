@@ -465,13 +465,39 @@
         font-size: 1rem;
     }
 
+    /* Tarjetas en filas horizontales con scroll en móvil */
     .values-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
+        display: flex !important;
+        flex-direction: row !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        gap: 16px !important;
+        padding-bottom: 8px !important;
+        scroll-snap-type: x mandatory !important;
+        -webkit-overflow-scrolling: touch !important;
+        scrollbar-width: thin !important;
+    }
+    
+    .values-grid::-webkit-scrollbar {
+        height: 6px !important;
+    }
+    
+    .values-grid::-webkit-scrollbar-track {
+        background: var(--light-gray) !important;
+        border-radius: 10px !important;
+    }
+    
+    .values-grid::-webkit-scrollbar-thumb {
+        background: var(--primary-green) !important;
+        border-radius: 10px !important;
     }
     
     .value-card {
-        padding: 28px 20px;
+        flex: 0 0 85% !important;
+        min-width: 85% !important;
+        max-width: 85% !important;
+        scroll-snap-align: start !important;
+        padding: 24px 16px !important;
     }
     
     .value-icon {
@@ -484,8 +510,36 @@
     }
 
     .team-grid {
-        grid-template-columns: 1fr;
-        gap: 24px;
+        display: flex !important;
+        flex-direction: row !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        gap: 16px !important;
+        padding-bottom: 8px !important;
+        scroll-snap-type: x mandatory !important;
+        -webkit-overflow-scrolling: touch !important;
+        scrollbar-width: thin !important;
+    }
+    
+    .team-grid::-webkit-scrollbar {
+        height: 6px !important;
+    }
+    
+    .team-grid::-webkit-scrollbar-track {
+        background: var(--light-gray) !important;
+        border-radius: 10px !important;
+    }
+    
+    .team-grid::-webkit-scrollbar-thumb {
+        background: var(--primary-green) !important;
+        border-radius: 10px !important;
+    }
+    
+    .team-card {
+        flex: 0 0 85% !important;
+        min-width: 85% !important;
+        max-width: 85% !important;
+        scroll-snap-align: start !important;
     }
     
     .team-image {
