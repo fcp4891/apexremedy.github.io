@@ -1103,7 +1103,7 @@ body:has(.cart-sidebar.open) .cart-overlay{
   .filter-group{width:100%}
   .filter-select,.search-box{width:100%}
   
-  /* Cart - Mejorado para móvil */
+  /* Cart - Mejorado para móvil con estructura fija */
   .cart-sidebar{
     width:100vw!important;
     max-width:100vw!important;
@@ -1112,10 +1112,12 @@ body:has(.cart-sidebar.open) .cart-overlay{
     opacity:0!important;
     display:flex!important;
     flex-direction:column!important;
-    max-height:100vh!important;
     height:100vh!important;
-    padding-bottom:0!important;
+    max-height:100vh!important;
+    padding:0!important;
+    margin:0!important;
     overflow:hidden!important;
+    box-sizing:border-box!important;
   }
   
   .cart-sidebar.open{
@@ -1124,62 +1126,106 @@ body:has(.cart-sidebar.open) .cart-overlay{
     opacity:1!important;
   }
   
-  /* Header del carrito - altura fija */
+  /* Header del carrito - altura fija medida */
   .cart-header{
+    flex:0 0 auto!important;
     flex-shrink:0!important;
     flex-grow:0!important;
     padding:16px!important;
     border-bottom:1px solid var(--light-gray)!important;
     height:auto!important;
-    min-height:60px!important;
+    min-height:65px!important;
+    max-height:65px!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    background:var(--white)!important;
+    z-index:20!important;
   }
   
-  /* Items del carrito - scrollable con altura calculada */
+  .cart-header h3{
+    margin:0!important;
+    font-size:1.1rem!important;
+  }
+  
+  .cart-header button{
+    flex-shrink:0!important;
+  }
+  
+  /* Items del carrito - scrollable con altura exacta calculada */
   .cart-items{
-    flex:1 1 0!important;
+    flex:1 1 auto!important;
     overflow-y:auto!important;
     overflow-x:hidden!important;
     padding:16px!important;
     min-height:0!important;
-    max-height:none!important;
+    /* Altura exacta: 100vh - header (65px) - footer (140px aprox) */
+    max-height:calc(100vh - 65px - 140px)!important;
+    height:calc(100vh - 65px - 140px)!important;
     -webkit-overflow-scrolling:touch!important;
-    /* Asegurar que los items no empujen el footer fuera */
-    height:0!important; /* Esto fuerza que flex:1 calcule correctamente */
+    scrollbar-width:thin!important;
+    scrollbar-color:var(--primary-green) var(--light-gray)!important;
   }
   
-  /* Footer del carrito - siempre visible con altura fija */
+  .cart-items::-webkit-scrollbar{
+    width:6px!important;
+  }
+  
+  .cart-items::-webkit-scrollbar-track{
+    background:var(--light-gray)!important;
+  }
+  
+  .cart-items::-webkit-scrollbar-thumb{
+    background:var(--primary-green)!important;
+    border-radius:3px!important;
+  }
+  
+  /* Footer del carrito - altura fija y siempre visible */
   .cart-total{
-    position:sticky!important;
-    bottom:0!important;
-    left:0!important;
-    right:0!important;
+    flex:0 0 auto!important;
     flex-shrink:0!important;
     flex-grow:0!important;
-    border-top:1px solid var(--light-gray)!important;
+    position:relative!important;
+    bottom:auto!important;
+    left:0!important;
+    right:0!important;
+    border-top:2px solid var(--light-gray)!important;
     padding:16px!important;
     background:var(--white)!important;
-    min-height:auto!important;
-    height:auto!important;
+    min-height:140px!important;
+    max-height:140px!important;
+    height:140px!important;
     display:flex!important;
     flex-direction:column!important;
-    justify-content:flex-end!important;
-    z-index:10!important;
-    box-shadow:0 -2px 8px rgba(0,0,0,0.1)!important;
+    justify-content:space-between!important;
+    z-index:20!important;
+    box-shadow:0 -4px 12px rgba(0,0,0,0.15)!important;
+    box-sizing:border-box!important;
   }
   
   .cart-total .total-amount{
-    margin-bottom:12px!important;
-    font-size:1.2rem!important;
+    margin:0 0 12px 0!important;
+    font-size:1.3rem!important;
     font-weight:700!important;
+    color:var(--accent-black)!important;
+    flex-shrink:0!important;
   }
   
-  .cart-total .cta-button{
+  .cart-total .cta-button,
+  .cart-total a.cta-button{
     width:100%!important;
-    padding:14px 20px!important;
-    font-size:1rem!important;
+    padding:16px 20px!important;
+    font-size:1.05rem!important;
     font-weight:600!important;
     margin:0!important;
     flex-shrink:0!important;
+    text-align:center!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    white-space:nowrap!important;
+    overflow:visible!important;
+    box-sizing:border-box!important;
   }
   
   .cart-overlay{
