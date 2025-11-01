@@ -1194,11 +1194,7 @@ body:has(.cart-sidebar.open) .cart-overlay{
   }
   
   /* Footer del carrito - POSITION FIXED para siempre visible cuando está abierto */
-  .cart-total{
-    display:none!important;
-  }
-  
-  .cart-sidebar.open .cart-total{
+  .cart-sidebar .cart-total{
     position:fixed!important;
     bottom:0!important;
     left:0!important;
