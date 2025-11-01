@@ -33,10 +33,28 @@ Plataforma de e-commerce para productos especializados con sistema de administra
 
 Este proyecto está configurado para desplegarse en GitHub Pages desde la carpeta `frontend/`.
 
-### Configuración de GitHub Pages
+### Paso 1: Subir el código a GitHub
 
+```bash
+# Si aún no has hecho push, ejecuta:
+git push -u origin main
+
+# Si te pide autenticación, usa un Personal Access Token:
+# 1. Ve a GitHub > Settings > Developer settings > Personal access tokens
+# 2. Crea un token con permisos de 'repo'
+# 3. Úsalo como contraseña cuando Git lo solicite
+```
+
+### Paso 2: Configurar GitHub Pages
+
+**Opción A: Usando GitHub Actions (Recomendado)**
 1. Ve a **Settings** > **Pages** en tu repositorio
-2. En **Source**, selecciona la rama `main` (o `master`)
+2. En **Source**, selecciona **GitHub Actions**
+3. El workflow `.github/workflows/pages.yml` se ejecutará automáticamente
+
+**Opción B: Manual**
+1. Ve a **Settings** > **Pages** en tu repositorio
+2. En **Source**, selecciona la rama `main`
 3. En **Folder**, selecciona `/frontend`
 4. Guarda los cambios
 
@@ -46,6 +64,8 @@ Tu sitio estará disponible en:
 ```
 https://fcp4891.github.io/apexremedy.github.io/
 ```
+
+**Nota**: El despliegue puede tardar unos minutos después del push.
 
 ## 📝 Notas Importantes
 
