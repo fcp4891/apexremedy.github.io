@@ -194,8 +194,7 @@ async function exportProducts() {
             }
         };
         
-        // Crear directorio api si no existe
-        const apiDir = path.join(__dirname, '../../frontend/api');
+        // Crear directorio api si no existe (ya declarado arriba)
         if (!fs.existsSync(apiDir)) {
             fs.mkdirSync(apiDir, { recursive: true });
             console.log('📁 Directorio api creado:', apiDir);
