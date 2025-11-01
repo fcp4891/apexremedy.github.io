@@ -887,18 +887,146 @@ if (typeof APIClient === 'undefined') {
 
         // Métodos de pedidos (ADMIN)
         async getAllOrders(filters = {}) {
-            const queryParams = new URLSearchParams();
-            
-            Object.keys(filters).forEach(key => {
-                if (filters[key]) {
-                    queryParams.append(key, filters[key]);
+            // Helper para aplicar filtros a orders
+            const applyFiltersToOrders = (orders, filters) => {
+                let filtered = [...orders];
+                
+                // Filtrar por cliente
+                if (filters.customer_id) {
+                    filtered = filtered.filter(o => 
+                        o.customer_id === parseInt(filters.customer_id) || 
+                        o.user_id === parseInt(filters.customer_id)
+                    );
                 }
-            });
-
-            const queryString = queryParams.toString();
-            const endpoint = queryString ? `/orders?${queryString}` : '/orders';
+                
+                // Filtrar por estado
+                if (filters.status && filters.status !== 'all') {
+                    filtered = filtered.filter(o => o.status === filters.status);
+                }
+                
+                // Filtrar por fecha desde
+                if (filters.date_from) {
+                    filtered = filtered.filter(o => {
+                        const orderDate = new Date(o.created_at || o.date);
+                        const filterDate = new Date(filters.date_from);
+                        return orderDate >= filterDate;
+                    });
+                }
+                
+                // Filtrar por fecha hasta
+                if (filters.date_to) {
+                    filtered = filtered.filter(o => {
+                        const orderDate = new Date(o.created_at || o.date);
+                        const filterDate = new Date(filters.date_to);
+                        return orderDate <= filterDate;
+                    });
+                }
+                
+                // Limitar resultados
+                if (filters.limit) {
+                    filtered = filtered.slice(0, parseInt(filters.limit));
+                }
+                
+                return filtered;
+            };
             
-            return await this.request(endpoint);
+            // SIEMPRE intentar JSON estático PRIMERO (más rápido y funciona sin backend)
+            try {
+                const staticData = await this.loadStaticJSON('orders.json');
+                console.log('🔍 JSON estático de orders cargado:', staticData);
+                if (staticData && staticData.success && staticData.data) {
+                    // Verificar si tiene orders directamente o dentro de data
+                    const ordersArray = staticData.data.orders || staticData.data || [];
+                    if (Array.isArray(ordersArray) && ordersArray.length > 0) {
+                        let orders = applyFiltersToOrders(ordersArray, filters);
+                        console.log('✅ Pedidos cargados desde JSON estático:', orders.length);
+                        console.log('📊 Primeros pedidos:', orders.slice(0, 3).map(o => ({ id: o.id, status: o.status, total: o.total })));
+                        return {
+                            success: true,
+                            data: { orders },
+                            message: 'Pedidos cargados desde API estática'
+                        };
+                    } else if (Array.isArray(ordersArray)) {
+                        // Array vacío, pero válido
+                        console.log('⚠️ JSON estático tiene array vacío de pedidos');
+                        return {
+                            success: true,
+                            data: { orders: [] },
+                            message: 'No hay pedidos disponibles'
+                        };
+                    }
+                } else {
+                    console.warn('⚠️ JSON estático no tiene formato válido:', staticData);
+                }
+            } catch (error) {
+                console.warn('⚠️ Error al cargar JSON estático de orders:', error.message);
+                console.warn('⚠️ Intentando API dinámica...');
+            }
+            
+            // Solo si hay backend configurado Y el JSON falló, intentar API dinámica
+            if (this.baseURL) {
+                try {
+                    const queryParams = new URLSearchParams();
+                    
+                    Object.keys(filters).forEach(key => {
+                        if (filters[key] !== undefined && filters[key] !== null && filters[key] !== '') {
+                            queryParams.append(key, filters[key]);
+                        }
+                    });
+
+                    const queryString = queryParams.toString();
+                    const endpoint = queryString ? `/orders?${queryString}` : '/orders';
+                    
+                    return await this.request(endpoint);
+                } catch (error) {
+                    // Si la API dinámica falla, intentar JSON estático como último recurso
+                    console.warn('⚠️ API dinámica falló, intentando JSON estático como fallback...', error);
+                    try {
+                        const staticData = await this.loadStaticJSON('orders.json');
+                        if (staticData && staticData.success && staticData.data) {
+                            const ordersArray = staticData.data.orders || staticData.data || [];
+                            if (Array.isArray(ordersArray)) {
+                                let orders = applyFiltersToOrders(ordersArray, filters);
+                                console.log('✅ Pedidos cargados desde JSON estático (fallback):', orders.length);
+                                return {
+                                    success: true,
+                                    data: { orders },
+                                    message: 'Pedidos cargados desde API estática (fallback)'
+                                };
+                            }
+                        }
+                    } catch (staticError) {
+                        console.error('❌ No se pudo cargar JSON estático como fallback:', staticError);
+                    }
+                    throw error;
+                }
+            } else {
+                // No hay backend y no se pudo cargar JSON estático
+                console.warn('⚠️ No hay backend y JSON estático no disponible para orders');
+                // Intentar una última vez cargar el JSON
+                try {
+                    const staticData = await this.loadStaticJSON('orders.json');
+                    if (staticData && staticData.success && staticData.data) {
+                        const ordersArray = staticData.data.orders || staticData.data || [];
+                        if (Array.isArray(ordersArray)) {
+                            let orders = applyFiltersToOrders(ordersArray, filters);
+                            console.log('✅ Pedidos cargados desde JSON estático (último intento):', orders.length);
+                            return {
+                                success: true,
+                                data: { orders },
+                                message: 'Pedidos cargados desde API estática'
+                            };
+                        }
+                    }
+                } catch (finalError) {
+                    console.error('❌ Error final al cargar JSON estático:', finalError);
+                }
+                return {
+                    success: true,
+                    data: { orders: [] },
+                    message: 'No se pudieron cargar pedidos. Verifica que orders.json exista en /api/'
+                };
+            }
         }
 
         async updateOrderStatus(id, status) {

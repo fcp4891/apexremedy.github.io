@@ -1380,11 +1380,21 @@
         
         // 🆕 Cargar categorías según permisos del usuario
         async function loadCategories() {
-            const categories = await productManager.getCategories();
+            const categoriesResponse = await productManager.getCategories();
             const select = document.getElementById('categoryFilter');
             
             // Limpiar opciones existentes excepto "Todas"
             select.innerHTML = '<option value="all">Todas</option>';
+            
+            // Extraer array de categorías (puede ser un array directo o estar en response.data.categories)
+            let categories = [];
+            if (Array.isArray(categoriesResponse)) {
+                categories = categoriesResponse;
+            } else if (categoriesResponse && Array.isArray(categoriesResponse.data?.categories)) {
+                categories = categoriesResponse.data.categories;
+            } else if (categoriesResponse && Array.isArray(categoriesResponse.data)) {
+                categories = categoriesResponse.data;
+            }
             
             // 🆕 Verificar si el usuario puede ver productos medicinales
             const canViewMedicinal = productManager.canViewMedicinal();
@@ -1394,37 +1404,47 @@
             const addedNames = new Set(); // Para evitar duplicados por nombre también
             
             categories.forEach(cat => {
+                // cat puede ser un string o un objeto {id, name, slug}
+                const catSlug = typeof cat === 'string' ? cat : (cat.slug || cat.id || '');
+                const catName = typeof cat === 'string' ? cat : (cat.name || catSlug);
+                
+                // Validar que tengamos un slug válido
+                if (!catSlug || typeof catSlug !== 'string') {
+                    console.warn('⚠️ Categoría inválida ignorada:', cat);
+                    return;
+                }
+                
                 // 🆕 FILTRAR categorías medicinales si el usuario no tiene acceso
                 if (!canViewMedicinal) {
-                    const isMedicinalCategory = cat === 'medicinal' ||
-                                               cat === 'medicinal-flores' ||
-                                               cat === 'medicinal-aceites' ||
-                                               cat === 'medicinal-concentrados' ||
-                                               (cat && cat.toLowerCase().includes('medicinal'));
+                    const isMedicinalCategory = catSlug === 'medicinal' ||
+                                               catSlug === 'medicinal-flores' ||
+                                               catSlug === 'medicinal-aceites' ||
+                                               catSlug === 'medicinal-concentrados' ||
+                                               catSlug.includes('medicinal');
                     if (isMedicinalCategory) {
                         return; // Saltar esta categoría
                     }
                 }
                 
                 // Normalizar categoría para evitar duplicados
-                const normalizedCat = cat.toLowerCase().trim();
-                const categoryName = productManager.categoriesMap && productManager.categoriesMap.has(cat)
-                    ? productManager.categoriesMap.get(cat)
-                    : formatCategoryName(cat);
-                const normalizedName = categoryName.toLowerCase().trim();
+                const normalizedCat = catSlug.toLowerCase().trim();
+                const categoryName = productManager.categoriesMap && productManager.categoriesMap.has(catSlug)
+                    ? productManager.categoriesMap.get(catSlug)
+                    : formatCategoryName(catSlug);
+                const normalizedName = (categoryName || catName || catSlug).toLowerCase().trim();
                 
                 // Verificar tanto por slug como por nombre para evitar duplicados
                 if (!addedCategories.has(normalizedCat) && !addedNames.has(normalizedName)) {
                     addedCategories.add(normalizedCat);
                     addedNames.add(normalizedName);
                     const option = document.createElement('option');
-                    option.value = cat; // Usar el slug para filtros
-                    option.textContent = categoryName; // Usar el nombre formateado para mostrar
+                    option.value = catSlug; // Usar el slug para filtros
+                    option.textContent = categoryName || catName || catSlug; // Usar el nombre formateado para mostrar
                     select.appendChild(option);
                 }
             });
             
-            console.log('✅ Categorías cargadas:', categories);
+            console.log('✅ Categorías cargadas:', categories.length);
             console.log('📋 Categorías en select:', Array.from(select.options).map(opt => ({value: opt.value, text: opt.textContent})));
         }
         
