@@ -1212,7 +1212,11 @@ function setupForm() {
             for (const field of requiredFields) {
                 const value = document.getElementById(field)?.value;
                 if (!value || isNaN(parseInt(value))) {
-                    alert(`Por favor ingresa un precio válido para ${field}`);
+                    if (typeof notify !== 'undefined') {
+                        notify.warning(`Por favor ingresa un precio válido para ${field}`, 'Precio Inválido');
+                    } else {
+                        console.warn(`Por favor ingresa un precio válido para ${field}`);
+                    }
                     return;
                 }
             }
