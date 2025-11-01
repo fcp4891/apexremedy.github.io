@@ -17,7 +17,18 @@
         const pathParts = window.location.pathname.split('/').filter(p => p);
         const repoIndex = pathParts.indexOf(repoName);
         if (repoIndex !== -1) {
-            basePath = '/' + pathParts.slice(0, repoIndex + 1).join('/') + '/';
+            const repoPath = '/' + pathParts.slice(0, repoIndex + 1).join('/') + '/';
+            
+            // Verificar si GitHub Pages está sirviendo desde la raíz o desde /frontend/
+            // Si la URL actual no incluye /frontend/, significa que GitHub Pages está sirviendo desde la raíz
+            const currentPath = window.location.pathname;
+            if (!currentPath.includes('/frontend/') && !currentPath.endsWith('/frontend')) {
+                // GitHub Pages está sirviendo desde la raíz, agregar /frontend/
+                basePath = repoPath + 'frontend/';
+            } else {
+                // GitHub Pages está sirviendo desde /frontend/ correctamente
+                basePath = repoPath;
+            }
         }
     }
     
