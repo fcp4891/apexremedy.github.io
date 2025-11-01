@@ -17,32 +17,31 @@
         const pathParts = window.location.pathname.split('/').filter(p => p);
         const repoIndex = pathParts.indexOf(repoName);
         
+        let repoPath = '';
         if (repoIndex !== -1) {
-            const repoPath = '/' + pathParts.slice(0, repoIndex + 1).join('/') + '/';
-            
-            // Verificar si la URL actual incluye /frontend/
-            const currentPath = window.location.pathname;
-            const hasFrontendInPath = currentPath.includes('/frontend/') || currentPath.endsWith('/frontend');
-            
-            // Si GitHub Pages está configurado para servir desde la raíz (no desde /frontend/),
-            // siempre agregar /frontend/ al basePath
-            // El workflow de GitHub Actions debería servir desde /frontend/, pero si no está configurado así,
-            // necesitamos agregar /frontend/ manualmente
-            if (!hasFrontendInPath) {
-                // GitHub Pages está sirviendo desde la raíz, agregar /frontend/
-                basePath = repoPath + 'frontend/';
-            } else {
-                // GitHub Pages está sirviendo desde /frontend/ correctamente
-                basePath = repoPath;
-            }
+            repoPath = '/' + pathParts.slice(0, repoIndex + 1).join('/') + '/';
         } else {
-            // Si no encontramos el repoName en el path, puede ser que estemos en la raíz
-            // Intentar construir el path asumiendo que el primer segmento es el usuario
-            const firstPart = pathParts[0];
-            if (firstPart && window.location.hostname.includes('github.io')) {
-                // Construir: /usuario/repo/frontend/
-                basePath = '/' + firstPart + '/' + repoName + '/frontend/';
+            // Si no encontramos el repoName en el path, construir desde el hostname
+            // hostname será algo como: fcp4891.github.io
+            const hostParts = window.location.hostname.split('.');
+            if (hostParts.length >= 2) {
+                const username = hostParts[0];
+                repoPath = '/' + username + '/' + repoName + '/';
             }
+        }
+        
+        // Verificar si la URL actual incluye /frontend/
+        const currentPath = window.location.pathname;
+        const hasFrontendInPath = currentPath.includes('/frontend/') || currentPath.endsWith('/frontend');
+        
+        // Como el workflow debería servir desde /frontend/, pero GitHub Pages puede estar sirviendo desde la raíz,
+        // SIEMPRE agregar /frontend/ si no está presente en la URL actual
+        if (!hasFrontendInPath && repoPath) {
+            // GitHub Pages está sirviendo desde la raíz, agregar /frontend/
+            basePath = repoPath + 'frontend/';
+        } else if (repoPath) {
+            // GitHub Pages está sirviendo desde /frontend/ correctamente
+            basePath = repoPath;
         }
     }
     
