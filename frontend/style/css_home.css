@@ -587,6 +587,8 @@ body.register-page {
   padding-bottom:80px;
   visibility:hidden;
   opacity:0;
+  display:flex;
+  flex-direction:column;
 }
 
 .cart-sidebar.open{
@@ -601,22 +603,22 @@ body.register-page {
   align-items:center;
   padding:18px;
   border-bottom:1px solid var(--light-gray);
+  flex-shrink:0;
 }
 
 .cart-items{
   padding:18px;
-  max-height:calc(100vh - 230px);
-  overflow:auto;
+  flex:1 1 auto;
+  overflow-y:auto;
+  overflow-x:hidden;
+  min-height:0;
 }
 
 .cart-total{
-  position:absolute;
-  bottom:0;
-  left:0;
-  right:0;
   border-top:1px solid var(--light-gray);
   padding:16px;
   background:var(--white);
+  flex-shrink:0;
 }
 
 .cart-overlay{
@@ -1122,10 +1124,10 @@ body:has(.cart-sidebar.open) .cart-overlay{
     margin:0!important;
     overflow:hidden!important;
     box-sizing:border-box!important;
-    display:none!important;
+    display:flex!important;
     flex-direction:column!important;
     z-index:1100!important;
-    transition:none!important;
+    transition:right .35s ease!important;
   }
   
   .cart-sidebar.open{
@@ -1168,6 +1170,7 @@ body:has(.cart-sidebar.open) .cart-overlay{
     min-height:0!important;
     -webkit-overflow-scrolling:touch!important;
     scrollbar-width:thin!important;
+    max-height:calc(100vh - 140px)!important;
   }
   
   .cart-items::-webkit-scrollbar{
@@ -1203,6 +1206,7 @@ body:has(.cart-sidebar.open) .cart-overlay{
     flex-direction:column!important;
     gap:10px!important;
     box-shadow:0 -4px 16px rgba(0,0,0,0.2)!important;
+    margin-top:auto!important;
   }
   
   .cart-sidebar .cart-total .total-amount{
