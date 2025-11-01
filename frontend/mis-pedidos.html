@@ -211,6 +211,7 @@
     <script src="./js/db_articulos.js"></script>
     <script>
         let currentOrderId = null;
+        let allOrders = []; // Almacenar pedidos cargados globalmente
 
         // Verificar autenticación - CORREGIDO
         (function initPage() {
@@ -234,13 +235,31 @@
         async function loadOrders() {
             try {
                 console.log('📦 Cargando pedidos del usuario...');
-                const response = await api.request('/orders/my-orders?limit=50');
+                
+                // Obtener usuario actual
+                const user = authManager.getCurrentUser();
+                if (!user || !user.id) {
+                    throw new Error('Usuario no autenticado');
+                }
+                
+                console.log('👤 Usuario ID:', user.id);
+                
+                // Usar getAllOrders con filtro de cliente (soporta API estática)
+                const response = await api.getAllOrders({ 
+                    customer_id: user.id,
+                    limit: 100 
+                });
                 
                 console.log('📊 Respuesta del servidor:', response);
                 
                 if (response.success) {
-                    const orders = response.data.orders || [];
-                    console.log(`✅ ${orders.length} pedidos encontrados`);
+                    // Los pedidos pueden estar en response.data.orders o response.data directamente
+                    const orders = response.data?.orders || response.data || [];
+                    console.log(`✅ ${orders.length} pedidos encontrados para el cliente ${user.id}`);
+                    
+                    // Guardar pedidos en cache global
+                    allOrders = orders;
+                    
                     displayOrders(orders);
                 } else {
                     throw new Error(response.message || 'Error al cargar pedidos');
@@ -358,11 +377,33 @@
         async function viewOrderDetails(id) {
             try {
                 console.log(`🔍 Cargando detalles del pedido #${id}...`);
-                const response = await api.request(`/orders/${id}`);
+                
+                // Primero buscar en los pedidos ya cargados
+                const cachedOrder = allOrders.find(o => o.id === id || o.id === parseInt(id));
+                if (cachedOrder) {
+                    console.log('✅ Detalles del pedido desde cache:', cachedOrder);
+                    showOrderModal(cachedOrder);
+                    return;
+                }
+                
+                // Si no está en cache, intentar cargar desde API
+                // Usar getAllOrders con filtro de ID específico (soporta API estática)
+                const user = authManager.getCurrentUser();
+                const response = await api.getAllOrders({ 
+                    customer_id: user?.id,
+                    limit: 1000 
+                });
                 
                 if (response.success) {
-                    console.log('✅ Detalles del pedido cargados:', response.data.order);
-                    showOrderModal(response.data.order);
+                    const orders = response.data?.orders || response.data || [];
+                    const order = orders.find(o => o.id === id || o.id === parseInt(id));
+                    
+                    if (order) {
+                        console.log('✅ Detalles del pedido cargados:', order);
+                        showOrderModal(order);
+                    } else {
+                        throw new Error('Pedido no encontrado');
+                    }
                 } else {
                     throw new Error(response.message || 'Error al cargar detalles');
                 }
