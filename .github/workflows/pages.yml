@@ -54,19 +54,33 @@ jobs:
       
       - name: Check existing JSON files
         run: |
+          echo "🔍 Verificando JSON existente..."
           if [ -f "frontend/api/products.json" ]; then
+            echo "📄 Archivo products.json encontrado"
+            # Intentar múltiples formas de obtener el total
             PRODUCT_COUNT=$(cat frontend/api/products.json | grep -o '"total":[0-9]*' | grep -o '[0-9]*' | head -1)
-            if [ -n "$PRODUCT_COUNT" ] && [ "$PRODUCT_COUNT" -gt 0 ]; then
-              echo "✅ JSON existente tiene $PRODUCT_COUNT productos"
+            # También verificar si hay productos en el array
+            PRODUCTS_ARRAY=$(cat frontend/api/products.json | grep -o '"products":\[' | wc -l)
+            # Verificar si el mensaje NO es "JSON vacío"
+            IS_EMPTY_MSG=$(cat frontend/api/products.json | grep -c "JSON vacío" || echo "0")
+            
+            echo "📊 Total encontrado: $PRODUCT_COUNT"
+            echo "📦 Array de productos encontrado: $PRODUCTS_ARRAY"
+            echo "⚠️ Mensaje vacío: $IS_EMPTY_MSG"
+            
+            # Si tiene productos (total > 0) Y no es el mensaje de vacío
+            if [ -n "$PRODUCT_COUNT" ] && [ "$PRODUCT_COUNT" -gt 0 ] && [ "$IS_EMPTY_MSG" -eq 0 ]; then
+              echo "✅ JSON existente tiene $PRODUCT_COUNT productos - PRESERVAR"
               echo "PRODUCTS_EXIST=true" >> $GITHUB_ENV
             else
-              echo "⚠️ JSON existente está vacío o no tiene productos"
+              echo "⚠️ JSON existente está vacío o no tiene productos válidos"
               echo "PRODUCTS_EXIST=false" >> $GITHUB_ENV
             fi
           else
             echo "⚠️ JSON no existe"
             echo "PRODUCTS_EXIST=false" >> $GITHUB_ENV
           fi
+          echo "🔍 PRODUCTS_EXIST=$PRODUCTS_EXIST"
       
       - name: Export products to JSON (Static API)
         working-directory: ./backend
