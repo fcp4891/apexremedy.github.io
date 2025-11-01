@@ -64,16 +64,8 @@ if (typeof AuthManager === 'undefined') {
         // Iniciar sesión - ACTUALIZADO CON REDIRECCIÓN SEGÚN ROL
         async login(email, password) {
             try {
-                // Verificar si hay backend configurado
-                if (!api.baseURL) {
-                    if (typeof notify !== 'undefined') {
-                        notify.error('El backend no está configurado. Por favor, configura la URL del backend en producción o usa el modo de desarrollo local.', 'Backend no disponible');
-                    } else {
-                        alert('⚠️ El backend no está configurado.\n\nPor favor:\n1. Configura la URL del backend en frontend/js/api/apiClient.js\n2. O ejecuta el backend localmente en http://localhost:3000');
-                    }
-                    return { success: false, message: 'Backend no configurado' };
-                }
-                
+                // NO verificar baseURL aquí - api.login() manejará la autenticación estática si no hay backend
+                // Llamar directamente a api.login() que decidirá usar loginStatic() si baseURL es null
                 const response = await api.login({ email, password });
                 
                 if (response.success) {
