@@ -409,8 +409,8 @@
    RESPONSIVE DESIGN
    ============================================ */
 
-/* Tablet */
-@media (max-width: 1024px) {
+/* ===== TABLET (768px - 1023px) ===== */
+@media (min-width: 768px) and (max-width: 1023px) {
     .history-container {
         grid-template-columns: 1fr;
         gap: 40px;
@@ -446,8 +446,8 @@
     }
 }
 
-/* Mobile */
-@media (max-width: 768px) {
+/* ===== MOBILE (hasta 767px) ===== */
+@media (max-width: 767px) {
     .history-container {
         padding: 40px 0;
         gap: 30px;
@@ -556,8 +556,7 @@
     }
 }
 
-/* Extra Small Mobile */
-@media (max-width: 480px) {
+    /* Ajustes adicionales para móviles pequeños */
     .history-container {
         padding: 30px 0;
     }

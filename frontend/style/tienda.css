@@ -5,11 +5,16 @@
 }
 
 /* ============================================
-   RESPONSIVE DESIGN
+   RESPONSIVE DESIGN - ESTÁNDARES
+   ============================================
+   Breakpoints estándar:
+   - Mobile: hasta 767px
+   - Tablet: 768px - 1023px
+   - Desktop: 1024px en adelante
    ============================================ */
 
-/* Tablet */
-@media (max-width: 1024px) {
+/* ===== TABLET (768px - 1023px) ===== */
+@media (min-width: 768px) and (max-width: 1023px) {
     .container > div {
         grid-template-columns: 1fr 1fr !important;
         gap: 20px;
@@ -19,7 +24,6 @@
         position: static !important;
     }
     
-    /* Filtros */
     .shop-filters {
         padding: 16px 0;
     }
@@ -27,10 +31,19 @@
     .filter-container {
         flex-wrap: wrap;
     }
+    
+    .products-grid,
+    .grid.grid-cols-1,
+    .grid.grid-cols-2,
+    .grid.grid-cols-3,
+    .grid.grid-cols-4 {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 20px;
+    }
 }
 
-/* Mobile */
-@media (max-width: 900px) {
+/* ===== MOBILE (hasta 767px) ===== */
+@media (max-width: 767px) {
     .container > div {
         grid-template-columns: 1fr !important;
         gap: 16px;
@@ -87,23 +100,6 @@
         font-size: 0.8rem;
         padding: 4px 10px;
     }
-}
-
-/* Extra Small Mobile */
-@media (max-width: 480px) {
-    .container {
-        padding: 0 12px;
-    }
-    
-    /* Grid de productos en móvil pequeño */
-    .products-grid,
-    .grid.grid-cols-1,
-    .grid.grid-cols-2,
-    .grid.grid-cols-3,
-    .grid.grid-cols-4 {
-        grid-template-columns: 1fr !important;
-        gap: 12px;
-    }
     
     /* Cards de productos */
     .product-card {
@@ -112,12 +108,6 @@
     
     .product-image {
         height: 180px;
-    }
-    
-    /* Modales */
-    .product-modal-content {
-        padding: 16px;
-        max-width: 100vw;
     }
     
     /* Botones */
@@ -129,14 +119,9 @@
     }
     
     /* Filtros más compactos */
-    .shop-filters {
-        padding: 10px 0;
-    }
-    
     .filter-select,
     .search-box {
         padding: 10px;
         font-size: 0.9rem;
     }
 }
-

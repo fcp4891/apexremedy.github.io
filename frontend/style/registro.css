@@ -550,8 +550,8 @@ a[href="#"]:hover {
    RESPONSIVE DESIGN
    ============================================ */
 
-/* Tablet y Mobile */
-@media (max-width: 768px) {
+/* ===== MOBILE (hasta 767px) ===== */
+@media (max-width: 767px) {
     .register-container {
         padding: 40px 16px;
     }
@@ -622,8 +622,7 @@ a[href="#"]:hover {
     }
 }
 
-/* Mobile Pequeño */
-@media (max-width: 480px) {
+    /* Ajustes adicionales para móviles pequeños */
     .register-container {
         padding: 30px 12px;
     }

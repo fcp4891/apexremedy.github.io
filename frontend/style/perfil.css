@@ -421,8 +421,8 @@
    RESPONSIVE DESIGN
    ============================================ */
 
-/* Mobile */
-@media (max-width: 768px) {
+/* ===== MOBILE (hasta 767px) ===== */
+@media (max-width: 767px) {
     .profile-header h1 {
         font-size: 2rem;
     }
@@ -458,8 +458,7 @@
     }
 }
 
-/* Extra Small Mobile */
-@media (max-width: 480px) {
+    /* Ajustes adicionales para móviles pequeños */
     .profile-header {
         padding: 30px 0;
     }

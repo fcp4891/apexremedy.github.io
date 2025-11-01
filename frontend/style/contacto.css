@@ -309,8 +309,8 @@
    RESPONSIVE DESIGN
    ============================================ */
 
-/* Mobile */
-@media (max-width: 768px) {
+/* ===== MOBILE (hasta 767px) ===== */
+@media (max-width: 767px) {
     .contact-grid {
         grid-template-columns: 1fr;
         gap: 32px;
@@ -355,8 +355,7 @@
     }
 }
 
-/* Extra Small Mobile */
-@media (max-width: 480px) {
+    /* Ajustes adicionales para móviles pequeños */
     .contact-form-card,
     .contact-info-card {
         padding: 20px 16px;

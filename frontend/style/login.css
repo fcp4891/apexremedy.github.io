@@ -201,8 +201,8 @@
    RESPONSIVE DESIGN
    ============================================ */
 
-/* Mobile */
-@media (max-width: 768px) {
+/* ===== MOBILE (hasta 767px) ===== */
+@media (max-width: 767px) {
   .login-container {
     padding: 40px 16px;
     min-height: calc(100vh - 300px);
@@ -256,10 +256,8 @@
   .test-credentials p {
     font-size: 0.85rem;
   }
-}
-
-/* Extra Small */
-@media (max-width: 480px) {
+  
+  /* Ajustes adicionales para móviles pequeños */
   .login-container {
     padding: 30px 12px;
   }

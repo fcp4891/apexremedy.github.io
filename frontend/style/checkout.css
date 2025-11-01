@@ -228,8 +228,8 @@ input[type="radio"]:checked + div {
     }
 }
 
-/* Mobile */
-@media (max-width: 768px) {
+/* ===== MOBILE (hasta 767px) ===== */
+@media (max-width: 767px) {
     .checkout-grid {
         grid-template-columns: 1fr !important;
         gap: 24px;
@@ -283,8 +283,7 @@ input[type="radio"]:checked + div {
     }
 }
 
-/* Extra Small Mobile */
-@media (max-width: 480px) {
+    /* Ajustes adicionales para móviles pequeños */
     .modal-content {
         padding: 16px;
     }

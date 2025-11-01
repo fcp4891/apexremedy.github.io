@@ -278,8 +278,8 @@
    RESPONSIVE DESIGN
    ============================================ */
 
-/* Tablet */
-@media (max-width: 1024px) {
+/* ===== TABLET (768px - 1023px) ===== */
+@media (min-width: 768px) and (max-width: 1023px) {
     .tabs-container {
         padding: 30px 24px;
     }
@@ -301,8 +301,8 @@
     }
 }
 
-/* Mobile */
-@media (max-width: 768px) {
+/* ===== MOBILE (hasta 767px) ===== */
+@media (max-width: 767px) {
     .timeline-line {
         left: 30px;
     }
@@ -400,8 +400,7 @@
     }
 }
 
-/* Extra Small Mobile */
-@media (max-width: 480px) {
+    /* Ajustes adicionales para móviles pequeños */
     .timeline-item {
         padding-left: 60px;
     }

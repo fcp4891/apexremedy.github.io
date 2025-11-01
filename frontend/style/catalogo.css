@@ -392,11 +392,16 @@ body {
 }
 
 /* ============================================
-   RESPONSIVE DESIGN
+   RESPONSIVE DESIGN - ESTÁNDARES
+   ============================================
+   Breakpoints estándar:
+   - Mobile: hasta 767px
+   - Tablet: 768px - 1023px
+   - Desktop: 1024px en adelante
    ============================================ */
 
-/* Tablet */
-@media (max-width: 1024px) {
+/* ===== TABLET (768px - 1023px) ===== */
+@media (min-width: 768px) and (max-width: 1023px) {
     .container {
         padding: 16px;
     }
@@ -426,8 +431,8 @@ body {
     }
 }
 
-/* Mobile */
-@media (max-width: 768px) {
+/* ===== MOBILE (hasta 767px) ===== */
+@media (max-width: 767px) {
     .container {
         padding: 12px;
     }
@@ -541,8 +546,7 @@ body {
     }
 }
 
-/* Extra Small Mobile */
-@media (max-width: 480px) {
+    /* Ajustes adicionales para móviles pequeños */
     .container {
         padding: 10px;
     }

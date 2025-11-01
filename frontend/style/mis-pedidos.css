@@ -418,8 +418,8 @@
    RESPONSIVE DESIGN
    ============================================ */
 
-/* Mobile */
-@media (max-width: 768px) {
+/* ===== MOBILE (hasta 767px) ===== */
+@media (max-width: 767px) {
     .orders-container {
         padding: 30px 16px;
     }
@@ -460,8 +460,7 @@
     }
 }
 
-/* Extra Small Mobile */
-@media (max-width: 480px) {
+    /* Ajustes adicionales para móviles pequeños */
     .orders-container {
         padding: 20px 12px;
     }
