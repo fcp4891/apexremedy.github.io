@@ -34,14 +34,16 @@
         const currentPath = window.location.pathname;
         const hasFrontendInPath = currentPath.includes('/frontend/') || currentPath.endsWith('/frontend');
         
-        // Como el workflow debería servir desde /frontend/, pero GitHub Pages puede estar sirviendo desde la raíz,
-        // SIEMPRE agregar /frontend/ si no está presente en la URL actual
-        if (!hasFrontendInPath && repoPath) {
-            // GitHub Pages está sirviendo desde la raíz, agregar /frontend/
-            basePath = repoPath + 'frontend/';
-        } else if (repoPath) {
-            // GitHub Pages está sirviendo desde /frontend/ correctamente
-            basePath = repoPath;
+        // Como GitHub Pages está sirviendo desde la raíz del repo (no desde /frontend/),
+        // SIEMPRE agregar /frontend/ al basePath para que las rutas funcionen correctamente
+        if (repoPath) {
+            if (!hasFrontendInPath) {
+                // GitHub Pages está sirviendo desde la raíz, agregar /frontend/
+                basePath = repoPath + 'frontend/';
+            } else {
+                // Si la URL ya incluye /frontend/, usar el repoPath tal cual
+                basePath = repoPath;
+            }
         }
     }
     
@@ -71,6 +73,12 @@
     // Exportar basePath globalmente
     window.BASE_PATH = basePath;
     
+    // Debug: mostrar el basePath calculado (solo en desarrollo)
+    if (basePath && window.location.hostname.includes('github.io')) {
+        console.log('🔧 BasePath calculado:', basePath);
+        console.log('🔧 URL actual:', window.location.pathname);
+    }
+    
     // Función para actualizar rutas en un elemento
     function updateElementPath(element, attribute) {
         const currentPath = element.getAttribute(attribute);
@@ -84,10 +92,20 @@
             
             // Solo actualizar rutas relativas (evitar rutas absolutas que ya tienen el path completo)
             if (currentPath.startsWith('./') || (!currentPath.startsWith('/') && currentPath.length > 0)) {
-                const newPath = window.getBasePath(currentPath);
-                // Solo actualizar si el nuevo path es diferente y no comienza con http
-                if (newPath && newPath !== currentPath && !newPath.startsWith('http')) {
-                    element.setAttribute(attribute, newPath);
+                // Asegurarse de que tenemos un basePath válido
+                const currentBasePath = window.BASE_PATH || basePath;
+                if (currentBasePath) {
+                    let cleanPath = currentPath;
+                    // Eliminar ./ si existe
+                    if (cleanPath.startsWith('./')) {
+                        cleanPath = cleanPath.substring(2);
+                    }
+                    // Construir la nueva ruta completa
+                    const newPath = currentBasePath + cleanPath;
+                    // Solo actualizar si el nuevo path es diferente
+                    if (newPath && newPath !== currentPath) {
+                        element.setAttribute(attribute, newPath);
+                    }
                 }
             }
         }
