@@ -198,15 +198,25 @@
             const cart = JSON.parse(localStorage.getItem('cart') || '[]');
             
             if (cart.length === 0) {
-                alert('Tu carrito está vacío');
+                notify.warning('Tu carrito está vacío', 'Carrito Vacío');
                 return;
             }
 
             // Verificar si está autenticado
             if (!authManager.isAuthenticated()) {
-                if (confirm('Debes iniciar sesión para continuar. ¿Deseas ir al login?')) {
-                    window.location.href = './login.html?redirect=checkout';
-                }
+                notify.confirm({
+                    type: 'info',
+                    icon: 'question',
+                    title: 'Iniciar Sesión Requerido',
+                    message: 'Debes iniciar sesión para continuar. ¿Deseas ir al login?',
+                    confirmText: 'Sí, Ir al Login',
+                    cancelText: 'Cancelar',
+                    confirmClass: 'primary'
+                }).then(confirmed => {
+                    if (confirmed) {
+                        window.location.href = './login.html?redirect=checkout';
+                    }
+                });
                 return;
             }
 

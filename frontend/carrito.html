@@ -117,9 +117,19 @@
             cart.updateCartPage();
         }
 
-        function proceedToCheckout() {
+        async function proceedToCheckout() {
             if (typeof authManager !== 'undefined' && !authManager.isAuthenticated()) {
-                if (confirm('Debes iniciar sesión para completar la compra. ¿Deseas ir a la página de login?')) {
+                const confirmed = await notify.confirm({
+                    type: 'info',
+                    icon: 'question',
+                    title: 'Iniciar Sesión Requerido',
+                    message: 'Debes iniciar sesión para completar la compra. ¿Deseas ir a la página de login?',
+                    confirmText: 'Sí, Ir al Login',
+                    cancelText: 'Cancelar',
+                    confirmClass: 'primary'
+                });
+                
+                if (confirmed) {
                     window.location.href = './login.html?redirect=carrito';
                 }
             } else {

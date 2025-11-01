@@ -4617,7 +4617,11 @@ function previewImage(input, previewId) {
             if (typeof notify !== 'undefined') {
                 notify.error('La imagen debe ser menor a 5MB');
             } else {
-                alert('La imagen debe ser menor a 5MB');
+                if (typeof notify !== 'undefined') {
+                    notify.warning('La imagen debe ser menor a 5MB', 'Tamaño de Archivo');
+                } else {
+                    console.warn('La imagen debe ser menor a 5MB');
+                }
             }
             input.value = '';
             return;
@@ -4629,7 +4633,11 @@ function previewImage(input, previewId) {
             if (typeof notify !== 'undefined') {
                 notify.error('Formato no válido. Use JPG, PNG o WebP');
             } else {
-                alert('Formato no válido. Use JPG, PNG o WebP');
+                if (typeof notify !== 'undefined') {
+                    notify.warning('Formato no válido. Use JPG, PNG o WebP', 'Formato Inválido');
+                } else {
+                    console.warn('Formato no válido. Use JPG, PNG o WebP');
+                }
             }
             input.value = '';
             return;

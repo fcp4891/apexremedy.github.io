@@ -45,8 +45,8 @@ class ShoppingCart {
     // 🆕 Notificación personalizada al agregar producto al carrito
     showAddToCartNotification(productName, productImage) {
         if (typeof notify === 'undefined') {
-            // Fallback si no hay sistema de notificaciones
-            alert(`✅ ${productName} agregado al carrito`);
+            // Fallback si no hay sistema de notificaciones - usar console en lugar de alert
+            console.log(`✅ ${productName} agregado al carrito`);
             return;
         }
         
@@ -139,7 +139,11 @@ class ShoppingCart {
                 throw new Error('No se pudo obtener el producto');
             }
         } catch (error) {
-            alert('❌ Error al agregar el producto al carrito');
+            if (typeof notify !== 'undefined') {
+                notify.error('Error al agregar el producto al carrito', 'Error');
+            } else {
+                console.error('❌ Error al agregar el producto al carrito:', error);
+            }
             return false;
         }
     }

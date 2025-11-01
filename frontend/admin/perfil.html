@@ -181,7 +181,7 @@
                     return;
                 }
                 if (!authManager.isAuthenticated()) {
-                    alert('Debes iniciar sesión para acceder a tu perfil');
+                    notify.warning('Debes iniciar sesión para acceder a tu perfil', 'Autenticación Requerida');
                     window.location.href = '../login.html?redirect=admin/perfil';
                     return;
                 }

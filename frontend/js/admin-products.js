@@ -155,7 +155,11 @@ async function loadProducts() {
         if (typeof notify !== 'undefined') {
             notify.error('Error al cargar productos');
         } else {
-            alert('Error al cargar productos. Ver consola para más detalles.');
+            if (typeof notify !== 'undefined') {
+                notify.error('Error al cargar productos. Ver consola para más detalles.', 'Error');
+            } else {
+                console.error('Error al cargar productos');
+            }
         }
     }
 }
@@ -892,7 +896,11 @@ async function deleteProduct(id) {
             if (typeof notify !== 'undefined') {
                 notify.success('Producto eliminado exitosamente');
             } else {
-                alert('Producto eliminado exitosamente');
+                if (typeof notify !== 'undefined') {
+                    notify.success('Producto eliminado exitosamente', 'Eliminado');
+                } else {
+                    console.log('Producto eliminado exitosamente');
+                }
             }
             loadProducts();
         }
@@ -900,7 +908,11 @@ async function deleteProduct(id) {
         if (typeof notify !== 'undefined') {
             notify.error('Error al eliminar producto');
         } else {
-            alert('Error al eliminar producto');
+            if (typeof notify !== 'undefined') {
+                notify.error('Error al eliminar producto', 'Error');
+            } else {
+                console.error('Error al eliminar producto');
+            }
         }
     }
 }
@@ -1187,7 +1199,11 @@ function setupForm() {
 
         // Validar campos requeridos
         if (!productData.name || !productData.category) {
-            alert('Por favor completa todos los campos requeridos');
+            if (typeof notify !== 'undefined') {
+                notify.warning('Por favor completa todos los campos requeridos', 'Campos Requeridos');
+            } else {
+                console.warn('Por favor completa todos los campos requeridos');
+            }
             return;
         }
         
@@ -1201,7 +1217,11 @@ function setupForm() {
                 }
             }
         } else if (!productData.price || isNaN(productData.price)) {
-            alert('Por favor ingresa un precio válido');
+            if (typeof notify !== 'undefined') {
+                notify.warning('Por favor ingresa un precio válido', 'Precio Inválido');
+            } else {
+                console.warn('Por favor ingresa un precio válido');
+            }
             return;
         }
         
@@ -1256,7 +1276,11 @@ function setupForm() {
             if (typeof notify !== 'undefined') {
                 notify.error('Error al guardar producto: ' + error.message);
             } else {
-                alert('Error al guardar producto: ' + error.message);
+                if (typeof notify !== 'undefined') {
+                    notify.error('Error al guardar producto: ' + error.message, 'Error');
+                } else {
+                    console.error('Error al guardar producto:', error.message);
+                }
             }
         }
     });

@@ -858,7 +858,11 @@ async function openBasicEditModal(productId) {
             
             if (camposFaltantes.length > 0) {
                 console.error('⚠️ FALTAN ESTOS CAMPOS:', camposFaltantes);
-                alert('Error: Faltan campos en el formulario. Revisa la consola.');
+                if (typeof notify !== 'undefined') {
+                    notify.error('Faltan campos en el formulario. Revisa la consola.', 'Error de Validación');
+                } else {
+                    console.error('Error: Faltan campos en el formulario');
+                }
                 return;
             }
             
