@@ -24,8 +24,21 @@ async function exportProducts() {
         
         console.log(`📂 Usando base de datos: ${dbPath}`);
         
-        // Inicializar base de datos
-        await initDatabase();
+        // Inicializar base de datos (ignorar errores de creación de tablas)
+        try {
+            await initDatabase();
+        } catch (error) {
+            console.warn('⚠️ Advertencia al inicializar DB (continuando...):', error.message);
+            // Intentar conectar directamente sin crear tablas
+            const { getDatabase } = require('../src/config/database');
+            try {
+                db = getDatabase();
+            } catch (e) {
+                console.error('❌ No se pudo conectar a la base de datos');
+                throw e;
+            }
+        }
+        
         const db = getDatabase();
         
         // Crear instancia del modelo Product

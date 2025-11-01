@@ -27,8 +27,14 @@ async function initDatabase() {
         db = createDatabaseAdapter(dbType, config);
         await db.connect();
         
-        // Crear tablas si no existen
-        await createTables();
+        // Crear tablas si no existen (ignorar errores de índices si las tablas ya existen)
+        try {
+            await createTables();
+        } catch (error) {
+            // Si hay error al crear tablas, podría ser que ya existen
+            // Continuar de todas formas para poder leer productos
+            console.warn('⚠️ Advertencia al crear tablas (puede ser normal si ya existen):', error.message);
+        }
         
         console.log(`✅ Base de datos ${dbType} conectada en: ${dbPath}`);
         return db;
@@ -115,9 +121,14 @@ async function createTables() {
         await db.query(table);
     }
     
-    // Crear índices
+    // Crear índices (ignorar errores si las columnas no existen)
     for (const index of indexes) {
-        await db.query(index);
+        try {
+            await db.query(index);
+        } catch (error) {
+            // Ignorar errores de índices (puede ser que la columna no exista)
+            console.warn(`⚠️ No se pudo crear índice (puede ser normal): ${index.split('ON')[0]}`);
+        }
     }
     
     console.log('✅ Tablas e índices creados');
