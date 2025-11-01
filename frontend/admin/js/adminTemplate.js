@@ -38,10 +38,29 @@
     }
     
     /**
+     * Obtener path base para GitHub Pages
+     */
+    function getBasePath() {
+        // Detectar si estamos en GitHub Pages
+        if (window.location.hostname.includes('github.io')) {
+            const pathParts = window.location.pathname.split('/').filter(p => p);
+            const repoName = 'apexremedy.github.io';
+            const repoIndex = pathParts.indexOf(repoName);
+            
+            if (repoIndex !== -1) {
+                return '/' + pathParts.slice(0, repoIndex + 1).join('/') + '/';
+            }
+        }
+        return '';
+    }
+    
+    /**
      * Obtener la ruta del header según el rol
      */
     function getHeaderPath() {
-        return './components/header.html'; // Siempre admin header en esta sección
+        const basePath = getBasePath();
+        const componentsPath = basePath ? basePath + 'components/' : './components';
+        return `${componentsPath}/header.html`; // Siempre admin header en esta sección
     }
     
     // ============================================
@@ -119,7 +138,9 @@
             return;
         }
         
-        const footerPath = './components/footer.html';
+        const basePath = getBasePath();
+        const componentsPath = basePath ? basePath + 'components/' : './components';
+        const footerPath = `${componentsPath}/footer.html`;
         
         try {
             console.log(`📥 Cargando footer: ${footerPath}`);

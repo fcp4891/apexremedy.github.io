@@ -7,6 +7,24 @@
   'use strict';
 
   /**
+   * Obtener path base para GitHub Pages
+   */
+  function getBasePath() {
+    // Detectar si estamos en GitHub Pages
+    if (window.location.hostname.includes('github.io')) {
+      const pathParts = window.location.pathname.split('/');
+      const repoName = 'apexremedy.github.io';
+      const repoIndex = pathParts.indexOf(repoName);
+      
+      if (repoIndex !== -1) {
+        // Construir el path base: /fcp4891/apexremedy.github.io/
+        return pathParts.slice(0, repoIndex + 1).join('/') + '/';
+      }
+    }
+    return '';
+  }
+
+  /**
    * Cargar template HTML en un contenedor
    */
   async function loadTemplate(selector, url) {
@@ -20,8 +38,12 @@
       return false;
     }
 
+    // Ajustar URL para GitHub Pages
+    const basePath = getBasePath();
+    const fullUrl = basePath ? basePath + url.replace('./', '') : url;
+
     try {
-      const response = await fetch(url, { cache: 'no-store' });
+      const response = await fetch(fullUrl, { cache: 'no-store' });
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
@@ -252,13 +274,17 @@ if (profileLink) {
 async function init() {
   // 1. Determinar si estamos en el área admin o customer
   const isAdminArea = location.pathname.toLowerCase().includes('/admin/');
-  const basePath = isAdminArea ? './components' : './components';
+  
+  // 2. Obtener el path base para GitHub Pages
+  const gitHubBasePath = getBasePath();
+  const componentsBasePath = gitHubBasePath ? gitHubBasePath + 'components/' : './components';
+  
   const headerFile = isAdminArea ? 'header.html' : 'header-customer.html';
   const footerFile = isAdminArea ? 'footer.html' : 'footer-customer.html';
 
-  // 2. Cargar header y footer correctos
-  const headerLoaded = await loadTemplate('#header-container', `${basePath}/${headerFile}`);
-  const footerLoaded = await loadTemplate('#footer-container', `${basePath}/${footerFile}`);
+  // 3. Cargar header y footer correctos
+  const headerLoaded = await loadTemplate('#header-container', `${componentsBasePath}/${headerFile}`);
+  const footerLoaded = await loadTemplate('#footer-container', `${componentsBasePath}/${footerFile}`);
 
   // 3. Configurar navegación y UI
   setActiveNavLink();
