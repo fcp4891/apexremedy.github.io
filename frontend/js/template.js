@@ -256,12 +256,25 @@
   /**
    * Actualizar UI de autenticación
    */
+  let authUIUpdated = false;
+  let authUIAttempts = 0;
+  const MAX_AUTH_ATTEMPTS = 50; // Máximo 5 segundos (50 * 100ms)
+  
   function updateAuthUI() {
-    // Esperar a que authManager esté disponible
+    // Prevenir ejecuciones múltiples
+    if (authUIUpdated) return;
+    
+    // Esperar a que authManager esté disponible, pero con límite
     if (typeof authManager === 'undefined') {
-      setTimeout(updateAuthUI, 100);
+      authUIAttempts++;
+      if (authUIAttempts < MAX_AUTH_ATTEMPTS) {
+        setTimeout(updateAuthUI, 100);
+      }
       return;
     }
+    
+    // Marcar como actualizado para prevenir re-ejecuciones
+    authUIUpdated = true;
 
     const guestMenuDesktop = document.getElementById('guestMenuDesktop');
     const guestMenuDesktop2 = document.getElementById('guestMenuDesktop2');
