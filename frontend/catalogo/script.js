@@ -139,7 +139,7 @@ function createProductCard(product) {
     return `
         <div class="product-card">
             <img src="${imageUrl}" alt="${product.name}" class="product-image" 
-                 onerror="this.src='./images/catalogo/catalogo_body.png'; this.onerror=null;">
+                 onerror="this.onerror=null; this.src='./images/catalogo/catalogo_body.png';">
             <div class="product-info">
                 <h3 class="product-name">${product.name}</h3>
                 <p class="product-strain">${product.strain}</p>
@@ -162,7 +162,7 @@ function renderHash() {
         if (hashImagesContainer) {
             hashImagesContainer.innerHTML = catalogData.hash.images
                 .map(img => `<img src="${img}" alt="Hash" class="hash-image" 
-                            onerror="this.src='./images/catalogo/catalogo_body.png'; this.onerror=null;">`)
+                            onerror="this.onerror=null; this.src='./images/catalogo/catalogo_body.png';">`)
                 .join('');
         }
         
@@ -207,7 +207,7 @@ function createOilCard(oil) {
     return `
         <div class="oil-card">
             <img src="${oil.image}" alt="${oil.name}" class="oil-image"
-                 onerror="this.src='./images/catalogo/catalogo_body.png'; this.onerror=null;">
+                 onerror="this.onerror=null; this.src='./images/catalogo/catalogo_body.png';">
             <div class="oil-info">
                 <h3>${oil.name}</h3>
                 <p class="oil-description">${oil.description}</p>
@@ -399,6 +399,46 @@ async function downloadPDF() {
             container.style.overflow = 'visible';
         });
         
+        // Procesar todas las imágenes rotas antes de generar PDF
+        const images = document.querySelectorAll('img');
+        const fallbackImage = './images/catalogo/catalogo_body.png';
+        const imagePromises = [];
+        
+        images.forEach((img, index) => {
+            const promise = new Promise((resolve) => {
+                // Verificar si la imagen falló
+                if (img.complete && img.naturalHeight === 0) {
+                    img.onerror = null;
+                    img.src = fallbackImage;
+                    // Esperar a que cargue la nueva imagen
+                    img.onload = () => {
+                        resolve();
+                    };
+                    img.onerror = () => {
+                        resolve();
+                    };
+                    // Timeout de seguridad
+                    setTimeout(() => resolve(), 3000);
+                } else if (img.complete && img.naturalHeight !== 0) {
+                    resolve();
+                } else {
+                    // Imagen aún cargando, esperar
+                    img.onload = () => {
+                        resolve();
+                    };
+                    img.onerror = () => {
+                        img.onerror = null;
+                        img.src = fallbackImage;
+                        setTimeout(() => resolve(), 100);
+                    };
+                    setTimeout(() => resolve(), 3000);
+                }
+            });
+            imagePromises.push(promise);
+        });
+        
+        await Promise.all(imagePromises);
+        
         // Esperar a que se renderice
         await new Promise(resolve => setTimeout(resolve, 500));
         
@@ -417,8 +457,11 @@ async function downloadPDF() {
             },
             html2canvas: { 
                 scale: 2,
-                logging: true,
-                backgroundColor: '#1a1a2e'
+                useCORS: false,
+                allowTaint: true,
+                logging: false,
+                backgroundColor: '#1a1a2e',
+                imageTimeout: 15000
             },
             jsPDF: { 
                 unit: 'mm', 

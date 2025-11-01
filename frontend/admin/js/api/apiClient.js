@@ -172,15 +172,7 @@ if (typeof APIClient === 'undefined') {
                     };
                 }
                 
-                // Verificar si el usuario está activo
-                if (!user.is_active) {
-                    return {
-                        success: false,
-                        message: 'Tu cuenta ha sido desactivada. Contacta al administrador.'
-                    };
-                }
-                
-                // Comparar contraseña usando SHA-256 (mismo método que seed_users.js)
+                // Comparar contraseña PRIMERO antes de verificar estado (para no revelar si el usuario existe)
                 const passwordHash = await this.hashPassword(password);
                 
                 if (user.password_hash !== passwordHash) {
@@ -190,11 +182,69 @@ if (typeof APIClient === 'undefined') {
                     };
                 }
                 
+                // Determinar account_status si no está definido explícitamente
+                let accountStatus = user.account_status;
+                if (!accountStatus) {
+                    // Calcular basado en is_verified e is_active
+                    if (user.is_verified === true || user.is_verified === 1) {
+                        accountStatus = 'approved';
+                    } else if (user.is_active === false || user.is_active === 0) {
+                        accountStatus = 'rejected';
+                    } else {
+                        accountStatus = 'pending';
+                    }
+                }
+                
+                // Para clientes (no admin), verificar estado de aprobación
+                const isAdmin = user.role === 'admin';
+                
+                if (!isAdmin) {
+                    // Solo clientes aprobados pueden hacer login
+                    if (accountStatus === 'pending') {
+                        return {
+                            success: false,
+                            message: 'Tu cuenta está pendiente de aprobación. Por favor, espera a que un administrador revise tu solicitud.',
+                            account_status: 'pending'
+                        };
+                    }
+                    
+                    if (accountStatus === 'rejected') {
+                        return {
+                            success: false,
+                            message: user.rejection_reason 
+                                ? `Tu cuenta ha sido rechazada: ${user.rejection_reason}` 
+                                : 'Tu cuenta ha sido rechazada. Contacta al administrador para más información.',
+                            account_status: 'rejected',
+                            rejection_reason: user.rejection_reason || null
+                        };
+                    }
+                    
+                    if (accountStatus !== 'approved') {
+                        return {
+                            success: false,
+                            message: 'Tu cuenta no está aprobada. Contacta al administrador.',
+                            account_status: accountStatus
+                        };
+                    }
+                }
+                
+                // Verificar si el usuario está activo (para todos los roles)
+                if (!user.is_active && !isAdmin) {
+                    return {
+                        success: false,
+                        message: 'Tu cuenta ha sido desactivada. Contacta al administrador.',
+                        account_status: 'rejected'
+                    };
+                }
+                
                 // Generar token simple (simulado)
                 const token = this.generateSimpleToken(user);
                 
                 // Preparar datos del usuario (sin password_hash)
                 const { password_hash, ...userData } = user;
+                
+                // Asegurar que account_status esté en userData
+                userData.account_status = accountStatus;
                 
                 return {
                     success: true,

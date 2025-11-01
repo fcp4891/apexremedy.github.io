@@ -1,0 +1,11 @@
+{
+  "name": "catalogo-apexremedy",
+  "version": "1.0.0",
+  "description": "Catálogo ApexRemedy 2025",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "main": "server.js",
+  "type": "commonjs"
+}
+
