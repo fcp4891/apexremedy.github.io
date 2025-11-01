@@ -116,10 +116,12 @@ if (typeof AuthManager === 'undefined') {
                     
                     return { success: true, user };
                 } else {
+                    // Retornar account_status y rejection_reason si están disponibles
                     return { 
                         success: false, 
                         message: response.message || 'Credenciales inválidas',
-                        account_status: response.account_status
+                        account_status: response.account_status || null,
+                        rejection_reason: response.rejection_reason || null
                     };
                 }
             } catch (error) {
@@ -141,9 +143,19 @@ if (typeof AuthManager === 'undefined') {
                             success: false,
                             message: message || 'Tu cuenta ha sido rechazada',
                             account_status: 'rejected',
-                            rejection_reason
+                            rejection_reason: rejection_reason || null
                         };
                     }
+                }
+                
+                // Si el error tiene account_status directamente
+                if (error.account_status) {
+                    return {
+                        success: false,
+                        message: error.message || 'Error al iniciar sesión',
+                        account_status: error.account_status,
+                        rejection_reason: error.rejection_reason || null
+                    };
                 }
                 
                 return { 
