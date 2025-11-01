@@ -153,42 +153,39 @@ div.container.tienda-container {
     
     .tienda-layout {
         grid-template-columns: 1fr !important;
-        gap: 24px !important;
+        gap: 0 !important;
         width: 100% !important;
         margin: 0 !important;
         padding: 0 !important;
         box-sizing: border-box !important;
     }
     
+    /* Ocultar completamente el sidebar de filtros en móvil - solo se usa modal */
     .tienda-filters-sidebar {
-        position: static !important;
-        order: -1; /* Filtros arriba en móvil */
-        width: 100% !important;
-        max-width: 100% !important;
+        display: none !important;
+        visibility: hidden !important;
+        position: absolute !important;
+        left: -9999px !important;
+        width: 0 !important;
+        height: 0 !important;
         margin: 0 !important;
         padding: 0 !important;
-        box-sizing: border-box !important;
+        overflow: hidden !important;
+        opacity: 0 !important;
     }
     
-    /* El about-card NO debe tener padding horizontal en móvil */
-    /* El contenedor ya tiene padding: 20px 16px, así que el card solo necesita padding vertical */
-    .tienda-filters-sidebar .about-card,
-    .tienda-filter-card,
-    #filtersCard {
-        padding-top: 20px !important;
-        padding-bottom: 20px !important;
-        padding-left: 0 !important; /* Sin padding izquierdo - el contenedor ya tiene 16px */
-        padding-right: 0 !important; /* Sin padding derecho - el contenedor ya tiene 16px */
-        margin: 0 !important;
+    /* Asegurar que el main ocupe todo el espacio disponible */
+    .tienda-layout > main {
         width: 100% !important;
         max-width: 100% !important;
-        box-sizing: border-box !important;
+        grid-column: 1 !important;
     }
     
-    /* Asegurar que todos los elementos internos respeten el box-sizing */
-    .tienda-filters-sidebar .about-card *,
-    .tienda-filter-card * {
-        box-sizing: border-box;
+    /* Mostrar botón para abrir filtros en móvil */
+    .filters-mobile-btn {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
     }
     
     .container > div {
