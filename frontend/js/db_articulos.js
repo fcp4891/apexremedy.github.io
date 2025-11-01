@@ -169,11 +169,34 @@ class ProductManager {
                 this.categories = response.data.categories;
                 return this.categories;
             }
-            
-            return [];
         } catch (error) {
-            return [];
+            console.warn('⚠️ No se pudieron cargar categorías de la API, extrayendo de productos cargados...');
         }
+        
+        // Fallback: Extraer categorías únicas de los productos ya cargados
+        if (this.products && this.products.length > 0) {
+            const categoriesSet = new Set();
+            this.products.forEach(product => {
+                if (product.category) {
+                    categoriesSet.add(product.category);
+                }
+                if (product.category_slug) {
+                    categoriesSet.add(product.category_slug);
+                }
+            });
+            const categories = Array.from(categoriesSet).filter(cat => cat && cat !== 'undefined');
+            console.log('✅ Categorías extraídas de productos:', categories);
+            this.categories = categories;
+            return categories;
+        }
+        
+        // Si no hay productos cargados, intentar cargarlos primero
+        if (this.products.length === 0) {
+            await this.loadProducts();
+            return this.getCategories(); // Recursión para obtener categorías después de cargar
+        }
+        
+        return [];
     }
 
     // Filtrar productos localmente (después de cargar)
