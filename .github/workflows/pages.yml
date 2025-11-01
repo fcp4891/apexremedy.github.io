@@ -61,7 +61,17 @@ jobs:
             DB_PATH=${DB_PATH:-database/apexremedy.db} node scripts/export-products-to-json.js
             echo "✅ Exportación completada"
           else
-            echo "⚠️ Base de datos no encontrada, creando JSON vacío para evitar errores..."
+            echo "⚠️ Base de datos no encontrada"
+            # Verificar si los JSON ya existen y tienen productos
+            if [ -f "../frontend/api/products.json" ]; then
+              PRODUCT_COUNT=$(cat ../frontend/api/products.json | grep -o '"total":[0-9]*' | grep -o '[0-9]*' | head -1)
+              if [ -n "$PRODUCT_COUNT" ] && [ "$PRODUCT_COUNT" -gt 0 ]; then
+                echo "✅ JSON existente tiene $PRODUCT_COUNT productos, manteniendo archivos existentes"
+                exit 0
+              fi
+            fi
+            # Solo crear JSON vacío si no existe o está vacío
+            echo "⚠️ Creando JSON vacío para evitar errores..."
             mkdir -p ../frontend/api
             echo '{"success":true,"message":"JSON vacío - base de datos no disponible","data":{"products":[],"total":0,"timestamp":"'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"}}' > ../frontend/api/products.json
             echo '{"success":true,"message":"JSON vacío - base de datos no disponible","data":{"products":[],"total":0,"timestamp":"'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"}}' > ../frontend/api/products-featured.json
@@ -73,6 +83,10 @@ jobs:
           if [ -f "frontend/api/products.json" ]; then
             echo "✅ products.json encontrado"
             echo "📊 Tamaño del archivo: $(du -h frontend/api/products.json | cut -f1)"
+            PRODUCT_COUNT=$(cat frontend/api/products.json | grep -o '"total":[0-9]*' | grep -o '[0-9]*' | head -1)
+            if [ -n "$PRODUCT_COUNT" ]; then
+              echo "📦 Productos en JSON: $PRODUCT_COUNT"
+            fi
             echo "📄 Primeras líneas:"
             head -n 5 frontend/api/products.json
           else
