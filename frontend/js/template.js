@@ -149,7 +149,15 @@
   /**
    * Configurar menú hamburguesa (móvil)
    */
+  // Flag para prevenir múltiples configuraciones
+  let mobileMenuSetup = false;
+
   function setupMobileMenu() {
+    // Prevenir múltiples configuraciones
+    if (mobileMenuSetup) {
+      return;
+    }
+    mobileMenuSetup = true;
     const hamburger = document.getElementById('hamburgerBtn');
     const navMenu = document.getElementById('navMenu');
     
