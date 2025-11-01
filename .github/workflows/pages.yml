@@ -112,6 +112,23 @@ jobs:
             fi
           fi
       
+      - name: Export users to JSON (Static API)
+        working-directory: ./backend
+        continue-on-error: true
+        run: |
+          if [ -f "../database/apexremedy.db" ] || [ -f "database/apexremedy.db" ]; then
+            echo "🚀 Exportando usuarios a JSON estático..."
+            DB_PATH=${DB_PATH:-database/apexremedy.db} node scripts/export-users-to-json.js
+            echo "✅ Exportación de usuarios completada"
+          else
+            echo "⚠️ Base de datos no encontrada, creando JSON vacío de usuarios..."
+            mkdir -p ../frontend/api
+            if [ ! -f "../frontend/api/users.json" ]; then
+              echo '{"success":true,"message":"JSON vacío - base de datos no disponible","data":{"users":[],"total":0,"timestamp":"'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"}}' > ../frontend/api/users.json
+              echo "✅ JSON vacío de usuarios creado"
+            fi
+          fi
+      
       - name: Verify JSON files
         run: |
           if [ -f "frontend/api/products.json" ]; then
@@ -129,6 +146,16 @@ jobs:
             echo '{"success":true,"message":"JSON vacío","data":{"products":[],"total":0,"timestamp":"'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"}}' > frontend/api/products.json
             echo '{"success":true,"message":"JSON vacío","data":{"products":[],"total":0,"timestamp":"'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"}}' > frontend/api/products-featured.json
             echo "✅ JSON vacío creado"
+          fi
+          if [ -f "frontend/api/users.json" ]; then
+            echo "✅ users.json encontrado"
+            echo "📊 Tamaño del archivo: $(du -h frontend/api/users.json | cut -f1)"
+            USER_COUNT=$(cat frontend/api/users.json | grep -o '"total":[0-9]*' | grep -o '[0-9]*' | head -1)
+            if [ -n "$USER_COUNT" ]; then
+              echo "👤 Usuarios en JSON: $USER_COUNT"
+            fi
+          else
+            echo "⚠️ Advertencia: users.json no encontrado"
           fi
       
       - name: Setup Pages

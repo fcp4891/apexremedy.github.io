@@ -121,6 +121,11 @@ if (typeof APIClient === 'undefined') {
         }
 
         async login(credentials) {
+            // Si no hay backend configurado, usar autenticación estática
+            if (!this.baseURL) {
+                return await this.loginStatic(credentials);
+            }
+            
             const response = await this.request('/auth/login', {
                 method: 'POST',
                 body: JSON.stringify(credentials)
@@ -131,6 +136,108 @@ if (typeof APIClient === 'undefined') {
             }
 
             return response;
+        }
+        
+        // 🆕 Login usando JSON estático
+        async loginStatic(credentials) {
+            try {
+                const { email, password } = credentials;
+                
+                if (!email || !password) {
+                    return {
+                        success: false,
+                        message: 'Email y contraseña son requeridos'
+                    };
+                }
+                
+                // Cargar usuarios desde JSON estático
+                const usersData = await this.loadStaticJSON('users.json');
+                
+                if (!usersData || !usersData.success || !usersData.data || !usersData.data.users) {
+                    return {
+                        success: false,
+                        message: 'No se pudo cargar la información de usuarios'
+                    };
+                }
+                
+                const users = usersData.data.users;
+                
+                // Buscar usuario por email
+                const user = users.find(u => u.email && u.email.toLowerCase() === email.toLowerCase());
+                
+                if (!user) {
+                    return {
+                        success: false,
+                        message: 'Credenciales incorrectas'
+                    };
+                }
+                
+                // Verificar si el usuario está activo
+                if (!user.is_active) {
+                    return {
+                        success: false,
+                        message: 'Tu cuenta ha sido desactivada. Contacta al administrador.'
+                    };
+                }
+                
+                // Comparar contraseña usando SHA-256 (mismo método que seed_users.js)
+                const passwordHash = await this.hashPassword(password);
+                
+                if (user.password_hash !== passwordHash) {
+                    return {
+                        success: false,
+                        message: 'Credenciales incorrectas'
+                    };
+                }
+                
+                // Generar token simple (simulado)
+                const token = this.generateSimpleToken(user);
+                
+                // Preparar datos del usuario (sin password_hash)
+                const { password_hash, ...userData } = user;
+                
+                return {
+                    success: true,
+                    message: 'Login exitoso',
+                    data: {
+                        token: token,
+                        user: userData
+                    }
+                };
+                
+            } catch (error) {
+                console.error('Error en login estático:', error);
+                return {
+                    success: false,
+                    message: error.message || 'Error al iniciar sesión'
+                };
+            }
+        }
+        
+        // 🆕 Hash de contraseña usando SHA-256 (compatible con seed_users.js)
+        async hashPassword(password) {
+            // Usar Web Crypto API para SHA-256
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
+        
+        // 🆕 Generar token simple para autenticación estática
+        generateSimpleToken(user) {
+            // Crear un token simple usando base64
+            const payload = {
+                userId: user.id,
+                email: user.email,
+                role: user.role,
+                exp: Date.now() + (7 * 24 * 60 * 60 * 1000) // 7 días
+            };
+            
+            // Simular JWT con base64 (no es seguro, pero funciona para estático)
+            const payloadBase64 = btoa(JSON.stringify(payload));
+            return `static.${payloadBase64}.${Date.now()}`;
         }
 
         async getProfile() {
