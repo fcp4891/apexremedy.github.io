@@ -292,16 +292,14 @@ async function init() {
   // 1. Determinar si estamos en el área admin o customer
   const isAdminArea = location.pathname.toLowerCase().includes('/admin/');
   
-  // 2. Obtener el path base para GitHub Pages
-  const gitHubBasePath = getBasePath();
-  const componentsBasePath = gitHubBasePath ? gitHubBasePath + 'components/' : './components';
-  
+  // 2. Construir path de componentes (loadTemplate manejará el basePath)
   const headerFile = isAdminArea ? 'header.html' : 'header-customer.html';
   const footerFile = isAdminArea ? 'footer.html' : 'footer-customer.html';
+  const componentsPath = './components';
 
-  // 3. Cargar header y footer correctos
-  const headerLoaded = await loadTemplate('#header-container', `${componentsBasePath}/${headerFile}`);
-  const footerLoaded = await loadTemplate('#footer-container', `${componentsBasePath}/${footerFile}`);
+  // 3. Cargar header y footer correctos (loadTemplate ajustará las rutas automáticamente)
+  const headerLoaded = await loadTemplate('#header-container', `${componentsPath}/${headerFile}`);
+  const footerLoaded = await loadTemplate('#footer-container', `${componentsPath}/${footerFile}`);
 
   // 3. Configurar navegación y UI
   setActiveNavLink();
