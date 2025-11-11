@@ -11,6 +11,7 @@
     <script src="./js/basePath.js"></script>
     <script src="./js/config.js"></script>
     <script src="./js/utils.js"></script>
+    <script type="module" src="./js/adminTemplate.legacy.js"></script>
     <script defer src="./js/adminTemplate.js"></script>
 </head>
 <body>
@@ -20,18 +21,18 @@
     <!-- Main Content -->
     <div class="container mx-auto px-4 py-8">
         <!-- Header Section -->
-        <div class="flex justify-between items-center mb-8">
+        <div class="admin-page-header">
             <div>
-                <h1 class="text-3xl font-bold text-gray-800">Gestión de Usuarios</h1>
-                <p class="text-gray-600 mt-1">Administra y aprueba cuentas de usuario</p>
+                <h1 class="admin-page-title">Gestión de Usuarios</h1>
+                <p class="admin-page-subtitle">Administra y aprueba cuentas de usuario</p>
             </div>
-            <div class="flex gap-3">
-                <button onclick="openAddUserModal()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg font-semibold transition flex items-center gap-2" title="Agregar nuevo usuario">
-                    <i class="fas fa-user-plus"></i>
+            <div class="admin-page-actions">
+                <button class="admin-btn admin-btn--primary" title="Agregar nuevo usuario" data-action="open-add-user-modal">
+                    <i class="fas fa-user-plus admin-btn__icon"></i>
                     <span>Agregar Usuario</span>
                 </button>
-                <button onclick="showApprovalGuide()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg font-semibold transition flex items-center gap-2" title="Guía de aprobación de usuarios">
-                    <i class="fas fa-info-circle"></i>
+                <button class="admin-btn admin-btn--accent" title="Guía de aprobación de usuarios" data-action="show-approval-guide">
+                    <i class="fas fa-info-circle admin-btn__icon"></i>
                     <span>Guía de Aprobación</span>
                 </button>
             </div>
@@ -88,8 +89,24 @@
             </div>
         </div>
 
-        <!-- Filtros -->
-        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+        <!-- Tabs Navigation -->
+        <div class="mb-6 border-b border-gray-200">
+            <nav class="-mb-px flex space-x-8">
+                <button id="tab-manage-users" class="tab-button active px-4 py-3 text-base font-semibold border-b-2 border-green-600 text-green-600" data-action="switch-users-tab" data-tab-name="manage">
+                    <i class="fas fa-users mr-2"></i>Gestionar Usuarios
+                </button>
+                <button id="tab-rbac" class="tab-button px-4 py-3 text-base font-semibold border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" data-action="switch-users-tab" data-tab-name="rbac">
+                    <i class="fas fa-user-shield mr-2"></i>Roles y Permisos
+                </button>
+            </nav>
+        </div>
+
+        <!-- Tab Content Container -->
+        <div id="users-tab-content-container">
+            <!-- Manage Users Tab Content -->
+            <div id="content-manage-users" class="users-tab-content">
+                <!-- Filtros -->
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                     <input type="text" id="searchInput" placeholder="Buscar por nombre o email..." 
@@ -99,6 +116,7 @@
                     <option value="">Todos los estados</option>
                     <option value="pending">Pendientes</option>
                     <option value="approved">Aprobados</option>
+                    <option value="forced_approved">Aprobados Forzosamente</option>
                     <option value="rejected">Rechazados</option>
                 </select>
                 <select id="roleFilter" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
@@ -143,7 +161,7 @@
             <div class="p-6">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-2xl font-bold text-gray-800">Documentos del Usuario</h2>
-                    <button onclick="closeDocumentsModal()" class="text-gray-400 hover:text-gray-600">
+                    <button class="text-gray-400 hover:text-gray-600" data-action="close-documents-modal">
                         <i class="fas fa-times text-2xl"></i>
                     </button>
                 </div>
@@ -161,7 +179,7 @@
             <div class="p-6">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-2xl font-bold text-gray-800">Aprobar Cuenta</h2>
-                    <button onclick="closeApproveModal()" class="text-gray-400 hover:text-gray-600">
+                    <button class="text-gray-400 hover:text-gray-600" data-action="close-approve-modal">
                         <i class="fas fa-times text-2xl"></i>
                     </button>
                 </div>
@@ -173,18 +191,40 @@
                         ¿Estás seguro de aprobar la cuenta de <strong id="approveUserName"></strong>?
                     </p>
 
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Notas del Administrador (opcional)</label>
-                        <textarea id="approveNotes" rows="3" 
+                    <!-- Checkbox para aprobación forzada -->
+                    <div class="mb-4 p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" id="forceApprove" 
+                                   data-action="toggle-force-approve"
+                                   class="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500">
+                            <span class="ml-3 text-sm font-medium text-orange-800">
+                                <i class="fas fa-exclamation-triangle mr-2"></i>
+                                Aprobación Forzada
+                            </span>
+                        </label>
+                        <p class="text-xs text-orange-700 mt-2 ml-7">
+                            Marca esta opción si el usuario no cumple completamente con los requisitos pero deseas aprobarlo de todas formas.
+                        </p>
+                    </div>
+
+                    <!-- Campo de notas - obligatorio si es forzada -->
+                    <div class="mb-4" id="approveNotesContainer">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Notas del Administrador <span id="approveNotesRequired" class="text-red-600 hidden">*</span>
+                        </label>
+                        <textarea id="approveNotes" rows="4" 
                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
-                                  placeholder="Agregar notas internas..."></textarea>
+                                  placeholder="Explica el motivo de la aprobación..."></textarea>
+                        <p id="approveNotesHelper" class="text-xs text-gray-500 mt-1">
+                            Notas opcionales para la aprobación estándar.
+                        </p>
                     </div>
 
                     <div class="flex gap-3">
-                        <button type="submit" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold">
-                            <i class="fas fa-check mr-2"></i>Aprobar
+                        <button type="submit" class="admin-btn admin-btn--primary flex-1">
+                            <i class="fas fa-check admin-btn__icon"></i>Aprobar
                         </button>
-                        <button type="button" onclick="closeApproveModal()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 rounded-lg font-semibold">
+                        <button type="button" class="admin-btn admin-btn--muted flex-1" data-action="close-approve-modal">
                             Cancelar
                         </button>
                     </div>
@@ -199,7 +239,7 @@
             <div class="p-6">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-2xl font-bold text-gray-800">Rechazar Cuenta</h2>
-                    <button onclick="closeRejectModal()" class="text-gray-400 hover:text-gray-600">
+                    <button class="text-gray-400 hover:text-gray-600" data-action="close-reject-modal">
                         <i class="fas fa-times text-2xl"></i>
                     </button>
                 </div>
@@ -226,10 +266,10 @@
                     </div>
 
                     <div class="flex gap-3">
-                        <button type="submit" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-semibold">
-                            <i class="fas fa-times mr-2"></i>Rechazar
+                        <button type="submit" class="admin-btn admin-btn--danger flex-1">
+                            <i class="fas fa-times admin-btn__icon"></i>Rechazar
                         </button>
-                        <button type="button" onclick="closeRejectModal()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 rounded-lg font-semibold">
+                        <button type="button" class="admin-btn admin-btn--muted flex-1" data-action="close-reject-modal">
                             Cancelar
                         </button>
                     </div>
@@ -243,7 +283,7 @@
         <div class="p-6">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold text-gray-800">Editar Usuario</h2>
-                <button onclick="closeEditModal()" class="text-gray-400 hover:text-gray-600">
+                <button class="text-gray-400 hover:text-gray-600" data-action="close-edit-modal">
                     <i class="fas fa-times text-2xl"></i>
                 </button>
             </div>
@@ -288,9 +328,9 @@
                         <label class="block text-sm font-medium text-gray-700 mb-2">Rol *</label>
                         <select id="editRole" required
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
-                            <option value="customer">Cliente</option>
-                            <option value="admin">Administrador</option>
+                            <option value="">Cargando roles...</option>
                         </select>
+                        <p class="text-xs text-gray-500 mt-1">Selecciona el rol del usuario</p>
                     </div>
 
                     <!-- Estado de Cuenta -->
@@ -300,9 +340,20 @@
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
                             <option value="pending">Pendiente</option>
                             <option value="approved">Aprobado</option>
+                            <option value="forced_approved">Aprobado Forzosamente</option>
                             <option value="rejected">Rechazado</option>
                         </select>
                         <p class="text-xs text-gray-500 mt-1">Cambiar el estado aquí actualizará el acceso del usuario</p>
+                    </div>
+
+                    <!-- Direcciones -->
+                    <div id="editAddressesSection">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-map-marker-alt mr-2"></i>Direcciones de Entrega
+                        </label>
+                        <div id="editAddressesList" class="space-y-3">
+                            <p class="text-sm text-gray-500">Cargando direcciones...</p>
+                        </div>
                     </div>
 
                     <!-- Info adicional -->
@@ -313,8 +364,8 @@
                                 <p class="font-semibold mb-1">Información</p>
                                 <ul class="space-y-1">
                                     <li>• El email debe ser único en el sistema</li>
-                                    <li>• Los cambios se aplicarán inmediatamente</li>
-                                    <li>• El usuario recibirá notificación de cambios</li>
+                                    <li>• Solo se actualizarán los campos modificados</li>
+                                    <li>• Si no hay cambios, la información se mantiene inalterable</li>
                                 </ul>
                             </div>
                         </div>
@@ -322,10 +373,10 @@
                 </div>
 
                 <div class="flex gap-3 mt-6">
-                    <button type="submit" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg font-semibold transition">
-                        <i class="fas fa-save mr-2"></i>Guardar Cambios
+                    <button type="submit" class="admin-btn admin-btn--accent flex-1">
+                        <i class="fas fa-save admin-btn__icon"></i>Guardar Cambios
                     </button>
-                    <button type="button" onclick="closeEditModal()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 rounded-lg font-semibold transition">
+                    <button type="button" class="admin-btn admin-btn--muted flex-1" data-action="close-edit-modal">
                         Cancelar
                     </button>
                 </div>
@@ -340,18 +391,29 @@
             <div class="p-6">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-2xl font-bold text-gray-800">Agregar Nuevo Usuario</h2>
-                    <button onclick="closeAddUserModal()" class="text-gray-400 hover:text-gray-600">
+                    <button class="text-gray-400 hover:text-gray-600" data-action="close-add-user-modal">
                         <i class="fas fa-times text-2xl"></i>
                     </button>
                 </div>
 
+                <!-- Selector de Rol -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-user-shield mr-2"></i>Rol del Usuario *
+                    </label>
+                    <select id="userTypeSelect" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" data-action="user-type-change">
+                        <option value="">Cargando roles...</option>
+                    </select>
+                    <p id="roleDescription" class="text-xs text-gray-500 mt-1">Selecciona el rol que tendrá el usuario en el sistema</p>
+                </div>
+
                 <!-- Pestañas -->
                 <div class="flex border-b border-gray-200 mb-6">
-                    <button onclick="switchUserTab('customer')" id="tabCustomer" class="flex-1 px-6 py-3 text-center font-semibold text-gray-700 border-b-2 border-green-600 transition">
-                        <i class="fas fa-user mr-2"></i>Cliente
+                    <button class="flex-1 px-6 py-3 text-center font-semibold text-gray-700 border-b-2 border-green-600 transition" data-action="switch-user-modal-tab" data-tab="customer" id="tabCustomer">
+                        <i class="fas fa-user mr-2"></i><span id="tabCustomerLabel">Cliente</span>
                     </button>
-                    <button onclick="switchUserTab('admin')" id="tabAdmin" class="flex-1 px-6 py-3 text-center font-semibold text-gray-500 border-b-2 border-transparent transition">
-                        <i class="fas fa-user-shield mr-2"></i>Administrador
+                    <button class="flex-1 px-6 py-3 text-center font-semibold text-gray-500 border-b-2 border-transparent transition" data-action="switch-user-modal-tab" data-tab="admin" id="tabAdmin">
+                        <i class="fas fa-user-shield mr-2"></i><span id="tabAdminLabel">Administrador</span>
                     </button>
                 </div>
 
@@ -390,10 +452,10 @@
 
                                 <!-- Teléfono -->
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Teléfono (opcional)</label>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Teléfono *</label>
                                     <div class="relative">
                                         <i class="fas fa-phone absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                                        <input type="tel" id="customerPhone"
+                                        <input type="tel" id="customerPhone" required
                                                class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
                                                placeholder="+56912345678">
                                     </div>
@@ -401,7 +463,7 @@
 
                                 <!-- RUT -->
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">RUT (opcional)</label>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">RUT</label>
                                     <div class="relative">
                                         <i class="fas fa-id-card absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                                         <input type="text" id="customerRut"
@@ -409,7 +471,87 @@
                                                placeholder="12345678-9">
                                     </div>
                                 </div>
+                            </div>
 
+                            <!-- Dirección (Opcional) -->
+                            <div class="mt-6">
+                                <h4 class="text-md font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                                    <i class="fas fa-map-marker-alt text-gray-600"></i>
+                                    Dirección de Entrega (Opcional)
+                                </h4>
+                                <p class="text-xs text-gray-500 mb-3">Puedes agregarla ahora o más tarde en el proceso de compra</p>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="md:col-span-2">
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Calle y número</label>
+                                        <div class="relative">
+                                            <i class="fas fa-home absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                            <input type="text" id="customerAddressLine1"
+                                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                                   placeholder="Calle y número">
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Tipo de dirección (Depto/Casa/Oficina) -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Tipo (opcional)</label>
+                                        <div class="relative">
+                                            <i class="fas fa-building absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 z-10"></i>
+                                            <select id="customerAddressType"
+                                                    class="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 appearance-none bg-white cursor-pointer">
+                                                <option value="">Tipo (opcional)</option>
+                                                <option value="Depto">Depto</option>
+                                                <option value="Casa">Casa</option>
+                                                <option value="Oficina">Oficina</option>
+                                            </select>
+                                            <i class="fas fa-chevron-down absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Referencia (texto aparte) -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Referencia (opcional)</label>
+                                        <div class="relative">
+                                            <i class="fas fa-info-circle absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                            <input type="text" id="customerAddressReference"
+                                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                                   placeholder="Ej: Frente a plaza">
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Comuna</label>
+                                        <div class="relative">
+                                            <i class="fas fa-map-pin absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                            <input type="text" id="customerCommune"
+                                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                                   placeholder="Comuna">
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Ciudad</label>
+                                        <div class="relative">
+                                            <i class="fas fa-city absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                            <input type="text" id="customerCity"
+                                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                                   placeholder="Ciudad">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="md:col-span-2">
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Región</label>
+                                        <div class="relative">
+                                            <i class="fas fa-globe-americas absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                            <input type="text" id="customerRegion"
+                                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                                   placeholder="Región (ej: Región Metropolitana)">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
                                 <!-- Contraseña -->
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Contraseña *</label>
@@ -418,8 +560,8 @@
                                         <input type="password" id="customerPassword" required minlength="6"
                                                class="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
                                                placeholder="••••••••">
-                                        <button type="button" onclick="togglePasswordVisibility('customerPassword', 'toggleCustomerPassword')" 
-                                                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                                        <button type="button" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600" 
+                                                data-action="toggle-password-visibility" data-target-input="customerPassword" data-toggle-icon="toggleCustomerPassword">
                                             <i id="toggleCustomerPassword" class="fas fa-eye"></i>
                                         </button>
                                     </div>
@@ -453,9 +595,9 @@
                                     <i class="fas fa-prescription text-green-600"></i>
                                     Receta Médica *
                                 </label>
-                                <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-green-500 transition" 
-                                     id="uploadRecetaZone" onclick="document.getElementById('recetaFileInput').click()">
-                                    <input type="file" id="recetaFileInput" accept=".pdf,.jpg,.jpeg,.png" class="hidden" onchange="handleDocumentUpload(event, 'receta')">
+                                <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-green-400 transition" 
+                                     id="uploadRecetaZone" data-action="trigger-file-input" data-target-input="recetaFileInput">
+                                    <input type="file" id="recetaFileInput" accept=".pdf,.jpg,.jpeg,.png" class="hidden" data-action="document-input" data-document-type="receta">
                                     <div id="recetaPlaceholderContent">
                                         <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-3"></i>
                                         <p class="text-gray-600 font-semibold">Arrastra tu receta médica aquí</p>
@@ -465,7 +607,7 @@
                                         <i class="fas fa-file-pdf text-4xl text-green-600 mb-3"></i>
                                         <p id="recetaFileName" class="font-semibold text-green-600"></p>
                                         <p id="recetaFileSize" class="text-sm text-gray-500"></p>
-                                        <button type="button" onclick="removeDocument('receta')" class="mt-2 text-red-600 hover:text-red-800 text-sm">
+                                        <button type="button" class="mt-2 text-red-600 hover:text-red-800 text-sm" data-action="remove-document" data-document-type="receta">
                                             <i class="fas fa-trash mr-1"></i>Eliminar
                                         </button>
                                     </div>
@@ -479,9 +621,9 @@
                                     <i class="fas fa-id-card text-blue-600"></i>
                                     Carnet de Identidad *
                                 </label>
-                                <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-blue-500 transition" 
-                                     id="uploadCarnetZone" onclick="document.getElementById('carnetFileInput').click()">
-                                    <input type="file" id="carnetFileInput" accept=".pdf,.jpg,.jpeg,.png" class="hidden" onchange="handleDocumentUpload(event, 'carnet')">
+                                <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-blue-400 transition" 
+                                     id="uploadCarnetZone" data-action="trigger-file-input" data-target-input="carnetFileInput">
+                                    <input type="file" id="carnetFileInput" accept=".pdf,.jpg,.jpeg,.png" class="hidden" data-action="document-input" data-document-type="carnet">
                                     <div id="carnetPlaceholderContent">
                                         <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-3"></i>
                                         <p class="text-gray-600 font-semibold">Arrastra tu carnet aquí</p>
@@ -491,7 +633,7 @@
                                         <i class="fas fa-file-image text-4xl text-blue-600 mb-3"></i>
                                         <p id="carnetFileName" class="font-semibold text-blue-600"></p>
                                         <p id="carnetFileSize" class="text-sm text-gray-500"></p>
-                                        <button type="button" onclick="removeDocument('carnet')" class="mt-2 text-red-600 hover:text-red-800 text-sm">
+                                        <button type="button" class="mt-2 text-red-600 hover:text-red-800 text-sm" data-action="remove-document" data-document-type="carnet">
                                             <i class="fas fa-trash mr-1"></i>Eliminar
                                         </button>
                                     </div>
@@ -505,9 +647,9 @@
                                     <i class="fas fa-certificate text-purple-600"></i>
                                     Certificado de Antecedentes *
                                 </label>
-                                <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-purple-500 transition" 
-                                     id="uploadCertificadoZone" onclick="document.getElementById('certificadoFileInput').click()">
-                                    <input type="file" id="certificadoFileInput" accept=".pdf,.jpg,.jpeg,.png" class="hidden" onchange="handleDocumentUpload(event, 'certificado')">
+                                <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-purple-400 transition" 
+                                     id="uploadCertificadoZone" data-action="trigger-file-input" data-target-input="certificadoFileInput">
+                                    <input type="file" id="certificadoFileInput" accept=".pdf,.jpg,.jpeg,.png" class="hidden" data-action="document-input" data-document-type="certificado">
                                     <div id="certificadoPlaceholderContent">
                                         <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-3"></i>
                                         <p class="text-gray-600 font-semibold">Arrastra tu certificado aquí</p>
@@ -517,22 +659,47 @@
                                         <i class="fas fa-file-alt text-4xl text-purple-600 mb-3"></i>
                                         <p id="certificadoFileName" class="font-semibold text-purple-600"></p>
                                         <p id="certificadoFileSize" class="text-sm text-gray-500"></p>
-                                        <button type="button" onclick="removeDocument('certificado')" class="mt-2 text-red-600 hover:text-red-800 text-sm">
+                                        <button type="button" class="mt-2 text-red-600 hover:text-red-800 text-sm" data-action="remove-document" data-document-type="certificado">
                                             <i class="fas fa-trash mr-1"></i>Eliminar
                                         </button>
                                     </div>
                                 </div>
                                 <input type="hidden" id="certificadoData">
                             </div>
+
+                            <!-- Poder de Cultivo (Cesión) -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                                    <i class="fas fa-leaf text-teal-600"></i>
+                                    Poder de Cultivo (Cesión de Derechos) *
+                                </label>
+                                <p class="text-xs text-gray-500 mb-3">
+                                    Debes completar y generar el formulario de cesión de derechos de cultivo. Este documento es obligatorio según la Ley 20.000.
+                                </p>
+                                
+                                <!-- Contenedor para el formulario de poder cultivo -->
+                                <div id="poderCultivoContainerModal"></div>
+                                
+                                <input type="hidden" id="poderCultivoData">
+                                <input type="hidden" id="poderCultivoFileName">
+                                
+                                <div id="poderCultivoStatusModal" class="hidden mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+                                    <div class="flex items-center gap-2">
+                                        <i class="fas fa-check-circle text-green-600"></i>
+                                        <span class="text-green-800 font-semibold text-sm">Documento de cesión generado correctamente</span>
+                                    </div>
+                                    <p id="poderCultivoFileNameDisplayModal" class="text-green-700 text-xs mt-1"></p>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <div class="flex gap-3 mt-6">
-                        <button type="button" onclick="closeAddUserModal()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 rounded-lg font-semibold transition">
+                        <button type="button" class="admin-btn admin-btn--muted flex-1" data-action="close-add-user-modal">
                             Cancelar
                         </button>
-                        <button type="submit" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold transition">
-                            <i class="fas fa-user-plus mr-2"></i>Crear Cliente
+                        <button type="submit" class="admin-btn admin-btn--primary flex-1">
+                            <i class="fas fa-user-plus admin-btn__icon"></i>Crear Cliente
                         </button>
                     </div>
                 </form>
@@ -588,8 +755,8 @@
                                         <input type="password" id="adminPassword" required minlength="6"
                                                class="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
                                                placeholder="••••••••">
-                                        <button type="button" onclick="togglePasswordVisibility('adminPassword', 'toggleAdminPassword')" 
-                                                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                                        <button type="button" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600" 
+                                                data-action="toggle-password-visibility" data-target-input="adminPassword" data-toggle-icon="toggleAdminPassword">
                                             <i id="toggleAdminPassword" class="fas fa-eye"></i>
                                         </button>
                                     </div>
@@ -626,1178 +793,92 @@
                     </div>
 
                     <div class="flex gap-3 mt-6">
-                        <button type="button" onclick="closeAddUserModal()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 rounded-lg font-semibold transition">
+                        <button type="button" class="admin-btn admin-btn--muted flex-1" data-action="close-add-user-modal">
                             Cancelar
                         </button>
-                        <button type="submit" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-semibold transition">
-                            <i class="fas fa-user-shield mr-2"></i>Crear Administrador
+                        <button type="submit" class="admin-btn admin-btn--danger flex-1">
+                            <i class="fas fa-user-shield admin-btn__icon"></i>Crear Administrador
                         </button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+            </div>
+            <!-- End Manage Users Tab Content -->
+
+            <!-- Roles and Permissions Tab Content -->
+            <div id="content-rbac" class="users-tab-content hidden">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Gestión de Roles y Permisos</h2>
+                    <p class="text-gray-600">Administra los roles y permisos del sistema RBAC</p>
+                </div>
+
+                <!-- Roles Section -->
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-bold text-gray-800">
+                            <i class="fas fa-user-shield mr-2 text-blue-600"></i>Roles del Sistema
+                        </h3>
+                        <button class="admin-btn admin-btn--accent admin-btn--compact" data-action="show-role-modal">
+                            <i class="fas fa-plus admin-btn__icon"></i>Nuevo Rol
+                        </button>
+                    </div>
+                    <div id="rolesListInUsers" class="space-y-4">
+                        <div class="text-center py-8 text-gray-400">
+                            <i class="fas fa-spinner fa-spin text-3xl mb-2"></i>
+                            <p>Cargando roles...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Permissions Section -->
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-bold text-gray-800">
+                            <i class="fas fa-key mr-2 text-purple-600"></i>Permisos del Sistema
+                        </h3>
+                        <button class="admin-btn admin-btn--accent admin-btn--compact" data-action="show-permission-modal">
+                            <i class="fas fa-plus admin-btn__icon"></i>Nuevo Permiso
+                        </button>
+                    </div>
+                    <div id="permissionsListInUsers" class="space-y-4">
+                        <div class="text-center py-8 text-gray-400">
+                            <i class="fas fa-spinner fa-spin text-3xl mb-2"></i>
+                            <p>Cargando permisos...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End Roles and Permissions Tab Content -->
+        </div>
+        <!-- End Tab Content Container -->
 
     <!-- Footer -->
     <div id="footer-container"></div>
 
     <!-- Scripts -->
+    <script type="module" src="./js/adminTemplate.legacy.js"></script>
     <script src="./js/api/apiClient.js"></script>
     <script src="./js/auth.js"></script>
     <script src="./js/sessionManager.js"></script>
     <script src="./js/notifications.js"></script>
-    
-    <script>
-        // ============================================
-        // PROTECCIÓN DE RUTA - SOLO ADMIN
-        // ============================================
-        (function() {
-            'use strict';
-            function checkAdminAccess() {
-                if (typeof authManager === 'undefined') {
-                    window.location.href = '../login.html';
-                    return;
-                }
-                if (!authManager.requireAdmin()) {
-                    return;
-                }
-            }
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', checkAdminAccess);
-            } else {
-                checkAdminAccess();
-            }
-        })();
-        
-        let allUsers = [];
-        let filteredUsers = [];
+    <!-- Users page modules -->
+    <script src="./js/users-main.js"></script>
+    <script src="./js/users-modals.js"></script>
+    <script src="./js/users-forms.js"></script>
+    <script src="./js/users-rbac.js"></script>
+    <script src="./js/users-utils.js"></script>
+    <script src="./js/pages/users-page.js" defer></script>
+    <!-- Note: Route protection (admin-only access) is handled in users-page.js -->
+
+    <!-- Scripts de usuarios cargados desde archivos externos -->
+    <!-- Todos los scripts inline han sido migrados a: -->
+    <!-- - users-main.js: Funciones principales de usuarios -->
+    <!-- - users-modals.js: Funciones de modales -->
+    <!-- - users-forms.js: Funciones de formularios -->
+    <!-- - users-rbac.js: Funciones de roles y permisos -->
+    <!-- - users-utils.js: Utilidades y guía de aprobación -->
 
-        document.addEventListener('DOMContentLoaded', () => {
-            if (!authManager.requireAdmin()) {
-                return;
-            }
-            loadUsers();
-            setupFilters();
-        });
-
-// Cargar usuarios
-async function loadUsers() {
-    try {
-        console.log('📥 Cargando usuarios...');
-        console.log('🔍 API object:', window.api);
-        
-        // Asegurarse de que api está disponible
-        if (typeof window.api === 'undefined') {
-            console.error('❌ window.api no está definido');
-            notify.error('Error: API no está disponible');
-            return;
-        }
-        
-        const response = await window.api.getUsers();
-        
-        console.log('📦 Respuesta del servidor:', response);
-        
-        if (response.success) {
-            allUsers = response.data.users || [];
-            console.log('👥 Usuarios obtenidos (raw):', allUsers);
-            
-            // 🔴 IMPORTANTE: Asegurarse de que todos tengan account_status
-            allUsers = allUsers.map(user => {
-                console.log('👤 Usuario sin procesar:', user);
-                return {
-                    ...user,
-                    account_status: user.account_status || 'pending' // Default si no existe
-                };
-            });
-            
-            console.log('✅ Usuarios procesados:', allUsers);
-            
-            filteredUsers = [...allUsers];
-            updateStats();
-            displayUsers();
-            
-            console.log('✅ Usuarios cargados:', allUsers.length);
-        } else {
-            throw new Error(response.message || 'Error al cargar usuarios');
-        }
-    } catch (error) {
-        console.error('❌ Error al cargar usuarios:', error);
-        notify.error('Error al cargar usuarios: ' + error.message);
-    }
-}
-
-        // Actualizar estadísticas
-        function updateStats() {
-            document.getElementById('totalUsers').textContent = allUsers.length;
-            document.getElementById('pendingUsers').textContent = allUsers.filter(u => u.account_status === 'pending').length;
-            document.getElementById('approvedUsers').textContent = allUsers.filter(u => u.account_status === 'approved').length;
-            document.getElementById('rejectedUsers').textContent = allUsers.filter(u => u.account_status === 'rejected').length;
-        }
-
-        // Configurar filtros
-        function setupFilters() {
-            let searchTimeout;
-            const searchInput = document.getElementById('searchInput');
-            
-            searchInput.addEventListener('input', () => {
-                clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(applyFilters, 300);
-            });
-
-            document.getElementById('statusFilter').addEventListener('change', applyFilters);
-            document.getElementById('roleFilter').addEventListener('change', applyFilters);
-        }
-
-        // Aplicar filtros
-        function applyFilters() {
-            const search = document.getElementById('searchInput').value.toLowerCase();
-            const status = document.getElementById('statusFilter').value;
-            const role = document.getElementById('roleFilter').value;
-
-            filteredUsers = allUsers.filter(user => {
-                const matchSearch = !search || 
-                    user.name.toLowerCase().includes(search) || 
-                    user.email.toLowerCase().includes(search);
-                const matchStatus = !status || user.account_status === status;
-                const matchRole = !role || user.role === role;
-                
-                return matchSearch && matchStatus && matchRole;
-            });
-
-            displayUsers();
-        }
-
-        // Mostrar usuarios
-// Mostrar usuarios
-function displayUsers() {
-    const tbody = document.getElementById('usersTable');
-    
-    if (filteredUsers.length === 0) {
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="7" class="px-6 py-12 text-center">
-                    <i class="fas fa-users text-6xl text-gray-300 mb-4"></i>
-                    <p class="text-xl text-gray-500">No se encontraron usuarios</p>
-                </td>
-            </tr>
-        `;
-        return;
-    }
-
-    tbody.innerHTML = filteredUsers.map(user => {
-        const statusColors = {
-            'pending': 'bg-yellow-100 text-yellow-800',
-            'approved': 'bg-green-100 text-green-800',
-            'rejected': 'bg-red-100 text-red-800'
-        };
-
-        const statusIcons = {
-            'pending': 'fa-clock',
-            'approved': 'fa-check-circle',
-            'rejected': 'fa-times-circle'
-        };
-
-        const statusLabels = {
-            'pending': 'Pendiente',
-            'approved': 'Aprobado',
-            'rejected': 'Rechazado'
-        };
-
-        return `
-            <tr class="hover:bg-gray-50">
-                <td class="px-6 py-4 text-sm font-medium text-gray-900">#${user.id}</td>
-                <td class="px-6 py-4">
-                    <div>
-                        <p class="text-sm font-medium text-gray-900">${user.name}</p>
-                        <p class="text-sm text-gray-500">${user.email}</p>
-                    </div>
-                </td>
-                <td class="px-6 py-4">
-                    <div class="text-sm text-gray-900">
-                        ${user.phone ? `<p><i class="fas fa-phone mr-1"></i>${user.phone}</p>` : ''}
-                        ${user.rut ? `<p class="text-gray-500"><i class="fas fa-id-card mr-1"></i>${user.rut}</p>` : ''}
-                    </div>
-                </td>
-                <td class="px-6 py-4">
-                    <span class="px-3 py-1 text-xs font-semibold rounded-full ${user.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}">
-                        ${user.role === 'admin' ? 'Admin' : 'Cliente'}
-                    </span>
-                </td>
-                <td class="px-6 py-4">
-                    <span class="px-3 py-1 text-xs font-semibold rounded-full ${statusColors[user.account_status]}">
-                        <i class="fas ${statusIcons[user.account_status]} mr-1"></i>${statusLabels[user.account_status]}
-                    </span>
-                </td>
-                <td class="px-6 py-4 text-sm text-gray-500">
-                    ${new Date(user.created_at).toLocaleDateString('es-CL')}
-                </td>
-                <td class="px-6 py-4 text-sm">
-                    <div class="flex gap-2">
-                        ${user.role !== 'admin' ? `
-                            <!-- Editar siempre visible -->
-                            <button onclick="openEditModal(${user.id})" class="text-indigo-600 hover:text-indigo-800" title="Editar">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            
-                            ${user.account_status === 'pending' ? `
-                                <button onclick="viewDocuments(${user.id})" class="text-blue-600 hover:text-blue-800" title="Ver documentos">
-                                    <i class="fas fa-file-alt"></i>
-                                </button>
-                                <button onclick="openApproveModal(${user.id}, '${user.name}')" class="text-green-600 hover:text-green-800" title="Aprobar">
-                                    <i class="fas fa-check"></i>
-                                </button>
-                                <button onclick="openRejectModal(${user.id}, '${user.name}')" class="text-red-600 hover:text-red-800" title="Rechazar">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                                <button onclick="deleteUser(${user.id}, '${user.name}')" class="text-red-600 hover:text-red-800" title="Eliminar">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            ` : ''}
-                            
-                            ${user.account_status === 'approved' ? `
-                                <button onclick="openRejectModal(${user.id}, '${user.name}')" class="text-red-600 hover:text-red-800" title="Rechazar">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                                <button onclick="setUserPending(${user.id})" class="text-yellow-600 hover:text-yellow-800" title="Marcar como Pendiente">
-                                    <i class="fas fa-clock"></i>
-                                </button>
-                                <button onclick="deleteUser(${user.id}, '${user.name}')" class="text-red-600 hover:text-red-800" title="Eliminar">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            ` : ''}
-                            
-                            ${user.account_status === 'rejected' ? `
-                                <button onclick="openApproveModal(${user.id}, '${user.name}')" class="text-green-600 hover:text-green-800" title="Aprobar">
-                                    <i class="fas fa-check"></i>
-                                </button>
-                                <button onclick="setUserPending(${user.id})" class="text-yellow-600 hover:text-yellow-800" title="Marcar como Pendiente">
-                                    <i class="fas fa-clock"></i>
-                                </button>
-                                <button onclick="deleteUser(${user.id}, '${user.name}')" class="text-red-600 hover:text-red-800" title="Eliminar">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            ` : ''}
-                        ` : `
-                            <button onclick="openEditModal(${user.id})" class="text-indigo-600 hover:text-indigo-800" title="Editar">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                        `}
-                    </div>
-                </td>
-            </tr>
-        `;
-    }).join('');
-}
-
-// Ver documentos
-async function viewDocuments(userId) {
-    try {
-        console.log('📄 Cargando documentos del usuario:', userId);
-        
-        // 🔴 CAMBIAR ESTO:
-        // const response = await api.request(`/users/${userId}/documents`, { method: 'GET' });
-        
-        // ✅ POR ESTO:
-        const response = await window.api.getUserDocuments(userId);
-
-        if (response.success) {
-            const documents = response.data.documents || [];
-            
-            // Obtener información del usuario
-            const userResponse = await window.api.request(`/users/${userId}`, { method: 'GET' });
-            const user = userResponse.data.user;
-            
-            // Mapear documentos a formato esperado
-            const documentsMap = {};
-            documents.forEach(doc => {
-                const base64Data = doc.file_data;
-                if (doc.document_type === 'receta_medica') {
-                    documentsMap.medical_prescription = base64Data;
-                } else if (doc.document_type === 'carnet_identidad') {
-                    documentsMap.id_card = base64Data;
-                } else if (doc.document_type === 'certificado_antecedentes') {
-                    documentsMap.background_check = base64Data;
-                }
-            });
-            
-            const content = document.getElementById('documentsContent');
-            
-            console.log('✅ Documentos recibidos:', {
-                userId: userId,
-                totalDocuments: documents.length,
-                documentsMap
-            });
-            
-            const userName = user.name || `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.email;
-            
-            content.innerHTML = `
-                <div class="mb-6 p-4 bg-gray-50 rounded-lg">
-                    <h3 class="text-lg font-bold text-gray-800 mb-2">${userName}</h3>
-                    <p class="text-sm text-gray-600 mb-1"><i class="fas fa-envelope mr-2"></i>${user.email}</p>
-                    <div class="mt-3 flex gap-2">
-                        <span class="px-3 py-1 text-xs font-semibold rounded-full ${
-                            user.account_status === 'approved' ? 'bg-green-100 text-green-800' :
-                            user.account_status === 'rejected' ? 'bg-red-100 text-red-800' :
-                            'bg-yellow-100 text-yellow-800'
-                        }">
-                            ${user.account_status === 'approved' ? 'Aprobado' : 
-                              user.account_status === 'rejected' ? 'Rechazado' : 'Pendiente'}
-                        </span>
-                        ${documents.length > 0 ? 
-                            '<span class="px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800"><i class="fas fa-check mr-1"></i>Documentos Cargados</span>' : 
-                            '<span class="px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800"><i class="fas fa-clock mr-1"></i>Sin Documentos</span>'
-                        }
-                    </div>
-                </div>
-
-                <div class="space-y-4">
-                    <!-- Receta Médica -->
-                    <div class="border rounded-lg p-4 bg-white">
-                        <h4 class="font-semibold mb-3 flex items-center gap-2">
-                            <i class="fas fa-prescription text-green-600 text-xl"></i>
-                            <span>1. Receta Médica</span>
-                            ${!documentsMap.medical_prescription ? '<span class="text-xs text-red-600 ml-2">(No cargado)</span>' : '<span class="text-xs text-green-600 ml-2">(✓ Cargado)</span>'}
-                        </h4>
-                        ${documentsMap.medical_prescription ? 
-                            `${documentsMap.medical_prescription.includes('application/pdf') ?
-                                `<iframe src="${documentsMap.medical_prescription}" class="w-full h-96 border rounded"></iframe>` :
-                                `<img src="${documentsMap.medical_prescription}" class="max-w-full h-auto border rounded shadow-lg">`
-                            }` :
-                            '<div class="text-center py-8 bg-gray-50 rounded"><i class="fas fa-file-excel text-gray-300 text-5xl mb-3"></i><p class="text-gray-500">Documento no disponible</p></div>'
-                        }
-                    </div>
-
-                    <!-- Carnet de Identidad -->
-                    <div class="border rounded-lg p-4 bg-white">
-                        <h4 class="font-semibold mb-3 flex items-center gap-2">
-                            <i class="fas fa-id-card text-blue-600 text-xl"></i>
-                            <span>2. Carnet de Identidad</span>
-                            ${!documentsMap.id_card ? '<span class="text-xs text-red-600 ml-2">(No cargado)</span>' : '<span class="text-xs text-green-600 ml-2">(✓ Cargado)</span>'}
-                        </h4>
-                        ${documentsMap.id_card ? 
-                            `${documentsMap.id_card.includes('application/pdf') ?
-                                `<iframe src="${documentsMap.id_card}" class="w-full h-96 border rounded"></iframe>` :
-                                `<img src="${documentsMap.id_card}" class="max-w-full h-auto border rounded shadow-lg">`
-                            }` :
-                            '<div class="text-center py-8 bg-gray-50 rounded"><i class="fas fa-id-card text-gray-300 text-5xl mb-3"></i><p class="text-gray-500">Documento no disponible</p></div>'
-                        }
-                    </div>
-
-                    <!-- Certificado de Antecedentes -->
-                    <div class="border rounded-lg p-4 bg-white">
-                        <h4 class="font-semibold mb-3 flex items-center gap-2">
-                            <i class="fas fa-certificate text-purple-600 text-xl"></i>
-                            <span>3. Certificado de Antecedentes</span>
-                            ${!documentsMap.background_check ? '<span class="text-xs text-red-600 ml-2">(No cargado)</span>' : '<span class="text-xs text-green-600 ml-2">(✓ Cargado)</span>'}
-                        </h4>
-                        ${documentsMap.background_check ? 
-                            `${documentsMap.background_check.includes('application/pdf') ?
-                                `<iframe src="${documentsMap.background_check}" class="w-full h-96 border rounded"></iframe>` :
-                                `<img src="${documentsMap.background_check}" class="max-w-full h-auto border rounded shadow-lg">`
-                            }` :
-                            '<div class="text-center py-8 bg-gray-50 rounded"><i class="fas fa-certificate text-gray-300 text-5xl mb-3"></i><p class="text-gray-500">Documento no disponible</p></div>'
-                        }
-                    </div>
-                </div>
-
-                <!-- Botones de acción -->
-                ${user.account_status === 'pending' ? `
-                    <div class="mt-6 flex gap-3">
-                        <button onclick="closeDocumentsModal(); openApproveModal(${userId}, '${userName}')" 
-                                class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold transition">
-                            <i class="fas fa-check mr-2"></i>Aprobar Cuenta
-                        </button>
-                        <button onclick="closeDocumentsModal(); openRejectModal(${userId}, '${userName}')" 
-                                class="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-semibold transition">
-                            <i class="fas fa-times mr-2"></i>Rechazar Cuenta
-                        </button>
-                    </div>
-                ` : ''}
-            `;
-
-            document.getElementById('documentsModal').classList.remove('hidden');
-        } else {
-            throw new Error(response.message || 'Error al cargar documentos');
-        }
-    } catch (error) {
-        console.error('❌ Error al cargar documentos:', error);
-        notify.error('Error al cargar documentos: ' + error.message);
-    }
-}
-
-        function closeDocumentsModal() {
-            document.getElementById('documentsModal').classList.add('hidden');
-        }
-
-        // Aprobar usuario
-        function openApproveModal(userId, userName) {
-            document.getElementById('approveUserId').value = userId;
-            document.getElementById('approveUserName').textContent = userName;
-            document.getElementById('approveModal').classList.remove('hidden');
-        }
-
-        function closeApproveModal() {
-            document.getElementById('approveModal').classList.add('hidden');
-            document.getElementById('approveForm').reset();
-        }
-
-        document.getElementById('approveForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const userId = document.getElementById('approveUserId').value;
-    const notes = document.getElementById('approveNotes').value;
-    
-    try {
-        // ✅ USAR EL NUEVO MÉTODO
-        const response = await window.api.approveUser(userId, notes);
-
-        if (response.success) {
-            notify.success('Cuenta aprobada exitosamente');
-            closeApproveModal();
-            loadUsers();
-        } else {
-            throw new Error(response.message);
-        }
-    } catch (error) {
-        console.error('Error al aprobar:', error);
-        notify.error('Error al aprobar cuenta');
-    }
-});
-
-        // Rechazar usuario
-        function openRejectModal(userId, userName) {
-            document.getElementById('rejectUserId').value = userId;
-            document.getElementById('rejectUserName').textContent = userName;
-            document.getElementById('rejectModal').classList.remove('hidden');
-        }
-
-        function closeRejectModal() {
-            document.getElementById('rejectModal').classList.add('hidden');
-            document.getElementById('rejectForm').reset();
-        }
-
-        document.getElementById('rejectForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const userId = document.getElementById('rejectUserId').value;
-    const reason = document.getElementById('rejectReason').value;
-    const notes = document.getElementById('rejectNotes').value;
-    
-    try {
-        // ✅ USAR EL NUEVO MÉTODO
-        const response = await window.api.rejectUser(userId, reason, notes);
-
-        if (response.success) {
-            notify.success('Cuenta rechazada');
-            closeRejectModal();
-            loadUsers();
-        } else {
-            throw new Error(response.message);
-        }
-    } catch (error) {
-        console.error('Error al rechazar:', error);
-        notify.error('Error al rechazar cuenta');
-    }
-});
-
-        // Eliminar usuario
-        async function deleteUser(userId, userName) {
-    const confirmed = await notify.confirmDelete(`al usuario "${userName}"`);
-    if (!confirmed) return;
-    
-    try {
-        // ✅ USAR EL NUEVO MÉTODO
-        const response = await window.api.deleteUser(userId);
-
-        if (response.success) {
-            notify.success('Usuario eliminado');
-            loadUsers();
-        } else {
-            throw new Error(response.message);
-        }
-    } catch (error) {
-        console.error('Error al eliminar:', error);
-        notify.error('Error al eliminar usuario');
-    }
-}
-
-// Marcar usuario como pendiente
-async function setUserPending(userId) {
-    const confirmed = await notify.confirm({
-        type: 'warning',
-        icon: 'clock',
-        title: '¿Marcar como pendiente?',
-        message: 'El usuario volverá al estado de aprobación pendiente',
-        confirmText: 'Sí, marcar como pendiente',
-        cancelText: 'Cancelar',
-        confirmClass: 'warning'
-    });
-    if (!confirmed) return;
-    
-    try {
-        const response = await window.api.updateUser(userId, {
-            account_status: 'pending'
-        });
-
-        if (response.success) {
-            notify.success('Usuario marcado como pendiente');
-            loadUsers();
-        } else {
-            throw new Error(response.message);
-        }
-    } catch (error) {
-        console.error('Error al cambiar estado:', error);
-        notify.error('Error al cambiar estado del usuario');
-    }
-}
-
-        // Abrir modal de edición
-        async function openEditModal(userId) {
-    try {
-        // ✅ USAR EL NUEVO MÉTODO
-        const response = await window.api.getUserById(userId);
-
-        if (response.success) {
-            const user = response.data.user;
-            
-            document.getElementById('editUserId').value = user.id;
-            document.getElementById('editName').value = user.name;
-            document.getElementById('editEmail').value = user.email;
-            document.getElementById('editPhone').value = user.phone || '';
-            document.getElementById('editRut').value = user.rut || '';
-            document.getElementById('editRole').value = user.role;
-            document.getElementById('editAccountStatus').value = user.account_status || 'pending';
-            
-            document.getElementById('editModal').classList.remove('hidden');
-        } else {
-            throw new Error(response.message);
-        }
-    } catch (error) {
-        console.error('Error al cargar usuario:', error);
-        notify.error('Error al cargar datos del usuario');
-    }
-}
-
-// Cerrar modal de edición
-function closeEditModal() {
-    document.getElementById('editModal').classList.add('hidden');
-    document.getElementById('editForm').reset();
-}
-
-// Guardar cambios del usuario
-document.getElementById('editForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const userId = document.getElementById('editUserId').value;
-    const userData = {
-        name: document.getElementById('editName').value.trim(),
-        email: document.getElementById('editEmail').value.trim(),
-        phone: document.getElementById('editPhone').value.trim(),
-        rut: document.getElementById('editRut').value.trim(),
-        role: document.getElementById('editRole').value,
-        account_status: document.getElementById('editAccountStatus').value
-    };
-    
-    console.log('📤 Enviando actualización de usuario:', { userId, userData });
-    
-    if (!userData.name || !userData.email) {
-        notify.error('Nombre y email son obligatorios');
-        return;
-    }
-    
-    try {
-        // ✅ USAR EL NUEVO MÉTODO
-                    const response = await window.api.updateUser(userId, userData);
-
-        console.log('📥 Respuesta del servidor:', response);
-
-        if (response.success) {
-            console.log('✅ Usuario actualizado, recargando lista...');
-            notify.success('Usuario actualizado exitosamente');
-            closeEditModal();
-            await loadUsers();
-            console.log('✅ Lista de usuarios recargada');
-        } else {
-            throw new Error(response.message);
-        }
-    } catch (error) {
-        console.error('❌ Error al actualizar usuario:', error);
-        notify.error('Error al actualizar usuario: ' + error.message);
-    }
-});
-    </script>
-<script>
-    (function () {
-      // Utilidad: cierra al clickear overlay y evita cierre al click interno
-      function enableOverlayToClose(modalId, closeFn) {
-        const modal = document.getElementById(modalId);
-        if (!modal) return;
-    
-        // Cierra si clic es sobre el overlay (fondo oscuro)
-        modal.addEventListener('click', (e) => {
-          if (e.target === modal) {
-            if (typeof closeFn === 'function') {
-              closeFn();
-            } else {
-              // fallback: ocultar modal si no hay función de cierre
-              modal.classList.add('hidden');
-            }
-          }
-        });
-    
-        // Evita que clics dentro del contenido cierren el modal
-        const dialog = modal.firstElementChild; // tu contenedor .bg-white...
-        if (dialog) {
-          dialog.addEventListener('click', (e) => e.stopPropagation());
-        }
-      }
-    
-      // ---- Ordena aquí los modals por página ----
-      // Orders (orders.html)
-      if (document.getElementById('orderModal')) {
-        enableOverlayToClose('orderModal', window.closeModal); // orders.html define closeModal()
-      }
-    
-      // Products (products.html)
-      if (document.getElementById('productModal')) {
-        enableOverlayToClose('productModal', window.closeModal); // products.html define closeModal()
-      }
-    
-      // Users (users.html)
-      if (document.getElementById('documentsModal')) {
-        enableOverlayToClose('documentsModal', window.closeDocumentsModal);
-      }
-      if (document.getElementById('approveModal')) {
-        enableOverlayToClose('approveModal', window.closeApproveModal);
-      }
-      if (document.getElementById('rejectModal')) {
-        enableOverlayToClose('rejectModal', window.closeRejectModal);
-      }
-      if (document.getElementById('editModal')) {
-        enableOverlayToClose('editModal', window.closeEditModal);
-      }
-    
-        // Cerrar con ESC el primer modal abierto que encontremos
-        document.addEventListener('keydown', (e) => {
-            if (e.key !== 'Escape') return;
-
-            // Prioridad: primero guía de aprobación, luego otros modales
-            const approvalGuideModal = document.getElementById('approvalGuideModal');
-            if (approvalGuideModal) {
-                closeApprovalGuide();
-                return;
-            }
-
-            const modalOrder = document.getElementById('orderModal');
-            const modalProduct = document.getElementById('productModal');
-            const modalDocs = document.getElementById('documentsModal');
-            const modalApprove = document.getElementById('approveModal');
-            const modalReject = document.getElementById('rejectModal');
-            const modalEdit = document.getElementById('editModal');
-            const addUserModal = document.getElementById('addUserModal');
-
-            const closers = [
-                [modalOrder, window.closeModal],
-                [modalProduct, window.closeModal],
-                [modalDocs, window.closeDocumentsModal],
-                [modalApprove, window.closeApproveModal],
-                [modalReject, window.closeRejectModal],
-                [modalEdit, window.closeEditModal],
-                [addUserModal, closeAddUserModal],
-            ];
-
-            for (const [m, fn] of closers) {
-                if (m && !m.classList.contains('hidden')) {
-                    if (typeof fn === 'function') fn(); else m.classList.add('hidden');
-                    break; // cierra solo uno
-                }
-            }
-        });
-    })();
-
-    /**
-     * 📋 GUÍA DE APROBACIÓN DE USUARIOS PARA PRODUCTOS MEDICINALES
-     */
-    function showApprovalGuide() {
-        const guideHTML = `
-            <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" id="approvalGuideModal" onclick="handleApprovalGuideClick(event)">
-                <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl mx-4 max-h-screen overflow-y-auto" onclick="event.stopPropagation()">
-                    <div class="p-6">
-                        <div class="flex justify-between items-center mb-6">
-                            <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-3">
-                                <i class="fas fa-prescription text-green-600"></i>
-                                Guía de Aprobación de Usuarios Medicinales
-                            </h2>
-                            <button onclick="closeApprovalGuide()" class="text-gray-500 hover:text-gray-700">
-                                <i class="fas fa-times text-xl"></i>
-                            </button>
-                        </div>
-
-                        <div class="space-y-6">
-                            <!-- Introducción -->
-                            <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
-                                <div class="flex">
-                                    <div class="flex-shrink-0">
-                                        <i class="fas fa-info-circle text-blue-400"></i>
-                                    </div>
-                                    <div class="ml-3">
-                                        <h3 class="text-sm font-medium text-blue-800">¿Qué hace la aprobación?</h3>
-                                        <p class="mt-2 text-sm text-blue-700">
-                                            Los usuarios aprobados pueden ver y comprar productos medicinales. Sin aprobación, solo ven productos recreativos y accesorios.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Estados de usuario -->
-                            <div>
-                                <h3 class="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                                    <i class="fas fa-traffic-light text-orange-500"></i>
-                                    Estados de Usuario
-                                </h3>
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <div class="border border-yellow-300 bg-yellow-50 rounded-lg p-4">
-                                        <div class="flex items-center gap-2 mb-2">
-                                            <i class="fas fa-clock text-yellow-600"></i>
-                                            <span class="font-medium text-yellow-800">Pendiente</span>
-                                        </div>
-                                        <p class="text-sm text-yellow-700">Usuario recién registrado. No puede ver productos medicinales.</p>
-                                    </div>
-                                    <div class="border border-green-300 bg-green-50 rounded-lg p-4">
-                                        <div class="flex items-center gap-2 mb-2">
-                                            <i class="fas fa-check text-green-600"></i>
-                                            <span class="font-medium text-green-800">Aprobado</span>
-                                        </div>
-                                        <p class="text-sm text-green-700">Usuario verificado. Puede ver y comprar productos medicinales.</p>
-                                    </div>
-                                    <div class="border border-red-300 bg-red-50 rounded-lg p-4">
-                                        <div class="flex items-center gap-2 mb-2">
-                                            <i class="fas fa-times text-red-600"></i>
-                                            <span class="font-medium text-red-800">Rechazado</span>
-                                        </div>
-                                        <p class="text-sm text-red-700">Usuario no cumple requisitos. No puede iniciar sesión.</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Pasos para aprobar -->
-                            <div>
-                                <h3 class="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                                    <i class="fas fa-list-ol text-green-500"></i>
-                                    Cómo Aprobar un Usuario
-                                </h3>
-                                <div class="space-y-3">
-                                    <div class="flex items-start gap-3">
-                                        <span class="bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-medium">1</span>
-                                        <div>
-                                            <p class="font-medium text-gray-800">Revisar documentos</p>
-                                            <p class="text-sm text-gray-600">Haz clic en <i class="fas fa-file-alt text-blue-600"></i> para ver los documentos médicos del usuario.</p>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-start gap-3">
-                                        <span class="bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-medium">2</span>
-                                        <div>
-                                            <p class="font-medium text-gray-800">Verificar información médica</p>
-                                            <p class="text-sm text-gray-600">Confirma que los datos médicos, RUT, y autorización sean válidos.</p>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-start gap-3">
-                                        <span class="bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-medium">3</span>
-                                        <div>
-                                            <p class="font-medium text-gray-800">Aprobar o rechazar</p>
-                                            <p class="text-sm text-gray-600">Haz clic en <i class="fas fa-check text-green-600"></i> para aprobar o <i class="fas fa-times text-red-600"></i> para rechazar.</p>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-start gap-3">
-                                        <span class="bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-medium">4</span>
-                                        <div>
-                                            <p class="font-medium text-gray-800">Notificar al usuario</p>
-                                            <p class="text-sm text-gray-600">El usuario debe cerrar sesión e iniciar sesión nuevamente para acceder a productos medicinales.</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Resolución de problemas -->
-                            <div>
-                                <h3 class="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                                    <i class="fas fa-tools text-orange-500"></i>
-                                    Resolución de Problemas
-                                </h3>
-                                <div class="space-y-3">
-                                    <div class="bg-orange-50 border border-orange-200 rounded-lg p-4">
-                                        <p class="font-medium text-orange-800 mb-2">❓ "El usuario aprobado no ve productos medicinales"</p>
-                                        <p class="text-sm text-orange-700">
-                                            → Pide al usuario cerrar sesión e iniciar sesión nuevamente.<br>
-                                            → En la consola del navegador, ejecuta: <code class="bg-gray-200 px-1 rounded">diagnosticMedicinalAccess()</code>
-                                        </p>
-                                    </div>
-                                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                                        <p class="font-medium text-blue-800 mb-2">🔍 "Necesito verificar el estado de un usuario"</p>
-                                        <p class="text-sm text-blue-700">
-                                            → Ve a la tabla de usuarios y revisa la columna "Estado".<br>
-                                            → Usa los botones de acción para cambiar el estado si es necesario.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Función de diagnóstico -->
-                            <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                                <h4 class="font-medium text-gray-800 mb-2 flex items-center gap-2">
-                                    <i class="fas fa-stethoscope text-purple-600"></i>
-                                    Herramienta de Diagnóstico
-                                </h4>
-                                <p class="text-sm text-gray-600 mb-3">
-                                    Los usuarios pueden ejecutar esta función en la consola del navegador para diagnosticar problemas de acceso:
-                                </p>
-                                <code class="bg-gray-800 text-green-400 px-3 py-2 rounded block text-sm">
-                                    diagnosticMedicinalAccess()
-                                </code>
-                            </div>
-                        </div>
-
-                        <div class="mt-6 flex justify-end">
-                            <button onclick="closeApprovalGuide()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition">
-                                <i class="fas fa-check mr-2"></i>Entendido
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        document.body.insertAdjacentHTML('beforeend', guideHTML);
-    }
-
-    function closeApprovalGuide() {
-        const modal = document.getElementById('approvalGuideModal');
-        if (modal) {
-            modal.remove();
-        }
-    }
-
-    // Manejar clic fuera del modal de guía
-    function handleApprovalGuideClick(event) {
-        if (event.target.id === 'approvalGuideModal') {
-            closeApprovalGuide();
-        }
-    }
-
-
-    </script>
-
-    <!-- Script para agregar usuario -->
-    <script>
-        let currentUserTab = 'customer';
-
-        // Abrir modal
-        function openAddUserModal() {
-            document.getElementById('addUserModal').classList.remove('hidden');
-            switchUserTab('customer'); // Resetear a cliente por defecto
-        }
-
-        // Cerrar modal
-        function closeAddUserModal() {
-            document.getElementById('addUserModal').classList.add('hidden');
-            // Limpiar formularios
-            document.getElementById('addCustomerForm').reset();
-            document.getElementById('addAdminForm').reset();
-            // Limpiar documentos
-            clearAllDocuments();
-        }
-
-        // Cambiar pestaña
-        function switchUserTab(tab) {
-            currentUserTab = tab;
-            
-            // Actualizar botones de pestaña
-            const tabCustomer = document.getElementById('tabCustomer');
-            const tabAdmin = document.getElementById('tabAdmin');
-            
-            if (tab === 'customer') {
-                tabCustomer.classList.add('border-green-600', 'text-gray-700');
-                tabCustomer.classList.remove('border-transparent', 'text-gray-500');
-                tabAdmin.classList.add('border-transparent', 'text-gray-500');
-                tabAdmin.classList.remove('border-red-600', 'text-gray-700');
-                
-                document.getElementById('addCustomerForm').classList.remove('hidden');
-                document.getElementById('addAdminForm').classList.add('hidden');
-            } else {
-                tabAdmin.classList.add('border-red-600', 'text-gray-700');
-                tabAdmin.classList.remove('border-transparent', 'text-gray-500');
-                tabCustomer.classList.add('border-transparent', 'text-gray-500');
-                tabCustomer.classList.remove('border-green-600', 'text-gray-700');
-                
-                document.getElementById('addAdminForm').classList.remove('hidden');
-                document.getElementById('addCustomerForm').classList.add('hidden');
-            }
-        }
-
-        // Toggle password visibility
-        function togglePasswordVisibility(inputId, iconId) {
-            const input = document.getElementById(inputId);
-            const icon = document.getElementById(iconId);
-            
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                input.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
-            }
-        }
-
-        // Manejar upload de documentos
-        function handleDocumentUpload(event, type) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            // Validar tipo
-            const validTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
-            if (!validTypes.includes(file.type)) {
-                notify.error('Formato no válido. Solo se permiten PDF, JPG y PNG');
-                return;
-            }
-
-            // Validar tamaño (5MB)
-            const maxSize = 5 * 1024 * 1024;
-            if (file.size > maxSize) {
-                notify.error('El archivo no debe superar 5MB');
-                return;
-            }
-
-            // Leer como Base64
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const base64 = e.target.result;
-                document.getElementById(`${type}Data`).value = base64;
-                
-                // Mostrar preview
-                document.getElementById(`${type}PlaceholderContent`).classList.add('hidden');
-                document.getElementById(`${type}PreviewContent`).classList.remove('hidden');
-                document.getElementById(`${type}FileName`).textContent = file.name;
-                document.getElementById(`${type}FileSize`).textContent = formatFileSize(file.size);
-                
-                notify.success(`${getDocumentName(type)} cargado correctamente`);
-            };
-            reader.readAsDataURL(file);
-        }
-
-        // Remover documento
-        function removeDocument(type) {
-            document.getElementById(`${type}FileInput`).value = '';
-            document.getElementById(`${type}Data`).value = '';
-            document.getElementById(`${type}PlaceholderContent`).classList.remove('hidden');
-            document.getElementById(`${type}PreviewContent`).classList.add('hidden');
-            notify.info(`${getDocumentName(type)} eliminado`);
-        }
-
-        // Limpiar todos los documentos
-        function clearAllDocuments() {
-            ['receta', 'carnet', 'certificado'].forEach(type => {
-                removeDocument(type);
-            });
-        }
-
-        // Nombre del documento
-        function getDocumentName(type) {
-            const names = {
-                'receta': 'Receta Médica',
-                'carnet': 'Carnet de Identidad',
-                'certificado': 'Certificado de Antecedentes'
-            };
-            return names[type] || 'Documento';
-        }
-
-        // Formatear tamaño de archivo
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
-        }
-
-        // Crear cliente
-        document.getElementById('addCustomerForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const name = document.getElementById('customerName').value.trim();
-            const email = document.getElementById('customerEmail').value.trim();
-            const password = document.getElementById('customerPassword').value;
-            const confirmPassword = document.getElementById('customerConfirmPassword').value;
-            const phone = document.getElementById('customerPhone').value.trim();
-            const rut = document.getElementById('customerRut').value.trim();
-            
-            // Validaciones
-            if (!name || !email || !password) {
-                notify.error('Por favor completa todos los campos requeridos');
-                return;
-            }
-            
-            if (password.length < 6) {
-                notify.error('La contraseña debe tener al menos 6 caracteres');
-                return;
-            }
-            
-            if (password !== confirmPassword) {
-                notify.error('Las contraseñas no coinciden');
-                return;
-            }
-            
-            // Validar documentos
-            const receta = document.getElementById('recetaData').value;
-            const carnet = document.getElementById('carnetData').value;
-            const certificado = document.getElementById('certificadoData').value;
-            
-            if (!receta || !carnet || !certificado) {
-                notify.error('Debes cargar los 3 documentos requeridos');
-                return;
-            }
-            
-            // Separar nombre
-            const nameParts = name.split(' ');
-            const firstName = nameParts[0] || '';
-            const lastName = nameParts.slice(1).join(' ') || '';
-            
-            try {
-                // Crear usuario
-                const userData = {
-                    email,
-                    password,
-                    first_name: firstName,
-                    last_name: lastName,
-                    phone: phone || undefined,
-                    rut: rut || undefined,
-                    role: 'customer'
-                };
-                
-                const submitBtn = e.target.querySelector('button[type="submit"]');
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Creando...';
-                
-                const response = await window.api.createUser(userData);
-                
-                if (response.success) {
-                    const userId = response.data.user.id;
-                    
-                    // Guardar documentos
-                    const documentsData = [
-                        {
-                            document_type: 'receta_medica',
-                            file_data: receta,
-                            file_name: 'receta_medica.pdf'
-                        },
-                        {
-                            document_type: 'carnet_identidad',
-                            file_data: carnet,
-                            file_name: 'carnet_identidad.pdf'
-                        },
-                        {
-                            document_type: 'certificado_antecedentes',
-                            file_data: certificado,
-                            file_name: 'certificado_antecedentes.pdf'
-                        }
-                    ];
-                    
-                    await window.api.saveUserDocuments(userId, documentsData);
-                    
-                    notify.success('Cliente creado exitosamente');
-                    closeAddUserModal();
-                    loadUsers();
-                } else {
-                    throw new Error(response.message || 'Error al crear cliente');
-                }
-            } catch (error) {
-                console.error('Error al crear cliente:', error);
-                notify.error('Error al crear cliente: ' + error.message);
-                const submitBtn = e.target.querySelector('button[type="submit"]');
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-user-plus mr-2"></i>Crear Cliente';
-            }
-        });
-
-        // Crear administrador
-        document.getElementById('addAdminForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const name = document.getElementById('adminName').value.trim();
-            const email = document.getElementById('adminEmail').value.trim();
-            const password = document.getElementById('adminPassword').value;
-            const confirmPassword = document.getElementById('adminConfirmPassword').value;
-            const phone = document.getElementById('adminPhone').value.trim();
-            
-            // Validaciones
-            if (!name || !email || !password) {
-                notify.error('Por favor completa todos los campos requeridos');
-                return;
-            }
-            
-            if (password.length < 6) {
-                notify.error('La contraseña debe tener al menos 6 caracteres');
-                return;
-            }
-            
-            if (password !== confirmPassword) {
-                notify.error('Las contraseñas no coinciden');
-                return;
-            }
-            
-            // Separar nombre
-            const nameParts = name.split(' ');
-            const firstName = nameParts[0] || '';
-            const lastName = nameParts.slice(1).join(' ') || '';
-            
-            try {
-                const userData = {
-                    email,
-                    password,
-                    first_name: firstName,
-                    last_name: lastName,
-                    phone: phone || undefined,
-                    role: 'admin',
-                    account_status: 'approved' // Los admins se aprueban automáticamente
-                };
-                
-                const submitBtn = e.target.querySelector('button[type="submit"]');
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Creando...';
-                
-                const response = await window.api.createUser(userData);
-                
-                if (response.success) {
-                    notify.success('Administrador creado exitosamente');
-                    closeAddUserModal();
-                    loadUsers();
-                } else {
-                    throw new Error(response.message || 'Error al crear administrador');
-                }
-            } catch (error) {
-                console.error('Error al crear administrador:', error);
-                notify.error('Error al crear administrador: ' + error.message);
-                const submitBtn = e.target.querySelector('button[type="submit"]');
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-user-shield mr-2"></i>Crear Administrador';
-            }
-        });
-
-        // Cerrar modal al hacer clic fuera
-        document.getElementById('addUserModal')?.addEventListener('click', (e) => {
-            if (e.target.id === 'addUserModal') {
-                closeAddUserModal();
-            }
-        });
-
-        // Cerrar con ESC
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && !document.getElementById('addUserModal').classList.contains('hidden')) {
-                closeAddUserModal();
-            }
-        });
-    </script>
-    
 </body>
 </html>

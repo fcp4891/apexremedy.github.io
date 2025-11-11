@@ -283,6 +283,14 @@ class ProductController {
         try {
             const { id } = req.params;
             const productData = req.body;
+            
+            console.log('📝 [UPDATE] Recibiendo actualización de producto:', {
+                id,
+                hasBasePrice: productData.base_price !== undefined,
+                basePrice: productData.base_price,
+                hasPriceVariants: !!(productData.price_variants && Array.isArray(productData.price_variants)),
+                priceVariantsCount: productData.price_variants ? productData.price_variants.length : 0
+            });
 
             const product = await productModel.update(id, productData);
 
@@ -293,17 +301,28 @@ class ProductController {
                 });
             }
 
+            console.log('✅ [UPDATE] Producto actualizado exitosamente:', {
+                id: product.id,
+                name: product.name,
+                base_price: product.base_price,
+                price_variants_count: product.price_variants ? product.price_variants.length : 0
+            });
+
             res.json({
                 success: true,
                 message: 'Producto actualizado exitosamente',
-                data: product
+                data: { product }
             });
         } catch (error) {
-            console.error('Error al actualizar producto:', error);
+            console.error('❌ [UPDATE] Error al actualizar producto:', error);
+            console.error('  - Error stack:', error.stack);
+            console.error('  - Error name:', error.name);
+            console.error('  - Error message:', error.message);
             res.status(500).json({
                 success: false,
                 message: 'Error al actualizar producto',
-                error: error.message
+                error: error.message,
+                details: process.env.NODE_ENV === 'development' ? error.stack : undefined
             });
         }
     }
@@ -522,6 +541,101 @@ class ProductController {
             res.status(500).json({
                 success: false,
                 message: 'Error al obtener productos sin stock',
+                error: error.message
+            });
+        }
+    }
+
+    /**
+     * Obtener productos activos medicinales para catálogo
+     * GET /api/products/catalog/medicinal
+     * Organiza productos por categoría: flores, hash, aceites
+     */
+    async getCatalogMedicinal(req, res) {
+        try {
+            const products = await productModel.getActiveMedicinalProductsForCatalog();
+            
+            // Organizar productos por tipo/categoría
+            const flowers = [];
+            const hash = [];
+            const oils = [];
+            
+            products.forEach(product => {
+                const categorySlug = (product.category_slug || '').toLowerCase();
+                const productType = (product.product_type || '').toLowerCase();
+
+                if (!categorySlug.startsWith('medicinal-')) {
+                    console.log('ℹ️ [catalog] Producto omitido por categoría no medicinal:', {
+                        id: product.id,
+                        name: product.name,
+                        categorySlug,
+                        productType
+                    });
+                    return;
+                }
+                
+                if (categorySlug.includes('aceite') || productType === 'oil') {
+                    oils.push(product);
+                } else if (
+                    categorySlug.includes('hash') ||
+                    categorySlug.includes('extracto') ||
+                    categorySlug.includes('concentrad') ||
+                    productType === 'concentrate'
+                ) {
+                    hash.push(product);
+                } else if (
+                    categorySlug.includes('flor') ||
+                    productType === 'flower'
+                ) {
+                    // Por defecto, flores
+                    flowers.push(product);
+                } else {
+                    console.log('ℹ️ [catalog] Producto omitido por categoría no compatible:', {
+                        id: product.id,
+                        name: product.name,
+                        categorySlug
+                    });
+                }
+            });
+            
+            // Formatear para el catálogo
+            const catalogData = {
+                flowers: flowers.map(p => ({
+                    name: p.name,
+                    strain: p.strain || '',
+                    image: p.images && p.images.length > 0 ? p.images[0].url : '',
+                    prices: p.prices || {}
+                })),
+                hash: hash.map(p => ({
+                    name: p.name,
+                    strain: p.strain || '',
+                    image: p.images && p.images.length > 0 ? p.images[0].url : '',
+                    prices: p.prices || {}
+                })),
+                oils: oils.map(p => ({
+                    name: p.name,
+                    strain: p.strain || '',
+                    concentration: p.concentration || '',
+                    image: p.images && p.images.length > 0 ? p.images[0].url : '',
+                    prices: p.prices || {}
+                }))
+            };
+            
+            res.json({
+                success: true,
+                data: catalogData,
+                stats: {
+                    total: products.length,
+                    flowers: flowers.length,
+                    hash: hash.length,
+                    oils: oils.length
+                }
+            });
+        } catch (error) {
+            console.error('Error al obtener catálogo medicinal:', error);
+            res.status(500).json({
+                success: false,
+                message: 'Error al obtener catálogo medicinal',
                 error: error.message
             });
         }

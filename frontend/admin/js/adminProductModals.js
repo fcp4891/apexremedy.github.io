@@ -173,8 +173,16 @@ function formatPrice(price) {
 /**
  * Cargar productos desde la API
  */
-async function loadProducts() {
-    console.log('📦 Cargando productos...');
+async function loadProducts(forceRefresh = false) {
+    console.log('📦 Cargando productos...', forceRefresh ? '(forzando recarga)' : '');
+    
+    // Si se fuerza la recarga, limpiar caché
+    if (forceRefresh) {
+        if (window.allProducts) {
+            delete window.allProducts;
+            console.log('🗑️ Caché de productos limpiado (recarga forzada)');
+        }
+    }
     
     // Evitar carga múltiple
     if (window.productsLoading) {
@@ -198,8 +206,15 @@ async function loadProducts() {
             `;
         }
         
-        // Cargar productos usando API client
-        const response = await api.getProducts({ limit: 500 });
+        // Cargar TODOS los productos (para filtros y estadísticas)
+        // Pero solo mostrar 10 por página
+        // Si se fuerza la recarga, agregar timestamp para evitar caché del navegador
+        const requestOptions = { limit: 1000 };
+        if (forceRefresh) {
+            requestOptions._t = Date.now(); // Timestamp para evitar caché
+            console.log('🔄 Forzando recarga desde servidor (sin caché)');
+        }
+        const response = await api.getProducts(requestOptions); // Cargar todos para filtros
         console.log('📦 Respuesta API productos:', response);
         
         let products = [];
@@ -215,14 +230,110 @@ async function loadProducts() {
         }
         
         console.log('✅ Productos cargados:', products.length);
+        if (products.length > 0) {
+            const firstProduct = products[0];
+            console.log('📦 Primer producto completo desde API:', firstProduct);
+            console.log('📦 Ejemplos de productos cargados:', products.slice(0, 3).map(p => ({ 
+                name: p.name, 
+                hasSupplier: !!p.supplier, 
+                supplierCode: p.supplier?.code,
+                supplierId: p.supplier_id,
+                supplierName: p.supplier_name,
+                supplierCodeRaw: p.supplier_code,
+                hasSupplierId: !!p.supplier_id,
+                allSupplierFields: {
+                    supplier: p.supplier,
+                    supplier_id: p.supplier_id,
+                    supplier_name: p.supplier_name,
+                    supplier_code: p.supplier_code
+                }
+            })));
+            
+            // Debug específico: verificar si hay campos supplier sin mapear
+            if (!firstProduct.supplier && (firstProduct.supplier_id || firstProduct.supplier_name || firstProduct.supplier_code)) {
+                console.warn('⚠️ PRODUCTO TIENE SUPPLIER SIN MAPEAR:', {
+                    id: firstProduct.id,
+                    name: firstProduct.name,
+                    supplier_id: firstProduct.supplier_id,
+                    supplier_name: firstProduct.supplier_name,
+                    supplier_code: firstProduct.supplier_code,
+                    message: 'El backend está devolviendo supplier_id/name/code pero no el objeto supplier mapeado'
+                });
+                console.log('🔧 Mapeando supplier manualmente en frontend...');
+            }
+        }
+        
+        // MAPEAR SUPPLIER MANUALMENTE SI FALTA (solución temporal mientras se corrige el backend)
+        products = products.map(product => {
+            if (!product.supplier && (product.supplier_id || product.supplier_name || product.supplier_code)) {
+                product.supplier = {
+                    id: product.supplier_id || null,
+                    name: product.supplier_name || null,
+                    code: product.supplier_code || null
+                };
+                // Limpiar campos temporales
+                delete product.supplier_id;
+                delete product.supplier_name;
+                delete product.supplier_code;
+            }
+            return product;
+        });
+        
+        // SOLUCIÓN DEFINITIVA: Si supplier.id existe pero code es null, cargar suppliers desde API
+        const productsWithMissingSupplierCode = products.filter(p => 
+            p.supplier && p.supplier.id && (!p.supplier.code || !p.supplier.name)
+        );
+        
+        if (productsWithMissingSupplierCode.length > 0) {
+            console.warn('⚠️ Productos con supplier.id pero sin code/name:', productsWithMissingSupplierCode.length);
+            console.log('🔧 Cargando suppliers desde API para completar datos...');
+            
+            try {
+                const suppliersResponse = await api.request('/suppliers', { method: 'GET' });
+                if (suppliersResponse.success && suppliersResponse.data && suppliersResponse.data.suppliers) {
+                    const suppliers = suppliersResponse.data.suppliers;
+                    const suppliersMap = {};
+                    suppliers.forEach(s => {
+                        suppliersMap[s.id] = { name: s.name, code: s.code };
+                    });
+                    
+                    console.log('✅ Suppliers cargados desde API:', suppliers.length);
+                    console.log('📦 Suppliers map:', suppliersMap);
+                    
+                    // Completar supplier.code y supplier.name para todos los productos
+                    products.forEach(product => {
+                        if (product.supplier && product.supplier.id && suppliersMap[product.supplier.id]) {
+                            product.supplier.name = suppliersMap[product.supplier.id].name;
+                            product.supplier.code = suppliersMap[product.supplier.id].code;
+                        }
+                    });
+                    
+                    console.log('✅ Suppliers completados para todos los productos');
+                } else {
+                    console.error('❌ No se pudieron cargar suppliers desde API');
+                }
+            } catch (error) {
+                console.error('❌ Error cargando suppliers desde API:', error);
+            }
+        }
+        
+        // Verificar mapeo después
+        if (products.length > 0 && products[0].supplier) {
+            console.log('✅ Supplier mapeado correctamente:', products[0].supplier);
+        }
         
         // Guardar productos para filtros
         window.allProducts = products;
         
-        // Actualizar estadísticas
+        // Inicializar paginación
+        window.currentPage = 1;
+        window.productsPerPage = 10;
+        window.filteredProductsForPagination = products; // Productos actuales para paginar
+        
+        // Actualizar estadísticas (usar todos los productos)
         updateStats(products);
         
-        // Renderizar tabla
+        // Renderizar tabla con paginación (mostrará solo 10 por página)
         renderProductsTable(products);
         
         return products;
@@ -309,6 +420,15 @@ function renderProductsTable(products) {
     
     if (!tbody) return;
     
+    // Guardar productos filtrados para paginación
+    window.filteredProductsForPagination = products;
+    
+    // Reiniciar a página 1 cuando se cambian los productos
+    if (!window.keepCurrentPage) {
+        window.currentPage = 1;
+    }
+    window.keepCurrentPage = false;
+    
     if (!Array.isArray(products) || products.length === 0) {
         tbody.innerHTML = `
             <tr>
@@ -318,11 +438,24 @@ function renderProductsTable(products) {
                 </td>
             </tr>
         `;
+        updatePaginationControls(0);
         return;
     }
     
-    tbody.innerHTML = products.map(product => `
-        <tr class="hover:bg-gray-50 transition">
+    // Aplicar paginación
+    const productsPerPage = window.productsPerPage || 10;
+    const currentPage = window.currentPage || 1;
+    const totalPages = Math.ceil(products.length / productsPerPage);
+    const startIndex = (currentPage - 1) * productsPerPage;
+    const endIndex = startIndex + productsPerPage;
+    const paginatedProducts = products.slice(startIndex, endIndex);
+    
+    console.log(`📄 Paginación: Página ${currentPage}/${totalPages}, Mostrando ${paginatedProducts.length} de ${products.length} productos`);
+    
+    tbody.innerHTML = paginatedProducts.map(product => {
+        const isOurProduction = product.supplier && (product.supplier.code === 'AR-PROD' || product.supplier.name && product.supplier.name.includes('Apex Remedy'));
+        return `
+        <tr class="hover:bg-gray-50 transition ${isOurProduction ? 'bg-blue-50' : ''}">
             <td class="px-6 py-4 text-sm text-gray-600">#${product.id}</td>
             <td class="px-6 py-4">
                 <img src="${(product.images && product.images[0] && product.images[0].url) || product.image_url || product.image || '../assets/images/placeholder.jpg'}" 
@@ -331,8 +464,14 @@ function renderProductsTable(products) {
                      class="w-16 h-16 object-cover rounded-lg">
             </td>
             <td class="px-6 py-4">
-                <div class="font-semibold text-gray-800">${product.name}</div>
+                <div class="font-semibold text-gray-800 flex items-center gap-2">
+                    ${product.name}
+                    ${isOurProduction ? '<i class="fas fa-industry text-blue-600" title="Producción Propia"></i>' : ''}
+                </div>
                 <div class="text-sm text-gray-500">${product.sku || 'Sin SKU'}</div>
+                ${product.supplier ? `<div class="text-xs mt-1 ${isOurProduction ? 'text-blue-700 font-semibold' : 'text-gray-400'}">
+                    <i class="fas fa-truck mr-1"></i>${product.supplier.name || 'Sin proveedor'}
+                </div>` : ''}
             </td>
             <td class="px-6 py-4">
                 <span class="px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
@@ -352,25 +491,169 @@ function renderProductsTable(products) {
             </td>
             <td class="px-6 py-4">
                 <div class="flex gap-2">
-                    <button onclick="adminOpenEditModal(${product.id})" 
-                            class="text-blue-600 hover:text-blue-800 transition"
+                    <button data-action="edit-product" 
+                            data-product-id="${product.id}"
+                            class="admin-icon-btn admin-icon-btn--primary"
                             title="Editar">
                         <i class="fas fa-edit text-lg"></i>
                     </button>
-                    <button onclick="duplicateProduct(${product.id})" 
-                            class="text-green-600 hover:text-green-800 transition"
+                    <button data-action="duplicate-product" 
+                            data-product-id="${product.id}"
+                            class="admin-icon-btn admin-icon-btn--success"
                             title="Duplicar">
                         <i class="fas fa-copy text-lg"></i>
                     </button>
-                    <button onclick="deleteProduct(${product.id})" 
-                            class="text-red-600 hover:text-red-800 transition"
+                    <button data-action="delete-product" 
+                            data-product-id="${product.id}"
+                            class="admin-icon-btn admin-icon-btn--danger"
                             title="Eliminar">
                         <i class="fas fa-trash text-lg"></i>
                     </button>
                 </div>
             </td>
         </tr>
-    `).join('');
+        `;
+    }).join('');
+    
+    // Actualizar controles de paginación
+    updatePaginationControls(products.length);
+}
+
+/**
+ * Actualizar controles de paginación
+ */
+function updatePaginationControls(totalProducts) {
+    const productsPerPage = window.productsPerPage || 10;
+    const currentPage = window.currentPage || 1;
+    const totalPages = Math.ceil(totalProducts / productsPerPage);
+    
+    // Información de paginación
+    const startIndex = totalProducts === 0 ? 0 : (currentPage - 1) * productsPerPage + 1;
+    const endIndex = Math.min(currentPage * productsPerPage, totalProducts);
+    const paginationInfo = document.getElementById('paginationInfo');
+    if (paginationInfo) {
+        paginationInfo.textContent = `Mostrando ${startIndex}-${endIndex} de ${totalProducts} productos`;
+    }
+    
+    // Botones anterior/siguiente
+    const prevBtn = document.getElementById('prevPageBtn');
+    const nextBtn = document.getElementById('nextPageBtn');
+    if (prevBtn) {
+        prevBtn.disabled = currentPage === 1;
+    }
+    if (nextBtn) {
+        nextBtn.disabled = currentPage >= totalPages;
+    }
+    
+    // Números de página
+    const pageNumbersContainer = document.getElementById('pageNumbers');
+    if (pageNumbersContainer) {
+        pageNumbersContainer.innerHTML = '';
+        
+        if (totalPages === 0) return;
+        
+        // Mostrar máximo 5 números de página
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalPages, currentPage + 2);
+        
+        // Ajustar si estamos cerca del inicio o final
+        if (endPage - startPage < 4) {
+            if (startPage === 1) {
+                endPage = Math.min(5, totalPages);
+            } else if (endPage === totalPages) {
+                startPage = Math.max(1, totalPages - 4);
+            }
+        }
+        
+        // Botón primera página si no está visible
+        if (startPage > 1) {
+            const firstBtn = document.createElement('button');
+            firstBtn.className = `admin-btn admin-btn--muted admin-btn--compact`;
+            firstBtn.textContent = '1';
+            firstBtn.onclick = () => goToPage(1);
+            pageNumbersContainer.appendChild(firstBtn);
+            
+            if (startPage > 2) {
+                const ellipsis = document.createElement('span');
+                ellipsis.className = 'px-2 text-gray-400';
+                ellipsis.textContent = '...';
+                pageNumbersContainer.appendChild(ellipsis);
+            }
+        }
+        
+        // Números de página
+        for (let i = startPage; i <= endPage; i++) {
+            const pageBtn = document.createElement('button');
+            pageBtn.className = `admin-btn admin-btn--compact ${
+                i === currentPage 
+                    ? 'admin-btn--primary' 
+                    : 'admin-btn--muted'
+            }`;
+            pageBtn.textContent = i;
+            pageBtn.onclick = () => goToPage(i);
+            pageNumbersContainer.appendChild(pageBtn);
+        }
+        
+        // Botón última página si no está visible
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                const ellipsis = document.createElement('span');
+                ellipsis.className = 'px-2 text-gray-400';
+                ellipsis.textContent = '...';
+                pageNumbersContainer.appendChild(ellipsis);
+            }
+            
+            const lastBtn = document.createElement('button');
+            lastBtn.className = `admin-btn admin-btn--muted admin-btn--compact`;
+            lastBtn.textContent = totalPages;
+            lastBtn.onclick = () => goToPage(totalPages);
+            pageNumbersContainer.appendChild(lastBtn);
+        }
+    }
+}
+
+/**
+ * Ir a página específica
+ */
+function goToPage(page) {
+    const products = window.filteredProductsForPagination || [];
+    const totalPages = Math.ceil(products.length / (window.productsPerPage || 10));
+    
+    if (page < 1 || page > totalPages) return;
+    
+    window.currentPage = page;
+    window.keepCurrentPage = true; // Evitar reset de página
+    renderProductsTable(products);
+    
+    // Scroll suave hacia arriba de la tabla
+    const table = document.querySelector('.bg-white.rounded-lg.shadow-lg');
+    if (table) {
+        table.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+/**
+ * Ir a página anterior
+ */
+function goToPreviousPage() {
+    const currentPage = window.currentPage || 1;
+    if (currentPage > 1) {
+        goToPage(currentPage - 1);
+    }
+}
+
+/**
+ * Ir a página siguiente
+ */
+function goToNextPage() {
+    const products = window.filteredProductsForPagination || [];
+    const productsPerPage = window.productsPerPage || 10;
+    const totalPages = Math.ceil(products.length / productsPerPage);
+    const currentPage = window.currentPage || 1;
+    
+    if (currentPage < totalPages) {
+        goToPage(currentPage + 1);
+    }
 }
 
 /**
@@ -407,85 +690,40 @@ function formatPrice(price) {
  * ABRIR MODAL DE CREACIÓN
  */
 function openCreateModal() {
-    console.log('📝 Abriendo modal de creación');
-    
-    // Mostrar selector de categoría
-    showCategorySelector();
+    console.log('📝 Abriendo modal de creación (sistema mejorado)');
+    if (typeof window.openCategorySelector === 'function') {
+        window.openCategorySelector();
+    } else if (typeof window.openCreateModal === 'function' && window.openCreateModal !== openCreateModal) {
+        window.openCreateModal();
+    } else {
+        console.error('❌ Sistema de modales mejorado no disponible');
+        if (typeof notify !== 'undefined') {
+            notify.error('No se pudo abrir el modal de creación');
+        }
+    }
 }
 
 /**
  * Mostrar selector de categoría
  */
 function showCategorySelector() {
-    const modalHTML = `
-    <div id="categorySelectorModal" class="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4" onclick="closeCategorySelector(event)">
-        <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full p-8" onclick="event.stopPropagation()">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold text-gray-800">Selecciona el tipo de producto</h2>
-                <button onclick="closeCategorySelector()" class="text-gray-400 hover:text-gray-600">
-                    <i class="fas fa-times text-2xl"></i>
-                </button>
-            </div>
-            
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                <button onclick="openCreateModalForCategory('medicinal-flores')" 
-                        class="p-6 border-2 border-gray-200 rounded-lg hover:border-green-500 hover:shadow-lg transition group">
-                    <i class="fas fa-cannabis text-4xl text-green-600 group-hover:scale-110 transition mb-3"></i>
-                    <p class="font-semibold text-gray-800">Flores Medicinales</p>
-                </button>
-                
-                <button onclick="openCreateModalForCategory('medicinal-aceites')" 
-                        class="p-6 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-lg transition group">
-                    <i class="fas fa-tint text-4xl text-blue-600 group-hover:scale-110 transition mb-3"></i>
-                    <p class="font-semibold text-gray-800">Aceites Medicinales</p>
-                </button>
-                
-                <button onclick="openCreateModalForCategory('medicinal-concentrados')" 
-                        class="p-6 border-2 border-gray-200 rounded-lg hover:border-amber-500 hover:shadow-lg transition group">
-                    <i class="fas fa-flask text-4xl text-amber-600 group-hover:scale-110 transition mb-3"></i>
-                    <p class="font-semibold text-gray-800">Concentrados</p>
-                </button>
-                
-                <button onclick="openCreateModalForCategory('semillas')" 
-                        class="p-6 border-2 border-gray-200 rounded-lg hover:border-lime-500 hover:shadow-lg transition group">
-                    <i class="fas fa-seedling text-4xl text-lime-600 group-hover:scale-110 transition mb-3"></i>
-                    <p class="font-semibold text-gray-800">Semillas</p>
-                </button>
-                
-                <button onclick="openCreateModalForCategory('vaporizadores')" 
-                        class="p-6 border-2 border-gray-200 rounded-lg hover:border-slate-500 hover:shadow-lg transition group">
-                    <i class="fas fa-wind text-4xl text-slate-600 group-hover:scale-110 transition mb-3"></i>
-                    <p class="font-semibold text-gray-800">Vaporizadores</p>
-                </button>
-                
-                <button onclick="openCreateModalForCategory('ropa')" 
-                        class="p-6 border-2 border-gray-200 rounded-lg hover:border-pink-500 hover:shadow-lg transition group">
-                    <i class="fas fa-tshirt text-4xl text-pink-600 group-hover:scale-110 transition mb-3"></i>
-                    <p class="font-semibold text-gray-800">Ropa</p>
-                </button>
-            </div>
-        </div>
-    </div>
-    `;
-    
-    // Remover modal anterior si existe
-    const oldModal = document.getElementById('categorySelectorModal');
-    if (oldModal) oldModal.remove();
-    
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    console.log('🗂️ Mostrando selector de categoría (sistema mejorado)');
+    if (typeof window.openCategorySelector === 'function') {
+        window.openCategorySelector();
+    } else {
+        console.error('❌ Selector de categorías no disponible');
+        if (typeof notify !== 'undefined') {
+            notify.error('No se pudo mostrar el selector de categorías');
+        }
+    }
 }
 
 /**
  * Cerrar selector de categoría
  */
 function closeCategorySelector(event) {
-    if (event && event.target.id !== 'categorySelectorModal') {
-        return;
-    }
-    
-    const modal = document.getElementById('categorySelectorModal');
-    if (modal) {
-        modal.remove();
+    if (typeof window.closeCategorySelector === 'function') {
+        window.closeCategorySelector(event);
     }
 }
 
@@ -493,79 +731,14 @@ function closeCategorySelector(event) {
  * Abrir modal de creación para categoría específica
  */
 function openCreateModalForCategory(categorySlug) {
-    console.log('📝 Creando producto para categoría:', categorySlug);
-    
-    // Cerrar selector de categoría
-    closeCategorySelector();
-    
-    // Abrir modal específico
-    currentEditingProduct = null;
-    
-    switch(categorySlug) {
-        case 'medicinal-flores':
-            if (typeof openMedicinalFlowerEditModal === 'function') {
-                openMedicinalFlowerEditModal(null);
-            } else {
-                console.error('❌ Función openMedicinalFlowerEditModal no encontrada');
-                if (typeof notify !== 'undefined') {
-                    notify.error('Modal no disponible. Verifica que adminEditModals.js esté cargado.');
-                }
-            }
-            break;
-        case 'medicinal-aceites':
-            if (typeof openMedicinalOilEditModal === 'function') {
-                openMedicinalOilEditModal(null);
-            } else {
-                console.error('❌ Función openMedicinalOilEditModal no encontrada');
-                if (typeof notify !== 'undefined') {
-                    notify.error('Modal no disponible. Verifica que adminEditModals.js esté cargado.');
-                }
-            }
-            break;
-        case 'medicinal-concentrados':
-            if (typeof openConcentrateEditModal === 'function') {
-                openConcentrateEditModal(null);
-            } else {
-                console.error('❌ Función openConcentrateEditModal no encontrada');
-                if (typeof notify !== 'undefined') {
-                    notify.error('Modal no disponible. Verifica que adminEditModals.js esté cargado.');
-                }
-            }
-            break;
-        case 'semillas':
-            if (typeof openSeedEditModal === 'function') {
-                openSeedEditModal(null);
-            } else {
-                console.error('❌ Función openSeedEditModal no encontrada');
-                if (typeof notify !== 'undefined') {
-                    notify.error('Modal no disponible. Verifica que adminEditModals.js esté cargado.');
-                }
-            }
-            break;
-        case 'vaporizadores':
-            if (typeof openVaporizerEditModal === 'function') {
-                openVaporizerEditModal(null);
-            } else {
-                console.error('❌ Función openVaporizerEditModal no encontrada');
-                if (typeof notify !== 'undefined') {
-                    notify.error('Modal no disponible. Verifica que adminEditModals.js esté cargado.');
-                }
-            }
-            break;
-        case 'ropa':
-            if (typeof openApparelEditModal === 'function') {
-                openApparelEditModal(null);
-            } else {
-                console.error('❌ Función openApparelEditModal no encontrada');
-            if (typeof notify !== 'undefined') {
-                    notify.error('Modal no disponible. Verifica que adminEditModals.js esté cargado.');
-                }
-            }
-            break;
-        default:
-            if (typeof notify !== 'undefined') {
-                notify.error('Categoría no reconocida');
-            }
+    console.log('📝 Creando producto para categoría (sistema mejorado):', categorySlug);
+    if (typeof window.openProductModal === 'function') {
+        window.openProductModal(categorySlug, null);
+    } else {
+        console.error('❌ openProductModal no disponible');
+        if (typeof notify !== 'undefined') {
+            notify.error('No se pudo abrir el modal de creación para la categoría seleccionada');
+        }
     }
 }
 
@@ -573,157 +746,45 @@ function openCreateModalForCategory(categorySlug) {
  * ABRIR MODAL DE EDICIÓN DEL SISTEMA ADMINISTRATIVO
  */
 async function adminOpenEditModal(productId) {
-    console.log('✏️ Abriendo modal de edición para producto:', productId);
-    
     try {
-        // Cargar producto usando apiClient (maneja autenticación)
-        console.log('📞 Usando api.getProductById para cargar producto...');
+        console.log('✏️ Abriendo modal de edición (sistema mejorado) para producto:', productId);
+
         const response = await api.getProductById(productId);
-        console.log('📦 Respuesta completa del apiClient:', response);
-        
-        // Manejar formato de respuesta del apiClient
         let product = null;
-        if (response.success && response.data && response.data.product) {
-            // Formato: {success: true, data: {product: {...}}}
+
+        if (response.success && response.data?.product) {
             product = response.data.product;
-            console.log('✅ Formato: response.data.product');
         } else if (response.success && response.data) {
-            // Formato: {success: true, data: {...}} - producto directo
             product = response.data;
-            console.log('✅ Formato: response.data');
         } else if (response.product) {
-            // Formato: {product: {...}}
             product = response.product;
-            console.log('✅ Formato: response.product');
-        } else if (response.data && response.data.product) {
-            // Formato anidado
-            product = response.data.product;
-            console.log('✅ Formato: response.data.product (anidado)');
         } else {
-            // Producto directo
             product = response;
-            console.log('✅ Formato: response (directo)');
         }
-        
-        console.log('📦 Producto extraído:', product);
-        
-        // Verificar que el producto se extrajo correctamente
+
         if (!product || !product.id) {
-            console.error('❌ Error: Producto no válido o sin ID');
-            console.log('Producto recibido:', product);
-            throw new Error('Producto no válido');
+            throw new Error('Producto no válido o sin ID');
         }
-        
-        currentEditingProduct = product;
-        
-        // Detectar categoría y abrir modal apropiado
-        console.log('🔍 Campos del producto:', Object.keys(product));
-        console.log('📦 product.category:', product.category);
-        console.log('📦 product.category_slug:', product.category_slug);
-        console.log('📦 product.category_id:', product.category_id);
-        console.log('📦 product.category_name:', product.category_name);
-        
-        const categorySlug = product.category_slug || product.category || product.category_name;
-        
-        console.log('🏷️ Categoría detectada:', categorySlug);
-        
-        // Debug: Verificar funciones disponibles
-        console.log('🔍 Funciones disponibles:');
-        console.log('  - openMedicinalFlowerEditModal:', typeof openMedicinalFlowerEditModal);
-        console.log('  - openMedicinalOilEditModal:', typeof openMedicinalOilEditModal);
-        console.log('  - openConcentrateEditModal:', typeof openConcentrateEditModal);
-        console.log('  - openSeedEditModal:', typeof openSeedEditModal);
-        console.log('  - openVaporizerEditModal:', typeof openVaporizerEditModal);
-        console.log('  - openApparelEditModal:', typeof openApparelEditModal);
-        
-        switch(categorySlug) {
-            case 'medicinal-flores':
-            case 'Flores Medicinales':
-                if (typeof openMedicinalFlowerEditModal === 'function') {
-                    openMedicinalFlowerEditModal(product);
-                } else {
-                    console.error('❌ Función openMedicinalFlowerEditModal no encontrada');
-                    openBasicEditModal(productId);
-                }
-                break;
-            case 'medicinal-aceites':
-            case 'Aceites Medicinales':
-                if (typeof openMedicinalOilEditModal === 'function') {
-                    openMedicinalOilEditModal(product);
-                } else {
-                    console.error('❌ Función openMedicinalOilEditModal no encontrada');
-                    openBasicEditModal(productId);
-                }
-                break;
-            case 'medicinal-concentrados':
-            case 'Concentrados Medicinales':
-            case 'Concentrados':
-                if (typeof openConcentrateEditModal === 'function') {
-                    openConcentrateEditModal(product);
-                } else {
-                    console.error('❌ Función openConcentrateEditModal no encontrada');
-                    if (typeof notify !== 'undefined') {
-                        notify.error('Modal no disponible. Verifica que adminEditModals.js esté cargado.');
-                    }
-                    openBasicEditModal(productId);
-                }
-                break;
-            case 'semillas':
-            case 'Semillas':
-                if (typeof openSeedEditModal === 'function') {
-                    openSeedEditModal(product);
-                } else {
-                    console.error('❌ Función openSeedEditModal no encontrada');
-                    if (typeof notify !== 'undefined') {
-                        notify.error('Modal no disponible. Verifica que adminEditModals.js esté cargado.');
-                    }
-                    openBasicEditModal(productId);
-                }
-                break;
-            case 'vaporizadores':
-            case 'Vaporizadores':
-                if (typeof openVaporizerEditModal === 'function') {
-                    openVaporizerEditModal(product);
-                } else {
-                    console.error('❌ Función openVaporizerEditModal no encontrada');
-                if (typeof notify !== 'undefined') {
-                        notify.error('Modal no disponible. Verifica que adminEditModals.js esté cargado.');
-                }
-                    openBasicEditModal(productId);
-                }
-                break;
-            case 'ropa':
-            case 'Ropa':
-                if (typeof openApparelEditModal === 'function') {
-                    openApparelEditModal(product);
-                } else {
-                    console.error('❌ Función openApparelEditModal no encontrada');
-                if (typeof notify !== 'undefined') {
-                        notify.error('Modal no disponible. Verifica que adminEditModals.js esté cargado.');
-                    }
-                    openBasicEditModal(productId);
-                }
-                break;
-            default:
-                console.log('⚠️ Categoría no reconocida:', categorySlug, '- Usando modal básico');
-                openBasicEditModal(productId);
+
+        let categorySlug = product.category_slug || product.category?.slug;
+        if (!categorySlug && product.category_id && Array.isArray(window.allCategories)) {
+            const match = window.allCategories.find(cat => cat.id === product.category_id);
+            categorySlug = match?.slug;
         }
-        
+
+        if (!categorySlug) {
+            throw new Error('No se pudo determinar la categoría del producto');
+        }
+
+        if (typeof window.openProductModal === 'function') {
+            window.openProductModal(categorySlug, product);
+        } else {
+            throw new Error('openProductModal no disponible');
+        }
     } catch (error) {
-        console.error('Error abriendo modal de edición:', error);
+        console.error('❌ Error abriendo modal de edición:', error);
         if (typeof notify !== 'undefined') {
-            notify.error('Error al cargar el producto. Intentando con modal básico...');
-        }
-        
-        // Fallback: usar modal básico si hay problemas con el sistema avanzado
-        console.log('🚨 Fallback: Usando modal básico debido a error...');
-        try {
-            await openBasicEditModal(productId);
-        } catch (fallbackError) {
-            console.error('❌ Error también en modal básico:', fallbackError);
-            if (typeof notify !== 'undefined') {
-                notify.error('Error al cargar el producto: ' + error.message);
-            }
+            notify.error('Error al abrir el modal de edición: ' + error.message);
         }
     }
 }
@@ -778,13 +839,40 @@ function stringifyJSON(obj) {
  * Eliminar producto
  */
 async function deleteProduct(productId) {
-    if (!confirm('¿Estás seguro de que deseas eliminar este producto? Esta acción no se puede deshacer.')) {
+    let confirmed = false;
+    
+    if (typeof notify !== 'undefined' && notify.confirmDelete) {
+        confirmed = await notify.confirmDelete({
+            title: '¿Eliminar producto?',
+            message: '¿Estás seguro de que deseas eliminar este producto? Esta acción no se puede deshacer.',
+            confirmText: 'Eliminar',
+            cancelText: 'Cancelar'
+        });
+    } else if (typeof notify !== 'undefined' && notify.confirm) {
+        confirmed = await notify.confirm({
+            title: '¿Eliminar producto?',
+            message: '¿Estás seguro de que deseas eliminar este producto? Esta acción no se puede deshacer.',
+            confirmText: 'Eliminar',
+            cancelText: 'Cancelar'
+        });
+    } else {
+        confirmed = confirm('¿Estás seguro de que deseas eliminar este producto? Esta acción no se puede deshacer.');
+    }
+    
+    if (!confirmed) {
         return;
     }
     
     try {
-        const response = await fetch(`http://localhost:3000/api/products/${productId}`, {
-            method: 'DELETE'
+        const baseUrl = (window.api && window.api.baseURL) ? window.api.baseURL : 'http://localhost:3000/api';
+        const csrfToken = (typeof api !== 'undefined' && typeof api.ensureCsrfToken === 'function')
+            ? await api.ensureCsrfToken()
+            : null;
+
+        const response = await fetch(`${baseUrl}/products/${productId}`, {
+            method: 'DELETE',
+            headers: csrfToken ? { 'X-CSRF-Token': csrfToken } : undefined,
+            credentials: 'include'
         });
         
         if (!response.ok) {
@@ -809,7 +897,10 @@ async function deleteProduct(productId) {
  */
 async function duplicateProduct(productId) {
     try {
-        const response = await fetch(`http://localhost:3000/api/products/${productId}`);
+        const baseUrl = (window.api && window.api.baseURL) ? window.api.baseURL : 'http://localhost:3000/api';
+        const response = await fetch(`${baseUrl}/products/${productId}`, {
+            credentials: 'include'
+        });
         
         if (!response.ok) {
             throw new Error('Error al cargar el producto');
@@ -915,7 +1006,11 @@ function setupFiltersAndSearch() {
         console.log('✅ Configurando listener de búsqueda');
         searchInput.addEventListener('input', debounce(() => {
             console.log('🔍 Ejecutando búsqueda:', searchInput.value);
-            filterProducts();
+            if (typeof window.applyGlobalFilters === 'function') {
+                window.applyGlobalFilters();
+            } else {
+                filterProducts();
+            }
         }, 300));
     } else {
         console.warn('❌ searchInput no encontrado');
@@ -925,17 +1020,40 @@ function setupFiltersAndSearch() {
         console.log('✅ Configurando listener de categoría');
         categoryFilter.addEventListener('change', () => {
             console.log('📂 Filtrando por categoría:', categoryFilter.value);
-            filterProducts();
+            if (typeof window.applyGlobalFilters === 'function') {
+                window.applyGlobalFilters();
+            } else {
+                filterProducts();
+            }
         });
     } else {
         console.warn('❌ categoryFilter no encontrado');
+    }
+    
+    const supplierFilter = document.getElementById('supplierFilter');
+    if (supplierFilter) {
+        console.log('✅ Configurando listener de proveedor');
+        supplierFilter.addEventListener('change', () => {
+            console.log('🏭 Filtrando por proveedor:', supplierFilter.value);
+            if (typeof window.applyGlobalFilters === 'function') {
+                window.applyGlobalFilters();
+            } else {
+                filterProducts();
+            }
+        });
+    } else {
+        console.warn('❌ supplierFilter no encontrado');
     }
     
     if (statusFilter) {
         console.log('✅ Configurando listener de estado');
         statusFilter.addEventListener('change', () => {
             console.log('📊 Filtrando por estado:', statusFilter.value);
-            filterProducts();
+            if (typeof window.applyGlobalFilters === 'function') {
+                window.applyGlobalFilters();
+            } else {
+                filterProducts();
+            }
         });
     } else {
         console.warn('❌ statusFilter no encontrado');
@@ -1198,16 +1316,25 @@ function resetFilters() {
     
     const searchInput = document.getElementById('searchInput');
     const categoryFilter = document.getElementById('categoryFilter');
+    const supplierFilter = document.getElementById('supplierFilter');
     const statusFilter = document.getElementById('statusFilter');
     
     if (searchInput) searchInput.value = '';
     if (categoryFilter) categoryFilter.value = '';
+    if (supplierFilter) supplierFilter.value = '';
     if (statusFilter) statusFilter.value = '';
     
-    // Recargar todos los productos
-    if (window.allProducts && Array.isArray(window.allProducts)) {
-        updateStats(window.allProducts);
-        renderProductsTable(window.allProducts);
+    // Aplicar filtros globales según la pestaña activa
+    if (typeof window.applyGlobalFilters === 'function') {
+        window.applyGlobalFilters();
+    } else {
+        // Fallback: recargar productos
+        if (window.allProducts && Array.isArray(window.allProducts)) {
+            window.currentPage = 1;
+            window.filteredProductsForPagination = window.allProducts;
+            updateStats(window.allProducts);
+            renderProductsTable(window.allProducts);
+        }
     }
 }
 
@@ -1219,34 +1346,37 @@ async function filterProducts() {
     
     const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
     const selectedCategory = document.getElementById('categoryFilter')?.value || '';
+    const selectedSupplier = document.getElementById('supplierFilter')?.value || '';
     const selectedStatus = document.getElementById('statusFilter')?.value || '';
     
     console.log('🔧 Filtros aplicados:', {
         searchTerm,
         selectedCategory,
+        selectedSupplier,
         selectedStatus
     });
     
     try {
         // Cargar todos los productos si no los tenemos
+        // NOTA: Siempre recargar desde API para obtener datos actualizados
+        // El caché solo se usa para evitar múltiples requests durante la misma sesión
         let products = [];
-        if (window.allProducts && Array.isArray(window.allProducts)) {
-            products = window.allProducts;
-            console.log('📦 Usando productos desde cache:', products.length);
-        } else {
-            console.log('📡 Cargando productos desde API...');
-            const response = await api.getProducts({ limit: 500 });
-            if (response.success && response.data && Array.isArray(response.data.products)) {
-                products = response.data.products;
-            } else if (response.success && Array.isArray(response.data)) {
-                products = response.data;
-            } else if (Array.isArray(response.products)) {
-                products = response.products;
-            } else if (Array.isArray(response)) {
-                products = response;
-            }
-            window.allProducts = products; // Cache para próximas búsquedas
-            console.log('✅ Productos cargados desde API:', products.length);
+        console.log('📡 Cargando productos desde API para filtros...');
+        const response = await api.getProducts({ limit: 1000, _t: Date.now() }); // Timestamp para evitar caché del navegador
+        if (response.success && response.data && Array.isArray(response.data.products)) {
+            products = response.data.products;
+        } else if (response.success && Array.isArray(response.data)) {
+            products = response.data;
+        } else if (Array.isArray(response.products)) {
+            products = response.products;
+        } else if (Array.isArray(response)) {
+            products = response;
+        }
+        // Actualizar caché con los productos más recientes
+        window.allProducts = products;
+        console.log('✅ Productos cargados desde API para filtros:', products.length);
+        if (products.length > 0) {
+            console.log('📦 Ejemplos de API:', products.slice(0, 2).map(p => ({ name: p.name, hasSupplier: !!p.supplier, supplierCode: p.supplier?.code })));
         }
         
         if (products.length === 0) {
@@ -1261,6 +1391,10 @@ async function filterProducts() {
                 product.name?.toLowerCase().includes(searchTerm) ||
                 product.sku?.toLowerCase().includes(searchTerm) ||
                 product.description?.toLowerCase().includes(searchTerm);
+            
+            if (!matchesSearch && product === products[0]) {
+                console.log(`❌ ${product.name} no pasa búsqueda: "${searchTerm}"`);
+            }
             
             // Filtro de categoría - Lógica mejorada para manejar diferentes formatos
             let matchesCategory = true;
@@ -1310,6 +1444,24 @@ async function filterProducts() {
             }
             
             
+            // Filtro de proveedor
+            let matchesSupplier = true;
+            if (selectedSupplier) {
+                if (selectedSupplier === 'AR-PROD') {
+                    matchesSupplier = product.supplier && (product.supplier.code === 'AR-PROD' || product.supplier.name && product.supplier.name.includes('Apex Remedy'));
+                    // Debug
+                    if (products.indexOf(product) < 5) {
+                        console.log(`🏭 ${product.name}: hasSupplier=${!!product.supplier}, code=${product.supplier?.code}, matches=${matchesSupplier}`);
+                    }
+                } else if (selectedSupplier === 'external') {
+                    matchesSupplier = !product.supplier || (product.supplier.code !== 'AR-PROD' && !product.supplier.name?.includes('Apex Remedy'));
+                }
+            }
+            
+            if (!matchesSupplier && product === products[0]) {
+                console.log(`❌ ${product.name} no pasa filtro proveedor: ${selectedSupplier}`);
+            }
+            
             // Filtro de estado
             let matchesStatus = true;
             if (selectedStatus) {
@@ -1352,10 +1504,33 @@ async function filterProducts() {
                 }
             }
             
-            return matchesSearch && matchesCategory && matchesStatus;
+            if (!matchesStatus && product === products[0]) {
+                console.log(`❌ ${product.name} no pasa filtro estado: ${selectedStatus}`);
+            }
+            
+            const finalMatch = matchesSearch && matchesCategory && matchesSupplier && matchesStatus;
+            
+            if (!finalMatch && product === products[0]) {
+                console.log(`❌ ${product.name} NO pasa filtros finales: search=${matchesSearch}, category=${matchesCategory}, supplier=${matchesSupplier}, status=${matchesStatus}`);
+            }
+            
+            return finalMatch;
         });
         
         console.log(`🔍 Filtrados: ${filteredProducts.length} de ${products.length} productos`);
+        
+        // Debug para filtro de proveedor
+        if (selectedSupplier) {
+            console.log('🏭 DEBUG FILTRO PROVEEDOR:');
+            console.log('📊 Total productos:', products.length);
+            const withSupplier = products.filter(p => p.supplier);
+            console.log('📦 Productos con supplier:', withSupplier.length);
+            console.log('📦 Ejemplos:', products.slice(0, 3).map(p => ({ 
+                name: p.name, 
+                hasSupplier: !!p.supplier, 
+                supplierCode: p.supplier?.code 
+            })));
+        }
         
         // Debug: mostrar algunos productos filtrados
         if (filteredProducts.length > 0) {
@@ -1419,7 +1594,11 @@ async function filterProducts() {
         // Actualizar estadísticas con productos filtrados
         updateStats(filteredProducts);
         
-        // Renderizar tabla con productos filtrados
+        // Guardar productos filtrados y resetear a página 1
+        window.filteredProductsForPagination = filteredProducts;
+        window.currentPage = 1;
+        
+        // Renderizar tabla con productos filtrados (se aplicará paginación automáticamente)
         renderProductsTable(filteredProducts);
         
     } catch (error) {
@@ -1446,6 +1625,9 @@ window.stringifyJSON = stringifyJSON;
 window.setupFiltersAndSearch = setupFiltersAndSearch;
 window.filterProducts = filterProducts;
 window.resetFilters = resetFilters;
+window.goToPage = goToPage;
+window.goToPreviousPage = goToPreviousPage;
+window.goToNextPage = goToNextPage;
 window.testFilters = testFilters;
 window.testMedicinalFilter = testMedicinalFilter;
 window.testCategoryFilter = testCategoryFilter;

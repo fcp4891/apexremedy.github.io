@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zonas de Envío - Apexremedy Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style/css_admin.css">
+    <script src="./js/basePath.js"></script>
+    <script src="./js/config.js"></script>
+    <script src="./js/utils.js"></script>
+    <script type="module" src="./js/adminTemplate.legacy.js"></script>
+    <script src="./js/chileRegions.js"></script>
+    <script src="./js/api/apiClient.js"></script>
+    <script src="./js/auth.js"></script>
+    <script src="./js/sessionManager.js"></script>
+    <script src="./js/notifications.js"></script>
+    <script defer src="./js/adminTemplate.js"></script>
+    <script src="./js/pages/logistica-zonas-page.js" defer></script>
+</head>
+<body>
+    <div id="header-container"></div>
+
+<div class="container mx-auto px-4 py-8">
+    <div class="admin-page-header">
+        <div>
+            <h1 class="admin-page-title">Zonas de Envío</h1>
+            <p class="admin-page-subtitle">Configura zonas geográficas y tarifas de envío</p>
+        </div>
+        <div class="admin-page-actions">
+            <button data-action="navigate" data-href="logistica.html" class="admin-btn admin-btn--muted">
+                <i class="fas fa-arrow-left admin-btn__icon"></i>Volver
+            </button>
+            <button class="admin-btn admin-btn--accent" data-action="open-create-modal">
+                <i class="fas fa-plus admin-btn__icon"></i>Nueva Zona
+            </button>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">ID</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Nombre</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase w-1/3">Regiones y Comunas</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Distancia Máx</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Tarifa</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Tiempo Estimado</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Estado</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="zonesTableBody" class="divide-y divide-gray-200">
+                    <tr>
+                        <td colspan="8" class="px-6 py-12 text-center">
+                            <i class="fas fa-spinner fa-spin text-4xl text-purple-600"></i>
+                            <p class="text-gray-500 mt-2">Cargando zonas...</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- Paginación -->
+        <div id="paginationContainer" class="hidden px-6 py-4 border-t border-gray-200 bg-gray-50">
+            <div class="flex items-center justify-between">
+                <div class="text-sm text-gray-700">
+                    Mostrando <span id="showingFrom">1</span> a <span id="showingTo">20</span> de <span id="totalRecords">0</span> registros
+                </div>
+                <div class="flex gap-2">
+                    <button id="prevPage" class="admin-btn admin-btn--muted admin-btn--compact" data-action="change-page" data-direction="-1">
+                        <i class="fas fa-chevron-left admin-btn__icon"></i>Anterior
+                    </button>
+                    <span id="pageInfo" class="px-4 py-2 text-sm text-gray-700">Página 1</span>
+                    <button id="nextPage" class="admin-btn admin-btn--muted admin-btn--compact" data-action="change-page" data-direction="1">
+                        Siguiente <i class="fas fa-chevron-right admin-btn__icon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Crear/Editar Zona -->
+<div id="zoneModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" data-action="close-modal-overlay">
+    <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" data-role="modal-content">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h2 id="modalTitle" class="text-2xl font-bold text-gray-800">Nueva Zona de Envío</h2>
+                <button class="admin-btn admin-btn--muted admin-btn--compact" data-action="close-modal">
+                    <i class="fas fa-times admin-btn__icon"></i>Cerrar
+                </button>
+            </div>
+
+            <form id="zoneForm" class="space-y-4">
+                <input type="hidden" id="zoneId">
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Nombre de Zona *</label>
+                    <input type="text" id="zoneName" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Descripción</label>
+                    <textarea id="zoneDescription" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Cobertura Geográfica *</label>
+                    
+                    <!-- Selector de Región -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-600 mb-2">Región</label>
+                        <select id="zoneRegionSelect" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                            <option value="">Selecciona una región</option>
+                        </select>
+                    </div>
+
+                    <!-- Selector de Comunas -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-600 mb-2">Comunas Disponibles</label>
+                        <select id="zoneCommuneSelect" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                            <option value="">Selecciona una región primero</option>
+                        </select>
+                        <button type="button" class="admin-btn admin-btn--accent admin-btn--compact admin-mt-1 w-full justify-center" data-action="add-commune">
+                            <i class="fas fa-plus admin-btn__icon"></i>Agregar Comuna
+                        </button>
+                    </div>
+
+                    <!-- Comunas Seleccionadas -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-600 mb-2">Comunas Seleccionadas</label>
+                        <div id="selectedCommunes" class="min-h-[100px] p-4 border border-gray-300 rounded-lg bg-gray-50">
+                            <p class="text-sm text-gray-500 text-center py-4">No hay comunas seleccionadas</p>
+                        </div>
+                    </div>
+
+                    <!-- Input oculto para almacenar JSON -->
+                    <input type="hidden" id="zoneCoverage" required>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Distancia Máxima (km)</label>
+                        <input type="number" id="zoneMaxDistance" step="0.1" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tarifa de Envío (CLP)</label>
+                        <input type="number" id="zoneDeliveryFee" step="1" value="0" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Días Mínimos</label>
+                        <input type="number" id="zoneDaysMin" min="1" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Días Máximos</label>
+                        <input type="number" id="zoneDaysMax" min="1" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="flex items-center cursor-pointer">
+                        <input type="checkbox" id="zoneActive" checked class="w-5 h-5 text-purple-600 rounded focus:ring-2 focus:ring-purple-500">
+                        <span class="ml-2 text-sm font-medium text-gray-700">Activa</span>
+                    </label>
+                </div>
+
+                <div class="flex justify-end gap-4 pt-4 border-t">
+                    <button type="button" class="admin-btn admin-btn--muted admin-btn--compact" data-action="close-modal">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="admin-btn admin-btn--accent admin-btn--compact">
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -70,6 +70,36 @@
     font-family: var(--admin-font-primary);
 }
 
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.tab-button {
+    cursor: pointer;
+}
+
+.tab-button.active {
+    border-bottom: 3px solid #3b82f6;
+}
+
+.goal-gauge-bar {
+    width: 0%;
+}
+
+.dashboard-heatmap {
+    width: 100%;
+    height: 500px;
+}
+
+.dashboard-heatmap--medium {
+    width: 100%;
+    height: 400px;
+}
+
 /* ============================================
    RESPONSIVE DESIGN
    ============================================ */

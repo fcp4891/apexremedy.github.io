@@ -1,3 +1,5 @@
+@import url("../src/styles/components.css");
+@import url("../src/styles/utilities.css");
 
 /* === Apexremedy – Unified Theme ===
    Estilos compartidos para todas las páginas de customer */
@@ -545,30 +547,7 @@ body.register-page {
 /* ============================================
    SHOP FILTERS
    ============================================ */
-.shop-filters{
-  padding:20px 0;
-  background:var(--white);
-}
 
-.filter-container{
-  display:flex;
-  flex-wrap:wrap;
-  gap:16px;
-  justify-content:space-between;
-  align-items:center;
-}
-
-.filter-group{
-  display:flex;
-  gap:12px;
-  flex-wrap:wrap;
-}
-
-.filter-select,.search-box{
-  border:2px solid var(--light-gray);
-  background:var(--white);
-  color:var(--accent-black);
-}
 
 /* ============================================
    CART SIDEBAR
@@ -642,20 +621,23 @@ body:has(.cart-sidebar.open) .cart-overlay{
 /* ============================================
    FOOTER
    ============================================ */
-.footer{
+.footer,
+.app-footer{
   background:linear-gradient(135deg, rgba(0,0,0,.35), rgba(110, 84, 10, 0.35));
   color:var(--white);
   padding:50px 0 28px;
 }
 
-.footer-content{
+.footer-content,
+.app-footer__content{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
   gap:28px;
   margin-bottom:28px;
 }
 
-.footer-logo{
+.footer-logo,
+.app-footer__logo{
   display:flex;
   align-items:center;
   gap:10px;
@@ -665,56 +647,65 @@ body:has(.cart-sidebar.open) .cart-overlay{
   color:var(--white);
 }
 
-.footer-logo i{
+.footer-logo i,
+.app-footer__logo-icon{
   color:var(--accent-yellow);
   font-size:1.8rem;
 }
 
-.footer-section h4{
+.footer-section h4,
+.app-footer__section-title{
   color:var(--accent-yellow);
   margin-bottom:12px;
   font-size:1.1rem;
   font-weight:600;
 }
 
-.footer-section ul{
+.footer-section ul,
+.app-footer__list{
   list-style:none;
   padding:0;
   margin:0;
 }
 
-.footer-section li{
+.footer-section li,
+.app-footer__list-item{
   margin:6px 0;
   color:var(--white);
   opacity:.85;
 }
 
-.footer-section a{
+.footer-section a,
+.app-footer__link{
   color:var(--white);
   opacity:.85;
   text-decoration:none;
   transition:var(--transition);
 }
 
-.footer-section a:hover{
+.footer-section a:hover,
+.app-footer__link:hover{
   opacity:1;
   color:var(--accent-yellow);
 }
 
-.footer-section p{
+.footer-section p,
+.app-footer__text{
   color:var(--white);
   opacity:.85;
   line-height:1.6;
   margin-bottom:12px;
 }
 
-.footer .social-links{
+.footer .social-links,
+.app-footer__social{
   display:flex;
   gap:12px;
   margin-top:16px;
 }
 
-.footer .social-links a{
+.footer .social-links a,
+.app-footer__social-link{
   display:flex;
   align-items:center;
   justify-content:center;
@@ -728,14 +719,16 @@ body:has(.cart-sidebar.open) .cart-overlay{
   font-size:1.1rem;
 }
 
-.footer .social-links a:hover{
+.footer .social-links a:hover,
+.app-footer__social-link:hover{
   background:var(--accent-yellow);
   color:var(--accent-black);
   opacity:1;
   transform:translateY(-2px);
 }
 
-.footer-bottom{
+.footer-bottom,
+.app-footer__bottom{
   text-align:center;
   border-top:1px solid #2b2b2b;
   padding-top:16px;
@@ -1098,15 +1091,6 @@ body:has(.cart-sidebar.open) .cart-overlay{
     grid-template-columns:1fr;
     gap:24px;
   }
-  
-  /* Filters */
-  .filter-container{
-    flex-direction:column;
-    align-items:stretch;
-  }
-  
-  .filter-group{width:100%}
-  .filter-select,.search-box{width:100%}
   
   /* Cart - Solución para móvil: máximo 80% de ancho y alto */
   .cart-sidebar{

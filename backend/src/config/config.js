@@ -17,7 +17,8 @@ const config = {
     // JWT
     jwt: {
         secret: process.env.JWT_SECRET || 'apexremedy_jwt_secret_2025_muy_seguro_cambiar_en_produccion',
-        expiresIn: process.env.JWT_EXPIRES_IN || '7d'
+        expiresIn: process.env.JWT_EXPIRES_IN || '10m',
+        refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d'
     },
     
     // Frontend

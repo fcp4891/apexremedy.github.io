@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datos del Dispensario - Apexremedy Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style/css_admin.css">
+    <script src="./js/basePath.js"></script>
+    <script src="./js/config.js"></script>
+    <script src="./js/utils.js"></script>
+    <script type="module" src="./js/adminTemplate.legacy.js"></script>
+    <script src="./js/notifications.js"></script>
+    <script src="./js/api/apiClient.js"></script>
+    <script src="./js/auth.js"></script>
+    <script defer src="./js/adminTemplate.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+</head>
+<body class="bg-slate-50 min-h-screen">
+    <div id="header-container"></div>
+
+    <main class="container mx-auto px-4 py-8 space-y-6">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-800">Datos del Dispensario</h1>
+                <p class="text-gray-600 mt-1">Administra la información oficial utilizada en los documentos de cesión.</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+                <button id="createDispensaryBtn" class="admin-btn admin-btn-primary hidden">
+                    <i class="fas fa-plus mr-2"></i> Crear registro
+                </button>
+                <button id="editDispensaryBtn" class="admin-btn admin-btn-secondary hidden">
+                    <i class="fas fa-pen mr-2"></i> Editar
+                </button>
+                <button id="deleteDispensaryBtn" class="admin-btn admin-btn-danger hidden">
+                    <i class="fas fa-trash-alt mr-2"></i> Eliminar
+                </button>
+            </div>
+        </div>
+
+        <section id="dispensaryCard" class="admin-card overflow-hidden">
+            <div id="dispensaryContent" class="p-12 text-center text-gray-500">
+                <div class="flex flex-col items-center gap-3">
+                    <span class="text-5xl">⌛</span>
+                    <p class="text-lg font-medium">Cargando información del dispensario...</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="dispensaryModal" class="fixed inset-0 z-50 hidden items-center justify-center">
+        <div class="disp-modal-overlay" data-dismiss-modal></div>
+        <div class="disp-modal-container">
+            <div class="disp-modal-header">
+                <div>
+                    <p class="disp-modal-kicker">Gestión Administrativa</p>
+                    <h2 id="dispensaryModalTitle" class="disp-modal-title">Nuevo registro</h2>
+                    <p id="dispensaryModalSubtitle" class="disp-modal-subtitle">
+                        Completa los campos obligatorios para guardar la información.
+                    </p>
+                </div>
+                <button id="closeDispensaryModal" class="disp-modal-close" aria-label="Cerrar modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <form id="dispensaryForm" class="disp-modal-body">
+                <div class="disp-field-grid">
+                    <div class="disp-field">
+                        <label for="formDispensaryName" class="disp-label">Nombre o Razón Social *</label>
+                        <div class="disp-input-wrapper">
+                            <i class="fas fa-building"></i>
+                            <input type="text" id="formDispensaryName" name="name" required placeholder="Apexremedy S.A." />
+                        </div>
+                    </div>
+                    <div class="disp-field">
+                        <label for="formDispensaryRut" class="disp-label">RUT *</label>
+                        <div class="disp-input-wrapper">
+                            <i class="fas fa-id-card"></i>
+                            <input type="text" id="formDispensaryRut" name="rut" required placeholder="12.345.678-9" />
+                        </div>
+                    </div>
+                    <div class="disp-field">
+                        <label for="formDispensaryEmail" class="disp-label">Correo Electrónico *</label>
+                        <div class="disp-input-wrapper">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="formDispensaryEmail" name="email" required placeholder="contacto@apexremedy.cl" />
+                        </div>
+                    </div>
+                    <div class="disp-field">
+                        <label for="formDispensaryAddress" class="disp-label">Domicilio *</label>
+                        <div class="disp-input-wrapper">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <input type="text" id="formDispensaryAddress" name="address" required placeholder="Calle y número, Comuna, Ciudad, Región" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="disp-signature-section">
+                    <div class="disp-signature-header">
+                        <div>
+                            <p class="disp-modal-kicker">Firma digital</p>
+                            <h3 class="disp-signature-title">Autorización del dispensario</h3>
+                        </div>
+                        <p class="disp-signature-text">
+                            Dibuja directamente en el lienzo, o arrastra una imagen (PNG/JPG) con la firma.
+                            Esta firma se inserta automáticamente en los documentos de cesión.
+                        </p>
+                    </div>
+
+                    <div id="signatureDropzone" class="disp-dropzone" aria-label="Zona para dibujar o arrastrar la firma">
+                        <canvas id="dispensarySignatureCanvas" class="disp-signature-canvas"></canvas>
+                        <div class="disp-dropzone-helper">
+                            <div class="disp-dropzone-icon">
+                                <i class="fas fa-pen-nib"></i>
+                            </div>
+                            <div class="disp-dropzone-copy">
+                                <p class="disp-dropzone-title">Arrastra y suelta una imagen de la firma.</p>
+                                <p class="disp-dropzone-subtitle">Formatos admitidos: PNG, JPG, WEBP · Tamaño recomendado 1200 × 400 px.</p>
+                                <div class="disp-dropzone-actions">
+                                    <button type="button" id="uploadSignatureBtn" class="admin-btn admin-btn-secondary">
+                                        <i class="fas fa-upload mr-2"></i>Seleccionar archivo
+                                    </button>
+                                    <button type="button" id="clearSignatureBtn" class="admin-btn admin-btn-secondary">
+                                        <i class="fas fa-eraser mr-2"></i>Limpiar lienzo
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="file" id="signatureUploadInput" accept="image/*" class="hidden" />
+
+                    <div id="signaturePreviewWrapper" class="disp-signature-preview hidden">
+                        <p class="disp-signature-preview-title">
+                            <i class="fas fa-image text-emerald-500"></i>
+                            Firma actual almacenada
+                        </p>
+                        <img id="signaturePreviewImage" src="" alt="Firma registrada" class="disp-signature-preview-img" />
+                    </div>
+                </div>
+
+                <div class="disp-modal-footer">
+                    <button type="button" id="cancelDispensaryBtn" class="admin-btn admin-btn-secondary">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="admin-btn admin-btn-primary">
+                        <i class="fas fa-save mr-2"></i>Guardar cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="./js/dispensaryManager.js"></script>
+</body>
+</html>
+
+
+

@@ -3,27 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Apexremedy Admin</title>
+    <title>Dashboard Completo - Apexremedy Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
     <link rel="stylesheet" href="style/css_admin.css">
     <link rel="stylesheet" href="style/dashboard.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script src="./js/basePath.js"></script>
-    <script src="./js/config.js"></script>
-    <script src="./js/utils.js"></script>
-    <script defer src="./js/adminTemplate.js"></script>
 </head>
-<body>
-    <!-- Header se carga automáticamente -->
+<body class="bg-gray-100">
+    
+    <!-- ✅ HEADER SE CARGA AUTOMÁTICAMENTE -->
     <div id="header-container"></div>
 
     <!-- Main Content -->
     <div class="container mx-auto px-4 py-8">
         <!-- Header Section -->
         <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-800">Panel de Control Completo</h1>
-            <p class="text-gray-600 mt-1">Análisis completo de ventas, inventario y logística</p>
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800">📊 Dashboard Completo</h1>
+                    <p class="text-gray-600 mt-1">Análisis completo del negocio - Todos los dashboards en un lugar</p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <select id="periodSelector" class="px-4 py-2 border border-gray-300 rounded-lg" data-action="change-period">
+                        <option value="7d">Últimos 7 días</option>
+                        <option value="30d" selected>Últimos 30 días</option>
+                        <option value="90d">Últimos 90 días</option>
+                        <option value="1y">Último año</option>
+                        <option value="ytd">Año actual</option>
+                        <option value="mtd">Mes actual</option>
+                    </select>
+                    <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700" data-action="refresh-dashboards">
+                        <i class="fas fa-sync-alt mr-2"></i>Actualizar
+                    </button>
+                </div>
+            </div>
             <p class="text-sm text-gray-500 mt-2">
                 <i class="fas fa-calendar-alt mr-1"></i>
                 <span id="currentDate"></span>
@@ -32,941 +47,688 @@
             </p>
         </div>
 
-        <!-- Estadísticas Principales -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <!-- Total Ventas Hoy -->
-            <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow-lg p-6 text-white">
-                <div class="flex items-center justify-between mb-4">
-                    <div>
-                        <p class="text-green-100 text-sm">Ventas Hoy</p>
-                        <p id="salesToday" class="text-3xl font-bold">$0</p>
+        <!-- Tabs Navigation -->
+        <div class="bg-white rounded-lg shadow-lg mb-6">
+            <div class="flex flex-wrap border-b border-gray-200">
+                <button class="tab-button active px-6 py-4 font-semibold text-gray-700 hover:text-blue-600 transition" data-action="switch-tab" data-tab="executive">
+                    <i class="fas fa-chart-line mr-2"></i>Executive
+                </button>
+                <button class="tab-button px-6 py-4 font-semibold text-gray-700 hover:text-blue-600 transition" data-action="switch-tab" data-tab="commercial">
+                    <i class="fas fa-shopping-cart mr-2"></i>Comercial
+                </button>
+                <button class="tab-button px-6 py-4 font-semibold text-gray-700 hover:text-blue-600 transition" data-action="switch-tab" data-tab="customers">
+                    <i class="fas fa-users mr-2"></i>Clientes
+                </button>
+                <button class="tab-button px-6 py-4 font-semibold text-gray-700 hover:text-blue-600 transition" data-action="switch-tab" data-tab="marketing">
+                    <i class="fas fa-bullhorn mr-2"></i>Marketing
+                </button>
+                <button class="tab-button px-6 py-4 font-semibold text-gray-700 hover:text-blue-600 transition" data-action="switch-tab" data-tab="products">
+                    <i class="fas fa-box mr-2"></i>Productos
+                </button>
+                <button class="tab-button px-6 py-4 font-semibold text-gray-700 hover:text-blue-600 transition" data-action="switch-tab" data-tab="inventory">
+                    <i class="fas fa-warehouse mr-2"></i>Inventario
+                </button>
+                <button class="tab-button px-6 py-4 font-semibold text-gray-700 hover:text-blue-600 transition" data-action="switch-tab" data-tab="operations">
+                    <i class="fas fa-truck mr-2"></i>Operaciones
+                </button>
+                <button class="tab-button px-6 py-4 font-semibold text-gray-700 hover:text-blue-600 transition" data-action="switch-tab" data-tab="ux">
+                    <i class="fas fa-mouse-pointer mr-2"></i>UX & Web
+                </button>
+                <button class="tab-button px-6 py-4 font-semibold text-gray-700 hover:text-blue-600 transition" data-action="switch-tab" data-tab="financial">
+                    <i class="fas fa-dollar-sign mr-2"></i>Financiero
+                </button>
+                <button class="tab-button px-6 py-4 font-semibold text-gray-700 hover:text-blue-600 transition" data-action="switch-tab" data-tab="service">
+                    <i class="fas fa-headset mr-2"></i>Servicio
+                </button>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- 1. EXECUTIVE DASHBOARD -->
+        <!-- ============================================ -->
+        <div id="tab-executive" class="tab-content active">
+            <div class="space-y-6">
+                <!-- KPIs Principales -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow-lg p-6 text-white">
+                        <p class="text-green-100 text-sm mb-2">Revenue Total</p>
+                        <p id="exec-revenue" class="text-3xl font-bold">$0</p>
+                        <p class="text-sm mt-2"><span id="exec-revenue-growth">+0%</span> vs período anterior</p>
                     </div>
-                    <div class="bg-white bg-opacity-20 p-4 rounded-full">
-                        <i class="fas fa-dollar-sign text-3xl"></i>
+                    <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-lg p-6 text-white">
+                        <p class="text-blue-100 text-sm mb-2">CAC</p>
+                        <p id="exec-cac" class="text-3xl font-bold">$0</p>
+                        <p class="text-sm mt-2">Costo por adquisición</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg shadow-lg p-6 text-white">
+                        <p class="text-purple-100 text-sm mb-2">LTV</p>
+                        <p id="exec-ltv" class="text-3xl font-bold">$0</p>
+                        <p class="text-sm mt-2">Ratio LTV:CAC: <span id="exec-ltv-cac-ratio">0:1</span></p>
+                    </div>
+                    <div class="bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg shadow-lg p-6 text-white">
+                        <p class="text-orange-100 text-sm mb-2">Tasa Conversión</p>
+                        <p id="exec-conversion" class="text-3xl font-bold">0%</p>
+                        <p class="text-sm mt-2"><span id="exec-new-customers">0</span> nuevos clientes</p>
                     </div>
                 </div>
-                <div class="flex items-center text-sm">
-                    <i class="fas fa-arrow-up mr-1"></i>
-                    <span id="salesTodayChange">+0%</span>
-                    <span class="ml-2 text-green-100">vs ayer</span>
+
+                <!-- Gráficos Executive -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">Revenue Trend</h3>
+                        <div class="h-72">
+                            <canvas id="chart-exec-revenue-trend"></canvas>
+                    </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">Métricas Clave</h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600">GMV</span>
+                                <span id="exec-gmv" class="font-bold text-lg">$0</span>
+                </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600">Margen Bruto</span>
+                                <span id="exec-gross-margin" class="font-bold text-lg">$0</span>
+                </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600">Cash Flow Operativo</span>
+                                <span id="exec-cash-flow" class="font-bold text-lg">$0</span>
+            </div>
+                            <div class="mt-4">
+                                <div class="w-full bg-gray-200 rounded-full h-4">
+                                    <div id="exec-goal-gauge" class="bg-green-600 h-4 rounded-full goal-gauge-bar"></div>
+                    </div>
+                                <p class="text-sm text-gray-600 mt-2">Cumplimiento de Objetivos: <span id="exec-goal-percent">0%</span></p>
+                    </div>
+                </div>
                 </div>
             </div>
 
-            <!-- Total Ventas Mes -->
-            <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-lg p-6 text-white">
-                <div class="flex items-center justify-between mb-4">
-                    <div>
-                        <p class="text-blue-100 text-sm">Ventas Este Mes</p>
-                        <p id="salesMonth" class="text-3xl font-bold">$0</p>
+                <!-- Mapa de Calor Geográfico -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">🗺️ Ventas por Comuna (RM)</h3>
+                    <div id="chart-exec-heatmap-rm" class="dashboard-heatmap"></div>
                     </div>
-                    <div class="bg-white bg-opacity-20 p-4 rounded-full">
-                        <i class="fas fa-chart-line text-3xl"></i>
                     </div>
                 </div>
-                <div class="flex items-center text-sm">
-                    <span id="ordersMonth">0</span>
-                    <span class="ml-1 text-blue-100">pedidos</span>
-                </div>
-            </div>
 
-            <!-- Ticket Promedio -->
-            <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg shadow-lg p-6 text-white">
-                <div class="flex items-center justify-between mb-4">
-                    <div>
-                        <p class="text-purple-100 text-sm">Ticket Promedio</p>
-                        <p id="avgTicket" class="text-3xl font-bold">$0</p>
+        <!-- ============================================ -->
+        <!-- 2. DASHBOARD COMERCIAL/VENTAS -->
+        <!-- ============================================ -->
+        <div id="tab-commercial" class="tab-content">
+            <div class="space-y-6">
+                <!-- Revenue & Orders -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Revenue & Orders</h3>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                        <div class="h-72">
+                            <canvas id="chart-comm-daily-sales"></canvas>
+                        </div>
+                        <div class="h-72">
+                            <canvas id="chart-comm-orders-status"></canvas>
+                        </div>
                     </div>
-                    <div class="bg-white bg-opacity-20 p-4 rounded-full">
-                        <i class="fas fa-receipt text-3xl"></i>
-                    </div>
-                </div>
-                <div class="flex items-center text-sm">
-                    <i class="fas fa-shopping-cart mr-1"></i>
-                    <span id="avgItems">0</span>
-                    <span class="ml-1 text-purple-100">items/pedido</span>
-                </div>
-            </div>
-
-            <!-- Tasa de Conversión -->
-            <div class="bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg shadow-lg p-6 text-white">
-                <div class="flex items-center justify-between mb-4">
-                    <div>
-                        <p class="text-orange-100 text-sm">Tasa Conversión</p>
-                        <p id="conversionRate" class="text-3xl font-bold">0%</p>
-                    </div>
-                    <div class="bg-white bg-opacity-20 p-4 rounded-full">
-                        <i class="fas fa-percentage text-3xl"></i>
-                    </div>
-                </div>
-                <div class="flex items-center text-sm">
-                    <span id="completedOrders">0</span>
-                    <span class="ml-1 text-orange-100">completados</span>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="h-72">
+                            <canvas id="chart-comm-sales-category"></canvas>
+                        </div>
+                        <div class="h-72">
+                            <canvas id="chart-comm-payment-methods"></canvas>
                 </div>
             </div>
         </div>
 
-        <!-- Estadísticas de Inventario -->
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
+                <!-- Top Products -->
             <div class="bg-white rounded-lg shadow-lg p-6">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-500 text-sm">Total Productos</p>
-                        <p id="totalProducts" class="text-2xl font-bold text-gray-800">0</p>
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xl font-bold text-gray-800">Top Productos</h3>
+                        <select id="topProductsSort" class="px-4 py-2 border border-gray-300 rounded-lg" data-action="top-products-sort">
+                            <option value="revenue">Por Revenue</option>
+                            <option value="units">Por Unidades</option>
+                            <option value="margin">Por Margen</option>
+                        </select>
                     </div>
-                    <i class="fas fa-box text-3xl text-purple-600"></i>
+                    <div id="topProductsTable" class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">#</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Producto</th>
+                                    <th class="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Revenue</th>
+                                    <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Unidades</th>
+                                    <th class="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Margen</th>
+                                </tr>
+                            </thead>
+                            <tbody id="topProductsBody">
+                                <tr><td colspan="5" class="px-4 py-8 text-center text-gray-400">Cargando...</td></tr>
+                            </tbody>
+                        </table>
                 </div>
             </div>
+
+                <!-- Performance Temporal -->
             <div class="bg-white rounded-lg shadow-lg p-6">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-500 text-sm">Stock Total</p>
-                        <p id="totalStock" class="text-2xl font-bold text-gray-800">0</p>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Performance Temporal</h3>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="h-72">
+                            <canvas id="chart-comm-by-hour"></canvas>
                     </div>
-                    <i class="fas fa-boxes text-3xl text-blue-600"></i>
+                        <div class="h-72">
+                            <canvas id="chart-comm-by-day"></canvas>
                 </div>
             </div>
-            <div class="bg-white rounded-lg shadow-lg p-6">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-500 text-sm">Valor Inventario</p>
-                        <p id="inventoryValue" class="text-2xl font-bold text-green-600">$0</p>
+                    <div class="mt-6">
+                        <h4 class="text-lg font-semibold text-gray-700 mb-4">Heatmap: Día x Hora</h4>
+                        <div id="chart-comm-heatmap" class="dashboard-heatmap dashboard-heatmap--medium"></div>
                     </div>
-                    <i class="fas fa-warehouse text-3xl text-green-600"></i>
-                </div>
-            </div>
-            <div class="bg-white rounded-lg shadow-lg p-6 border-2 border-orange-200">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-500 text-sm">Stock Bajo</p>
-                        <p id="lowStockCount" class="text-2xl font-bold text-orange-600">0</p>
-                    </div>
-                    <i class="fas fa-exclamation-triangle text-3xl text-orange-600"></i>
-                </div>
-            </div>
-            <div class="bg-white rounded-lg shadow-lg p-6 border-2 border-red-200">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-500 text-sm">Sin Stock</p>
-                        <p id="outOfStockCount" class="text-2xl font-bold text-red-600">0</p>
-                    </div>
-                    <i class="fas fa-ban text-3xl text-red-600"></i>
                 </div>
             </div>
         </div>
 
-        <!-- Gráficos de Ventas -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            <!-- Ventas Últimos 30 Días -->
+        <!-- ============================================ -->
+        <!-- 3. DASHBOARD DE CLIENTES (CRM) -->
+        <!-- ============================================ -->
+        <div id="tab-customers" class="tab-content">
+            <div class="space-y-6">
+                <!-- Adquisición -->
             <div class="bg-white rounded-lg shadow-lg p-6">
-                <h2 class="text-xl font-bold text-gray-800 mb-6">Ventas Últimos 30 Días</h2>
-                <div class="relative h-72"> <!-- ~288px -->
-                  <canvas id="salesChart"></canvas>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Adquisición de Clientes</h3>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                        <div class="bg-blue-50 rounded-lg p-6">
+                            <p class="text-sm text-gray-600">Nuevos Clientes</p>
+                            <p id="cust-new-customers" class="text-3xl font-bold text-blue-600">0</p>
+                    </div>
+                        <div class="bg-green-50 rounded-lg p-6">
+                            <p class="text-sm text-gray-600">Clientes Recurrentes</p>
+                            <p id="cust-repeat-customers" class="text-3xl font-bold text-green-600">0</p>
+                </div>
+                        <div class="bg-purple-50 rounded-lg p-6">
+                            <p class="text-sm text-gray-600">AOV</p>
+                            <p id="cust-aov" class="text-3xl font-bold text-purple-600">$0</p>
+            </div>
+                    </div>
+                    <div class="h-72">
+                        <canvas id="chart-cust-by-channel"></canvas>
+                </div>
+            </div>
+
+                <!-- RFM Segmentation -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Segmentación RFM</h3>
+                    <div id="rfmTable" class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Cliente</th>
+                                    <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Recency</th>
+                                    <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Frequency</th>
+                                    <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Monetary</th>
+                                    <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Score</th>
+                                    <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Segmento</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rfmBody">
+                                <tr><td colspan="6" class="px-4 py-8 text-center text-gray-400">Cargando...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Cohort Analysis -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Análisis de Cohortes</h3>
+                    <div class="h-72">
+                        <canvas id="chart-cust-cohort"></canvas>
+            </div>
+        </div>
+
+                <!-- Top Customers -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Top 20 Clientes por CLV</h3>
+                    <div id="topCustomersTable" class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Cliente</th>
+                                    <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Órdenes</th>
+                                    <th class="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Revenue Total</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Primera Compra</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Última Compra</th>
+                                </tr>
+                            </thead>
+                            <tbody id="topCustomersBody">
+                                <tr><td colspan="5" class="px-4 py-8 text-center text-gray-400">Cargando...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
                 </div>
               </div>
               
+        <!-- ============================================ -->
+        <!-- 4. DASHBOARD DE MARKETING -->
+        <!-- ============================================ -->
+        <div id="tab-marketing" class="tab-content">
+            <div class="space-y-6">
+                <!-- Campañas -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Campañas de Marketing</h3>
+                    <div id="campaignsTable" class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Campaña</th>
+                                    <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Canal</th>
+                                    <th class="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Inversión</th>
+                                    <th class="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Revenue</th>
+                                    <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase">ROAS</th>
+                                    <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Conversiones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="campaignsBody">
+                                <tr><td colspan="6" class="px-4 py-8 text-center text-gray-400">Cargando...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
 
-            <!-- Pedidos por Estado -->
+                <!-- Canales de Adquisición -->
             <div class="bg-white rounded-lg shadow-lg p-6">
-                <h2 class="text-xl font-bold text-gray-800 mb-6">Distribución de Pedidos</h2>
-                <div class="relative h-72">
-                  <canvas id="ordersChart"></canvas>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Canales de Adquisición</h3>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="h-72">
+                            <canvas id="chart-marketing-channels"></canvas>
+                        </div>
+                        <div class="h-72">
+                            <canvas id="chart-marketing-funnel"></canvas>
+                        </div>
                 </div>
             </div>
               
+                <!-- Email Marketing -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Email Marketing</h3>
+                    <div id="emailStatsTable" class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Tipo</th>
+                                    <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Enviados</th>
+                                    <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Abiertos</th>
+                                    <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Open Rate</th>
+                                    <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Entregados</th>
+                                </tr>
+                            </thead>
+                            <tbody id="emailStatsBody">
+                                <tr><td colspan="5" class="px-4 py-8 text-center text-gray-400">Cargando...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- Top 10 Productos Más Vendidos -->
-        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-xl font-bold text-gray-800">Top 10 Productos Más Vendidos</h2>
-                <select id="topProductsPeriod" onchange="loadTopProducts()" class="px-4 py-2 border border-gray-300 rounded-lg">
-                    <option value="7">Última Semana</option>
-                    <option value="30" selected>Último Mes</option>
-                    <option value="90">Últimos 3 Meses</option>
-                    <option value="365">Último Año</option>
-                </select>
+        <!-- ============================================ -->
+        <!-- 5. DASHBOARD DE PRODUCTO -->
+        <!-- ============================================ -->
+        <div id="tab-products" class="tab-content">
+            <div class="space-y-6">
+                <!-- Performance por Categoría -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Performance por Categoría</h3>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="h-72">
+                            <canvas id="chart-prod-category-revenue"></canvas>
             </div>
-            <div class="overflow-x-auto">
+                        <div class="h-72">
+                            <canvas id="chart-prod-category-units"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Productos sin Ventas -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Productos sin Ventas</h3>
+                    <div id="noSalesTable" class="overflow-x-auto">
                 <table class="w-full">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">#</th>
                             <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Producto</th>
-                            <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Vendidos</th>
-                            <th class="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Ingresos</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">SKU</th>
+                                    <th class="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Precio</th>
                             <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Stock</th>
-                            <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Popularidad</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Creado</th>
                         </tr>
                     </thead>
-                    <tbody id="topProductsTable">
-                        <tr>
-                            <td colspan="6" class="px-4 py-8 text-center text-gray-400">
-                                <i class="fas fa-spinner fa-spin text-3xl mb-2"></i>
-                                <p>Cargando productos más vendidos...</p>
-                            </td>
+                            <tbody id="noSalesBody">
+                                <tr><td colspan="5" class="px-4 py-8 text-center text-gray-400">Cargando...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Productos con Más Devoluciones -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Productos con Más Devoluciones</h3>
+                    <div id="highReturnsTable" class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Producto</th>
+                                    <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Devoluciones</th>
+                                    <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Unidades Devueltas</th>
                         </tr>
+                            </thead>
+                            <tbody id="highReturnsBody">
+                                <tr><td colspan="3" class="px-4 py-8 text-center text-gray-400">Cargando...</td></tr>
                     </tbody>
                 </table>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Análisis de Logística -->
-        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
-            <h2 class="text-xl font-bold text-gray-800 mb-6">Análisis de Logística y Cumplimiento</h2>
+        <!-- ============================================ -->
+        <!-- 6. DASHBOARD DE INVENTARIO -->
+        <!-- ============================================ -->
+        <div id="tab-inventory" class="tab-content">
+            <div class="space-y-6">
+                <!-- KPIs Inventario -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div class="text-center p-6 bg-yellow-50 rounded-lg border-2 border-yellow-200">
-                    <i class="fas fa-clock text-yellow-600 text-4xl mb-3"></i>
-                    <p class="text-3xl font-bold text-yellow-800" id="pendingOrdersCount">0</p>
-                    <p class="text-sm text-gray-600 mt-1">Pendientes</p>
-                    <p class="text-xs text-gray-500 mt-2">Requieren acción</p>
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <p class="text-gray-500 text-sm">Valor Inventario</p>
+                        <p id="inv-value" class="text-2xl font-bold text-gray-800">$0</p>
                 </div>
-                <div class="text-center p-6 bg-blue-50 rounded-lg border-2 border-blue-200">
-                    <i class="fas fa-cog text-blue-600 text-4xl mb-3"></i>
-                    <p class="text-3xl font-bold text-blue-800" id="processingOrdersCount">0</p>
-                    <p class="text-sm text-gray-600 mt-1">En Proceso</p>
-                    <p class="text-xs text-gray-500 mt-2">Preparando envío</p>
+                    <div class="bg-white rounded-lg shadow-lg p-6 border-2 border-orange-200">
+                        <p class="text-gray-500 text-sm">Stock Bajo</p>
+                        <p id="inv-low-stock-count" class="text-2xl font-bold text-orange-600">0</p>
                 </div>
-                <div class="text-center p-6 bg-purple-50 rounded-lg border-2 border-purple-200">
-                    <i class="fas fa-truck text-purple-600 text-4xl mb-3"></i>
-                    <p class="text-3xl font-bold text-purple-800" id="shippedOrdersCount">0</p>
-                    <p class="text-sm text-gray-600 mt-1">Enviados</p>
-                    <p class="text-xs text-gray-500 mt-2">En tránsito</p>
+                    <div class="bg-white rounded-lg shadow-lg p-6 border-2 border-red-200">
+                        <p class="text-gray-500 text-sm">Sin Stock</p>
+                        <p id="inv-out-stock-count" class="text-2xl font-bold text-red-600">0</p>
                 </div>
-                <div class="text-center p-6 bg-green-50 rounded-lg border-2 border-green-200">
-                    <i class="fas fa-check-circle text-green-600 text-4xl mb-3"></i>
-                    <p class="text-3xl font-bold text-green-800" id="deliveredOrdersCount">0</p>
-                    <p class="text-sm text-gray-600 mt-1">Entregados</p>
-                    <p class="text-xs text-gray-500 mt-2">Completados</p>
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <p class="text-gray-500 text-sm">Productos Activos</p>
+                        <p id="inv-active-products" class="text-2xl font-bold text-gray-800">0</p>
                 </div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-                <div class="bg-gray-50 rounded-lg p-4">
-                    <p class="text-sm text-gray-600 mb-2">Tiempo Promedio Entrega</p>
-                    <p class="text-2xl font-bold text-gray-800" id="avgDeliveryTime">0 días</p>
-                </div>
-                <div class="bg-gray-50 rounded-lg p-4">
-                    <p class="text-sm text-gray-600 mb-2">Tasa de Cancelación</p>
-                    <p class="text-2xl font-bold text-red-600" id="cancellationRate">0%</p>
-                </div>
-                <div class="bg-gray-50 rounded-lg p-4">
-                    <p class="text-sm text-gray-600 mb-2">Tasa de Éxito</p>
-                    <p class="text-2xl font-bold text-green-600" id="successRate">0%</p>
-                </div>
-            </div>
-        </div>
 
-        <!-- Análisis de Categorías -->
-        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
-            <h2 class="text-xl font-bold text-gray-800 mb-6">Ventas por Categoría</h2>
-            <div id="categoriesGrid" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                <div class="text-center py-8 text-gray-400">
-                    <i class="fas fa-spinner fa-spin text-3xl mb-2"></i>
-                    <p>Cargando categorías...</p>
+                <!-- Productos con Stock Bajo -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Productos con Stock Bajo</h3>
+                    <div id="lowStockTable" class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Producto</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">SKU</th>
+                                    <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Stock Disponible</th>
+                                    <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Stock Reservado</th>
+                                    <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Umbral</th>
+                                </tr>
+                            </thead>
+                            <tbody id="lowStockBody">
+                                <tr><td colspan="5" class="px-4 py-8 text-center text-gray-400">Cargando...</td></tr>
+                            </tbody>
+                        </table>
                 </div>
-            </div>
-        </div>
+                </div>
 
-        <!-- Productos con Stock Bajo -->
-        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-xl font-bold text-gray-800">Productos con Stock Bajo (Requieren Reposición)</h2>
-                <a href="./products.html" class="text-blue-600 hover:text-blue-800 text-sm font-semibold">
-                    Gestionar Inventario <i class="fas fa-arrow-right ml-1"></i>
-                </a>
-            </div>
-            <div id="lowStockProducts" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="col-span-2 text-center py-8 text-gray-400">
-                    <i class="fas fa-spinner fa-spin text-3xl mb-2"></i>
-                    <p>Cargando productos...</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Pedidos Recientes -->
-        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-xl font-bold text-gray-800">Últimos Pedidos</h2>
-                <a href="./orders.html" class="text-blue-600 hover:text-blue-800 text-sm font-semibold">
-                    Ver todos <i class="fas fa-arrow-right ml-1"></i>
-                </a>
-            </div>
-            <div id="recentOrders" class="space-y-4">
-                <div class="text-center py-8 text-gray-400">
-                    <i class="fas fa-spinner fa-spin text-3xl mb-2"></i>
-                    <p>Cargando pedidos...</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Métricas de Rendimiento -->
-        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
-            <h2 class="text-xl font-bold text-gray-800 mb-6">Métricas de Rendimiento del Negocio</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="border-l-4 border-green-500 pl-4">
-                    <p class="text-sm text-gray-600">Productos Activos</p>
-                    <p class="text-2xl font-bold text-gray-800" id="activeProducts">0</p>
-                    <p class="text-xs text-gray-500 mt-1">Con stock disponible</p>
-                </div>
-                <div class="border-l-4 border-blue-500 pl-4">
-                    <p class="text-sm text-gray-600">Categorías Activas</p>
-                    <p class="text-2xl font-bold text-gray-800" id="activeCategories">0</p>
-                    <p class="text-xs text-gray-500 mt-1">Con productos en stock</p>
-                </div>
-                <div class="border-l-4 border-purple-500 pl-4">
-                    <p class="text-sm text-gray-600">Rotación Inventario</p>
-                    <p class="text-2xl font-bold text-gray-800" id="inventoryTurnover">0x</p>
-                    <p class="text-xs text-gray-500 mt-1">Veces al mes</p>
-                </div>
-                <div class="border-l-4 border-orange-500 pl-4">
-                    <p class="text-sm text-gray-600">Días de Inventario</p>
-                    <p class="text-2xl font-bold text-gray-800" id="daysOfInventory">0</p>
-                    <p class="text-xs text-gray-500 mt-1">Días de stock</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Accesos Rápidos -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <a href="./products.html" class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg shadow-lg p-6 hover:shadow-xl transition group text-white">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h3 class="text-xl font-bold mb-2">Gestionar Productos</h3>
-                        <p class="text-purple-100 text-sm">Crear, editar y eliminar productos</p>
+                <!-- Rotación de Inventario -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Rotación de Inventario (Top 20)</h3>
+                    <div id="turnoverTable" class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Producto</th>
+                                    <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Órdenes</th>
+                                    <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Unidades Vendidas</th>
+                                    <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Stock Promedio</th>
+                                </tr>
+                            </thead>
+                            <tbody id="turnoverBody">
+                                <tr><td colspan="4" class="px-4 py-8 text-center text-gray-400">Cargando...</td></tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <i class="fas fa-box text-4xl opacity-50 group-hover:opacity-100 transition"></i>
                 </div>
-            </a>
+            </div>
+        </div>
 
-            <a href="./orders.html" class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-lg p-6 hover:shadow-xl transition group text-white">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h3 class="text-xl font-bold mb-2">Gestionar Pedidos</h3>
-                        <p class="text-blue-100 text-sm">Ver y actualizar estados de pedidos</p>
-                    </div>
-                    <i class="fas fa-shopping-cart text-4xl opacity-50 group-hover:opacity-100 transition"></i>
+        <!-- ============================================ -->
+        <!-- 7. DASHBOARD DE OPERACIONES -->
+        <!-- ============================================ -->
+        <div id="tab-operations" class="tab-content">
+            <div class="space-y-6">
+                <!-- Fulfillment -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Fulfillment</h3>
+                    <div class="h-72">
+                        <canvas id="chart-ops-fulfillment"></canvas>
                 </div>
-            </a>
+                </div>
 
-            <a href="../index.html" class="bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow-lg p-6 hover:shadow-xl transition group text-white">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h3 class="text-xl font-bold mb-2">Ver Sitio Web</h3>
-                        <p class="text-green-100 text-sm">Vista de cliente del sitio</p>
-                    </div>
-                    <i class="fas fa-globe text-4xl opacity-50 group-hover:opacity-100 transition"></i>
+                <!-- Shipping Performance -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Performance de Envíos</h3>
+                    <div id="shippingTable" class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Carrier</th>
+                                    <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Envíos</th>
+                                    <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Tiempo Promedio (días)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="shippingBody">
+                                <tr><td colspan="3" class="px-4 py-8 text-center text-gray-400">Cargando...</td></tr>
+                            </tbody>
+                        </table>
+            </div>
+        </div>
+
+                <!-- Devoluciones -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Devoluciones</h3>
+                    <div class="h-72">
+                        <canvas id="chart-ops-returns"></canvas>
+            </div>
                 </div>
-            </a>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- 8. DASHBOARD UX & WEB -->
+        <!-- ============================================ -->
+        <div id="tab-ux" class="tab-content">
+            <div class="space-y-6">
+                <!-- Sessions -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Sessions & Engagement</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                        <div class="bg-blue-50 rounded-lg p-4">
+                            <p class="text-sm text-gray-600">Total Sessions</p>
+                            <p id="ux-sessions-total" class="text-2xl font-bold">0</p>
+            </div>
+                        <div class="bg-green-50 rounded-lg p-4">
+                            <p class="text-sm text-gray-600">Usuarios Únicos</p>
+                            <p id="ux-users-unique" class="text-2xl font-bold">0</p>
+                </div>
+                        <div class="bg-purple-50 rounded-lg p-4">
+                            <p class="text-sm text-gray-600">Duración Promedio</p>
+                            <p id="ux-avg-duration" class="text-2xl font-bold">0s</p>
+                        </div>
+                        <div class="bg-orange-50 rounded-lg p-4">
+                            <p class="text-sm text-gray-600">Bounce Rate</p>
+                            <p id="ux-bounce-rate" class="text-2xl font-bold">0%</p>
+                        </div>
+                    </div>
+                    <div class="h-72">
+                        <canvas id="chart-ux-funnel"></canvas>
+            </div>
+        </div>
+
+                <!-- Páginas Más Visitadas -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Páginas Más Visitadas</h3>
+                    <div id="topPagesTable" class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Página</th>
+                                    <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Visitas</th>
+                                    <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Sessions Únicas</th>
+                                    <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Tiempo Promedio</th>
+                                </tr>
+                            </thead>
+                            <tbody id="topPagesBody">
+                                <tr><td colspan="4" class="px-4 py-8 text-center text-gray-400">Cargando...</td></tr>
+                            </tbody>
+                        </table>
+                </div>
+                </div>
+
+                <!-- Cart Abandonment -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Abandono de Carrito</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-red-50 rounded-lg p-4">
+                            <p class="text-sm text-gray-600">Abandonados</p>
+                            <p id="ux-abandoned" class="text-2xl font-bold text-red-600">0</p>
+                </div>
+                        <div class="bg-green-50 rounded-lg p-4">
+                            <p class="text-sm text-gray-600">Recuperados</p>
+                            <p id="ux-recovered" class="text-2xl font-bold text-green-600">0</p>
+                </div>
+                        <div class="bg-blue-50 rounded-lg p-4">
+                            <p class="text-sm text-gray-600">Valor Promedio</p>
+                            <p id="ux-cart-value" class="text-2xl font-bold text-blue-600">$0</p>
+            </div>
+        </div>
+                    </div>
+                </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- 9. DASHBOARD FINANCIERO -->
+        <!-- ============================================ -->
+        <div id="tab-financial" class="tab-content">
+            <div class="space-y-6">
+                <!-- P&L -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">P&L (Profit & Loss)</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center border-b pb-2">
+                            <span class="text-gray-700 font-semibold">Revenue</span>
+                            <span id="fin-revenue" class="text-xl font-bold text-green-600">$0</span>
+                    </div>
+                        <div class="flex justify-between items-center border-b pb-2">
+                            <span class="text-gray-600">COGS (60%)</span>
+                            <span id="fin-cogs" class="text-lg font-semibold text-gray-700">$0</span>
+                </div>
+                        <div class="flex justify-between items-center border-b pb-2">
+                            <span class="text-gray-700 font-semibold">Gross Profit</span>
+                            <span id="fin-gross-profit" class="text-xl font-bold text-green-600">$0</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b pb-2">
+                            <span class="text-gray-600">Gross Margin</span>
+                            <span id="fin-gross-margin" class="text-lg font-semibold text-green-600">0%</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b pb-2 pt-2">
+                            <span class="text-gray-600">Marketing</span>
+                            <span id="fin-marketing" class="text-lg font-semibold text-red-600">$0</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b pb-2">
+                            <span class="text-gray-600">Shipping</span>
+                            <span id="fin-shipping" class="text-lg font-semibold text-red-600">$0</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b pb-2">
+                            <span class="text-gray-600">Payment Fees</span>
+                            <span id="fin-payment-fees" class="text-lg font-semibold text-red-600">$0</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b pb-2">
+                            <span class="text-gray-600">Total Expenses</span>
+                            <span id="fin-total-expenses" class="text-lg font-semibold text-red-600">$0</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-2">
+                            <span class="text-gray-800 font-bold text-lg">Net Profit</span>
+                            <span id="fin-net-profit" class="text-2xl font-bold text-green-600">$0</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Net Margin</span>
+                            <span id="fin-net-margin" class="text-lg font-semibold text-green-600">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Unit Economics -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Unit Economics</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-blue-50 rounded-lg p-6">
+                            <p class="text-sm text-gray-600 mb-2">Revenue por Orden</p>
+                            <p id="fin-rev-per-order" class="text-3xl font-bold text-blue-600">$0</p>
+                    </div>
+                        <div class="bg-red-50 rounded-lg p-6">
+                            <p class="text-sm text-gray-600 mb-2">COGS por Orden</p>
+                            <p id="fin-cogs-per-order" class="text-3xl font-bold text-red-600">$0</p>
+                </div>
+                        <div class="bg-green-50 rounded-lg p-6">
+                            <p class="text-sm text-gray-600 mb-2">Contribution Margin</p>
+                            <p id="fin-contribution-margin" class="text-3xl font-bold text-green-600">$0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- 10. DASHBOARD SERVICIO AL CLIENTE -->
+        <!-- ============================================ -->
+        <div id="tab-service" class="tab-content">
+            <div class="space-y-6">
+                <!-- Tickets -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Tickets & Soporte</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                        <div class="bg-yellow-50 rounded-lg p-6">
+                            <p class="text-sm text-gray-600">Tickets Totales</p>
+                            <p id="svc-total-tickets" class="text-3xl font-bold text-yellow-600">0</p>
+                        </div>
+                        <div class="bg-blue-50 rounded-lg p-6">
+                            <p class="text-sm text-gray-600">Tiempo Respuesta</p>
+                            <p id="svc-avg-response" class="text-3xl font-bold text-blue-600">0h</p>
+                        </div>
+                        <div class="bg-green-50 rounded-lg p-6">
+                            <p class="text-sm text-gray-600">Tasa Resolución</p>
+                            <p id="svc-resolution-rate" class="text-3xl font-bold text-green-600">0%</p>
+                        </div>
+                    </div>
+                    <div class="h-72">
+                        <canvas id="chart-svc-tickets"></canvas>
+                    </div>
+                </div>
         </div>
     </div>
 
-    <!-- Footer -->
-<!--     <footer class="bg-white shadow-lg mt-12 py-6">
-        <div class="container mx-auto px-4 text-center text-gray-600">
-            <p>&copy; 2025 Apexremedy. Panel de Administración Completo.</p>
-            <p class="text-sm mt-2">Versión 2.0.0 | Última actualización: <span id="lastUpdate"></span></p>
         </div>
-    </footer> -->
 
     <!-- Footer -->
     <div id="footer-container"></div>
 
     <!-- Scripts -->
+    <script src="./js/basePath.js"></script>
+    <script src="./js/config.js"></script>
+    <script src="./js/utils.js"></script>
+    <script type="module" src="./js/adminTemplate.legacy.js"></script>
     <script src="./js/api/apiClient.js"></script>
     <script src="./js/auth.js"></script>
     <script src="./js/sessionManager.js"></script>
     <script src="./js/notifications.js"></script>
-    <script>
-        let allProducts = [];
-        let allOrders = [];
-        let salesChart = null;
-        let ordersChart = null;
-
-        document.addEventListener('DOMContentLoaded', () => {
-            if (!authManager || !authManager.requireAdmin()) {
-                return;
-            }
-            initDashboard();
-            startClock();
-        });
-
-        async function initDashboard() {
-            // Verificar autenticación antes de cargar datos
-            if (!authManager.requireAdmin()) {
-                return;
-            }
-            
-            updateCurrentDate();
-            // updateAdminName();
-            await loadAllData();
-            calculateAndDisplayStats();
-            createCharts();
-            // updateLastUpdateTime();
-        }
-
-        async function loadAllData() {
-            try {
-                const [productsResponse, ordersResponse] = await Promise.all([
-                    api.getProducts({ limit: 500 }),
-                    api.getAllOrders()
-                ]);
-                allProducts = productsResponse?.data?.products || productsResponse?.data || [];
-                allOrders = ordersResponse?.data?.orders || ordersResponse?.data || [];
-            } catch (error) {
-                console.error('Error al cargar datos:', error);
-                allProducts = [];
-                allOrders = [];
-            }
-        }
-        function calculateAndDisplayStats() {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            const thisMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-            
-            const ordersToday = allOrders.filter(o => new Date(o.created_at) >= today);
-            const ordersThisMonth = allOrders.filter(o => new Date(o.created_at) >= thisMonth);
-            const completedOrders = allOrders.filter(o => o.status === 'delivered');
-            
-            const salesToday = ordersToday.reduce((sum, o) => sum + (o.total || 0), 0);
-            const salesMonth = ordersThisMonth.reduce((sum, o) => sum + (o.total || 0), 0);
-            const totalSales = allOrders.reduce((sum, o) => sum + (o.total || 0), 0);
-            const avgTicket = allOrders.length > 0 ? totalSales / allOrders.length : 0;
-            
-            const totalItems = allOrders.reduce((sum, o) => {
-                if (Array.isArray(o.items)) {
-                    return sum + o.items.reduce((s, i) => s + (i.quantity || 0), 0);
-                }
-                return sum;
-            }, 0);
-            const avgItems = allOrders.length > 0 ? totalItems / allOrders.length : 0;
-            const conversionRate = allOrders.length > 0 ? (completedOrders.length / allOrders.length) * 100 : 0;
-            
-            const totalStock = allProducts.reduce((sum, p) => sum + (p.stock || 0), 0);
-            const inventoryValue = allProducts.reduce((sum, p) => sum + ((p.stock || 0) * (p.price || 0)), 0);
-            const lowStock = allProducts.filter(p => p.stock > 0 && p.stock < 10);
-            const outOfStock = allProducts.filter(p => p.stock === 0);
-            const activeProducts = allProducts.filter(p => p.stock > 0);
-            
-            document.getElementById('salesToday').textContent = '$' + salesToday.toLocaleString();
-            document.getElementById('salesMonth').textContent = '$' + salesMonth.toLocaleString();
-            document.getElementById('ordersMonth').textContent = ordersThisMonth.length;
-            document.getElementById('avgTicket').textContent = '$' + avgTicket.toFixed(0).toLocaleString();
-            document.getElementById('avgItems').textContent = avgItems.toFixed(1);
-            document.getElementById('conversionRate').textContent = conversionRate.toFixed(1) + '%';
-            document.getElementById('completedOrders').textContent = completedOrders.length;
-            
-            document.getElementById('totalProducts').textContent = allProducts.length;
-            document.getElementById('totalStock').textContent = totalStock.toLocaleString();
-            document.getElementById('inventoryValue').textContent = '$' + inventoryValue.toLocaleString();
-            document.getElementById('lowStockCount').textContent = lowStock.length;
-            document.getElementById('outOfStockCount').textContent = outOfStock.length;
-            
-            const ordersByStatus = {
-                pending: allOrders.filter(o => o.status === 'pending').length,
-                processing: allOrders.filter(o => o.status === 'processing').length,
-                shipped: allOrders.filter(o => o.status === 'shipped').length,
-                delivered: allOrders.filter(o => o.status === 'delivered').length,
-                cancelled: allOrders.filter(o => o.status === 'cancelled').length
-            };
-            
-            document.getElementById('pendingOrdersCount').textContent = ordersByStatus.pending;
-            document.getElementById('processingOrdersCount').textContent = ordersByStatus.processing;
-            document.getElementById('shippedOrdersCount').textContent = ordersByStatus.shipped;
-            document.getElementById('deliveredOrdersCount').textContent = ordersByStatus.delivered;
-            document.getElementById('avgDeliveryTime').textContent = '3 días';
-            
-            const cancellationRate = allOrders.length > 0 ? (ordersByStatus.cancelled / allOrders.length) * 100 : 0;
-            const successRate = allOrders.length > 0 ? (ordersByStatus.delivered / allOrders.length) * 100 : 0;
-            document.getElementById('cancellationRate').textContent = cancellationRate.toFixed(1) + '%';
-            document.getElementById('successRate').textContent = successRate.toFixed(1) + '%';
-            
-            document.getElementById('activeProducts').textContent = activeProducts.length;
-            const categories = [...new Set(activeProducts.map(p => p.category).filter(c => c))];
-            document.getElementById('activeCategories').textContent = categories.length;
-            
-            const inventoryTurnover = inventoryValue > 0 ? (salesMonth / inventoryValue) : 0;
-            document.getElementById('inventoryTurnover').textContent = inventoryTurnover.toFixed(1) + 'x';
-            
-            const daysOfInventory = inventoryTurnover > 0 ? (30 / inventoryTurnover) : 0;
-            document.getElementById('daysOfInventory').textContent = Math.round(daysOfInventory);
-            
-            loadTopProducts();
-            loadCategoriesAnalysis();
-            loadLowStockProducts();
-            loadRecentOrders();
-        }
-
-        function createCharts() {
-            createSalesChart();
-            createOrdersChart();
-        }
-
-        function createSalesChart() {
-    const ctx = document.getElementById('salesChart');
-    
-    // IMPORTANTE: Destruir el gráfico anterior ANTES de crear uno nuevo
-    if (salesChart && salesChart instanceof Chart) {
-        salesChart.destroy();
-        salesChart = null;
-    }
-    
-    // Generar datos de los últimos 30 días
-    const days = [];
-    const sales = [];
-    const today = new Date();
-    
-    for (let i = 29; i >= 0; i--) {
-        const date = new Date(today);
-        date.setDate(date.getDate() - i);
-        days.push(date.toLocaleDateString('es-CL', { day: 'numeric', month: 'short' }));
-        
-        const dayOrders = allOrders.filter(o => {
-            const orderDate = new Date(o.created_at);
-            return orderDate.toDateString() === date.toDateString();
-        });
-        
-        const daySales = dayOrders.reduce((sum, o) => sum + (o.total || 0), 0);
-        sales.push(daySales);
-    }
-    
-    // Crear el gráfico
-    salesChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: days,
-            datasets: [{
-                label: 'Ventas ($)',
-                data: sales,
-                borderColor: 'rgb(34, 197, 94)',
-                backgroundColor: 'rgba(34, 197, 94, 0.1)',
-                tension: 0.4,
-                fill: true
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return 'Ventas: $' + context.parsed.y.toLocaleString();
-                        }
-                    }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        callback: function(value) {
-                            return '$' + value.toLocaleString();
-                        }
-                    }
-                }
-            }
-        }
-    });
-}
-
-function createOrdersChart() {
-    const ctx = document.getElementById('ordersChart');
-    
-    // IMPORTANTE: Destruir el gráfico anterior ANTES de crear uno nuevo
-    if (ordersChart && ordersChart instanceof Chart) {
-        ordersChart.destroy();
-        ordersChart = null;
-    }
-    
-    const ordersByStatus = {
-        pending: allOrders.filter(o => o.status === 'pending').length,
-        processing: allOrders.filter(o => o.status === 'processing').length,
-        shipped: allOrders.filter(o => o.status === 'shipped').length,
-        delivered: allOrders.filter(o => o.status === 'delivered').length,
-        cancelled: allOrders.filter(o => o.status === 'cancelled').length
-    };
-    
-    ordersChart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Pendientes', 'En Proceso', 'Enviados', 'Entregados', 'Cancelados'],
-            datasets: [{
-                data: [
-                    ordersByStatus.pending,
-                    ordersByStatus.processing,
-                    ordersByStatus.shipped,
-                    ordersByStatus.delivered,
-                    ordersByStatus.cancelled
-                ],
-                backgroundColor: [
-                    'rgb(234, 179, 8)',
-                    'rgb(59, 130, 246)',
-                    'rgb(168, 85, 247)',
-                    'rgb(34, 197, 94)',
-                    'rgb(239, 68, 68)'
-                ]
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom'
-                }
-            }
-        }
-    });
-}
-
-        function loadTopProducts() {
-            const period = parseInt(document.getElementById('topProductsPeriod').value);
-            const cutoffDate = new Date();
-            cutoffDate.setDate(cutoffDate.getDate() - period);
-            
-            const productSales = {};
-            
-            allOrders
-                .filter(o => new Date(o.created_at) >= cutoffDate)
-                .forEach(order => {
-                    if (Array.isArray(order.items)) {
-                        order.items.forEach(item => {
-                            const productId = item.product_id || item.id;
-                            if (!productSales[productId]) {
-                                productSales[productId] = {
-                                    id: productId,
-                                    name: item.product_name || item.name,
-                                    quantity: 0,
-                                    revenue: 0
-                                };
-                            }
-                            productSales[productId].quantity += item.quantity || 0;
-                            productSales[productId].revenue += (item.price || 0) * (item.quantity || 0);
-                        });
-                    }
-                });
-            
-            const topProducts = Object.values(productSales)
-                .sort((a, b) => b.quantity - a.quantity)
-                .slice(0, 10);
-            
-            displayTopProducts(topProducts);
-        }
-        function displayTopProducts(products) {
-            const tbody = document.getElementById('topProductsTable');
-            
-            if (products.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="6" class="px-4 py-8 text-center text-gray-400">
-                            <i class="fas fa-inbox text-3xl mb-2"></i>
-                            <p>No hay ventas en este período</p>
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-            
-            const maxQuantity = products[0].quantity;
-            
-            tbody.innerHTML = products.map((product, index) => {
-                const productData = allProducts.find(p => p.id === product.id);
-                const stock = productData ? productData.stock : 0;
-                const percentage = (product.quantity / maxQuantity) * 100;
-                
-                return `
-                    <tr class="hover:bg-gray-50 border-b">
-                        <td class="px-4 py-4">
-                            <span class="inline-flex items-center justify-center w-8 h-8 rounded-full ${
-                                index === 0 ? 'bg-yellow-100 text-yellow-800' :
-                                index === 1 ? 'bg-gray-100 text-gray-800' :
-                                index === 2 ? 'bg-orange-100 text-orange-800' :
-                                'bg-blue-100 text-blue-800'
-                            } font-bold">
-                                ${index + 1}
-                            </span>
-                        </td>
-                        <td class="px-4 py-4">
-                            <div class="font-semibold text-gray-800">${product.name}</div>
-                            <div class="text-xs text-gray-500">ID: ${product.id}</div>
-                        </td>
-                        <td class="px-4 py-4 text-center">
-                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full font-semibold">
-                                ${product.quantity}
-                            </span>
-                        </td>
-                        <td class="px-4 py-4 text-right font-semibold text-green-600">
-                            $${product.revenue.toLocaleString()}
-                        </td>
-                        <td class="px-4 py-4 text-center">
-                            <span class="px-3 py-1 rounded-full font-semibold ${
-                                stock === 0 ? 'bg-red-100 text-red-800' :
-                                stock < 10 ? 'bg-orange-100 text-orange-800' :
-                                'bg-green-100 text-green-800'
-                            }">
-                                ${stock}
-                            </span>
-                        </td>
-                        <td class="px-4 py-4">
-                            <div class="w-full bg-gray-200 rounded-full h-2.5">
-                                <div class="bg-green-600 h-2.5 rounded-full" style="width: ${percentage}%"></div>
-                            </div>
-                            <p class="text-xs text-gray-500 text-center mt-1">${percentage.toFixed(0)}%</p>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        function loadCategoriesAnalysis() {
-            const categorySales = {};
-            
-            allOrders.forEach(order => {
-                if (Array.isArray(order.items)) {
-                    order.items.forEach(item => {
-                        const product = allProducts.find(p => p.id === (item.product_id || item.id));
-                        if (product && product.category) {
-                            if (!categorySales[product.category]) {
-                                categorySales[product.category] = {
-                                    name: product.category,
-                                    quantity: 0,
-                                    revenue: 0,
-                                    products: 0
-                                };
-                            }
-                            categorySales[product.category].quantity += item.quantity || 0;
-                            categorySales[product.category].revenue += (item.price || 0) * (item.quantity || 0);
-                        }
-                    });
-                }
-            });
-            
-            allProducts.forEach(product => {
-                if (product.category && categorySales[product.category]) {
-                    categorySales[product.category].products++;
-                }
-            });
-            
-            const categories = Object.values(categorySales).sort((a, b) => b.revenue - a.revenue);
-            displayCategories(categories);
-        }
-
-        function displayCategories(categories) {
-            const container = document.getElementById('categoriesGrid');
-            
-            if (categories.length === 0) {
-                container.innerHTML = `
-                    <div class="col-span-full text-center py-8 text-gray-400">
-                        <i class="fas fa-tags text-3xl mb-2"></i>
-                        <p>No hay categorías con ventas</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            container.innerHTML = categories.map(cat => `
-                <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-6 border-2 border-blue-200">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="font-bold text-gray-800">${cat.name}</h3>
-                        <i class="fas fa-tag text-blue-600 text-xl"></i>
-                    </div>
-                    <div class="space-y-2">
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-600">Productos:</span>
-                            <span class="font-semibold">${cat.products}</span>
-                        </div>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-600">Vendidos:</span>
-                            <span class="font-semibold">${cat.quantity}</span>
-                        </div>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-600">Ingresos:</span>
-                            <span class="font-semibold text-green-600">$${cat.revenue.toLocaleString()}</span>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function loadLowStockProducts() {
-            const lowStock = allProducts
-                .filter(p => p.stock > 0 && p.stock < 10)
-                .sort((a, b) => a.stock - b.stock);
-            
-            displayLowStockProducts(lowStock);
-        }
-
-        function displayLowStockProducts(products) {
-            const container = document.getElementById('lowStockProducts');
-            
-            if (products.length === 0) {
-                container.innerHTML = `
-                    <div class="col-span-2 text-center py-8 text-gray-400">
-                        <i class="fas fa-check-circle text-3xl mb-2 text-green-400"></i>
-                        <p>Todos los productos tienen stock suficiente</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            container.innerHTML = products.slice(0, 6).map(product => `
-                <div class="flex items-center justify-between p-4 border-2 ${
-                    product.stock < 5 ? 'border-red-300 bg-red-50' : 'border-orange-300 bg-orange-50'
-                } rounded-lg">
-                    <div class="flex items-center gap-4 flex-1">
-                        <img src="${product.image || '../assets/images/placeholder.jpg'}" 
-                             alt="${product.name}" 
-                             class="w-16 h-16 object-cover rounded-lg"
-                             onerror="this.src='../assets/images/placeholder.jpg'">
-                        <div>
-                            <p class="font-bold text-gray-800">${product.name}</p>
-                            <p class="text-sm text-gray-600">${product.category || 'Sin categoría'}</p>
-                            <p class="text-xs text-gray-500">SKU: ${product.sku || 'N/A'}</p>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-3xl font-bold ${product.stock < 5 ? 'text-red-600' : 'text-orange-600'}">
-                            ${product.stock}
-                        </p>
-                        <p class="text-xs text-gray-500">unidades</p>
-                        <a href="./products.html" class="text-xs text-blue-600 hover:text-blue-800 mt-2 inline-block">
-                            Reabastecer →
-                        </a>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function loadRecentOrders() {
-            const recentOrders = allOrders
-                .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-                .slice(0, 5);
-            
-            displayRecentOrders(recentOrders);
-        }
-
-        function displayRecentOrders(orders) {
-            const container = document.getElementById('recentOrders');
-            
-            if (orders.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-8 text-gray-400">
-                        <i class="fas fa-inbox text-3xl mb-2"></i>
-                        <p>No hay pedidos recientes</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            container.innerHTML = orders.map(order => {
-                const statusConfig = getStatusConfig(order.status);
-                return `
-                    <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
-                        <div class="flex-1">
-                            <div class="flex items-center gap-3 mb-2">
-                                <span class="font-mono font-bold text-gray-800">#${order.id}</span>
-                                <span class="px-3 py-1 text-xs font-semibold rounded-full ${statusConfig.class}">
-                                    <i class="${statusConfig.icon} mr-1"></i>${statusConfig.text}
-                                </span>
-                            </div>
-                            <p class="text-sm text-gray-600">${order.customer_name || 'Cliente'}</p>
-                            <p class="text-xs text-gray-400">${formatDate(order.created_at)}</p>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-xl font-bold text-green-600">$${(order.total || 0).toLocaleString()}</p>
-                            <a href="./orders.html" class="text-xs text-blue-600 hover:text-blue-800">Ver detalles →</a>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function getStatusConfig(status) {
-            const configs = {
-                pending: { text: 'Pendiente', class: 'bg-yellow-100 text-yellow-800', icon: 'fas fa-clock' },
-                processing: { text: 'En Proceso', class: 'bg-blue-100 text-blue-800', icon: 'fas fa-cog' },
-                shipped: { text: 'Enviado', class: 'bg-purple-100 text-purple-800', icon: 'fas fa-truck' },
-                delivered: { text: 'Entregado', class: 'bg-green-100 text-green-800', icon: 'fas fa-check-circle' },
-                cancelled: { text: 'Cancelado', class: 'bg-red-100 text-red-800', icon: 'fas fa-times-circle' }
-            };
-            return configs[status] || configs.pending;
-        }
-        function formatDate(dateString) {
-            if (!dateString) return 'N/A';
-            const date = new Date(dateString);
-            const now = new Date();
-            const diff = now - date;
-            
-            const minutes = Math.floor(diff / 60000);
-            const hours = Math.floor(diff / 3600000);
-            const days = Math.floor(diff / 86400000);
-            
-            if (minutes < 1) return 'Ahora';
-            if (minutes < 60) return `Hace ${minutes} min`;
-            if (hours < 24) return `Hace ${hours}h`;
-            if (days < 7) return `Hace ${days} días`;
-            
-            return date.toLocaleDateString('es-CL', { day: 'numeric', month: 'short' });
-        }
-
-        function updateCurrentDate() {
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            const date = new Date().toLocaleDateString('es-CL', options);
-            document.getElementById('currentDate').textContent = date.charAt(0).toUpperCase() + date.slice(1);
-        }
-
-        function startClock() {
-            function updateTime() {
-                const now = new Date();
-                const time = now.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-                document.getElementById('currentTime').textContent = time;
-            }
-            updateTime();
-            setInterval(updateTime, 1000);
-        }
-
-/*         function updateAdminName() {
-            const user = authManager.getCurrentUser();
-            if (user && user.name) {
-                document.getElementById('adminName').textContent = user.name.split(' ')[0];
-            }
-        } */
-
-        function updateLastUpdateTime() {
-            const now = new Date();
-            const time = now.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
-            document.getElementById('lastUpdate').textContent = time;
-        }
-
-        async function refreshDashboard() {
-            const btn = event.target.closest('button');
-            btn.innerHTML = '<i class="fas fa-sync-alt fa-spin"></i>';
-            
-            await loadAllData();
-            calculateAndDisplayStats();
-            createCharts();
-            // updateLastUpdateTime();
-            
-            setTimeout(() => {
-                btn.innerHTML = '<i class="fas fa-sync-alt"></i>';
-            }, 1000);
-        }
-
-/*         function handleLogout() {
-            if (confirm('¿Estás seguro que deseas cerrar sesión?')) {
-                authManager.logout();
-            }
-        } */
-
-        setInterval(() => {
-            loadAllData().then(() => {
-                calculateAndDisplayStats();
-                createCharts();
-                // updateLastUpdateTime();
-            });
-        }, 300000);
-    </script>
+    <script defer src="./js/adminTemplate.js"></script>
+    <script src="./js/dashboard-complete.js"></script>
+    <script src="./js/pages/dashboard-page.js" defer></script>
 </body>
 </html>

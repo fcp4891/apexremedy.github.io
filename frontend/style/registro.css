@@ -261,15 +261,14 @@
 .document-label {
   display: block;
   font-weight: 600;
-  margin-bottom: 12px;
   color: var(--accent-black);
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
 }
 
 .document-label i {
-  color: #10b981;
+  color: var(--primary-green);
+  margin-right: 8px;
 }
 
 .upload-zone {
@@ -329,14 +328,28 @@
 }
 
 .remove-doc-btn {
-  border-color: var(--error);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--error);
   color: var(--error);
+  font-size: 0.9rem;
+  font-weight: 600;
+  background: rgba(220, 53, 69, 0.08);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.remove-doc-btn:hover {
+  background: rgba(220, 53, 69, 0.15);
 }
 
 /* Footer del formulario */
 .register-footer {
-  margin-top: 32px;
   text-align: center;
+  margin-top: 24px;
   padding-top: 24px;
   border-top: 1px solid var(--light-gray);
 }
@@ -352,15 +365,6 @@
 }
 
 /* Estados de los indicadores de paso */
-.step-indicator.completed .step-circle {
-    background: var(--primary-green);
-    color: white;
-}
-
-.step-indicator.completed p {
-    color: var(--primary-green);
-}
-
 .step-indicator.active .step-circle {
     background: var(--primary-green);
     color: white;
@@ -368,15 +372,6 @@
 
 .step-indicator.active p {
     color: var(--primary-green);
-}
-
-.step-indicator.pending .step-circle {
-    background: var(--light-gray);
-    color: var(--medium-gray);
-}
-
-.step-indicator.pending p {
-    color: var(--medium-gray);
 }
 
 /* Zonas de carga de documentos */
@@ -389,12 +384,6 @@
     background: rgba(141, 82, 59, 0.05) !important;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(141, 82, 59, 0.1);
-}
-
-.upload-zone.dragging {
-    border-color: var(--primary-green) !important;
-    background: rgba(141, 82, 59, 0.1) !important;
-    transform: scale(1.02);
 }
 
 /* Clase hidden */
@@ -699,5 +688,4 @@ a[href="#"]:hover {
     .progress-bar {
         top: 16px;
     }
-}
 

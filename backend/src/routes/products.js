@@ -113,6 +113,15 @@ router.get('/admin/out-of-stock',
 );
 
 /**
+ * GET /api/products/catalog/medicinal
+ * Obtener productos activos medicinales para catálogo
+ * Público (sin autenticación) - catálogo es solo visualización
+ */
+router.get('/catalog/medicinal', 
+    productController.getCatalogMedicinal
+);
+
+/**
  * PATCH /api/products/:id/stock
  * Actualizar stock de producto (solo admin)
  * Body: { quantity: number, operation: "set"|"increment"|"decrement" }

@@ -1,0 +1,5982 @@
+{
+  "generatedAt": "2025-11-09T18:47:53.104Z",
+  "analyzed": {
+    "cssFiles": [
+      "frontend\\ajustes_puntuales\\css_modals.css",
+      "frontend\\catalogo\\product-manager-styles.css",
+      "frontend\\catalogo\\visual-editor-styles.css",
+      "frontend\\src\\styles\\base.css",
+      "frontend\\src\\styles\\components.css",
+      "frontend\\src\\styles\\tokens.css",
+      "frontend\\src\\styles\\utilities.css",
+      "frontend\\style\\checkout.css",
+      "frontend\\style\\contacto.css",
+      "frontend\\style\\css_home.css",
+      "frontend\\style\\index.css",
+      "frontend\\style\\input.css",
+      "frontend\\style\\login.css",
+      "frontend\\style\\marco-legal.css",
+      "frontend\\style\\mis-pedidos.css",
+      "frontend\\style\\nosotros.css",
+      "frontend\\style\\perfil.css",
+      "frontend\\style\\registro.css",
+      "frontend\\style\\tienda.css"
+    ],
+    "htmlFiles": [
+      "frontend\\ajustes_puntuales\\html_modals.html",
+      "frontend\\carrito.html",
+      "frontend\\catalogo\\index.html",
+      "frontend\\checkout.html",
+      "frontend\\components\\footer-customer.html",
+      "frontend\\components\\footer.html",
+      "frontend\\components\\header-customer.html",
+      "frontend\\components\\header-customer_2.html",
+      "frontend\\components\\header.html",
+      "frontend\\components\\poder-cultivo-form.html",
+      "frontend\\contacto.html",
+      "frontend\\index.html",
+      "frontend\\login.html",
+      "frontend\\mapa_calor_cantiago\\analytics-geografico.html",
+      "frontend\\mapa_calor_cantiago\\v2\\analytics-geografico.html",
+      "frontend\\marco-legal.html",
+      "frontend\\mis-pedidos.html",
+      "frontend\\nosotros.html",
+      "frontend\\perfil.html",
+      "frontend\\poder_cultivo\\templates\\poder.html",
+      "frontend\\poder_cultivo_firma_simple.html",
+      "frontend\\productos.html",
+      "frontend\\registro.html",
+      "frontend\\tienda.html"
+    ],
+    "jsFiles": [
+      "frontend\\ajustes_puntuales\\js_modal.js",
+      "frontend\\catalogo\\catalog-api.js",
+      "frontend\\catalogo\\data.js",
+      "frontend\\catalogo\\integration.js",
+      "frontend\\catalogo\\product-manager.js",
+      "frontend\\catalogo\\script.js",
+      "frontend\\catalogo\\server.js",
+      "frontend\\catalogo\\visual-editor.js",
+      "frontend\\js\\admin-products.js",
+      "frontend\\js\\adminTemplate.js",
+      "frontend\\js\\api\\apiClient.js",
+      "frontend\\js\\auth.js",
+      "frontend\\js\\basePath.js",
+      "frontend\\js\\carrito.js",
+      "frontend\\js\\checkout.js",
+      "frontend\\js\\clearStorage.js",
+      "frontend\\js\\config.js",
+      "frontend\\js\\db_articulos.js",
+      "frontend\\js\\env-detector.js",
+      "frontend\\js\\notifications.js",
+      "frontend\\js\\productModal.js",
+      "frontend\\js\\sessionManager.js",
+      "frontend\\js\\tailwind.config.js",
+      "frontend\\js\\template.js",
+      "frontend\\js\\utils.js",
+      "frontend\\mapa_calor_cantiago\\analytics.routes.js",
+      "frontend\\mapa_calor_cantiago\\app.example.js",
+      "frontend\\mapa_calor_cantiago\\comunas.helpers.js",
+      "frontend\\mapa_calor_cantiago\\v2\\analytics_routes.js",
+      "frontend\\mapa_calor_cantiago\\v2\\comunas_helpers.js",
+      "frontend\\server.js"
+    ]
+  },
+  "totals": {
+    "classes": 435,
+    "unusedClasses": 51
+  },
+  "unusedClasses": [
+    {
+      "className": "product-input-group",
+      "selectors": [
+        ".product-input-group",
+        ".product-input-group .product-form-input"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "product-input-icon",
+      "selectors": [
+        ".product-input-icon"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "valid-feedback",
+      "selectors": [
+        ".validation-feedback.valid-feedback"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "product-grid-4",
+      "selectors": [
+        ".product-grid-4"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "product-col-span-3",
+      "selectors": [
+        ".product-col-span-3"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "product-badge-success",
+      "selectors": [
+        ".product-badge-success"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "product-badge-warning",
+      "selectors": [
+        ".product-badge-warning"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "product-badge-danger",
+      "selectors": [
+        ".product-badge-danger"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "product-badge-info",
+      "selectors": [
+        ".product-badge-info"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "product-btn-success",
+      "selectors": [
+        ".product-btn-success",
+        ".product-btn-success:hover:not(:disabled)"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "product-btn-lg",
+      "selectors": [
+        ".product-btn-lg"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "product-loading-overlay",
+      "selectors": [
+        ".product-loading-overlay"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "product-loading-spinner",
+      "selectors": [
+        ".product-loading-spinner"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "shake",
+      "selectors": [
+        ".shake"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "pulse",
+      "selectors": [
+        ".pulse"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "category-selector-description",
+      "selectors": [
+        ".category-selector-description"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "app-card__icon",
+      "selectors": [
+        ".app-card__icon",
+        ".app-card:hover .app-card__icon"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\components.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "app-section--muted",
+      "selectors": [
+        ".app-section--muted"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\components.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "app-overlay",
+      "selectors": [
+        ".app-overlay"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\components.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "app-overlay--visible",
+      "selectors": [
+        ".app-overlay--visible"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\components.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "app-modal",
+      "selectors": [
+        ".app-modal"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\components.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "u-text-center",
+      "selectors": [
+        ".u-text-center"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\utilities.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "u-flex-center",
+      "selectors": [
+        ".u-flex-center"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\utilities.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "u-flex-between",
+      "selectors": [
+        ".u-flex-between"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\utilities.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "u-grid-responsive",
+      "selectors": [
+        ".u-grid-responsive"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\utilities.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "u-shadow-elevated",
+      "selectors": [
+        ".u-shadow-elevated"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\utilities.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "u-radius-md",
+      "selectors": [
+        ".u-radius-md"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\utilities.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "u-spacing-section",
+      "selectors": [
+        ".u-spacing-section"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\utilities.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "skeleton",
+      "selectors": [
+        ".skeleton"
+      ],
+      "definedIn": [
+        "frontend\\style\\checkout.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "products-section",
+      "selectors": [
+        ".products-section"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "legal-card",
+      "selectors": [
+        ".legal-card",
+        ".legal-card:hover",
+        ".legal-card:hover .card-icon"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "filter-select",
+      "selectors": [
+        ".filter-select"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css",
+        "frontend\\style\\tienda.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "search-box",
+      "selectors": [
+        ".search-box"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css",
+        "frontend\\style\\tienda.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "filter-container",
+      "selectors": [
+        ".filter-container"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css",
+        "frontend\\style\\tienda.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "registro-catalogo-grid",
+      "selectors": [
+        ".registro-catalogo-grid"
+      ],
+      "definedIn": [
+        "frontend\\style\\index.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "product-modal-content",
+      "selectors": [
+        ".product-modal-content"
+      ],
+      "definedIn": [
+        "frontend\\style\\index.css",
+        "frontend\\style\\tienda.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "product-modal-grid",
+      "selectors": [
+        ".product-modal-grid"
+      ],
+      "definedIn": [
+        "frontend\\style\\index.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "hero-legal",
+      "selectors": [
+        ".hero-legal",
+        ".hero-legal::before"
+      ],
+      "definedIn": [
+        "frontend\\style\\marco-legal.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "hero-legal-content",
+      "selectors": [
+        ".hero-legal-content",
+        ".hero-legal-content h1",
+        ".hero-legal-content p"
+      ],
+      "definedIn": [
+        "frontend\\style\\marco-legal.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "stat-icon",
+      "selectors": [
+        ".stat-icon"
+      ],
+      "definedIn": [
+        "frontend\\style\\marco-legal.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "stat-text",
+      "selectors": [
+        ".stat-text"
+      ],
+      "definedIn": [
+        "frontend\\style\\marco-legal.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "orders-header",
+      "selectors": [
+        ".orders-header",
+        ".orders-header h1",
+        ".orders-header p"
+      ],
+      "definedIn": [
+        "frontend\\style\\mis-pedidos.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "hero-about",
+      "selectors": [
+        ".hero-about",
+        ".hero-about::before",
+        ".hero-about::after"
+      ],
+      "definedIn": [
+        "frontend\\style\\nosotros.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "hero-icon",
+      "selectors": [
+        ".hero-icon",
+        ".hero-icon i"
+      ],
+      "definedIn": [
+        "frontend\\style\\nosotros.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "profile-header",
+      "selectors": [
+        ".profile-header",
+        ".profile-header h1",
+        ".profile-header h1 i"
+      ],
+      "definedIn": [
+        "frontend\\style\\perfil.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "document-label",
+      "selectors": [
+        ".document-label",
+        ".document-label i"
+      ],
+      "definedIn": [
+        "frontend\\style\\registro.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "upload-placeholder",
+      "selectors": [
+        ".upload-placeholder",
+        ".upload-placeholder i",
+        ".upload-placeholder p:first-of-type",
+        ".upload-placeholder p:last-of-type",
+        ".upload-placeholder p"
+      ],
+      "definedIn": [
+        "frontend\\style\\registro.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "upload-preview",
+      "selectors": [
+        ".upload-preview",
+        ".upload-preview i",
+        ".upload-preview p:first-of-type",
+        ".upload-preview p:last-of-type"
+      ],
+      "definedIn": [
+        "frontend\\style\\registro.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "remove-doc-btn",
+      "selectors": [
+        ".remove-doc-btn",
+        ".remove-doc-btn:hover"
+      ],
+      "definedIn": [
+        "frontend\\style\\registro.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "register-footer",
+      "selectors": [
+        ".register-footer",
+        ".register-footer p"
+      ],
+      "definedIn": [
+        "frontend\\style\\registro.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "login-link",
+      "selectors": [
+        ".login-link"
+      ],
+      "definedIn": [
+        "frontend\\style\\registro.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    }
+  ],
+  "classes": [
+    {
+      "className": "about-card",
+      "selectors": [
+        ".about-card",
+        ".about-card:hover",
+        ".about-card:hover .card-icon",
+        ".tienda-filters-sidebar .about-card"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css",
+        "frontend\\style\\login.css",
+        "frontend\\style\\tienda.css"
+      ],
+      "usageCount": 28,
+      "isUnused": false
+    },
+    {
+      "className": "about-grid",
+      "selectors": [
+        ".about-grid",
+        ".about-grid::-webkit-scrollbar",
+        ".about-grid::-webkit-scrollbar-track",
+        ".about-grid::-webkit-scrollbar-thumb"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 7,
+      "isUnused": false
+    },
+    {
+      "className": "about-section",
+      "selectors": [
+        ".about-section"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 6,
+      "isUnused": false
+    },
+    {
+      "className": "accordion-content",
+      "selectors": [
+        ".accordion-content",
+        ".accordion-item.active .accordion-content"
+      ],
+      "definedIn": [
+        "frontend\\style\\marco-legal.css"
+      ],
+      "usageCount": 8,
+      "isUnused": false
+    },
+    {
+      "className": "accordion-header",
+      "selectors": [
+        ".accordion-header",
+        ".accordion-header:hover",
+        ".accordion-header i",
+        ".accordion-item.active .accordion-header i"
+      ],
+      "definedIn": [
+        "frontend\\style\\marco-legal.css"
+      ],
+      "usageCount": 8,
+      "isUnused": false
+    },
+    {
+      "className": "accordion-item",
+      "selectors": [
+        ".accordion-item",
+        ".accordion-item.active .accordion-header i",
+        ".accordion-item.active .accordion-content"
+      ],
+      "definedIn": [
+        "frontend\\style\\marco-legal.css"
+      ],
+      "usageCount": 9,
+      "isUnused": false
+    },
+    {
+      "className": "active",
+      "selectors": [
+        ".mode-btn.active",
+        ".mode-btn.active svg",
+        ".nav-link.active",
+        ".hamburger.active span:nth-child(1)",
+        ".hamburger.active span:nth-child(2)",
+        ".hamburger.active span:nth-child(3)",
+        ".tab-button.active",
+        ".tab-content.active",
+        ".accordion-item.active .accordion-header i",
+        ".accordion-item.active .accordion-content",
+        ".profile-nav-btn.active",
+        ".step-indicator.active .step-circle",
+        ".step-indicator.active p",
+        ".step-indicator:not(.active) .step-circle",
+        ".step-indicator:not(.active) p"
+      ],
+      "definedIn": [
+        "frontend\\catalogo\\visual-editor-styles.css",
+        "frontend\\style\\css_home.css",
+        "frontend\\style\\marco-legal.css",
+        "frontend\\style\\perfil.css",
+        "frontend\\style\\registro.css"
+      ],
+      "usageCount": 44,
+      "isUnused": false
+    },
+    {
+      "className": "add-item",
+      "selectors": [
+        ".toolbar-btn.add-item",
+        ".toolbar-btn.add-item:hover"
+      ],
+      "definedIn": [
+        "frontend\\catalogo\\visual-editor-styles.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "add-page",
+      "selectors": [
+        ".toolbar-btn.add-page",
+        ".toolbar-btn.add-page:hover"
+      ],
+      "definedIn": [
+        "frontend\\catalogo\\visual-editor-styles.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "add-variant-btn",
+      "selectors": [
+        ".add-variant-btn",
+        ".add-variant-btn:hover"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "admin-visible",
+      "selectors": [
+        "#adminMenuItem.admin-visible"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 5,
+      "isUnused": false
+    },
+    {
+      "className": "amount",
+      "selectors": [
+        ".order-total-row.final .amount"
+      ],
+      "definedIn": [
+        "frontend\\style\\mis-pedidos.css"
+      ],
+      "usageCount": 17,
+      "isUnused": false
+    },
+    {
+      "className": "animate-fadeIn",
+      "selectors": [
+        ".animate-fadeIn"
+      ],
+      "definedIn": [
+        "frontend\\style\\checkout.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "app-button",
+      "selectors": [
+        ".app-button"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\components.css"
+      ],
+      "usageCount": 107,
+      "isUnused": false
+    },
+    {
+      "className": "app-button--danger",
+      "selectors": [
+        ".app-button--danger",
+        ".app-button--danger:hover"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\components.css"
+      ],
+      "usageCount": 4,
+      "isUnused": false
+    },
+    {
+      "className": "app-button--primary",
+      "selectors": [
+        ".app-button--primary"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\components.css"
+      ],
+      "usageCount": 38,
+      "isUnused": false
+    },
+    {
+      "className": "app-button--secondary",
+      "selectors": [
+        ".app-button--secondary",
+        ".app-button--secondary:hover"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\components.css"
+      ],
+      "usageCount": 12,
+      "isUnused": false
+    },
+    {
+      "className": "app-card",
+      "selectors": [
+        ".app-card",
+        ".app-card:hover",
+        ".app-card:hover .app-card__icon"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\components.css",
+        "frontend\\style\\contacto.css"
+      ],
+      "usageCount": 40,
+      "isUnused": false
+    },
+    {
+      "className": "app-card__icon",
+      "selectors": [
+        ".app-card__icon",
+        ".app-card:hover .app-card__icon"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\components.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "app-footer",
+      "selectors": [
+        ".app-footer"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "app-footer__bottom",
+      "selectors": [
+        ".app-footer__bottom"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "app-footer__content",
+      "selectors": [
+        ".app-footer__content"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "app-footer__link",
+      "selectors": [
+        ".app-footer__link",
+        ".app-footer__link:hover"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 17,
+      "isUnused": false
+    },
+    {
+      "className": "app-footer__list",
+      "selectors": [
+        ".app-footer__list"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 26,
+      "isUnused": false
+    },
+    {
+      "className": "app-footer__list-item",
+      "selectors": [
+        ".app-footer__list-item"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 21,
+      "isUnused": false
+    },
+    {
+      "className": "app-footer__logo",
+      "selectors": [
+        ".app-footer__logo"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 4,
+      "isUnused": false
+    },
+    {
+      "className": "app-footer__logo-icon",
+      "selectors": [
+        ".app-footer__logo-icon"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "app-footer__section-title",
+      "selectors": [
+        ".app-footer__section-title"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 5,
+      "isUnused": false
+    },
+    {
+      "className": "app-footer__social",
+      "selectors": [
+        ".app-footer__social"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 9,
+      "isUnused": false
+    },
+    {
+      "className": "app-footer__social-link",
+      "selectors": [
+        ".app-footer__social-link",
+        ".app-footer__social-link:hover"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 7,
+      "isUnused": false
+    },
+    {
+      "className": "app-footer__text",
+      "selectors": [
+        ".app-footer__text"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "app-modal",
+      "selectors": [
+        ".app-modal"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\components.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "app-navbar",
+      "selectors": [
+        ".app-navbar"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\components.css"
+      ],
+      "usageCount": 3,
+      "isUnused": false
+    },
+    {
+      "className": "app-navbar__cart-badge",
+      "selectors": [
+        ".app-navbar__cart-badge"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\components.css"
+      ],
+      "usageCount": 3,
+      "isUnused": false
+    },
+    {
+      "className": "app-navbar__container",
+      "selectors": [
+        ".app-navbar__container"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\components.css"
+      ],
+      "usageCount": 3,
+      "isUnused": false
+    },
+    {
+      "className": "app-navbar__link",
+      "selectors": [
+        ".app-navbar__link",
+        ".app-navbar__link:hover"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\components.css"
+      ],
+      "usageCount": 40,
+      "isUnused": false
+    },
+    {
+      "className": "app-navbar__link--active",
+      "selectors": [
+        ".app-navbar__link--active"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\components.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "app-navbar__link--cta",
+      "selectors": [
+        ".app-navbar__link--cta",
+        ".app-navbar__link--cta:hover"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\components.css"
+      ],
+      "usageCount": 3,
+      "isUnused": false
+    },
+    {
+      "className": "app-navbar__logo",
+      "selectors": [
+        ".app-navbar__logo"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\components.css"
+      ],
+      "usageCount": 3,
+      "isUnused": false
+    },
+    {
+      "className": "app-navbar__menu",
+      "selectors": [
+        ".app-navbar__menu"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\components.css"
+      ],
+      "usageCount": 3,
+      "isUnused": false
+    },
+    {
+      "className": "app-overlay",
+      "selectors": [
+        ".app-overlay"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\components.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "app-overlay--visible",
+      "selectors": [
+        ".app-overlay--visible"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\components.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "app-section",
+      "selectors": [
+        ".app-section"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\components.css"
+      ],
+      "usageCount": 25,
+      "isUnused": false
+    },
+    {
+      "className": "app-section__header",
+      "selectors": [
+        ".app-section__header"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\components.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "app-section__subtitle",
+      "selectors": [
+        ".app-section__subtitle"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\components.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "app-section__title",
+      "selectors": [
+        ".app-section__title"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\components.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "app-section--muted",
+      "selectors": [
+        ".app-section--muted"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\components.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "badge",
+      "selectors": [
+        ".badge"
+      ],
+      "definedIn": [
+        "frontend\\style\\marco-legal.css",
+        "frontend\\style\\tienda.css"
+      ],
+      "usageCount": 39,
+      "isUnused": false
+    },
+    {
+      "className": "badge-container",
+      "selectors": [
+        ".badge-container"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "btn-add-page",
+      "selectors": [
+        ".btn-add-page",
+        ".btn-add-page:hover",
+        ".btn-add-page svg"
+      ],
+      "definedIn": [
+        "frontend\\catalogo\\product-manager-styles.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "btn-add-product",
+      "selectors": [
+        ".btn-add-product",
+        ".btn-add-product:hover",
+        ".btn-add-product svg"
+      ],
+      "definedIn": [
+        "frontend\\catalogo\\product-manager-styles.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "btn-delete-page",
+      "selectors": [
+        ".btn-delete-page",
+        ".btn-delete-page:hover",
+        ".btn-delete-page svg"
+      ],
+      "definedIn": [
+        "frontend\\catalogo\\product-manager-styles.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "callout-danger",
+      "selectors": [
+        ".callout-danger"
+      ],
+      "definedIn": [
+        "frontend\\style\\marco-legal.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "callout-info",
+      "selectors": [
+        ".callout-info"
+      ],
+      "definedIn": [
+        "frontend\\style\\marco-legal.css"
+      ],
+      "usageCount": 8,
+      "isUnused": false
+    },
+    {
+      "className": "callout-warning",
+      "selectors": [
+        ".callout-warning"
+      ],
+      "definedIn": [
+        "frontend\\style\\marco-legal.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "cancelled",
+      "selectors": [
+        ".order-status.cancelled"
+      ],
+      "definedIn": [
+        "frontend\\style\\mis-pedidos.css"
+      ],
+      "usageCount": 9,
+      "isUnused": false
+    },
+    {
+      "className": "cannabinoid-section",
+      "selectors": [
+        ".product-section.cannabinoid-section"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "card-action-btn",
+      "selectors": [
+        ".card-action-btn",
+        ".card-action-btn.delete",
+        ".card-action-btn.delete:hover",
+        ".card-action-btn.duplicate",
+        ".card-action-btn.duplicate:hover",
+        ".card-action-btn svg",
+        ".card-action-btn:focus"
+      ],
+      "definedIn": [
+        "frontend\\catalogo\\visual-editor-styles.css"
+      ],
+      "usageCount": 5,
+      "isUnused": false
+    },
+    {
+      "className": "card-icon",
+      "selectors": [
+        ".card-icon",
+        ".card-icon i",
+        ".about-card:hover .card-icon",
+        ".legal-card:hover .card-icon"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 16,
+      "isUnused": false
+    },
+    {
+      "className": "cart-count",
+      "selectors": [
+        ".cart-count"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 3,
+      "isUnused": false
+    },
+    {
+      "className": "cart-header",
+      "selectors": [
+        ".cart-header",
+        ".cart-header h3",
+        ".cart-header button"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 7,
+      "isUnused": false
+    },
+    {
+      "className": "cart-items",
+      "selectors": [
+        ".cart-items",
+        ".cart-items::-webkit-scrollbar",
+        ".cart-items::-webkit-scrollbar-track",
+        ".cart-items::-webkit-scrollbar-thumb",
+        ".cart-items::-webkit-scrollbar-thumb:hover"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 7,
+      "isUnused": false
+    },
+    {
+      "className": "cart-link",
+      "selectors": [
+        ".cart-link"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 3,
+      "isUnused": false
+    },
+    {
+      "className": "cart-overlay",
+      "selectors": [
+        ".cart-overlay",
+        ".cart-sidebar.open ~ .cart-overlay",
+        "body:has(.cart-sidebar.open) .cart-overlay",
+        ".cart-sidebar.open + .cart-overlay"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css",
+        "frontend\\style\\index.css"
+      ],
+      "usageCount": 8,
+      "isUnused": false
+    },
+    {
+      "className": "cart-sidebar",
+      "selectors": [
+        ".cart-sidebar",
+        ".cart-sidebar.open",
+        ".cart-sidebar.open ~ .cart-overlay",
+        "body:has(.cart-sidebar.open) .cart-overlay",
+        ".cart-sidebar .cart-total",
+        ".cart-sidebar .cart-total .total-amount",
+        ".cart-sidebar .cart-total .cta-button",
+        ".cart-sidebar .cart-total a.cta-button",
+        ".cart-sidebar.open + .cart-overlay"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css",
+        "frontend\\style\\index.css"
+      ],
+      "usageCount": 8,
+      "isUnused": false
+    },
+    {
+      "className": "cart-total",
+      "selectors": [
+        ".cart-total",
+        ".cart-sidebar .cart-total",
+        ".cart-sidebar .cart-total .total-amount",
+        ".cart-sidebar .cart-total .cta-button",
+        ".cart-sidebar .cart-total a.cta-button"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 7,
+      "isUnused": false
+    },
+    {
+      "className": "category-selector-description",
+      "selectors": [
+        ".category-selector-description"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "category-selector-grid",
+      "selectors": [
+        ".category-selector-grid"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "category-selector-icon",
+      "selectors": [
+        ".category-selector-icon",
+        ".category-selector-item:hover .category-selector-icon"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "category-selector-item",
+      "selectors": [
+        ".category-selector-item",
+        ".category-selector-item:hover",
+        ".category-selector-item:hover .category-selector-icon"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "category-selector-name",
+      "selectors": [
+        ".category-selector-name"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "checkout-btn",
+      "selectors": [
+        ".checkout-btn",
+        ".checkout-btn:hover:not(:disabled)",
+        ".checkout-btn:disabled"
+      ],
+      "definedIn": [
+        "frontend\\style\\checkout.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "checkout-container",
+      "selectors": [
+        ".checkout-container"
+      ],
+      "definedIn": [
+        "frontend\\style\\checkout.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "checkout-grid",
+      "selectors": [
+        ".checkout-grid"
+      ],
+      "definedIn": [
+        "frontend\\style\\checkout.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "checkout-input",
+      "selectors": [
+        ".checkout-input",
+        ".checkout-input:focus"
+      ],
+      "definedIn": [
+        "frontend\\style\\checkout.css"
+      ],
+      "usageCount": 3,
+      "isUnused": false
+    },
+    {
+      "className": "checkout-label",
+      "selectors": [
+        ".checkout-label"
+      ],
+      "definedIn": [
+        "frontend\\style\\checkout.css"
+      ],
+      "usageCount": 5,
+      "isUnused": false
+    },
+    {
+      "className": "checkout-section",
+      "selectors": [
+        ".checkout-section"
+      ],
+      "definedIn": [
+        "frontend\\style\\checkout.css"
+      ],
+      "usageCount": 3,
+      "isUnused": false
+    },
+    {
+      "className": "checkout-textarea",
+      "selectors": [
+        ".checkout-textarea",
+        ".checkout-textarea:focus"
+      ],
+      "definedIn": [
+        "frontend\\style\\checkout.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "checkout-title",
+      "selectors": [
+        ".checkout-title",
+        ".checkout-title i"
+      ],
+      "definedIn": [
+        "frontend\\style\\checkout.css"
+      ],
+      "usageCount": 4,
+      "isUnused": false
+    },
+    {
+      "className": "contact-form-card",
+      "selectors": [
+        ".contact-form-card",
+        ".contact-form-card h2"
+      ],
+      "definedIn": [
+        "frontend\\style\\contacto.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "contact-form-container",
+      "selectors": [
+        ".contact-form-container"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "contact-grid",
+      "selectors": [
+        ".contact-grid"
+      ],
+      "definedIn": [
+        "frontend\\style\\contacto.css",
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "contact-info",
+      "selectors": [
+        ".contact-info h2",
+        ".contact-info p"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 5,
+      "isUnused": false
+    },
+    {
+      "className": "contact-info-card",
+      "selectors": [
+        ".contact-info-card",
+        ".contact-info-card h2"
+      ],
+      "definedIn": [
+        "frontend\\style\\contacto.css"
+      ],
+      "usageCount": 3,
+      "isUnused": false
+    },
+    {
+      "className": "contact-input-wrapper",
+      "selectors": [
+        ".contact-input-wrapper",
+        ".contact-input-wrapper i",
+        ".contact-input-wrapper input",
+        ".contact-input-wrapper textarea",
+        ".contact-input-wrapper select",
+        ".contact-input-wrapper input:focus",
+        ".contact-input-wrapper textarea:focus",
+        ".contact-input-wrapper select:focus",
+        ".contact-input-wrapper input::placeholder",
+        ".contact-input-wrapper textarea::placeholder"
+      ],
+      "definedIn": [
+        "frontend\\style\\contacto.css"
+      ],
+      "usageCount": 5,
+      "isUnused": false
+    },
+    {
+      "className": "contact-item",
+      "selectors": [
+        ".contact-item",
+        ".contact-item i",
+        ".contact-item h4"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 16,
+      "isUnused": false
+    },
+    {
+      "className": "contact-item-content",
+      "selectors": [
+        ".contact-item-content h3",
+        ".contact-item-content p"
+      ],
+      "definedIn": [
+        "frontend\\style\\contacto.css"
+      ],
+      "usageCount": 4,
+      "isUnused": false
+    },
+    {
+      "className": "contact-item-icon",
+      "selectors": [
+        ".contact-item-icon",
+        ".contact-item-icon i"
+      ],
+      "definedIn": [
+        "frontend\\style\\contacto.css"
+      ],
+      "usageCount": 4,
+      "isUnused": false
+    },
+    {
+      "className": "contact-item-wrapper",
+      "selectors": [
+        ".contact-item-wrapper",
+        ".contact-item-wrapper:last-child"
+      ],
+      "definedIn": [
+        "frontend\\style\\contacto.css"
+      ],
+      "usageCount": 4,
+      "isUnused": false
+    },
+    {
+      "className": "contact-label",
+      "selectors": [
+        ".contact-label"
+      ],
+      "definedIn": [
+        "frontend\\style\\contacto.css"
+      ],
+      "usageCount": 5,
+      "isUnused": false
+    },
+    {
+      "className": "contact-message",
+      "selectors": [
+        ".contact-message",
+        ".contact-message.success",
+        ".contact-message.error",
+        ".contact-message i"
+      ],
+      "definedIn": [
+        "frontend\\style\\contacto.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "contact-section",
+      "selectors": [
+        ".contact-section"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "container",
+      "selectors": [
+        ".container",
+        ".shop-header .container",
+        ".tienda .container",
+        ".tienda > .container",
+        "div.container.tienda-container",
+        "div.container[style*=\"max-width\"]",
+        ".container > div"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css",
+        "frontend\\style\\tienda.css"
+      ],
+      "usageCount": 272,
+      "isUnused": false
+    },
+    {
+      "className": "cta-button",
+      "selectors": [
+        ".nav-link.cta-button",
+        ".nav-link.cta-button:hover",
+        ".cta-button",
+        ".cta-button:hover",
+        ".cart-sidebar .cart-total .cta-button",
+        ".cart-sidebar .cart-total a.cta-button",
+        ".cta-buttons .cta-button",
+        ".profile-actions .cta-button",
+        ".step-buttons .cta-button",
+        ".filters-modal-footer .cta-button"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css",
+        "frontend\\style\\login.css",
+        "frontend\\style\\nosotros.css",
+        "frontend\\style\\perfil.css",
+        "frontend\\style\\registro.css",
+        "frontend\\style\\tienda.css"
+      ],
+      "usageCount": 50,
+      "isUnused": false
+    },
+    {
+      "className": "cta-buttons",
+      "selectors": [
+        ".cta-buttons",
+        ".cta-buttons .cta-button",
+        ".cta-buttons .secondary-button"
+      ],
+      "definedIn": [
+        "frontend\\style\\nosotros.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "cta-content",
+      "selectors": [
+        ".cta-content",
+        ".cta-content h2",
+        ".cta-content p"
+      ],
+      "definedIn": [
+        "frontend\\style\\nosotros.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "cta-final",
+      "selectors": [
+        ".cta-final",
+        ".cta-final::before",
+        ".cta-final::after"
+      ],
+      "definedIn": [
+        "frontend\\style\\nosotros.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "danger",
+      "selectors": [
+        ".secondary-button.danger",
+        ".secondary-button.danger:hover"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 17,
+      "isUnused": false
+    },
+    {
+      "className": "delete",
+      "selectors": [
+        ".card-action-btn.delete",
+        ".card-action-btn.delete:hover"
+      ],
+      "definedIn": [
+        "frontend\\catalogo\\visual-editor-styles.css"
+      ],
+      "usageCount": 26,
+      "isUnused": false
+    },
+    {
+      "className": "delete-page",
+      "selectors": [
+        ".toolbar-btn.delete-page",
+        ".toolbar-btn.delete-page:hover"
+      ],
+      "definedIn": [
+        "frontend\\catalogo\\visual-editor-styles.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "delivered",
+      "selectors": [
+        ".order-status.delivered"
+      ],
+      "definedIn": [
+        "frontend\\style\\mis-pedidos.css"
+      ],
+      "usageCount": 11,
+      "isUnused": false
+    },
+    {
+      "className": "document-label",
+      "selectors": [
+        ".document-label",
+        ".document-label i"
+      ],
+      "definedIn": [
+        "frontend\\style\\registro.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "document-section-description",
+      "selectors": [
+        ".document-section-description"
+      ],
+      "definedIn": [
+        "frontend\\style\\registro.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "document-section-title",
+      "selectors": [
+        ".document-section-title"
+      ],
+      "definedIn": [
+        "frontend\\style\\registro.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "document-upload-area",
+      "selectors": [
+        ".document-upload-area",
+        ".document-upload-area .secondary-button",
+        ".document-upload-area .secondary-button:hover",
+        ".document-upload-area label i"
+      ],
+      "definedIn": [
+        "frontend\\style\\registro.css"
+      ],
+      "usageCount": 4,
+      "isUnused": false
+    },
+    {
+      "className": "duplicate",
+      "selectors": [
+        ".card-action-btn.duplicate",
+        ".card-action-btn.duplicate:hover"
+      ],
+      "definedIn": [
+        "frontend\\catalogo\\visual-editor-styles.css"
+      ],
+      "usageCount": 5,
+      "isUnused": false
+    },
+    {
+      "className": "edit-card",
+      "selectors": [
+        ".edit-card",
+        ".edit-card:hover"
+      ],
+      "definedIn": [
+        "frontend\\catalogo\\visual-editor-styles.css"
+      ],
+      "usageCount": 17,
+      "isUnused": false
+    },
+    {
+      "className": "edit-card-actions",
+      "selectors": [
+        ".edit-card-actions"
+      ],
+      "definedIn": [
+        "frontend\\catalogo\\visual-editor-styles.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "edit-card-header",
+      "selectors": [
+        ".edit-card-header"
+      ],
+      "definedIn": [
+        "frontend\\catalogo\\visual-editor-styles.css"
+      ],
+      "usageCount": 5,
+      "isUnused": false
+    },
+    {
+      "className": "edit-card-title",
+      "selectors": [
+        ".edit-card-title",
+        ".edit-card-title svg"
+      ],
+      "definedIn": [
+        "frontend\\catalogo\\visual-editor-styles.css"
+      ],
+      "usageCount": 5,
+      "isUnused": false
+    },
+    {
+      "className": "edit-form",
+      "selectors": [
+        ".edit-form"
+      ],
+      "definedIn": [
+        "frontend\\catalogo\\visual-editor-styles.css"
+      ],
+      "usageCount": 6,
+      "isUnused": false
+    },
+    {
+      "className": "editor-container",
+      "selectors": [
+        ".editor-container"
+      ],
+      "definedIn": [
+        "frontend\\catalogo\\visual-editor-styles.css"
+      ],
+      "usageCount": 4,
+      "isUnused": false
+    },
+    {
+      "className": "editor-mode-selector",
+      "selectors": [
+        ".editor-mode-selector"
+      ],
+      "definedIn": [
+        "frontend\\catalogo\\visual-editor-styles.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "editor-toolbar",
+      "selectors": [
+        ".editor-toolbar"
+      ],
+      "definedIn": [
+        "frontend\\catalogo\\product-manager-styles.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "empty-state",
+      "selectors": [
+        ".empty-state",
+        ".empty-state svg",
+        ".empty-state h3",
+        ".empty-state p"
+      ],
+      "definedIn": [
+        "frontend\\catalogo\\visual-editor-styles.css"
+      ],
+      "usageCount": 5,
+      "isUnused": false
+    },
+    {
+      "className": "error",
+      "selectors": [
+        ".contact-message.error"
+      ],
+      "definedIn": [
+        "frontend\\style\\contacto.css"
+      ],
+      "usageCount": 592,
+      "isUnused": false
+    },
+    {
+      "className": "error-message",
+      "selectors": [
+        ".error-message"
+      ],
+      "definedIn": [
+        "frontend\\style\\login.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "fa-spinner",
+      "selectors": [
+        ".fa-spinner"
+      ],
+      "definedIn": [
+        "frontend\\style\\registro.css"
+      ],
+      "usageCount": 12,
+      "isUnused": false
+    },
+    {
+      "className": "facebook",
+      "selectors": [
+        ".social-link.facebook"
+      ],
+      "definedIn": [
+        "frontend\\style\\contacto.css"
+      ],
+      "usageCount": 4,
+      "isUnused": false
+    },
+    {
+      "className": "faq-card",
+      "selectors": [
+        ".faq-card",
+        ".faq-card:hover",
+        ".faq-card h3",
+        ".faq-card h3 i",
+        ".faq-card p"
+      ],
+      "definedIn": [
+        "frontend\\style\\contacto.css"
+      ],
+      "usageCount": 4,
+      "isUnused": false
+    },
+    {
+      "className": "faq-grid",
+      "selectors": [
+        ".faq-grid"
+      ],
+      "definedIn": [
+        "frontend\\style\\contacto.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "faq-section",
+      "selectors": [
+        ".faq-section",
+        ".faq-section h2"
+      ],
+      "definedIn": [
+        "frontend\\style\\contacto.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "filter-container",
+      "selectors": [
+        ".filter-container"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css",
+        "frontend\\style\\tienda.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "filter-group",
+      "selectors": [
+        ".filter-group"
+      ],
+      "definedIn": [
+        "frontend\\style\\tienda.css"
+      ],
+      "usageCount": 22,
+      "isUnused": false
+    },
+    {
+      "className": "filter-select",
+      "selectors": [
+        ".filter-select"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css",
+        "frontend\\style\\tienda.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "filters-mobile-btn",
+      "selectors": [
+        ".filters-mobile-btn"
+      ],
+      "definedIn": [
+        "frontend\\style\\tienda.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "filters-modal",
+      "selectors": [
+        ".filters-modal",
+        ".filters-modal.hidden"
+      ],
+      "definedIn": [
+        "frontend\\style\\tienda.css"
+      ],
+      "usageCount": 7,
+      "isUnused": false
+    },
+    {
+      "className": "filters-modal-body",
+      "selectors": [
+        ".filters-modal-body"
+      ],
+      "definedIn": [
+        "frontend\\style\\tienda.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "filters-modal-close",
+      "selectors": [
+        ".filters-modal-close",
+        ".filters-modal-close:hover"
+      ],
+      "definedIn": [
+        "frontend\\style\\tienda.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "filters-modal-content",
+      "selectors": [
+        ".filters-modal-content"
+      ],
+      "definedIn": [
+        "frontend\\style\\tienda.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "filters-modal-footer",
+      "selectors": [
+        ".filters-modal-footer",
+        ".filters-modal-footer .cta-button",
+        ".filters-modal-footer .secondary-button"
+      ],
+      "definedIn": [
+        "frontend\\style\\tienda.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "filters-modal-header",
+      "selectors": [
+        ".filters-modal-header",
+        ".filters-modal-header h2"
+      ],
+      "definedIn": [
+        "frontend\\style\\tienda.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "filters-modal-overlay",
+      "selectors": [
+        ".filters-modal-overlay"
+      ],
+      "definedIn": [
+        "frontend\\style\\tienda.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "final",
+      "selectors": [
+        ".order-total-row.final",
+        ".order-total-row.final .amount"
+      ],
+      "definedIn": [
+        "frontend\\style\\mis-pedidos.css"
+      ],
+      "usageCount": 6,
+      "isUnused": false
+    },
+    {
+      "className": "flex",
+      "selectors": [
+        ".flex.gap-3",
+        ".flex.gap-3 button",
+        ".flex.gap-3 a"
+      ],
+      "definedIn": [
+        "frontend\\style\\checkout.css"
+      ],
+      "usageCount": 598,
+      "isUnused": false
+    },
+    {
+      "className": "flex-shrink-0",
+      "selectors": [
+        "#cartPageItems .flex-shrink-0"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 38,
+      "isUnused": false
+    },
+    {
+      "className": "font-semibold",
+      "selectors": [
+        ".order-table td.font-semibold"
+      ],
+      "definedIn": [
+        "frontend\\style\\mis-pedidos.css"
+      ],
+      "usageCount": 137,
+      "isUnused": false
+    },
+    {
+      "className": "footer",
+      "selectors": [
+        ".footer",
+        ".footer .social-links",
+        ".footer .social-links a",
+        ".footer .social-links a:hover"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 67,
+      "isUnused": false
+    },
+    {
+      "className": "footer-bottom",
+      "selectors": [
+        ".footer-bottom"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "footer-content",
+      "selectors": [
+        ".footer-content"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "footer-logo",
+      "selectors": [
+        ".footer-logo",
+        ".footer-logo i"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "footer-section",
+      "selectors": [
+        ".footer-section h4",
+        ".footer-section ul",
+        ".footer-section li",
+        ".footer-section a",
+        ".footer-section a:hover",
+        ".footer-section p"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 7,
+      "isUnused": false
+    },
+    {
+      "className": "forgot-password-link",
+      "selectors": [
+        ".forgot-password-link"
+      ],
+      "definedIn": [
+        "frontend\\style\\login.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "form-grid",
+      "selectors": [
+        ".form-grid"
+      ],
+      "definedIn": [
+        "frontend\\style\\registro.css"
+      ],
+      "usageCount": 5,
+      "isUnused": false
+    },
+    {
+      "className": "form-grid-2",
+      "selectors": [
+        ".form-grid-2"
+      ],
+      "definedIn": [
+        "frontend\\style\\registro.css"
+      ],
+      "usageCount": 3,
+      "isUnused": false
+    },
+    {
+      "className": "form-group",
+      "selectors": [
+        ".form-group",
+        ".form-group label",
+        ".form-group input",
+        ".form-group textarea",
+        ".form-group select",
+        ".form-group input:focus",
+        ".form-group textarea:focus",
+        ".form-group select:focus",
+        ".form-group input::placeholder",
+        ".form-group textarea::placeholder"
+      ],
+      "definedIn": [
+        "frontend\\catalogo\\visual-editor-styles.css",
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 51,
+      "isUnused": false
+    },
+    {
+      "className": "form-label",
+      "selectors": [
+        ".form-label"
+      ],
+      "definedIn": [
+        "frontend\\style\\login.css",
+        "frontend\\style\\registro.css"
+      ],
+      "usageCount": 38,
+      "isUnused": false
+    },
+    {
+      "className": "form-step",
+      "selectors": [
+        ".form-step",
+        ".form-step h3",
+        ".form-step h3 i"
+      ],
+      "definedIn": [
+        "frontend\\style\\registro.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "full-width",
+      "selectors": [
+        ".full-width"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 14,
+      "isUnused": false
+    },
+    {
+      "className": "gap-3",
+      "selectors": [
+        ".flex.gap-3",
+        ".flex.gap-3 button",
+        ".flex.gap-3 a"
+      ],
+      "definedIn": [
+        "frontend\\style\\checkout.css"
+      ],
+      "usageCount": 13,
+      "isUnused": false
+    },
+    {
+      "className": "grid",
+      "selectors": [
+        ".grid.grid-cols-1",
+        ".grid.grid-cols-2",
+        ".grid.grid-cols-3",
+        ".grid.grid-cols-4"
+      ],
+      "definedIn": [
+        "frontend\\style\\tienda.css"
+      ],
+      "usageCount": 254,
+      "isUnused": false
+    },
+    {
+      "className": "grid-cols-1",
+      "selectors": [
+        ".grid.grid-cols-1"
+      ],
+      "definedIn": [
+        "frontend\\style\\tienda.css"
+      ],
+      "usageCount": 5,
+      "isUnused": false
+    },
+    {
+      "className": "grid-cols-2",
+      "selectors": [
+        ".grid.grid-cols-2"
+      ],
+      "definedIn": [
+        "frontend\\style\\tienda.css"
+      ],
+      "usageCount": 25,
+      "isUnused": false
+    },
+    {
+      "className": "grid-cols-3",
+      "selectors": [
+        ".grid.grid-cols-3"
+      ],
+      "definedIn": [
+        "frontend\\style\\tienda.css"
+      ],
+      "usageCount": 10,
+      "isUnused": false
+    },
+    {
+      "className": "grid-cols-4",
+      "selectors": [
+        ".grid.grid-cols-4"
+      ],
+      "definedIn": [
+        "frontend\\style\\tienda.css"
+      ],
+      "usageCount": 3,
+      "isUnused": false
+    },
+    {
+      "className": "hamburger",
+      "selectors": [
+        ".hamburger",
+        ".hamburger span",
+        ".hamburger.active span:nth-child(1)",
+        ".hamburger.active span:nth-child(2)",
+        ".hamburger.active span:nth-child(3)"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 11,
+      "isUnused": false
+    },
+    {
+      "className": "hero",
+      "selectors": [
+        ".hero"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css",
+        "frontend\\style\\index.css"
+      ],
+      "usageCount": 6,
+      "isUnused": false
+    },
+    {
+      "className": "hero-about",
+      "selectors": [
+        ".hero-about",
+        ".hero-about::before",
+        ".hero-about::after"
+      ],
+      "definedIn": [
+        "frontend\\style\\nosotros.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "hero-background",
+      "selectors": [
+        ".hero-background",
+        ".hero-background::before"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "hero-content",
+      "selectors": [
+        ".hero-content"
+      ],
+      "definedIn": [
+        "frontend\\style\\nosotros.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "hero-icon",
+      "selectors": [
+        ".hero-icon",
+        ".hero-icon i"
+      ],
+      "definedIn": [
+        "frontend\\style\\nosotros.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "hero-legal",
+      "selectors": [
+        ".hero-legal",
+        ".hero-legal::before"
+      ],
+      "definedIn": [
+        "frontend\\style\\marco-legal.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "hero-legal-content",
+      "selectors": [
+        ".hero-legal-content",
+        ".hero-legal-content h1",
+        ".hero-legal-content p"
+      ],
+      "definedIn": [
+        "frontend\\style\\marco-legal.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "hero-overlay",
+      "selectors": [
+        ".hero-overlay"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css",
+        "frontend\\style\\index.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "hero-subtitle",
+      "selectors": [
+        ".hero-subtitle"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "hero-title",
+      "selectors": [
+        ".hero-title"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "hidden",
+      "selectors": [
+        ".hidden",
+        ".filters-modal.hidden"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css",
+        "frontend\\style\\registro.css",
+        "frontend\\style\\tienda.css"
+      ],
+      "usageCount": 239,
+      "isUnused": false
+    },
+    {
+      "className": "history-container",
+      "selectors": [
+        ".history-container"
+      ],
+      "definedIn": [
+        "frontend\\style\\nosotros.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "history-content",
+      "selectors": [
+        ".history-content",
+        ".history-content h2",
+        ".history-content p"
+      ],
+      "definedIn": [
+        "frontend\\style\\nosotros.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "history-image",
+      "selectors": [
+        ".history-image",
+        ".history-image::before"
+      ],
+      "definedIn": [
+        "frontend\\style\\nosotros.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "history-image-placeholder",
+      "selectors": [
+        ".history-image-placeholder"
+      ],
+      "definedIn": [
+        "frontend\\style\\nosotros.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "html-editor",
+      "selectors": [
+        ".html-editor",
+        ".html-editor:focus"
+      ],
+      "definedIn": [
+        "frontend\\catalogo\\visual-editor-styles.css"
+      ],
+      "usageCount": 6,
+      "isUnused": false
+    },
+    {
+      "className": "html-editor-container",
+      "selectors": [
+        ".html-editor-container"
+      ],
+      "definedIn": [
+        "frontend\\catalogo\\visual-editor-styles.css"
+      ],
+      "usageCount": 3,
+      "isUnused": false
+    },
+    {
+      "className": "html-preview",
+      "selectors": [
+        ".html-preview",
+        ".html-preview h3",
+        ".html-preview h4",
+        ".html-preview ul",
+        ".html-preview ol",
+        ".html-preview li"
+      ],
+      "definedIn": [
+        "frontend\\catalogo\\visual-editor-styles.css"
+      ],
+      "usageCount": 3,
+      "isUnused": false
+    },
+    {
+      "className": "input-with-icon",
+      "selectors": [
+        ".input-with-icon",
+        ".input-with-icon i",
+        ".input-with-icon input",
+        ".input-with-icon.password-input input"
+      ],
+      "definedIn": [
+        "frontend\\style\\login.css",
+        "frontend\\style\\registro.css"
+      ],
+      "usageCount": 18,
+      "isUnused": false
+    },
+    {
+      "className": "instagram",
+      "selectors": [
+        ".social-link.instagram"
+      ],
+      "definedIn": [
+        "frontend\\style\\contacto.css"
+      ],
+      "usageCount": 4,
+      "isUnused": false
+    },
+    {
+      "className": "invalid-feedback",
+      "selectors": [
+        ".validation-feedback.invalid-feedback"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "is-invalid",
+      "selectors": [
+        ".product-form-input.is-invalid",
+        ".product-form-select.is-invalid",
+        ".product-form-textarea.is-invalid"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 3,
+      "isUnused": false
+    },
+    {
+      "className": "is-valid",
+      "selectors": [
+        ".product-form-input.is-valid",
+        ".product-form-select.is-valid",
+        ".product-form-textarea.is-valid"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 3,
+      "isUnused": false
+    },
+    {
+      "className": "json-editor",
+      "selectors": [
+        ".json-editor"
+      ],
+      "definedIn": [
+        "frontend\\catalogo\\visual-editor-styles.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "json-info",
+      "selectors": [
+        ".json-info",
+        ".json-info svg"
+      ],
+      "definedIn": [
+        "frontend\\catalogo\\visual-editor-styles.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "legal-card",
+      "selectors": [
+        ".legal-card",
+        ".legal-card:hover",
+        ".legal-card:hover .card-icon"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "legal-section",
+      "selectors": [
+        ".legal-section"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 4,
+      "isUnused": false
+    },
+    {
+      "className": "login-checkbox-label",
+      "selectors": [
+        ".login-checkbox-label",
+        ".login-checkbox-label input[type=\"checkbox\"]",
+        ".login-checkbox-label span"
+      ],
+      "definedIn": [
+        "frontend\\style\\login.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "login-container",
+      "selectors": [
+        ".login-container"
+      ],
+      "definedIn": [
+        "frontend\\style\\login.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "login-footer",
+      "selectors": [
+        ".login-footer",
+        ".login-footer p"
+      ],
+      "definedIn": [
+        "frontend\\style\\login.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "login-form",
+      "selectors": [
+        ".login-form"
+      ],
+      "definedIn": [
+        "frontend\\style\\login.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "login-form-wrapper",
+      "selectors": [
+        ".login-form-wrapper"
+      ],
+      "definedIn": [
+        "frontend\\style\\login.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "login-header",
+      "selectors": [
+        ".login-header",
+        ".login-header h2",
+        ".login-header p"
+      ],
+      "definedIn": [
+        "frontend\\style\\login.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "login-icon-container",
+      "selectors": [
+        ".login-icon-container",
+        ".login-icon-container i"
+      ],
+      "definedIn": [
+        "frontend\\style\\login.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "login-link",
+      "selectors": [
+        ".login-link"
+      ],
+      "definedIn": [
+        "frontend\\style\\registro.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "login-options",
+      "selectors": [
+        ".login-options"
+      ],
+      "definedIn": [
+        "frontend\\style\\login.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "login-page",
+      "selectors": [
+        "body.login-page"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\base.css",
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "logout",
+      "selectors": [
+        ".profile-nav-link.logout",
+        ".profile-nav-link.logout:hover"
+      ],
+      "definedIn": [
+        "frontend\\style\\perfil.css"
+      ],
+      "usageCount": 29,
+      "isUnused": false
+    },
+    {
+      "className": "map-note",
+      "selectors": [
+        ".map-placeholder-content .map-note"
+      ],
+      "definedIn": [
+        "frontend\\style\\contacto.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "map-placeholder",
+      "selectors": [
+        ".map-placeholder"
+      ],
+      "definedIn": [
+        "frontend\\style\\contacto.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "map-placeholder-content",
+      "selectors": [
+        ".map-placeholder-content",
+        ".map-placeholder-content i",
+        ".map-placeholder-content p",
+        ".map-placeholder-content .map-note"
+      ],
+      "definedIn": [
+        "frontend\\style\\contacto.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "message-container",
+      "selectors": [
+        ".message-container"
+      ],
+      "definedIn": [
+        "frontend\\style\\login.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "modal-content",
+      "selectors": [
+        ".modal-content"
+      ],
+      "definedIn": [
+        "frontend\\catalogo\\product-manager-styles.css",
+        "frontend\\style\\checkout.css"
+      ],
+      "usageCount": 4,
+      "isUnused": false
+    },
+    {
+      "className": "modal-scroll",
+      "selectors": [
+        ".modal-scroll",
+        ".modal-scroll::-webkit-scrollbar"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 6,
+      "isUnused": false
+    },
+    {
+      "className": "mode-btn",
+      "selectors": [
+        ".mode-btn",
+        ".mode-btn svg",
+        ".mode-btn:hover",
+        ".mode-btn:hover svg",
+        ".mode-btn.active",
+        ".mode-btn.active svg",
+        ".mode-btn:focus"
+      ],
+      "definedIn": [
+        "frontend\\catalogo\\visual-editor-styles.css"
+      ],
+      "usageCount": 4,
+      "isUnused": false
+    },
+    {
+      "className": "nav-container",
+      "selectors": [
+        ".nav-container"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 4,
+      "isUnused": false
+    },
+    {
+      "className": "nav-link",
+      "selectors": [
+        ".nav-link",
+        ".nav-link:hover",
+        ".nav-link.active",
+        ".nav-link.cta-button",
+        ".nav-link.cta-button:hover"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 41,
+      "isUnused": false
+    },
+    {
+      "className": "nav-logo",
+      "selectors": [
+        ".nav-logo",
+        ".nav-logo i",
+        ".nav-logo img"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 3,
+      "isUnused": false
+    },
+    {
+      "className": "nav-menu",
+      "selectors": [
+        ".nav-menu",
+        ".nav-menu.open",
+        ".nav-menu[style*=\"display: flex\"]",
+        ".nav-menu[style*=\"display:flex\"]",
+        ".nav-menu[style*=\"display:flex;\"]",
+        ".nav-menu li",
+        ".nav-menu li:last-child"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 3,
+      "isUnused": false
+    },
+    {
+      "className": "navbar",
+      "selectors": [
+        ".navbar"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 6,
+      "isUnused": false
+    },
+    {
+      "className": "open",
+      "selectors": [
+        ".cart-sidebar.open",
+        ".cart-sidebar.open ~ .cart-overlay",
+        "body:has(.cart-sidebar.open) .cart-overlay",
+        ".nav-menu.open",
+        ".cart-sidebar.open + .cart-overlay"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 23,
+      "isUnused": false
+    },
+    {
+      "className": "order-actions",
+      "selectors": [
+        ".order-actions"
+      ],
+      "definedIn": [
+        "frontend\\style\\mis-pedidos.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "order-card",
+      "selectors": [
+        ".order-card",
+        ".order-card:hover"
+      ],
+      "definedIn": [
+        "frontend\\style\\mis-pedidos.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "order-date",
+      "selectors": [
+        ".order-date"
+      ],
+      "definedIn": [
+        "frontend\\style\\mis-pedidos.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "order-footer",
+      "selectors": [
+        ".order-footer"
+      ],
+      "definedIn": [
+        "frontend\\style\\mis-pedidos.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "order-header",
+      "selectors": [
+        ".order-header"
+      ],
+      "definedIn": [
+        "frontend\\style\\mis-pedidos.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "order-modal",
+      "selectors": [
+        ".order-modal"
+      ],
+      "definedIn": [
+        "frontend\\style\\mis-pedidos.css"
+      ],
+      "usageCount": 6,
+      "isUnused": false
+    },
+    {
+      "className": "order-modal-close",
+      "selectors": [
+        ".order-modal-close",
+        ".order-modal-close:hover"
+      ],
+      "definedIn": [
+        "frontend\\style\\mis-pedidos.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "order-modal-content",
+      "selectors": [
+        ".order-modal-content"
+      ],
+      "definedIn": [
+        "frontend\\style\\mis-pedidos.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "order-modal-date",
+      "selectors": [
+        ".order-modal-date"
+      ],
+      "definedIn": [
+        "frontend\\style\\mis-pedidos.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "order-modal-header",
+      "selectors": [
+        ".order-modal-header",
+        ".order-modal-header h3"
+      ],
+      "definedIn": [
+        "frontend\\style\\mis-pedidos.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "order-modal-table",
+      "selectors": [
+        ".order-modal-table"
+      ],
+      "definedIn": [
+        "frontend\\style\\mis-pedidos.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "order-payment-box",
+      "selectors": [
+        ".order-payment-box",
+        ".order-payment-box h4"
+      ],
+      "definedIn": [
+        "frontend\\style\\mis-pedidos.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "order-payment-hint",
+      "selectors": [
+        ".order-payment-hint"
+      ],
+      "definedIn": [
+        "frontend\\style\\mis-pedidos.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "order-payment-info",
+      "selectors": [
+        ".order-payment-info"
+      ],
+      "definedIn": [
+        "frontend\\style\\mis-pedidos.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "order-payment-method",
+      "selectors": [
+        ".order-payment-method",
+        ".order-payment-method strong"
+      ],
+      "definedIn": [
+        "frontend\\style\\mis-pedidos.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "order-status",
+      "selectors": [
+        ".order-status",
+        ".order-status.pending",
+        ".order-status.processing",
+        ".order-status.shipped",
+        ".order-status.delivered",
+        ".order-status.cancelled"
+      ],
+      "definedIn": [
+        "frontend\\style\\mis-pedidos.css"
+      ],
+      "usageCount": 3,
+      "isUnused": false
+    },
+    {
+      "className": "order-table",
+      "selectors": [
+        ".order-table",
+        ".order-table thead",
+        ".order-table th",
+        ".order-table th.text-right",
+        ".order-table tbody tr",
+        ".order-table td",
+        ".order-table td.text-right",
+        ".order-table td.font-semibold"
+      ],
+      "definedIn": [
+        "frontend\\style\\mis-pedidos.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "order-title",
+      "selectors": [
+        ".order-title"
+      ],
+      "definedIn": [
+        "frontend\\style\\mis-pedidos.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "order-total",
+      "selectors": [
+        ".order-total"
+      ],
+      "definedIn": [
+        "frontend\\style\\mis-pedidos.css"
+      ],
+      "usageCount": 4,
+      "isUnused": false
+    },
+    {
+      "className": "order-total-row",
+      "selectors": [
+        ".order-total-row",
+        ".order-total-row.final",
+        ".order-total-row.final .amount"
+      ],
+      "definedIn": [
+        "frontend\\style\\mis-pedidos.css"
+      ],
+      "usageCount": 3,
+      "isUnused": false
+    },
+    {
+      "className": "order-totals-box",
+      "selectors": [
+        ".order-totals-box"
+      ],
+      "definedIn": [
+        "frontend\\style\\mis-pedidos.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "orders-container",
+      "selectors": [
+        ".orders-container"
+      ],
+      "definedIn": [
+        "frontend\\style\\mis-pedidos.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "orders-empty",
+      "selectors": [
+        ".orders-empty",
+        ".orders-empty i",
+        ".orders-empty h3",
+        ".orders-empty p"
+      ],
+      "definedIn": [
+        "frontend\\style\\mis-pedidos.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "orders-header",
+      "selectors": [
+        ".orders-header",
+        ".orders-header h1",
+        ".orders-header p"
+      ],
+      "definedIn": [
+        "frontend\\style\\mis-pedidos.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "orders-list",
+      "selectors": [
+        ".orders-list"
+      ],
+      "definedIn": [
+        "frontend\\style\\mis-pedidos.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "orders-loading",
+      "selectors": [
+        ".orders-loading",
+        ".orders-loading i"
+      ],
+      "definedIn": [
+        "frontend\\style\\mis-pedidos.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "page-selector",
+      "selectors": [
+        ".page-selector",
+        ".page-selector label",
+        ".page-selector select",
+        ".page-selector select:hover",
+        ".page-selector select:focus"
+      ],
+      "definedIn": [
+        "frontend\\catalogo\\visual-editor-styles.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "password-hint",
+      "selectors": [
+        ".password-hint"
+      ],
+      "definedIn": [
+        "frontend\\style\\registro.css"
+      ],
+      "usageCount": 4,
+      "isUnused": false
+    },
+    {
+      "className": "password-input",
+      "selectors": [
+        ".input-with-icon.password-input input"
+      ],
+      "definedIn": [
+        "frontend\\style\\login.css",
+        "frontend\\style\\registro.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "pending",
+      "selectors": [
+        ".order-status.pending"
+      ],
+      "definedIn": [
+        "frontend\\style\\mis-pedidos.css"
+      ],
+      "usageCount": 20,
+      "isUnused": false
+    },
+    {
+      "className": "price-currency",
+      "selectors": [
+        ".price-currency"
+      ],
+      "definedIn": [
+        "frontend\\catalogo\\visual-editor-styles.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "price-input-group",
+      "selectors": [
+        ".price-input-group",
+        ".price-input-group label"
+      ],
+      "definedIn": [
+        "frontend\\catalogo\\visual-editor-styles.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "price-input-wrapper",
+      "selectors": [
+        ".price-input-wrapper",
+        ".price-input-wrapper input"
+      ],
+      "definedIn": [
+        "frontend\\catalogo\\visual-editor-styles.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "price-variant-item",
+      "selectors": [
+        ".price-variant-item",
+        ".price-variant-item:hover"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 3,
+      "isUnused": false
+    },
+    {
+      "className": "price-variant-remove-btn",
+      "selectors": [
+        ".price-variant-remove-btn",
+        ".price-variant-remove-btn:hover"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "price-variants-container",
+      "selectors": [
+        ".price-variants-container"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "prices-grid",
+      "selectors": [
+        ".prices-grid"
+      ],
+      "definedIn": [
+        "frontend\\catalogo\\visual-editor-styles.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "processing",
+      "selectors": [
+        ".order-status.processing"
+      ],
+      "definedIn": [
+        "frontend\\style\\mis-pedidos.css"
+      ],
+      "usageCount": 9,
+      "isUnused": false
+    },
+    {
+      "className": "product-badge",
+      "selectors": [
+        ".product-badge",
+        ".product-image .product-badge",
+        ".product-card > .product-badge:not(.product-image .product-badge)"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css",
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "product-badge-danger",
+      "selectors": [
+        ".product-badge-danger"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "product-badge-info",
+      "selectors": [
+        ".product-badge-info"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "product-badge-success",
+      "selectors": [
+        ".product-badge-success"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "product-badge-warning",
+      "selectors": [
+        ".product-badge-warning"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "product-btn",
+      "selectors": [
+        ".product-btn",
+        ".product-btn:disabled"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 7,
+      "isUnused": false
+    },
+    {
+      "className": "product-btn-danger",
+      "selectors": [
+        ".product-btn-danger",
+        ".product-btn-danger:hover:not(:disabled)"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "product-btn-lg",
+      "selectors": [
+        ".product-btn-lg"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "product-btn-primary",
+      "selectors": [
+        ".product-btn-primary",
+        ".product-btn-primary:hover:not(:disabled)"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "product-btn-secondary",
+      "selectors": [
+        ".product-btn-secondary",
+        ".product-btn-secondary:hover:not(:disabled)"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "product-btn-sm",
+      "selectors": [
+        ".product-btn-sm"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "product-btn-success",
+      "selectors": [
+        ".product-btn-success",
+        ".product-btn-success:hover:not(:disabled)"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "product-card",
+      "selectors": [
+        ".product-card",
+        ".product-card:hover",
+        ".product-card > .product-badge:not(.product-image .product-badge)",
+        ".products-grid .product-card",
+        "#featuredProducts .product-card",
+        "#productsGrid .product-card"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css",
+        "frontend\\style\\index.css",
+        "frontend\\style\\tienda.css"
+      ],
+      "usageCount": 3,
+      "isUnused": false
+    },
+    {
+      "className": "product-col-span-2",
+      "selectors": [
+        ".product-col-span-2"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 10,
+      "isUnused": false
+    },
+    {
+      "className": "product-col-span-3",
+      "selectors": [
+        ".product-col-span-3"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "product-description",
+      "selectors": [
+        ".product-description"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "product-form-group",
+      "selectors": [
+        ".product-form-group"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 26,
+      "isUnused": false
+    },
+    {
+      "className": "product-form-input",
+      "selectors": [
+        ".product-form-input",
+        ".product-form-input:focus",
+        ".product-form-input:hover:not(:focus)",
+        ".product-form-input:disabled",
+        ".product-input-group .product-form-input",
+        ".product-form-input.is-valid",
+        ".product-form-input.is-invalid"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 15,
+      "isUnused": false
+    },
+    {
+      "className": "product-form-label",
+      "selectors": [
+        ".product-form-label",
+        ".product-form-label i",
+        ".product-form-label .required-mark"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 27,
+      "isUnused": false
+    },
+    {
+      "className": "product-form-select",
+      "selectors": [
+        ".product-form-select",
+        ".product-form-select:focus",
+        ".product-form-select:hover:not(:focus)",
+        ".product-form-select:disabled",
+        ".product-form-select.is-valid",
+        ".product-form-select.is-invalid"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 4,
+      "isUnused": false
+    },
+    {
+      "className": "product-form-textarea",
+      "selectors": [
+        ".product-form-textarea",
+        ".product-form-textarea:focus",
+        ".product-form-textarea:hover:not(:focus)",
+        ".product-form-textarea:disabled",
+        ".product-form-textarea.is-valid",
+        ".product-form-textarea.is-invalid"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 7,
+      "isUnused": false
+    },
+    {
+      "className": "product-grid",
+      "selectors": [
+        ".product-grid"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 18,
+      "isUnused": false
+    },
+    {
+      "className": "product-grid-2",
+      "selectors": [
+        ".product-grid-2"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 6,
+      "isUnused": false
+    },
+    {
+      "className": "product-grid-3",
+      "selectors": [
+        ".product-grid-3"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "product-grid-4",
+      "selectors": [
+        ".product-grid-4"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "product-grid-5",
+      "selectors": [
+        ".product-grid-5"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "product-help-text",
+      "selectors": [
+        ".product-help-text",
+        ".product-help-text i"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 3,
+      "isUnused": false
+    },
+    {
+      "className": "product-image",
+      "selectors": [
+        ".product-image",
+        ".product-image img",
+        ".product-image img:hover",
+        ".product-image .product-badge",
+        ".product-card > .product-badge:not(.product-image .product-badge)"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css",
+        "frontend\\style\\tienda.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "product-info",
+      "selectors": [
+        ".product-info"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "product-input-group",
+      "selectors": [
+        ".product-input-group",
+        ".product-input-group .product-form-input"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "product-input-icon",
+      "selectors": [
+        ".product-input-icon"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "product-loading-overlay",
+      "selectors": [
+        ".product-loading-overlay"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "product-loading-spinner",
+      "selectors": [
+        ".product-loading-spinner"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "product-modal",
+      "selectors": [
+        ".product-modal"
+      ],
+      "definedIn": [
+        "frontend\\style\\tienda.css"
+      ],
+      "usageCount": 19,
+      "isUnused": false
+    },
+    {
+      "className": "product-modal-body",
+      "selectors": [
+        ".product-modal-body",
+        ".product-modal-body::-webkit-scrollbar",
+        ".product-modal-body::-webkit-scrollbar-track",
+        ".product-modal-body::-webkit-scrollbar-thumb",
+        ".product-modal-body::-webkit-scrollbar-thumb:hover"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "product-modal-close-btn",
+      "selectors": [
+        ".product-modal-close-btn",
+        ".product-modal-close-btn:hover"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "product-modal-container",
+      "selectors": [
+        ".product-modal-container"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "product-modal-content",
+      "selectors": [
+        ".product-modal-content"
+      ],
+      "definedIn": [
+        "frontend\\style\\index.css",
+        "frontend\\style\\tienda.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "product-modal-footer",
+      "selectors": [
+        ".product-modal-footer"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 3,
+      "isUnused": false
+    },
+    {
+      "className": "product-modal-footer-left",
+      "selectors": [
+        ".product-modal-footer-left"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "product-modal-footer-right",
+      "selectors": [
+        ".product-modal-footer-right"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "product-modal-grid",
+      "selectors": [
+        ".product-modal-grid"
+      ],
+      "definedIn": [
+        "frontend\\style\\index.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "product-modal-header",
+      "selectors": [
+        ".product-modal-header"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 4,
+      "isUnused": false
+    },
+    {
+      "className": "product-modal-header-content",
+      "selectors": [
+        ".product-modal-header-content"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "product-modal-icon",
+      "selectors": [
+        ".product-modal-icon"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "product-modal-overlay",
+      "selectors": [
+        ".product-modal-overlay"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "product-modal-title-group",
+      "selectors": [
+        ".product-modal-title-group h2",
+        ".product-modal-title-group p"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "product-name",
+      "selectors": [
+        ".product-name"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "product-price",
+      "selectors": [
+        ".product-price"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "product-section",
+      "selectors": [
+        ".product-section",
+        ".product-section:hover",
+        ".product-section.cannabinoid-section",
+        ".product-section.terpene-section",
+        ".product-section.therapeutic-section",
+        ".product-section.safety-section"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 40,
+      "isUnused": false
+    },
+    {
+      "className": "product-section-header",
+      "selectors": [
+        ".product-section-header"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 10,
+      "isUnused": false
+    },
+    {
+      "className": "product-section-icon",
+      "selectors": [
+        ".product-section-icon"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 10,
+      "isUnused": false
+    },
+    {
+      "className": "product-section-title",
+      "selectors": [
+        ".product-section-title"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 10,
+      "isUnused": false
+    },
+    {
+      "className": "product-toggle-container",
+      "selectors": [
+        ".product-toggle-container",
+        ".product-toggle-container:hover"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 4,
+      "isUnused": false
+    },
+    {
+      "className": "product-toggle-input",
+      "selectors": [
+        ".product-toggle-input",
+        ".product-toggle-input:checked + .product-toggle-slider",
+        ".product-toggle-input:checked + .product-toggle-slider:before"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 4,
+      "isUnused": false
+    },
+    {
+      "className": "product-toggle-label",
+      "selectors": [
+        ".product-toggle-label",
+        ".product-toggle-label strong",
+        ".product-toggle-label small"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 4,
+      "isUnused": false
+    },
+    {
+      "className": "product-toggle-slider",
+      "selectors": [
+        ".product-toggle-slider",
+        ".product-toggle-slider:before",
+        ".product-toggle-input:checked + .product-toggle-slider",
+        ".product-toggle-input:checked + .product-toggle-slider:before"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 4,
+      "isUnused": false
+    },
+    {
+      "className": "product-toggle-switch",
+      "selectors": [
+        ".product-toggle-switch"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 4,
+      "isUnused": false
+    },
+    {
+      "className": "products-grid",
+      "selectors": [
+        ".products-grid",
+        ".products-grid .product-card"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css",
+        "frontend\\style\\index.css",
+        "frontend\\style\\tienda.css"
+      ],
+      "usageCount": 13,
+      "isUnused": false
+    },
+    {
+      "className": "products-preview",
+      "selectors": [
+        ".products-preview"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css",
+        "frontend\\style\\index.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "products-section",
+      "selectors": [
+        ".products-section"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "profile-actions",
+      "selectors": [
+        ".profile-actions",
+        ".profile-actions .cta-button",
+        ".profile-actions .secondary-button"
+      ],
+      "definedIn": [
+        "frontend\\style\\perfil.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "profile-avatar",
+      "selectors": [
+        ".profile-avatar"
+      ],
+      "definedIn": [
+        "frontend\\style\\perfil.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "profile-avatar-icon",
+      "selectors": [
+        ".profile-avatar-icon",
+        ".profile-avatar-icon i"
+      ],
+      "definedIn": [
+        "frontend\\style\\perfil.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "profile-badge",
+      "selectors": [
+        ".profile-badge"
+      ],
+      "definedIn": [
+        "frontend\\style\\perfil.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "profile-container",
+      "selectors": [
+        ".profile-container"
+      ],
+      "definedIn": [
+        "frontend\\style\\perfil.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "profile-email",
+      "selectors": [
+        ".profile-email"
+      ],
+      "definedIn": [
+        "frontend\\style\\perfil.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "profile-form",
+      "selectors": [
+        ".profile-form"
+      ],
+      "definedIn": [
+        "frontend\\style\\perfil.css"
+      ],
+      "usageCount": 10,
+      "isUnused": false
+    },
+    {
+      "className": "profile-form-grid",
+      "selectors": [
+        ".profile-form-grid"
+      ],
+      "definedIn": [
+        "frontend\\style\\perfil.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "profile-form-group",
+      "selectors": [
+        ".profile-form-group"
+      ],
+      "definedIn": [
+        "frontend\\style\\perfil.css"
+      ],
+      "usageCount": 7,
+      "isUnused": false
+    },
+    {
+      "className": "profile-grid",
+      "selectors": [
+        ".profile-grid"
+      ],
+      "definedIn": [
+        "frontend\\style\\perfil.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "profile-header",
+      "selectors": [
+        ".profile-header",
+        ".profile-header h1",
+        ".profile-header h1 i"
+      ],
+      "definedIn": [
+        "frontend\\style\\perfil.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "profile-hint",
+      "selectors": [
+        ".profile-hint"
+      ],
+      "definedIn": [
+        "frontend\\style\\perfil.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "profile-info-box",
+      "selectors": [
+        ".profile-info-box",
+        ".profile-info-box i"
+      ],
+      "definedIn": [
+        "frontend\\style\\perfil.css"
+      ],
+      "usageCount": 4,
+      "isUnused": false
+    },
+    {
+      "className": "profile-info-box-content",
+      "selectors": [
+        ".profile-info-box-content"
+      ],
+      "definedIn": [
+        "frontend\\style\\perfil.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "profile-info-box-list",
+      "selectors": [
+        ".profile-info-box-list"
+      ],
+      "definedIn": [
+        "frontend\\style\\perfil.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "profile-info-box-title",
+      "selectors": [
+        ".profile-info-box-title"
+      ],
+      "definedIn": [
+        "frontend\\style\\perfil.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "profile-input",
+      "selectors": [
+        ".profile-input",
+        ".profile-input:focus",
+        ".profile-input::placeholder"
+      ],
+      "definedIn": [
+        "frontend\\style\\perfil.css"
+      ],
+      "usageCount": 7,
+      "isUnused": false
+    },
+    {
+      "className": "profile-label",
+      "selectors": [
+        ".profile-label"
+      ],
+      "definedIn": [
+        "frontend\\style\\perfil.css"
+      ],
+      "usageCount": 7,
+      "isUnused": false
+    },
+    {
+      "className": "profile-name",
+      "selectors": [
+        ".profile-name"
+      ],
+      "definedIn": [
+        "frontend\\style\\perfil.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "profile-nav",
+      "selectors": [
+        ".profile-nav"
+      ],
+      "definedIn": [
+        "frontend\\style\\perfil.css"
+      ],
+      "usageCount": 6,
+      "isUnused": false
+    },
+    {
+      "className": "profile-nav-btn",
+      "selectors": [
+        ".profile-nav-btn",
+        ".profile-nav-btn:hover",
+        ".profile-nav-btn.active",
+        ".profile-nav-btn i"
+      ],
+      "definedIn": [
+        "frontend\\style\\perfil.css"
+      ],
+      "usageCount": 3,
+      "isUnused": false
+    },
+    {
+      "className": "profile-nav-link",
+      "selectors": [
+        ".profile-nav-link",
+        ".profile-nav-link:hover",
+        ".profile-nav-link.logout",
+        ".profile-nav-link.logout:hover"
+      ],
+      "definedIn": [
+        "frontend\\style\\perfil.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "profile-section",
+      "selectors": [
+        ".profile-section",
+        ".profile-section h2",
+        ".profile-section h2 i"
+      ],
+      "definedIn": [
+        "frontend\\style\\perfil.css"
+      ],
+      "usageCount": 3,
+      "isUnused": false
+    },
+    {
+      "className": "profile-sidebar",
+      "selectors": [
+        ".profile-sidebar"
+      ],
+      "definedIn": [
+        "frontend\\style\\perfil.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "progress-bar",
+      "selectors": [
+        ".progress-bar"
+      ],
+      "definedIn": [
+        "frontend\\style\\registro.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "progress-step",
+      "selectors": [
+        ".progress-step"
+      ],
+      "definedIn": [
+        "frontend\\style\\marco-legal.css"
+      ],
+      "usageCount": 5,
+      "isUnused": false
+    },
+    {
+      "className": "pulse",
+      "selectors": [
+        ".pulse"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "register-container",
+      "selectors": [
+        ".register-container"
+      ],
+      "definedIn": [
+        "frontend\\style\\registro.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "register-footer",
+      "selectors": [
+        ".register-footer",
+        ".register-footer p"
+      ],
+      "definedIn": [
+        "frontend\\style\\registro.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "register-form-card",
+      "selectors": [
+        ".register-form-card"
+      ],
+      "definedIn": [
+        "frontend\\style\\registro.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "register-form-wrapper",
+      "selectors": [
+        ".register-form-wrapper"
+      ],
+      "definedIn": [
+        "frontend\\style\\registro.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "register-header",
+      "selectors": [
+        ".register-header",
+        ".register-header h2",
+        ".register-header p"
+      ],
+      "definedIn": [
+        "frontend\\style\\registro.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "register-icon-container",
+      "selectors": [
+        ".register-icon-container",
+        ".register-icon-container i"
+      ],
+      "definedIn": [
+        "frontend\\style\\registro.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "register-link",
+      "selectors": [
+        ".register-link"
+      ],
+      "definedIn": [
+        "frontend\\style\\login.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "register-page",
+      "selectors": [
+        "body.register-page"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\base.css",
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "registro-catalogo",
+      "selectors": [
+        ".registro-catalogo"
+      ],
+      "definedIn": [
+        "frontend\\style\\index.css"
+      ],
+      "usageCount": 4,
+      "isUnused": false
+    },
+    {
+      "className": "registro-catalogo-grid",
+      "selectors": [
+        ".registro-catalogo-grid"
+      ],
+      "definedIn": [
+        "frontend\\style\\index.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "remove-doc-btn",
+      "selectors": [
+        ".remove-doc-btn",
+        ".remove-doc-btn:hover"
+      ],
+      "definedIn": [
+        "frontend\\style\\registro.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "required-asterisk",
+      "selectors": [
+        ".terms-checkbox .required-asterisk"
+      ],
+      "definedIn": [
+        "frontend\\style\\checkout.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "required-mark",
+      "selectors": [
+        ".product-form-label .required-mark"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 3,
+      "isUnused": false
+    },
+    {
+      "className": "safety-section",
+      "selectors": [
+        ".product-section.safety-section"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "search-box",
+      "selectors": [
+        ".search-box"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css",
+        "frontend\\style\\tienda.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "secondary-button",
+      "selectors": [
+        ".secondary-button",
+        ".secondary-button:hover",
+        ".secondary-button.danger",
+        ".secondary-button.danger:hover",
+        ".cta-buttons .secondary-button",
+        ".profile-actions .secondary-button",
+        ".document-upload-area .secondary-button",
+        ".document-upload-area .secondary-button:hover",
+        ".step-buttons .secondary-button",
+        ".filters-modal-footer .secondary-button"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css",
+        "frontend\\style\\nosotros.css",
+        "frontend\\style\\perfil.css",
+        "frontend\\style\\registro.css",
+        "frontend\\style\\tienda.css"
+      ],
+      "usageCount": 27,
+      "isUnused": false
+    },
+    {
+      "className": "section-header",
+      "selectors": [
+        ".section-header",
+        ".section-header h2",
+        ".section-header p"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css",
+        "frontend\\style\\nosotros.css"
+      ],
+      "usageCount": 19,
+      "isUnused": false
+    },
+    {
+      "className": "session-btn-logout",
+      "selectors": [
+        ".session-btn-logout",
+        ".session-btn-logout:hover"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "session-btn-stay",
+      "selectors": [
+        ".session-btn-stay",
+        ".session-btn-stay:hover"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "session-warning-actions",
+      "selectors": [
+        ".session-warning-actions"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "session-warning-body",
+      "selectors": [
+        ".session-warning-body",
+        ".session-warning-body p"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "session-warning-content",
+      "selectors": [
+        ".session-warning-content"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "session-warning-countdown",
+      "selectors": [
+        ".session-warning-countdown",
+        ".session-warning-countdown span"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "session-warning-header",
+      "selectors": [
+        ".session-warning-header",
+        ".session-warning-header i",
+        ".session-warning-header h3"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "session-warning-modal",
+      "selectors": [
+        ".session-warning-modal"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "shake",
+      "selectors": [
+        ".shake"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "shipped",
+      "selectors": [
+        ".order-status.shipped"
+      ],
+      "definedIn": [
+        "frontend\\style\\mis-pedidos.css"
+      ],
+      "usageCount": 11,
+      "isUnused": false
+    },
+    {
+      "className": "shop-header",
+      "selectors": [
+        ".shop-header",
+        ".shop-header::after",
+        ".shop-header .container",
+        ".shop-header h1",
+        ".shop-header h1 i",
+        ".shop-header p"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 9,
+      "isUnused": false
+    },
+    {
+      "className": "skeleton",
+      "selectors": [
+        ".skeleton"
+      ],
+      "definedIn": [
+        "frontend\\style\\checkout.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "social-link",
+      "selectors": [
+        ".social-link",
+        ".social-link.facebook",
+        ".social-link.instagram",
+        ".social-link.twitter",
+        ".social-link.whatsapp",
+        ".social-link:hover"
+      ],
+      "definedIn": [
+        "frontend\\style\\contacto.css"
+      ],
+      "usageCount": 4,
+      "isUnused": false
+    },
+    {
+      "className": "social-links",
+      "selectors": [
+        ".social-links",
+        ".footer .social-links",
+        ".footer .social-links a",
+        ".footer .social-links a:hover"
+      ],
+      "definedIn": [
+        "frontend\\style\\contacto.css",
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 3,
+      "isUnused": false
+    },
+    {
+      "className": "space-y-6",
+      "selectors": [
+        ".space-y-6 > *"
+      ],
+      "definedIn": [
+        "frontend\\style\\checkout.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "stat-card",
+      "selectors": [
+        ".stat-card",
+        ".stat-card:hover"
+      ],
+      "definedIn": [
+        "frontend\\style\\nosotros.css"
+      ],
+      "usageCount": 14,
+      "isUnused": false
+    },
+    {
+      "className": "stat-icon",
+      "selectors": [
+        ".stat-icon"
+      ],
+      "definedIn": [
+        "frontend\\style\\marco-legal.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "stat-label",
+      "selectors": [
+        ".stat-label"
+      ],
+      "definedIn": [
+        "frontend\\style\\nosotros.css"
+      ],
+      "usageCount": 13,
+      "isUnused": false
+    },
+    {
+      "className": "stat-mini",
+      "selectors": [
+        ".stat-mini",
+        ".stat-mini:hover"
+      ],
+      "definedIn": [
+        "frontend\\style\\marco-legal.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "stat-number",
+      "selectors": [
+        ".stat-number"
+      ],
+      "definedIn": [
+        "frontend\\style\\nosotros.css"
+      ],
+      "usageCount": 3,
+      "isUnused": false
+    },
+    {
+      "className": "stat-text",
+      "selectors": [
+        ".stat-text"
+      ],
+      "definedIn": [
+        "frontend\\style\\marco-legal.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "stats-grid",
+      "selectors": [
+        ".stats-grid"
+      ],
+      "definedIn": [
+        "frontend\\style\\nosotros.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "step-buttons",
+      "selectors": [
+        ".step-buttons",
+        ".step-buttons .cta-button",
+        ".step-buttons .secondary-button"
+      ],
+      "definedIn": [
+        "frontend\\style\\registro.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "step-circle",
+      "selectors": [
+        ".step-circle",
+        ".step-indicator.active .step-circle",
+        ".step-indicator:not(.active) .step-circle"
+      ],
+      "definedIn": [
+        "frontend\\style\\registro.css"
+      ],
+      "usageCount": 3,
+      "isUnused": false
+    },
+    {
+      "className": "step-indicator",
+      "selectors": [
+        ".step-indicator",
+        ".step-indicator.active .step-circle",
+        ".step-indicator.active p",
+        ".step-indicator:not(.active) .step-circle",
+        ".step-indicator:not(.active) p",
+        ".step-indicator p"
+      ],
+      "definedIn": [
+        "frontend\\style\\registro.css"
+      ],
+      "usageCount": 3,
+      "isUnused": false
+    },
+    {
+      "className": "step-number",
+      "selectors": [
+        ".step-number"
+      ],
+      "definedIn": [
+        "frontend\\style\\marco-legal.css"
+      ],
+      "usageCount": 5,
+      "isUnused": false
+    },
+    {
+      "className": "steps-container",
+      "selectors": [
+        ".steps-container"
+      ],
+      "definedIn": [
+        "frontend\\style\\registro.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "steps-progress-line",
+      "selectors": [
+        ".steps-progress-line"
+      ],
+      "definedIn": [
+        "frontend\\style\\registro.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "sticky",
+      "selectors": [
+        ".sticky"
+      ],
+      "definedIn": [
+        "frontend\\style\\checkout.css"
+      ],
+      "usageCount": 4,
+      "isUnused": false
+    },
+    {
+      "className": "submit-btn-with-loader",
+      "selectors": [
+        ".submit-btn-with-loader"
+      ],
+      "definedIn": [
+        "frontend\\style\\login.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "success",
+      "selectors": [
+        ".contact-message.success",
+        ".upload-zone.success"
+      ],
+      "definedIn": [
+        "frontend\\style\\contacto.css",
+        "frontend\\style\\registro.css"
+      ],
+      "usageCount": 166,
+      "isUnused": false
+    },
+    {
+      "className": "success-message",
+      "selectors": [
+        ".success-message"
+      ],
+      "definedIn": [
+        "frontend\\style\\login.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "tab-button",
+      "selectors": [
+        ".tab-button",
+        ".tab-button:hover",
+        ".tab-button.active"
+      ],
+      "definedIn": [
+        "frontend\\style\\marco-legal.css"
+      ],
+      "usageCount": 6,
+      "isUnused": false
+    },
+    {
+      "className": "tab-buttons",
+      "selectors": [
+        ".tab-buttons"
+      ],
+      "definedIn": [
+        "frontend\\style\\marco-legal.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "tab-content",
+      "selectors": [
+        ".tab-content",
+        ".tab-content.active"
+      ],
+      "definedIn": [
+        "frontend\\style\\marco-legal.css"
+      ],
+      "usageCount": 6,
+      "isUnused": false
+    },
+    {
+      "className": "tabs-container",
+      "selectors": [
+        ".tabs-container"
+      ],
+      "definedIn": [
+        "frontend\\style\\marco-legal.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "team-avatar",
+      "selectors": [
+        ".team-avatar",
+        ".team-card:hover .team-avatar",
+        ".team-avatar i"
+      ],
+      "definedIn": [
+        "frontend\\style\\nosotros.css"
+      ],
+      "usageCount": 4,
+      "isUnused": false
+    },
+    {
+      "className": "team-card",
+      "selectors": [
+        ".team-card",
+        ".team-card::before",
+        ".team-card:hover::before",
+        ".team-card:hover",
+        ".team-card:hover .team-avatar"
+      ],
+      "definedIn": [
+        "frontend\\style\\nosotros.css"
+      ],
+      "usageCount": 5,
+      "isUnused": false
+    },
+    {
+      "className": "team-description",
+      "selectors": [
+        ".team-description"
+      ],
+      "definedIn": [
+        "frontend\\style\\nosotros.css"
+      ],
+      "usageCount": 4,
+      "isUnused": false
+    },
+    {
+      "className": "team-grid",
+      "selectors": [
+        ".team-grid",
+        ".team-grid::-webkit-scrollbar",
+        ".team-grid::-webkit-scrollbar-track",
+        ".team-grid::-webkit-scrollbar-thumb"
+      ],
+      "definedIn": [
+        "frontend\\style\\nosotros.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "team-image",
+      "selectors": [
+        ".team-image",
+        ".team-image::after"
+      ],
+      "definedIn": [
+        "frontend\\style\\nosotros.css"
+      ],
+      "usageCount": 4,
+      "isUnused": false
+    },
+    {
+      "className": "team-info",
+      "selectors": [
+        ".team-info",
+        ".team-info h3"
+      ],
+      "definedIn": [
+        "frontend\\style\\nosotros.css"
+      ],
+      "usageCount": 4,
+      "isUnused": false
+    },
+    {
+      "className": "team-role",
+      "selectors": [
+        ".team-role"
+      ],
+      "definedIn": [
+        "frontend\\style\\nosotros.css"
+      ],
+      "usageCount": 4,
+      "isUnused": false
+    },
+    {
+      "className": "terms-checkbox",
+      "selectors": [
+        ".terms-checkbox",
+        ".terms-checkbox input[type=\"checkbox\"]",
+        ".terms-checkbox span",
+        ".terms-checkbox strong",
+        ".terms-checkbox .required-asterisk"
+      ],
+      "definedIn": [
+        "frontend\\style\\checkout.css"
+      ],
+      "usageCount": 3,
+      "isUnused": false
+    },
+    {
+      "className": "terms-checkbox-label",
+      "selectors": [
+        ".terms-checkbox-label",
+        ".terms-checkbox-label input[type=\"checkbox\"]",
+        ".terms-checkbox-label span",
+        ".terms-checkbox-label a"
+      ],
+      "definedIn": [
+        "frontend\\style\\registro.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "terms-container",
+      "selectors": [
+        ".terms-container"
+      ],
+      "definedIn": [
+        "frontend\\style\\checkout.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "terms-content",
+      "selectors": [
+        ".terms-content",
+        ".terms-content h4",
+        ".terms-content p"
+      ],
+      "definedIn": [
+        "frontend\\style\\checkout.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "terpene-section",
+      "selectors": [
+        ".product-section.terpene-section"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "test-credentials",
+      "selectors": [
+        ".test-credentials",
+        ".test-credentials p:first-child",
+        ".test-credentials p"
+      ],
+      "definedIn": [
+        "frontend\\style\\login.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "text-center",
+      "selectors": [
+        ".text-center"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 28,
+      "isUnused": false
+    },
+    {
+      "className": "text-right",
+      "selectors": [
+        ".order-table th.text-right",
+        ".order-table td.text-right"
+      ],
+      "definedIn": [
+        "frontend\\style\\mis-pedidos.css"
+      ],
+      "usageCount": 33,
+      "isUnused": false
+    },
+    {
+      "className": "therapeutic-section",
+      "selectors": [
+        ".product-section.therapeutic-section"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "tienda",
+      "selectors": [
+        ".tienda .container",
+        ".tienda > .container"
+      ],
+      "definedIn": [
+        "frontend\\style\\tienda.css"
+      ],
+      "usageCount": 29,
+      "isUnused": false
+    },
+    {
+      "className": "tienda-container",
+      "selectors": [
+        ".tienda-container",
+        "div.container.tienda-container"
+      ],
+      "definedIn": [
+        "frontend\\style\\tienda.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "tienda-filters-sidebar",
+      "selectors": [
+        ".tienda-filters-sidebar",
+        ".tienda-filters-sidebar .about-card"
+      ],
+      "definedIn": [
+        "frontend\\style\\tienda.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "tienda-layout",
+      "selectors": [
+        ".tienda-layout",
+        ".tienda-layout > main"
+      ],
+      "definedIn": [
+        "frontend\\style\\tienda.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "timeline-container",
+      "selectors": [
+        ".timeline-container"
+      ],
+      "definedIn": [
+        "frontend\\style\\marco-legal.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "timeline-content",
+      "selectors": [
+        ".timeline-content",
+        ".timeline-content:hover"
+      ],
+      "definedIn": [
+        "frontend\\style\\marco-legal.css"
+      ],
+      "usageCount": 4,
+      "isUnused": false
+    },
+    {
+      "className": "timeline-icon",
+      "selectors": [
+        ".timeline-icon"
+      ],
+      "definedIn": [
+        "frontend\\style\\marco-legal.css"
+      ],
+      "usageCount": 4,
+      "isUnused": false
+    },
+    {
+      "className": "timeline-item",
+      "selectors": [
+        ".timeline-item",
+        ".timeline-item:nth-child(odd)",
+        ".timeline-item:nth-child(even)"
+      ],
+      "definedIn": [
+        "frontend\\style\\marco-legal.css"
+      ],
+      "usageCount": 5,
+      "isUnused": false
+    },
+    {
+      "className": "timeline-line",
+      "selectors": [
+        ".timeline-line"
+      ],
+      "definedIn": [
+        "frontend\\style\\marco-legal.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "toggle-password-btn",
+      "selectors": [
+        ".toggle-password-btn"
+      ],
+      "definedIn": [
+        "frontend\\style\\login.css",
+        "frontend\\style\\registro.css"
+      ],
+      "usageCount": 2,
+      "isUnused": false
+    },
+    {
+      "className": "toolbar-btn",
+      "selectors": [
+        ".toolbar-btn",
+        ".toolbar-btn.add-item",
+        ".toolbar-btn.add-item:hover",
+        ".toolbar-btn.add-page",
+        ".toolbar-btn.add-page:hover",
+        ".toolbar-btn.delete-page",
+        ".toolbar-btn.delete-page:hover",
+        ".toolbar-btn svg",
+        ".toolbar-btn:focus"
+      ],
+      "definedIn": [
+        "frontend\\catalogo\\visual-editor-styles.css"
+      ],
+      "usageCount": 3,
+      "isUnused": false
+    },
+    {
+      "className": "total-amount",
+      "selectors": [
+        ".cart-sidebar .cart-total .total-amount"
+      ],
+      "definedIn": [
+        "frontend\\style\\css_home.css"
+      ],
+      "usageCount": 7,
+      "isUnused": false
+    },
+    {
+      "className": "twitter",
+      "selectors": [
+        ".social-link.twitter"
+      ],
+      "definedIn": [
+        "frontend\\style\\contacto.css"
+      ],
+      "usageCount": 4,
+      "isUnused": false
+    },
+    {
+      "className": "u-container",
+      "selectors": [
+        ".u-container"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\utilities.css"
+      ],
+      "usageCount": 31,
+      "isUnused": false
+    },
+    {
+      "className": "u-flex-between",
+      "selectors": [
+        ".u-flex-between"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\utilities.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "u-flex-center",
+      "selectors": [
+        ".u-flex-center"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\utilities.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "u-grid-responsive",
+      "selectors": [
+        ".u-grid-responsive"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\utilities.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "u-radius-md",
+      "selectors": [
+        ".u-radius-md"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\utilities.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "u-shadow-elevated",
+      "selectors": [
+        ".u-shadow-elevated"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\utilities.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "u-spacing-section",
+      "selectors": [
+        ".u-spacing-section"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\utilities.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "u-text-center",
+      "selectors": [
+        ".u-text-center"
+      ],
+      "definedIn": [
+        "frontend\\src\\styles\\utilities.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "upload-placeholder",
+      "selectors": [
+        ".upload-placeholder",
+        ".upload-placeholder i",
+        ".upload-placeholder p:first-of-type",
+        ".upload-placeholder p:last-of-type",
+        ".upload-placeholder p"
+      ],
+      "definedIn": [
+        "frontend\\style\\registro.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "upload-preview",
+      "selectors": [
+        ".upload-preview",
+        ".upload-preview i",
+        ".upload-preview p:first-of-type",
+        ".upload-preview p:last-of-type"
+      ],
+      "definedIn": [
+        "frontend\\style\\registro.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "upload-zone",
+      "selectors": [
+        ".upload-zone",
+        ".upload-zone:hover",
+        ".upload-zone.success"
+      ],
+      "definedIn": [
+        "frontend\\style\\registro.css"
+      ],
+      "usageCount": 3,
+      "isUnused": false
+    },
+    {
+      "className": "valid-feedback",
+      "selectors": [
+        ".validation-feedback.valid-feedback"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 0,
+      "isUnused": true
+    },
+    {
+      "className": "validation-feedback",
+      "selectors": [
+        ".validation-feedback",
+        ".validation-feedback.valid-feedback",
+        ".validation-feedback.invalid-feedback"
+      ],
+      "definedIn": [
+        "frontend\\ajustes_puntuales\\css_modals.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "value-card",
+      "selectors": [
+        ".value-card",
+        ".value-card::before",
+        ".value-card:hover::before",
+        ".value-card:hover",
+        ".value-card:hover .value-icon",
+        ".value-card:hover .value-icon::after",
+        ".value-card h3",
+        ".value-card p"
+      ],
+      "definedIn": [
+        "frontend\\style\\nosotros.css"
+      ],
+      "usageCount": 7,
+      "isUnused": false
+    },
+    {
+      "className": "value-icon",
+      "selectors": [
+        ".value-icon",
+        ".value-icon::after",
+        ".value-card:hover .value-icon",
+        ".value-card:hover .value-icon::after",
+        ".value-icon i"
+      ],
+      "definedIn": [
+        "frontend\\style\\nosotros.css"
+      ],
+      "usageCount": 6,
+      "isUnused": false
+    },
+    {
+      "className": "values-grid",
+      "selectors": [
+        ".values-grid",
+        ".values-grid::-webkit-scrollbar",
+        ".values-grid::-webkit-scrollbar-track",
+        ".values-grid::-webkit-scrollbar-thumb"
+      ],
+      "definedIn": [
+        "frontend\\style\\nosotros.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "visual-content",
+      "selectors": [
+        ".visual-content",
+        ".visual-content::-webkit-scrollbar",
+        ".visual-content::-webkit-scrollbar-track",
+        ".visual-content::-webkit-scrollbar-thumb",
+        ".visual-content::-webkit-scrollbar-thumb:hover"
+      ],
+      "definedIn": [
+        "frontend\\catalogo\\visual-editor-styles.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "visual-editor",
+      "selectors": [
+        ".visual-editor"
+      ],
+      "definedIn": [
+        "frontend\\catalogo\\visual-editor-styles.css"
+      ],
+      "usageCount": 4,
+      "isUnused": false
+    },
+    {
+      "className": "visual-toolbar",
+      "selectors": [
+        ".visual-toolbar"
+      ],
+      "definedIn": [
+        "frontend\\catalogo\\visual-editor-styles.css"
+      ],
+      "usageCount": 1,
+      "isUnused": false
+    },
+    {
+      "className": "whatsapp",
+      "selectors": [
+        ".social-link.whatsapp"
+      ],
+      "definedIn": [
+        "frontend\\style\\contacto.css"
+      ],
+      "usageCount": 3,
+      "isUnused": false
+    }
+  ],
+  "meta": {
+    "excludeSegments": [
+      "admin",
+      "node_modules",
+      "dist"
+    ]
+  }
+}

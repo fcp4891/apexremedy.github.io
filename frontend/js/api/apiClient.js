@@ -2,54 +2,106 @@
 // Cliente API para comunicación con el backend
 // ✅ ACTUALIZADO CON SOPORTE MEDICINAL
 
+// Log inmediato para verificar que el script se carga
+try {
+    console.log('📦 [API] Script apiClient.js cargado');
+    console.log('📦 [API] Timestamp:', new Date().toISOString());
+    console.log('📦 [API] URL actual:', window.location.href);
+} catch (e) {
+    console.error('❌ [API] Error en log inicial:', e);
+}
+
 // Prevenir doble declaración
 if (typeof APIClient === 'undefined') {
+    console.log('📦 [API] Creando clase APIClient...');
     class APIClient {
         constructor() {
-            // Detectar entorno y configurar URL de API
-            const isProduction = window.location.hostname.includes('github.io') || 
-                                (window.location.hostname !== 'localhost' && 
-                                 window.location.hostname !== '127.0.0.1');
+            // Detectar entorno usando el detector de entorno
+            let backendURL = null;
             
-            // ⚠️ IMPORTANTE: Configurar la URL de tu backend en producción
-            // Si tu backend está en Heroku/Railway/Render/etc, reemplaza la URL abajo
-            // Ejemplo: 'https://apexremedy-api.herokuapp.com/api'
-            // Ejemplo: 'https://api.apexremedy.com/api'
-            // Si no tienes backend en producción, déjalo como null para usar solo API estática
-            const PRODUCTION_API_URL = null; // ⚠️ Configurar URL real del backend o null para solo API estática
-            
-            // Si no hay URL de producción configurada, usar localhost como fallback o solo API estática
-            if (isProduction && !PRODUCTION_API_URL) {
-                console.warn('⚠️ No hay backend configurado en producción. Se usará solo API estática.');
-                this.baseURL = null; // null indica que solo se usará API estática
+            // Usar detector de entorno si está disponible
+            if (typeof window !== 'undefined' && window.envDetector) {
+                backendURL = window.envDetector.getBackendURL();
+                this.env = window.envDetector.env;
+                this.dataSource = window.envDetector.dataSource.type;
             } else {
-                this.baseURL = isProduction 
-                    ? PRODUCTION_API_URL
-                    : 'http://localhost:3000/api';
+                // Fallback: detección básica
+                const isProduction = window.location.hostname.includes('github.io') || 
+                                    (window.location.hostname !== 'localhost' && 
+                                     window.location.hostname !== '127.0.0.1');
+                
+                if (isProduction) {
+                    this.env = 'github';
+                    this.dataSource = 'json';
+                    // En GitHub Pages, no hay backend
+                    backendURL = null;
+                } else {
+                    this.env = 'local';
+                    this.dataSource = 'sqlite';
+                    // En local, usar backend en localhost
+                    backendURL = 'http://localhost:3000/api';
+                }
             }
             
-            // Sincronizar token con localStorage al inicializar
-            this.token = localStorage.getItem('authToken');
+            this.baseURL = backendURL;
+            this.token = null;
             
-            // Log para debug
-            if (isProduction) {
-                console.log('🌐 Modo producción detectado');
-                console.log('🔗 API URL:', this.baseURL);
-            } else {
-                console.log('💻 Modo desarrollo detectado');
-                console.log('🔗 API URL:', this.baseURL);
+            // Log informativo
+            console.log(`📍 Entorno: ${this.env} | Fuente: ${this.dataSource}`);
+            console.log(`🔗 Backend URL: ${this.baseURL || 'Solo JSON estático'}`);
+        }
+
+        getCsrfTokenFromCookie() {
+            if (typeof document === 'undefined') {
+                return null;
             }
+            const cookies = document.cookie ? document.cookie.split('; ') : [];
+            const entry = cookies.find((row) => row.startsWith('csrf_token='));
+            if (!entry) {
+                return null;
+            }
+            return decodeURIComponent(entry.split('=')[1] || '');
+        }
+
+        async ensureCsrfToken() {
+            if (!this.baseURL) {
+                return null;
+            }
+
+            const existing = this.getCsrfTokenFromCookie();
+            if (existing) {
+                return existing;
+            }
+
+            try {
+                const response = await fetch(`${this.baseURL}/auth/csrf`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                if (data?.data?.csrfToken) {
+                    return data.data.csrfToken;
+                }
+            } catch (error) {
+                console.warn('⚠️ No se pudo obtener token CSRF:', error.message);
+            }
+
+            return this.getCsrfTokenFromCookie();
         }
         
-        // Método para sincronizar token desde localStorage
-        syncToken() {
-            const storedToken = localStorage.getItem('authToken');
-            if (storedToken !== this.token) {
-                this.token = storedToken;
+        // Método auxiliar para hacer peticiones
+        handleUnauthorized() {
+            if (typeof window !== 'undefined') {
+                window.dispatchEvent(new Event('userLoggedOut'));
+            }
+            if (typeof authManager !== 'undefined' && authManager.clearSession) {
+                authManager.clearSession();
+                if (typeof authManager.updateUI === 'function') {
+                    authManager.updateUI();
+                }
             }
         }
 
-        // Método auxiliar para hacer peticiones
         async request(endpoint, options = {}) {
             // Verificar si hay backend configurado
             if (!this.baseURL) {
@@ -58,38 +110,45 @@ if (typeof APIClient === 'undefined') {
                 throw error;
             }
             
-            // Sincronizar token antes de cada petición
-            this.syncToken();
-            
             const url = `${this.baseURL}${endpoint}`;
             const headers = {
                 'Content-Type': 'application/json',
                 ...options.headers
             };
 
-            // Agregar token si existe (sincronizado desde localStorage)
-            if (this.token) {
-                headers['Authorization'] = `Bearer ${this.token}`;
-            }
+            const method = (options.method || 'GET').toUpperCase();
+            const requiresCsrf = !['GET', 'HEAD', 'OPTIONS'].includes(method);
 
+            if (requiresCsrf) {
+                const csrfToken = await this.ensureCsrfToken();
+                if (csrfToken) {
+                    headers['X-CSRF-Token'] = csrfToken;
+                }
+            }
+            
             try {
                 const response = await fetch(url, {
                     ...options,
-                    headers
+                    headers,
+                    credentials: options.credentials || 'include'
                 });
 
                 const data = await response.json();
 
                 if (!response.ok) {
-                    // Si es error 401, limpiar token y redirigir
                     if (response.status === 401) {
-                        this.token = null;
-                        localStorage.removeItem('authToken');
-                        if (typeof authManager !== 'undefined') {
-                            authManager.logout();
-                        }
+                        this.handleUnauthorized();
                     }
-                    throw new Error(data.message || 'Error en la petición');
+                    
+                    // Crear error personalizado con información del backend
+                    const error = new Error(data.message || 'Error en la petición');
+                    error.response = {
+                        status: response.status,
+                        data: data
+                    };
+                    error.error_code = data.error_code;
+                    error.field = data.field;
+                    throw error;
                 }
 
                 return data;
@@ -113,10 +172,6 @@ if (typeof APIClient === 'undefined') {
                 body: JSON.stringify(userData)
             });
 
-            if (response.success && response.data.token) {
-                this.setToken(response.data.token);
-            }
-
             return response;
         }
 
@@ -130,10 +185,6 @@ if (typeof APIClient === 'undefined') {
                 method: 'POST',
                 body: JSON.stringify(credentials)
             });
-
-            if (response.success && response.data.token) {
-                this.setToken(response.data.token);
-            }
 
             return response;
         }
@@ -431,7 +482,43 @@ if (typeof APIClient === 'undefined') {
         }
 
         async getProfile() {
-            return await this.request('/auth/profile');
+            // Si no hay backend, no hay perfil
+            if (!this.baseURL) {
+                throw new Error('Backend no configurado');
+            }
+
+            try {
+                const response = await this.request('/auth/profile');
+                
+                // Validar respuesta estrictamente
+                if (!response || !response.success) {
+                    throw new Error('Respuesta inválida del servidor');
+                }
+                
+                return response;
+            } catch (error) {
+                // Si es 401 (no autorizado), limpiar token y lanzar error
+                if (error.response && error.response.status === 401) {
+                    this.clearToken();
+                    // Limpiar cookies también
+                    this.clearAuthCookies();
+                    throw new Error('Sesión expirada o inválida');
+                }
+                throw error;
+            }
+        }
+
+        // Limpiar cookies de autenticación
+        clearAuthCookies() {
+            if (typeof document === 'undefined') {
+                return;
+            }
+
+            const cookiesToClear = ['access_token', 'refresh_token', 'csrf_token'];
+            cookiesToClear.forEach(cookieName => {
+                document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+                document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/api/auth;`;
+            });
         }
 
         async updateProfile(data) {
@@ -450,20 +537,33 @@ if (typeof APIClient === 'undefined') {
             }
         }
 
-        logout() {
+        async logout() {
             this.clearToken();
-            localStorage.removeItem('currentUser');
-            localStorage.removeItem('cart');
+
+            if (!this.baseURL) {
+                return { success: true };
+            }
+
+            try {
+                const response = await this.request('/auth/logout', {
+                    method: 'POST',
+                    body: JSON.stringify({})
+                });
+                return response;
+            } catch (error) {
+                if (error.response && error.response.status === 401) {
+                    return { success: true, message: 'Sesión expirada' };
+                }
+                throw error;
+            }
         }
 
         setToken(token) {
             this.token = token;
-            localStorage.setItem('authToken', token);
         }
 
         clearToken() {
             this.token = null;
-            localStorage.removeItem('authToken');
         }
 
         // Método auxiliar para cargar JSON estático (fallback en producción)
@@ -748,10 +848,32 @@ if (typeof APIClient === 'undefined') {
                     return null;
                 }
                 
+                // 🆕 Verificar si el usuario puede ver productos medicinales
+                // Nota: Esto requiere verificar authManager si está disponible
+                let canViewMedicinal = false;
+                if (typeof window !== 'undefined' && window.authManager) {
+                    canViewMedicinal = window.authManager.isAuthenticated() && 
+                                      (() => {
+                                          const user = window.authManager.getCurrentUser();
+                                          return user && (user.account_status === 'approved' || user.role === 'admin');
+                                      })();
+                }
+                
                 const categoriesMap = new Map();
                 const seenSlugs = new Set();
                 
                 staticData.data.products.forEach(product => {
+                    // 🆕 FILTRAR productos medicinales si el usuario no tiene acceso
+                    if (!canViewMedicinal) {
+                        const isMedicinal = product.requires_prescription === true || 
+                                          product.is_medicinal === true ||
+                                          (product.category_slug && product.category_slug.includes('medicinal')) ||
+                                          (product.category && product.category.toLowerCase().includes('medicinal'));
+                        if (isMedicinal) {
+                            return; // Saltar este producto
+                        }
+                    }
+                    
                     let slug = product.category_slug || product.category;
                     let name = product.category || product.category_slug;
                     
@@ -930,7 +1052,30 @@ if (typeof APIClient === 'undefined') {
                 return filtered;
             };
             
-            // SIEMPRE intentar JSON estático PRIMERO (más rápido y funciona sin backend)
+            // Si hay backend configurado, usar API dinámica directamente (más actualizado)
+            if (this.baseURL) {
+                try {
+                    const queryParams = new URLSearchParams();
+                    
+                    Object.keys(filters).forEach(key => {
+                        if (filters[key] !== undefined && filters[key] !== null && filters[key] !== '') {
+                            queryParams.append(key, filters[key]);
+                        }
+                    });
+
+                    const queryString = queryParams.toString();
+                    const endpoint = queryString ? `/orders?${queryString}` : '/orders';
+                    
+                    console.log('🔗 Cargando pedidos desde API dinámica:', endpoint);
+                    const response = await this.request(endpoint);
+                    console.log('✅ Respuesta de API dinámica:', response);
+                    return response;
+                } catch (error) {
+                    console.warn('⚠️ API dinámica falló, intentando JSON estático como fallback...', error.message);
+                }
+            }
+            
+            // Si no hay backend o falló, intentar JSON estático
             try {
                 const staticData = await this.loadStaticJSON('orders.json');
                 console.log('🔍 JSON estático de orders cargado:', staticData);
@@ -940,7 +1085,6 @@ if (typeof APIClient === 'undefined') {
                     if (Array.isArray(ordersArray) && ordersArray.length > 0) {
                         let orders = applyFiltersToOrders(ordersArray, filters);
                         console.log('✅ Pedidos cargados desde JSON estático:', orders.length);
-                        console.log('📊 Primeros pedidos:', orders.slice(0, 3).map(o => ({ id: o.id, status: o.status, total: o.total })));
                         return {
                             success: true,
                             data: { orders },
@@ -960,73 +1104,15 @@ if (typeof APIClient === 'undefined') {
                 }
             } catch (error) {
                 console.warn('⚠️ Error al cargar JSON estático de orders:', error.message);
-                console.warn('⚠️ Intentando API dinámica...');
             }
             
-            // Solo si hay backend configurado Y el JSON falló, intentar API dinámica
-            if (this.baseURL) {
-                try {
-                    const queryParams = new URLSearchParams();
-                    
-                    Object.keys(filters).forEach(key => {
-                        if (filters[key] !== undefined && filters[key] !== null && filters[key] !== '') {
-                            queryParams.append(key, filters[key]);
-                        }
-                    });
-
-                    const queryString = queryParams.toString();
-                    const endpoint = queryString ? `/orders?${queryString}` : '/orders';
-                    
-                    return await this.request(endpoint);
-                } catch (error) {
-                    // Si la API dinámica falla, intentar JSON estático como último recurso
-                    console.warn('⚠️ API dinámica falló, intentando JSON estático como fallback...', error);
-                    try {
-                        const staticData = await this.loadStaticJSON('orders.json');
-                        if (staticData && staticData.success && staticData.data) {
-                            const ordersArray = staticData.data.orders || staticData.data || [];
-                            if (Array.isArray(ordersArray)) {
-                                let orders = applyFiltersToOrders(ordersArray, filters);
-                                console.log('✅ Pedidos cargados desde JSON estático (fallback):', orders.length);
-                                return {
-                                    success: true,
-                                    data: { orders },
-                                    message: 'Pedidos cargados desde API estática (fallback)'
-                                };
-                            }
-                        }
-                    } catch (staticError) {
-                        console.error('❌ No se pudo cargar JSON estático como fallback:', staticError);
-                    }
-                    throw error;
-                }
-            } else {
-                // No hay backend y no se pudo cargar JSON estático
-                console.warn('⚠️ No hay backend y JSON estático no disponible para orders');
-                // Intentar una última vez cargar el JSON
-                try {
-                    const staticData = await this.loadStaticJSON('orders.json');
-                    if (staticData && staticData.success && staticData.data) {
-                        const ordersArray = staticData.data.orders || staticData.data || [];
-                        if (Array.isArray(ordersArray)) {
-                            let orders = applyFiltersToOrders(ordersArray, filters);
-                            console.log('✅ Pedidos cargados desde JSON estático (último intento):', orders.length);
-                            return {
-                                success: true,
-                                data: { orders },
-                                message: 'Pedidos cargados desde API estática'
-                            };
-                        }
-                    }
-                } catch (finalError) {
-                    console.error('❌ Error final al cargar JSON estático:', finalError);
-                }
-                return {
-                    success: true,
-                    data: { orders: [] },
-                    message: 'No se pudieron cargar pedidos. Verifica que orders.json exista en /api/'
-                };
-            }
+            // Si todo falla, retornar array vacío
+            console.warn('⚠️ No se pudo cargar pedidos desde ninguna fuente');
+            return {
+                success: true,
+                data: { orders: [] },
+                message: 'No se pudieron cargar pedidos'
+            };
         }
 
         async updateOrderStatus(id, status) {
@@ -1121,6 +1207,31 @@ if (typeof APIClient === 'undefined') {
             return await this.request('/users/pending');
         }
 
+        async saveCultivationCession(cessionData) {
+            return await this.request('/cultivation-cessions', {
+                method: 'POST',
+                body: JSON.stringify(cessionData)
+            });
+        }
+
+        async saveUserRegistrationDocuments(registrationId, userId, documents) {
+            return await this.request('/user-registration-documents', {
+                method: 'POST',
+                body: {
+                    registration_id: registrationId,
+                    user_id: userId,
+                    documents: documents
+                }
+            });
+        }
+
+        async saveUserRegistration(registrationData) {
+            return await this.request('/user-registrations', {
+                method: 'POST',
+                body: JSON.stringify(registrationData)
+            });
+        }
+
 // Subir comprobante de pago
 async uploadPaymentProof(orderId, file) {
     const formData = new FormData();
@@ -1130,16 +1241,12 @@ async uploadPaymentProof(orderId, file) {
     const url = `${this.baseURL}/orders/${orderId}/payment-proof`;
     const headers = {};
 
-    // Agregar token si existe
-    if (this.token) {
-        headers['Authorization'] = `Bearer ${this.token}`;
-    }
-
     try {
         const response = await fetch(url, {
             method: 'POST',
             headers,
-            body: formData // No incluir Content-Type, el navegador lo manejará
+            body: formData, // No incluir Content-Type, el navegador lo manejará
+            credentials: 'include'
         });
 
         const data = await response.json();
@@ -1195,13 +1302,11 @@ async submitTransferProof(formData) {
     const url = `${this.baseURL}/payments/bank-transfer`;
     const headers = {};
 
-    // token
-    if (this.token) headers['Authorization'] = `Bearer ${this.token}`;
-
     const response = await fetch(url, {
         method: 'POST',
         headers,          // sin Content-Type; fetch lo define por boundary
-        body: formData
+        body: formData,
+        credentials: 'include'
     });
 
     const data = await response.json();

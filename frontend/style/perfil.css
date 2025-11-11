@@ -1,5 +1,3 @@
-/* === CSS Específico para perfil.html === */
-
 /* Hero section para perfil */
 .profile-header {
     padding: 40px 0;
@@ -281,141 +279,6 @@
     flex-wrap: wrap;
 }
 
-/* Modal de pedidos */
-.profile-modal {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-}
-
-.profile-modal-content {
-    background: var(--white);
-    border-radius: var(--border-radius);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    max-width: 800px;
-    width: 100%;
-    max-height: 90vh;
-    overflow-y: auto;
-    padding: 32px;
-}
-
-.profile-modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 24px;
-    padding-bottom: 16px;
-    border-bottom: 2px solid var(--light-gray);
-}
-
-.profile-modal-header h3 {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: var(--primary-green);
-    font-family: var(--font-primary);
-}
-
-.profile-modal-close {
-    background: none;
-    border: none;
-    color: var(--medium-gray);
-    font-size: 1.5rem;
-    cursor: pointer;
-    transition: var(--transition);
-    padding: 4px;
-}
-
-.profile-modal-close:hover {
-    color: var(--accent-black);
-}
-
-.profile-status-badge {
-    display: inline-block;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    margin-bottom: 20px;
-}
-
-.profile-table-container {
-    background: var(--light-gray);
-    border-radius: var(--border-radius);
-    padding: 20px;
-    margin-bottom: 24px;
-}
-
-.profile-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.profile-table thead {
-    border-bottom: 2px solid var(--medium-gray);
-}
-
-.profile-table th {
-    text-align: left;
-    padding-bottom: 12px;
-    color: var(--medium-gray);
-    font-size: 0.9rem;
-    font-weight: 600;
-}
-
-.profile-table th.text-right {
-    text-align: right;
-}
-
-.profile-table tbody tr {
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.profile-table td {
-    padding: 12px 0;
-    color: var(--accent-black);
-    font-size: 0.95rem;
-}
-
-.profile-table td.text-right {
-    text-align: right;
-}
-
-.profile-table td.font-semibold {
-    font-weight: 600;
-}
-
-.profile-totals {
-    background: var(--light-gray);
-    border-radius: var(--border-radius);
-    padding: 20px;
-    margin-bottom: 24px;
-}
-
-.profile-total-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
-    color: var(--medium-gray);
-}
-
-.profile-total-row.final {
-    border-top: 2px solid var(--medium-gray);
-    padding-top: 12px;
-    margin-top: 12px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--accent-black);
-}
-
-.profile-total-row.final .amount {
-    color: var(--primary-green);
-    font-size: 1.25rem;
-}
 
 /* ============================================
    RESPONSIVE DESIGN
@@ -456,8 +319,6 @@
     .profile-actions .secondary-button {
         width: 100%;
     }
-}
-
     /* Ajustes adicionales para móviles pequeños */
     .profile-header {
         padding: 30px 0;
@@ -476,8 +337,5 @@
         padding: 20px 16px;
     }
     
-    .profile-modal-content {
-        padding: 20px;
-    }
 }
 

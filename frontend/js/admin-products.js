@@ -189,9 +189,7 @@ async function loadCategories() {
         // Cargar todas las categorías disponibles (admin puede ver todo)
         // Pasar ?all=true para forzar cargar todas las categorías
         const response = await fetch(api.baseURL + '/products/categories?all=true', {
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-            }
+            credentials: 'include'
         }).then(res => res.json());
         
         console.log('📦 [loadCategories] Respuesta recibida:', response);

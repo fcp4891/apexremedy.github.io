@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logística - Apexremedy Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style/css_admin.css">
+    <script src="./js/basePath.js"></script>
+    <script src="./js/config.js"></script>
+    <script src="./js/utils.js"></script>
+    <script type="module" src="./js/adminTemplate.legacy.js"></script>
+    <script src="./js/api/apiClient.js"></script>
+    <script src="./js/auth.js"></script>
+    <script src="./js/notifications.js"></script>
+    <script src="./js/sessionManager.js"></script>
+    <script defer src="./js/adminTemplate.js"></script>
+    <script src="./js/pages/logistica-page.js" defer></script>
+</head>
+<body>
+    <!-- Header se carga automáticamente -->
+    <div id="header-container"></div>
+
+<div class="container mx-auto px-4 py-8">
+    <div class="admin-page-header">
+        <div>
+            <h1 class="admin-page-title">Gestión de Logística</h1>
+            <p class="admin-page-subtitle">Administra proveedores, envíos, zonas y materiales de empaque</p>
+        </div>
+    </div>
+
+    <!-- Estadísticas Rápidas -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm">Proveedores</p>
+                    <p id="totalProviders" class="text-3xl font-bold text-blue-600">0</p>
+                </div>
+                <div class="bg-blue-100 p-4 rounded-full">
+                    <i class="fas fa-truck text-blue-600 text-2xl"></i>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm">Envíos Activos</p>
+                    <p id="activeShipments" class="text-3xl font-bold text-green-600">0</p>
+                </div>
+                <div class="bg-green-100 p-4 rounded-full">
+                    <i class="fas fa-shipping-fast text-green-600 text-2xl"></i>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm">Zonas de Envío</p>
+                    <p id="totalZones" class="text-3xl font-bold text-purple-600">0</p>
+                </div>
+                <div class="bg-purple-100 p-4 rounded-full">
+                    <i class="fas fa-map-marked-alt text-purple-600 text-2xl"></i>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm">Materiales</p>
+                    <p id="totalMaterials" class="text-3xl font-bold text-orange-600">0</p>
+                </div>
+                <div class="bg-orange-100 p-4 rounded-full">
+                    <i class="fas fa-box text-orange-600 text-2xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mantenedores -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Proveedores de Envío -->
+        <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-bold text-gray-800">Proveedores de Envío</h3>
+                <i class="fas fa-truck text-blue-600 text-2xl"></i>
+            </div>
+            <p class="text-gray-600 mb-4">Gestiona empresas de envío externas e internas</p>
+            <button data-action="navigate" data-href="logistica-proveedores.html" class="admin-btn admin-btn--accent admin-btn--compact admin-full-width">
+                Gestionar
+            </button>
+        </div>
+
+        <!-- Envíos -->
+        <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-bold text-gray-800">Envíos</h3>
+                <i class="fas fa-shipping-fast text-green-600 text-2xl"></i>
+            </div>
+            <p class="text-gray-600 mb-4">Gestiona y rastrea todos los envíos de pedidos</p>
+            <button data-action="navigate" data-href="logistica-envios.html" class="admin-btn admin-btn--primary admin-btn--compact admin-full-width">
+                Gestionar
+            </button>
+        </div>
+
+        <!-- Zonas de Envío -->
+        <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-bold text-gray-800">Zonas de Envío</h3>
+                <i class="fas fa-map-marked-alt text-purple-600 text-2xl"></i>
+            </div>
+            <p class="text-gray-600 mb-4">Configura zonas geográficas y tarifas</p>
+            <button data-action="navigate" data-href="logistica-zonas.html" class="admin-btn admin-btn--accent admin-btn--compact admin-full-width">
+                Gestionar
+            </button>
+        </div>
+
+        <!-- Centros de Despacho -->
+        <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-bold text-gray-800">Centros de Despacho</h3>
+                <i class="fas fa-warehouse text-indigo-600 text-2xl"></i>
+            </div>
+            <p class="text-gray-600 mb-4">Gestiona bodegas y centros de distribución</p>
+            <button data-action="navigate" data-href="logistica-centros.html" class="admin-btn admin-btn--accent admin-btn--compact admin-full-width">
+                Gestionar
+            </button>
+        </div>
+
+        <!-- Conductores y Flota -->
+        <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-bold text-gray-800">Conductores y Flota</h3>
+                <i class="fas fa-car text-red-600 text-2xl"></i>
+            </div>
+            <p class="text-gray-600 mb-4">Gestiona conductores y vehículos de delivery</p>
+            <button data-action="navigate" data-href="logistica-conductores.html" class="admin-btn admin-btn--danger admin-btn--compact admin-full-width">
+                Gestionar
+            </button>
+        </div>
+
+        <!-- Materiales de Empaque -->
+        <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-bold text-gray-800">Materiales de Empaque</h3>
+                <i class="fas fa-box text-orange-600 text-2xl"></i>
+            </div>
+            <p class="text-gray-600 mb-4">Gestiona stock de bolsas, cajas y sellos</p>
+            <button data-action="navigate" data-href="logistica-materiales.html" class="admin-btn admin-btn--warning admin-btn--compact admin-full-width">
+                Gestionar
+            </button>
+        </div>
+
+        <!-- Puntos de Retiro -->
+        <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-bold text-gray-800">Puntos de Retiro</h3>
+                <i class="fas fa-store text-teal-600 text-2xl"></i>
+            </div>
+            <p class="text-gray-600 mb-4">Gestiona sucursales y puntos de retiro</p>
+            <button data-action="navigate" data-href="logistica-puntos-retiro.html" class="admin-btn admin-btn--accent admin-btn--compact admin-full-width">
+                Gestionar
+            </button>
+        </div>
+
+        <!-- Reglas de Envío Gratis -->
+        <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-bold text-gray-800">Envío Gratis</h3>
+                <i class="fas fa-gift text-pink-600 text-2xl"></i>
+            </div>
+            <p class="text-gray-600 mb-4">Configura reglas de envío gratis</p>
+            <button data-action="navigate" data-href="logistica-envio-gratis.html" class="admin-btn admin-btn--accent admin-btn--compact admin-full-width">
+                Gestionar
+            </button>
+        </div>
+
+        <!-- Zonas Restringidas -->
+        <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-bold text-gray-800">Zonas Restringidas</h3>
+                <i class="fas fa-ban text-red-600 text-2xl"></i>
+            </div>
+            <p class="text-gray-600 mb-4">Define zonas donde no se puede enviar</p>
+            <button data-action="navigate" data-href="logistica-zonas-restringidas.html" class="admin-btn admin-btn--danger admin-btn--compact admin-full-width">
+                Gestionar
+            </button>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

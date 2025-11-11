@@ -1,0 +1,651 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "NOM_COM": "Santiago",
+        "CUT_COM": "13101",
+        "codigo_region": "13",
+        "NOM_REG": "Metropolitana de Santiago"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-70.6693, -33.4372],
+          [-70.6477, -33.4372],
+          [-70.6477, -33.4629],
+          [-70.6693, -33.4629],
+          [-70.6693, -33.4372]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NOM_COM": "Providencia",
+        "CUT_COM": "13123",
+        "codigo_region": "13",
+        "NOM_REG": "Metropolitana de Santiago"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-70.6477, -33.4186],
+          [-70.5995, -33.4186],
+          [-70.5995, -33.4372],
+          [-70.6477, -33.4372],
+          [-70.6477, -33.4186]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NOM_COM": "Las Condes",
+        "CUT_COM": "13114",
+        "codigo_region": "13",
+        "NOM_REG": "Metropolitana de Santiago"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-70.5995, -33.3814],
+          [-70.5188, -33.3814],
+          [-70.5188, -33.4372],
+          [-70.5995, -33.4372],
+          [-70.5995, -33.3814]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NOM_COM": "Vitacura",
+        "CUT_COM": "13132",
+        "codigo_region": "13",
+        "NOM_REG": "Metropolitana de Santiago"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-70.5995, -33.3628],
+          [-70.5188, -33.3628],
+          [-70.5188, -33.3814],
+          [-70.5995, -33.3814],
+          [-70.5995, -33.3628]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NOM_COM": "Lo Barnechea",
+        "CUT_COM": "13115",
+        "codigo_region": "13",
+        "NOM_REG": "Metropolitana de Santiago"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-70.5188, -33.3256],
+          [-70.3896, -33.3256],
+          [-70.3896, -33.3814],
+          [-70.5188, -33.3814],
+          [-70.5188, -33.3256]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NOM_COM": "Ñuñoa",
+        "CUT_COM": "13120",
+        "codigo_region": "13",
+        "NOM_REG": "Metropolitana de Santiago"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-70.6184, -33.4372],
+          [-70.5888, -33.4372],
+          [-70.5888, -33.4629],
+          [-70.6184, -33.4629],
+          [-70.6184, -33.4372]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NOM_COM": "Macul",
+        "CUT_COM": "13118",
+        "codigo_region": "13",
+        "NOM_REG": "Metropolitana de Santiago"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-70.5888, -33.4629],
+          [-70.5565, -33.4629],
+          [-70.5565, -33.4886],
+          [-70.5888, -33.4886],
+          [-70.5888, -33.4629]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NOM_COM": "Peñalolén",
+        "CUT_COM": "13122",
+        "codigo_region": "13",
+        "NOM_REG": "Metropolitana de Santiago"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-70.5565, -33.4629],
+          [-70.4919, -33.4629],
+          [-70.4919, -33.5143],
+          [-70.5565, -33.5143],
+          [-70.5565, -33.4629]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NOM_COM": "La Reina",
+        "CUT_COM": "13113",
+        "codigo_region": "13",
+        "NOM_REG": "Metropolitana de Santiago"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-70.5565, -33.4372],
+          [-70.5188, -33.4372],
+          [-70.5188, -33.4629],
+          [-70.5565, -33.4629],
+          [-70.5565, -33.4372]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NOM_COM": "La Florida",
+        "CUT_COM": "13110",
+        "codigo_region": "13",
+        "NOM_REG": "Metropolitana de Santiago"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-70.6184, -33.4886],
+          [-70.5565, -33.4886],
+          [-70.5565, -33.5515],
+          [-70.6184, -33.5515],
+          [-70.6184, -33.4886]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NOM_COM": "Puente Alto",
+        "CUT_COM": "13201",
+        "codigo_region": "13",
+        "NOM_REG": "Metropolitana de Santiago"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-70.6184, -33.5515],
+          [-70.5188, -33.5515],
+          [-70.5188, -33.6515],
+          [-70.6184, -33.6515],
+          [-70.6184, -33.5515]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NOM_COM": "San Joaquín",
+        "CUT_COM": "13129",
+        "codigo_region": "13",
+        "NOM_REG": "Metropolitana de Santiago"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-70.6477, -33.4886],
+          [-70.6184, -33.4886],
+          [-70.6184, -33.5058],
+          [-70.6477, -33.5058],
+          [-70.6477, -33.4886]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NOM_COM": "San Miguel",
+        "CUT_COM": "13130",
+        "codigo_region": "13",
+        "NOM_REG": "Metropolitana de Santiago"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-70.6693, -33.4886],
+          [-70.6477, -33.4886],
+          [-70.6477, -33.5058],
+          [-70.6693, -33.5058],
+          [-70.6693, -33.4886]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NOM_COM": "La Cisterna",
+        "CUT_COM": "13109",
+        "codigo_region": "13",
+        "NOM_REG": "Metropolitana de Santiago"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-70.6693, -33.5058],
+          [-70.6477, -33.5058],
+          [-70.6477, -33.5286],
+          [-70.6693, -33.5286],
+          [-70.6693, -33.5058]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NOM_COM": "El Bosque",
+        "CUT_COM": "13105",
+        "codigo_region": "13",
+        "NOM_REG": "Metropolitana de Santiago"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-70.6693, -33.5286],
+          [-70.6477, -33.5286],
+          [-70.6477, -33.5686],
+          [-70.6693, -33.5686],
+          [-70.6693, -33.5286]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NOM_COM": "San Ramón",
+        "CUT_COM": "13131",
+        "codigo_region": "13",
+        "NOM_REG": "Metropolitana de Santiago"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-70.6477, -33.5286],
+          [-70.6184, -33.5286],
+          [-70.6184, -33.5515],
+          [-70.6477, -33.5515],
+          [-70.6477, -33.5286]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NOM_COM": "La Granja",
+        "CUT_COM": "13111",
+        "codigo_region": "13",
+        "NOM_REG": "Metropolitana de Santiago"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-70.6477, -33.5515],
+          [-70.6184, -33.5515],
+          [-70.6184, -33.5858],
+          [-70.6477, -33.5858],
+          [-70.6477, -33.5515]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NOM_COM": "Maipú",
+        "CUT_COM": "13119",
+        "codigo_region": "13",
+        "NOM_REG": "Metropolitana de Santiago"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-70.8050, -33.4629],
+          [-70.7050, -33.4629],
+          [-70.7050, -33.5429],
+          [-70.8050, -33.5429],
+          [-70.8050, -33.4629]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NOM_COM": "Cerrillos",
+        "CUT_COM": "13102",
+        "codigo_region": "13",
+        "NOM_REG": "Metropolitana de Santiago"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-70.7268, -33.4886],
+          [-70.6909, -33.4886],
+          [-70.6909, -33.5143],
+          [-70.7268, -33.5143],
+          [-70.7268, -33.4886]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NOM_COM": "Estación Central",
+        "CUT_COM": "13106",
+        "codigo_region": "13",
+        "NOM_REG": "Metropolitana de Santiago"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-70.7050, -33.4629],
+          [-70.6909, -33.4629],
+          [-70.6909, -33.4886],
+          [-70.7050, -33.4886],
+          [-70.7050, -33.4629]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NOM_COM": "Pedro Aguirre Cerda",
+        "CUT_COM": "13121",
+        "codigo_region": "13",
+        "NOM_REG": "Metropolitana de Santiago"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-70.6909, -33.4886],
+          [-70.6693, -33.4886],
+          [-70.6693, -33.5058],
+          [-70.6909, -33.5058],
+          [-70.6909, -33.4886]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NOM_COM": "Lo Espejo",
+        "CUT_COM": "13116",
+        "codigo_region": "13",
+        "NOM_REG": "Metropolitana de Santiago"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-70.6909, -33.5143],
+          [-70.6693, -33.5143],
+          [-70.6693, -33.5429],
+          [-70.6909, -33.5429],
+          [-70.6909, -33.5143]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NOM_COM": "Quinta Normal",
+        "CUT_COM": "13126",
+        "codigo_region": "13",
+        "NOM_REG": "Metropolitana de Santiago"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-70.7050, -33.4372],
+          [-70.6909, -33.4372],
+          [-70.6909, -33.4629],
+          [-70.7050, -33.4629],
+          [-70.7050, -33.4372]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NOM_COM": "Recoleta",
+        "CUT_COM": "13127",
+        "codigo_region": "13",
+        "NOM_REG": "Metropolitana de Santiago"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-70.6477, -33.4072],
+          [-70.6184, -33.4072],
+          [-70.6184, -33.4372],
+          [-70.6477, -33.4372],
+          [-70.6477, -33.4072]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NOM_COM": "Independencia",
+        "CUT_COM": "13108",
+        "codigo_region": "13",
+        "NOM_REG": "Metropolitana de Santiago"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-70.6693, -33.4072],
+          [-70.6477, -33.4072],
+          [-70.6477, -33.4372],
+          [-70.6693, -33.4372],
+          [-70.6693, -33.4072]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NOM_COM": "Conchalí",
+        "CUT_COM": "13104",
+        "codigo_region": "13",
+        "NOM_REG": "Metropolitana de Santiago"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-70.6909, -33.3686],
+          [-70.6477, -33.3686],
+          [-70.6477, -33.4072],
+          [-70.6909, -33.4072],
+          [-70.6909, -33.3686]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NOM_COM": "Huechuraba",
+        "CUT_COM": "13107",
+        "codigo_region": "13",
+        "NOM_REG": "Metropolitana de Santiago"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-70.6477, -33.3400],
+          [-70.6184, -33.3400],
+          [-70.6184, -33.3900],
+          [-70.6477, -33.3900],
+          [-70.6477, -33.3400]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NOM_COM": "Quilicura",
+        "CUT_COM": "13125",
+        "codigo_region": "13",
+        "NOM_REG": "Metropolitana de Santiago"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-70.7350, -33.3400],
+          [-70.6693, -33.3400],
+          [-70.6693, -33.3900],
+          [-70.7350, -33.3900],
+          [-70.7350, -33.3400]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NOM_COM": "Renca",
+        "CUT_COM": "13128",
+        "codigo_region": "13",
+        "NOM_REG": "Metropolitana de Santiago"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-70.7350, -33.3900],
+          [-70.6909, -33.3900],
+          [-70.6909, -33.4286],
+          [-70.7350, -33.4286],
+          [-70.7350, -33.3900]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NOM_COM": "Cerro Navia",
+        "CUT_COM": "13103",
+        "codigo_region": "13",
+        "NOM_REG": "Metropolitana de Santiago"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-70.7550, -33.4286],
+          [-70.7050, -33.4286],
+          [-70.7050, -33.4629],
+          [-70.7550, -33.4629],
+          [-70.7550, -33.4286]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NOM_COM": "Lo Prado",
+        "CUT_COM": "13117",
+        "codigo_region": "13",
+        "NOM_REG": "Metropolitana de Santiago"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-70.7350, -33.4372],
+          [-70.7050, -33.4372],
+          [-70.7050, -33.4629],
+          [-70.7350, -33.4629],
+          [-70.7350, -33.4372]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NOM_COM": "Pudahuel",
+        "CUT_COM": "13124",
+        "codigo_region": "13",
+        "NOM_REG": "Metropolitana de Santiago"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-70.8050, -33.3900],
+          [-70.7350, -33.3900],
+          [-70.7350, -33.4629],
+          [-70.8050, -33.4629],
+          [-70.8050, -33.3900]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NOM_COM": "San Bernardo",
+        "CUT_COM": "13401",
+        "codigo_region": "13",
+        "NOM_REG": "Metropolitana de Santiago"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-70.7268, -33.5686],
+          [-70.6693, -33.5686],
+          [-70.6693, -33.6400],
+          [-70.7268, -33.6400],
+          [-70.7268, -33.5686]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NOM_COM": "La Pintana",
+        "CUT_COM": "13112",
+        "codigo_region": "13",
+        "NOM_REG": "Metropolitana de Santiago"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-70.6693, -33.5858],
+          [-70.6184, -33.5858],
+          [-70.6184, -33.6229],
+          [-70.6693, -33.6229],
+          [-70.6693, -33.5858]
+        ]]
+      }
+    }
+  ]
+}

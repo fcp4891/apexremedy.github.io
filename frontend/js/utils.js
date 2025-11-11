@@ -32,20 +32,60 @@ class Utils {
 
     // Validar email
     static isValidEmail(email) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
+        if (!email || email.trim() === '') return false;
+        // Validación más estricta de email
+        const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+        return emailRegex.test(email.trim()) && email.length <= 254;
     }
 
-    // Validar RUT chileno
+    // Formatear RUT chileno
+    static formatRUT(rut) {
+        if (!rut || rut.trim() === '') return '';
+        // Limpiar RUT
+        let cleanRUT = rut.trim().replace(/\./g, '').replace(/-/g, '').toUpperCase();
+        // Agregar guión antes del último carácter
+        if (cleanRUT.length > 1) {
+            cleanRUT = cleanRUT.slice(0, -1) + '-' + cleanRUT.slice(-1);
+        }
+        // Agregar puntos cada 3 dígitos desde la derecha (antes del guión)
+        const parts = cleanRUT.split('-');
+        if (parts.length === 2) {
+            const body = parts[0];
+            const dv = parts[1];
+            let formatted = '';
+            for (let i = body.length - 1, count = 0; i >= 0; i--, count++) {
+                formatted = body[i] + formatted;
+                if (count % 3 === 2 && i > 0) {
+                    formatted = '.' + formatted;
+                }
+            }
+            return formatted + '-' + dv;
+        }
+        return cleanRUT;
+    }
+
+    // Validar RUT chileno (acepta con o sin puntos y guión)
     static isValidRUT(rut) {
-        const rutRegex = /^\d{1,2}\.\d{3}\.\d{3}-[\dkK]$/;
-        if (!rutRegex.test(rut)) return false;
+        if (!rut || rut.trim() === '') return false;
         
-        // Validar dígito verificador
-        const cleanRUT = rut.replace(/\./g, '').replace('-', '');
+        // Limpiar RUT y normalizar formato (eliminar puntos y guiones)
+        let cleanRUT = rut.trim().replace(/\./g, '').replace(/-/g, '').toUpperCase();
+        
+        // Verificar formato básico (debe tener 7 u 8 dígitos + 1 dígito verificador)
+        if (!/^\d{7,8}[\dkK]$/.test(cleanRUT)) {
+            return false;
+        }
+        
+        // Separar cuerpo y dígito verificador
         const body = cleanRUT.slice(0, -1);
         const dv = cleanRUT.slice(-1).toUpperCase();
         
+        // Validar que el cuerpo tenga 7 u 8 dígitos
+        if (body.length < 7 || body.length > 8) {
+            return false;
+        }
+        
+        // Calcular dígito verificador
         let sum = 0;
         let multiplier = 2;
         

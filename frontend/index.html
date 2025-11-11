@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <link rel="icon" type="image/png" href="./assets/images/logo.png">
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Apexremedy Dispensario Premium</title>
@@ -14,17 +13,17 @@
 
   <!-- Theme unificado -->
   <link rel="stylesheet" href="./style/css_home.css"/>
-  <link rel="stylesheet" href="./style/index.css"/>
+  <link rel="stylesheet" href="./style/index-page.css"/>
 
   <!-- Configuración y utilidades -->
-  <script src="./js/basePath.js"></script>
+  <script src="./js/env-detector.js"></script>
   <script src="./js/config.js"></script>
   <script src="./js/utils.js"></script>
   
   <!-- Template (inyecta header/footer y maneja carrito/hamburger) -->
   <script defer src="./js/template.js"></script>
 </head>
-<body>
+<body >
   <!-- Header template -->
   <div id="header-container"></div>
 
@@ -34,7 +33,7 @@
       <div class="hero-content">
         <h1 class="hero-title">Bienvenido a Apexremedy</h1>
         <p class="hero-subtitle">Tu dispensario de confianza con productos de la más alta calidad</p>
-        <a href="./tienda.html" class="cta-button">
+        <a href="./tienda.html" class="cta-button app-button app-button--primary">
           Explorar Productos <i class="fas fa-arrow-right"></i>
         </a>
       </div>
@@ -43,11 +42,11 @@
   </section>
 
   <!-- Sobre Nosotros -->
-  <section id="about" class="about-section">
-    <div class="container">
-      <div class="section-header">
-        <h2>Sobre Nosotros</h2>
-        <p>Comprometidos con la calidad y el bienestar de nuestros clientes</p>
+  <section id="about" class="about-section app-section">
+    <div class="container u-container">
+      <div class="section-header app-section__header">
+        <h2 class="app-section__title">Sobre Nosotros</h2>
+        <p class="app-section__subtitle">Comprometidos con la calidad y el bienestar de nuestros clientes</p>
       </div>
       <div class="about-grid">
         <div class="about-card">
@@ -70,7 +69,7 @@
     </div>
                 <!-- Cinta creativa -->
                 <div style="margin-top: 26px; text-align:center;">
-                  <a href="./nosotros.html" class="cta-button">
+        <a href="./nosotros.html" class="cta-button app-button app-button--primary">
                     <i class="fas fa-leaf mr-2"></i>Conoce nuestra historia y valores
                   </a>
                 </div>
@@ -79,9 +78,9 @@
   <!-- Resumen Medicinal & Confianza -->
 <section id="resumen" class="legal-section" style="position: relative; overflow: hidden;">
   <div class="container">
-    <div class="section-header">
-      <h2><i class="fas fa-balance-scale" style="color: var(--primary-green);"></i> Marco Legal & Derechos del Paciente</h2>
-      <p>Información clara, respaldo legal y seguridad para pacientes medicinales</p>
+      <div class="section-header app-section__header">
+        <h2 class="app-section__title"><i class="fas fa-balance-scale" style="color: var(--primary-green);"></i> Marco Legal & Derechos del Paciente</h2>
+        <p class="app-section__subtitle">Información clara, respaldo legal y seguridad para pacientes medicinales</p>
     </div>
 
     <!-- Quote inspiracional -->
@@ -180,8 +179,8 @@
     </div>
 
     <!-- CTA destacado -->
-    <div style="text-align: center; margin-top: 40px;">
-      <a href="./marco-legal.html" class="cta-button" style="font-size: 1.1rem; padding: 16px 32px;">
+      <div style="text-align: center; margin-top: 40px;">
+      <a href="./marco-legal.html" class="cta-button app-button app-button--primary" style="font-size: 1.1rem; padding: 16px 32px;">
         <i class="fas fa-book-open mr-2"></i>Explorar Centro Educativo Completo
       </a>
     </div>
@@ -261,7 +260,7 @@
 
       <!-- Botones de acción -->
       <div style="text-align: center;">
-        <a href="./registro.html" class="cta-button" style="display: inline-flex; align-items: center; gap: 10px; padding: 16px 40px; font-size: 1.1rem; margin-bottom: 15px;">
+              <a href="./registro.html" class="cta-button app-button app-button--primary" style="display: inline-flex; align-items: center; gap: 10px; padding: 16px 40px; font-size: 1.1rem; margin-bottom: 15px;">
           <i class="fas fa-user-plus"></i>
           Registrarse Ahora
         </a>
@@ -366,7 +365,7 @@
   <div id="cartSidebar" class="cart-sidebar">
     <div class="cart-header">
       <h3><i class="fas fa-shopping-cart"></i> Carrito de Compras</h3>
-      <button id="closeCart" class="cta-button" style="padding: 6px 12px;">Cerrar</button>
+      <button id="closeCart" class="cta-button app-button app-button--primary" style="padding: 6px 12px;">Cerrar</button>
     </div>
     <div id="cartItems" class="cart-items">
       <!-- Items del carrito se cargan aquí -->
@@ -384,163 +383,13 @@
   <!-- Scripts Core -->
   <script src="./js/api/apiClient.js"></script>
   <script src="./js/auth.js"></script>
-  <script src="./js/sessionManager.js"></script>
   <script src="./js/notifications.js"></script>
   <script src="./js/carrito.js"></script>
   <script src="./js/productModal.js"></script>
   <script src="./js/db_articulos.js"></script>
   
   <!-- Scripts de la página -->
-<!-- Scripts de la página -->
-<script>
-  // Cargar productos destacados
-  document.addEventListener('DOMContentLoaded', async () => {
-    try {
-      console.log('Cargando productos destacados...');
-      const products = await productManager.getFeaturedProducts(6);
-      
-      if (products && products.length > 0) {
-        productManager.renderProducts(products, 'featuredProducts');
-        console.log(`✅ ${products.length} productos destacados cargados`);
-        
-        // Verificar acceso medicinal solo en casos excepcionales
-        setTimeout(() => {
-          if (window.authManager && window.authManager.isAuthenticated()) {
-            const user = window.authManager.getCurrentUser();
-            if (user && user.role !== 'admin' && typeof user.account_status === 'undefined') {
-              console.log('💡 Token desactualizado detectado. Ejecuta: refreshUserToken() si es necesario');
-            }
-          }
-        }, 2000);
-      } else {
-        document.getElementById('featuredProducts').innerHTML = `
-          <div style="grid-column: 1/-1; text-align: center; padding: 40px 20px;">
-            <i class="fas fa-box-open" style="font-size: 3rem; color: var(--medium-gray); margin-bottom: 16px;"></i>
-            <p style="color: var(--medium-gray);">No hay productos destacados disponibles</p>
-            <a href="./tienda.html" class="cta-button" style="margin-top: 16px; display: inline-flex;">
-              Ver Toda la Tienda
-            </a>
-          </div>
-        `;
-      }
-    } catch (error) {
-      console.error('Error al cargar productos destacados:', error);
-      document.getElementById('featuredProducts').innerHTML = `
-        <div style="grid-column: 1/-1; text-align: center; padding: 40px 20px;">
-          <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: var(--error); margin-bottom: 16px;"></i>
-          <p style="color: var(--medium-gray);">Error al cargar productos</p>
-          <button onclick="location.reload()" class="cta-button" style="margin-top: 16px;">
-            Reintentar
-          </button>
-        </div>
-      `;
-    }
-  });
-
-  // Manejar formulario de contacto
-  document.getElementById('contactForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const submitBtn = document.getElementById('contactSubmitBtn');
-    const btnText = document.getElementById('contactBtnText');
-    const btnLoader = document.getElementById('contactBtnLoader');
-    const formMessage = document.getElementById('contactFormMessage');
-    
-    const name = document.getElementById('contactName').value.trim();
-    const email = document.getElementById('contactEmail').value.trim();
-    const message = document.getElementById('contactMessage').value.trim();
-    
-    if (!name || !email || !message) {
-      notify.warning('Por favor completa todos los campos', 'Campos Requeridos');
-      return;
-    }
-    
-    // Deshabilitar botón
-    submitBtn.disabled = true;
-    btnText.textContent = 'Enviando...';
-    btnLoader.classList.remove('hidden');
-    formMessage.classList.add('hidden');
-    
-    try {
-      // Simular envío (aquí conectarías con tu API)
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      notify.success('¡Mensaje enviado con éxito! Te contactaremos pronto.', '✅ Enviado');
-      document.getElementById('contactForm').reset();
-    } catch (error) {
-      notify.error('Error al enviar el mensaje. Intenta nuevamente.', 'Error de Envío');
-    } finally {
-      submitBtn.disabled = false;
-      btnText.textContent = 'Enviar';
-      btnLoader.classList.add('hidden');
-    }
-  });
-
-  // ✅ FUNCIÓN CHECKOUT CORREGIDA - SIN CONFIRM()
-  async function checkout() {
-    if (typeof authManager !== 'undefined' && !authManager.isAuthenticated()) {
-      const confirmed = await notify.confirm({
-        type: 'info',
-        icon: 'question',
-        title: 'Iniciar Sesión Requerido',
-        message: 'Debes iniciar sesión para completar la compra. ¿Deseas ir a la página de login?',
-        confirmText: 'Sí, Ir al Login',
-        cancelText: 'Cancelar',
-        confirmClass: 'primary'
-      });
-      
-      if (confirmed) {
-        window.location.href = './login.html?redirect=checkout';
-      }
-    } else {
-      window.location.href = './checkout.html';
-    }
-  }
-</script>
-<script>
-  // 🔒 Control de visibilidad según estado de autenticación
-  document.addEventListener('DOMContentLoaded', async function() {
-    const registroSection = document.getElementById('registro-catalogo'); // index
-    const userNotice = document.getElementById('unregistered-user-notice'); // tienda
-    
-    // Función para verificar si está logueado
-    function isUserLoggedIn() {
-      // Método 1: Verificar token en localStorage
-      const token = localStorage.getItem('authToken');
-      if (token) return true;
-      
-      // Método 2: Verificar token en sessionStorage
-      const sessionToken = sessionStorage.getItem('authToken');
-      if (sessionToken) return true;
-      
-      // Método 3: Verificar objeto de usuario
-      const user = localStorage.getItem('user');
-      if (user) {
-        try {
-          const userObj = JSON.parse(user);
-          return userObj && userObj.id;
-        } catch (e) {
-          return false;
-        }
-      }
-      
-      return false;
-    }
-    
-    const isLoggedIn = isUserLoggedIn();
-    
-    // Ocultar/mostrar según estado
-    if (registroSection) {
-      registroSection.style.display = isLoggedIn ? 'none' : 'block';
-    }
-    
-    if (userNotice) {
-      userNotice.style.display = isLoggedIn ? 'none' : 'block';
-    }
-    
-    console.log('Estado de autenticación:', isLoggedIn ? '✅ Logueado' : '❌ No logueado');
-  });
-</script>
+  <script src="./js/pages/index-page.js" defer></script>
 
 <!-- Modal Detalle Producto - Estilo Carta Magic (70% pantalla) -->
 <div id="productDetailModal" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4 backdrop-blur-sm" onclick="closeProductModalOnOverlay(event)">
@@ -595,7 +444,7 @@
 
                   <!-- Botón Agregar al Carrito -->
                   <div class="px-4 pb-4">
-                      <button onclick="addToCartFromModal()" class="cta-button">
+                      <button onclick="addToCartFromModal()" class="cta-button app-button app-button--primary">
                           <i class="fas fa-shopping-cart text-lg"></i>
                           <span class="text-base">Agregar al Carrito</span>
                       </button>
@@ -1514,7 +1363,7 @@
   
                     <!-- Botón Agregar al Carrito -->
                     <div class="px-4 pb-4">
-                        <button onclick="addToCartFromModal()" class="cta-button">
+                        <button onclick="addToCartFromModal()" class="cta-button app-button app-button--primary">
                             <i class="fas fa-shopping-cart text-lg"></i>
                             <span class="text-base">Agregar al Carrito</span>
                         </button>

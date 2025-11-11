@@ -135,13 +135,13 @@
     
     navLinks.forEach(link => {
       const navKey = link.getAttribute('data-nav');
-      link.classList.remove('active');
+      link.classList.remove('active', 'app-navbar__link--active');
       
       // Marcar como activo si coincide
       if (currentPage.includes(navKey) || 
           (currentPage === '' && navKey === 'index') ||
           (currentPage === 'index.html' && navKey === 'index')) {
-        link.classList.add('active');
+        link.classList.add('active', 'app-navbar__link--active');
       }
     });
   }

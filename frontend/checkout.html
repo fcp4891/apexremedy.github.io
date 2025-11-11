@@ -19,8 +19,8 @@
     <div id="header-container"></div>
 
     <!-- Header Section -->
-    <section class="shop-header">
-        <div class="container">
+    <section class="shop-header app-section">
+        <div class="container u-container">
             <h1>
                 <i class="fas fa-shopping-bag"></i>Finalizar Compra
             </h1>
@@ -31,14 +31,14 @@
     </section>
 
     <!-- Main Content -->
-    <div class="container checkout-container" style="max-width: 1400px; margin: 0 auto; padding: 40px 20px;">
+    <div class="container u-container checkout-container" style="max-width: 1400px; margin: 0 auto; padding: 40px 20px;">
         <div class="checkout-grid" style="display: grid; grid-template-columns: 2fr 1fr; gap: 32px; align-items: start;">
             
             <!-- Formulario de Checkout -->
             <div>
                 
                 <!-- Información de Entrega -->
-                <div class="checkout-section">
+                <div class="checkout-section app-card">
                     <h2 class="checkout-title">
                         <i class="fas fa-shipping-fast"></i>
                         Información de Entrega
@@ -113,7 +113,7 @@
                 </div>
 
                 <!-- Método de Pago -->
-                <div class="checkout-section">
+                <div class="checkout-section app-card">
                     <h2 class="checkout-title">
                         <i class="fas fa-credit-card"></i>
                         Método de Pago
@@ -184,7 +184,7 @@
                 </div>
 
                 <!-- Términos y Condiciones de Envío -->
-                <div class="terms-container">
+                <div class="terms-container app-card">
                     <h2 class="checkout-title">
                         <i class="fas fa-file-contract"></i>
                         Términos y Condiciones de Envío
@@ -229,7 +229,7 @@
 
 <!-- Resumen del Pedido -->
 <div>
-    <div class="checkout-section" style="position: sticky; top: 100px;">
+    <div class="checkout-section app-card" style="position: sticky; top: 100px;">
         <h2 class="checkout-title">
             <i class="fas fa-receipt"></i>
             Resumen del Pedido
@@ -269,7 +269,7 @@
         <!-- Botón de Compra -->
         <button onclick="submitOrder()" 
                 id="submitBtn" 
-                class="checkout-btn">
+                class="checkout-btn app-button app-button--primary">
             <i class="fas fa-lock mr-2"></i>Confirmar Pedido
         </button>
         

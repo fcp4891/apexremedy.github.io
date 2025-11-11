@@ -1,40 +1,37 @@
 # PowerShell script to start a local HTTP server
-Write-Host "Starting local server on http://localhost:8000" -ForegroundColor Green
-Write-Host "Press Ctrl+C to stop the server" -ForegroundColor Yellow
+Write-Host "========================================" -ForegroundColor Cyan
+Write-Host "  ApexRemedy Catálogo - Servidor Local" -ForegroundColor Cyan
+Write-Host "========================================" -ForegroundColor Cyan
+Write-Host ""
 
-# Try Python first
+# Try Node.js first (recommended)
+$node = Get-Command node -ErrorAction SilentlyContinue
+if ($node) {
+    Write-Host "[*] Usando Node.js..." -ForegroundColor Green
+    Write-Host "[*] Si el puerto 8000 está ocupado, se usará uno alternativo automáticamente" -ForegroundColor Yellow
+    Write-Host ""
+    node server.js
+    exit
+}
+
+# Try Python as fallback
 $python = Get-Command python -ErrorAction SilentlyContinue
 if ($python) {
+    Write-Host "[*] Node.js no encontrado, usando Python..." -ForegroundColor Yellow
+    Write-Host "[*] Iniciando servidor en http://localhost:8000" -ForegroundColor Green
+    Write-Host "[*] Presiona Ctrl+C para detener el servidor" -ForegroundColor Yellow
+    Write-Host ""
     python -m http.server 8000
-} else {
-    # Use PowerShell's built-in web server (requires PowerShell 5.1+)
-    $listener = New-Object System.Net.HttpListener
-    $listener.Prefixes.Add("http://localhost:8000/")
-    $listener.Start()
-    
-    Write-Host "Server started at http://localhost:8000" -ForegroundColor Green
-    
-    while ($listener.IsListening) {
-        $context = $listener.GetContext()
-        $request = $context.Request
-        $response = $context.Response
-        
-        $localPath = $request.Url.LocalPath
-        if ($localPath -eq "/") {
-            $localPath = "/index.html"
-        }
-        
-        $filePath = Join-Path $PWD ($localPath.Substring(1))
-        
-        if (Test-Path $filePath) {
-            $content = [System.IO.File]::ReadAllBytes($filePath)
-            $response.ContentLength64 = $content.Length
-            $response.OutputStream.Write($content, 0, $content.Length)
-        } else {
-            $response.StatusCode = 404
-        }
-        
-        $response.Close()
-    }
+    exit
 }
+
+# If neither is available, show error
+Write-Host "[ERROR] No se encontró Node.js ni Python" -ForegroundColor Red
+Write-Host ""
+Write-Host "Por favor instala uno de los siguientes:" -ForegroundColor Yellow
+Write-Host "  - Node.js: https://nodejs.org/" -ForegroundColor Cyan
+Write-Host "  - Python: https://www.python.org/" -ForegroundColor Cyan
+Write-Host ""
+pause
+
 

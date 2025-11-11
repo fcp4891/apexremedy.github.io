@@ -14,14 +14,16 @@
     <script src="./js/config.js"></script>
     <script src="./js/utils.js"></script>
     <script defer src="./js/template.js"></script>
+    <!-- SignaturePad para firmas electrónicas -->
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
 </head>
 <body class="register-page">
     <!-- Header template -->
     <div id="header-container"></div>
 
     <!-- Formulario de Registro -->
-    <div class="register-container">
-        <div class="container register-form-wrapper">
+    <div class="register-container app-section">
+        <div class="container u-container register-form-wrapper">
             <!-- Header -->
             <div class="register-header">
                 <div class="register-icon-container">
@@ -32,7 +34,7 @@
             </div>
 
             <!-- Formulario Multi-Step -->
-            <div class="about-card register-form-card">
+            <div class="about-card app-card register-form-card">
                 <!-- Progress Steps -->
                 <div class="steps-container">
                     <div class="steps-progress-line"></div>
@@ -92,33 +94,163 @@
                             <div class="form-grid-2">
                                 <div>
                                     <label class="form-label">
-                                        Teléfono (opcional)
+                                        Teléfono *
                                     </label>
                                     <div class="input-with-icon">
                                         <i class="fas fa-phone"></i>
                                         <input type="tel" 
                                                id="phone" 
                                                name="phone"
+                                               required
                                                placeholder="+56912345678">
                                     </div>
                                 </div>
 
                                 <div>
                                     <label class="form-label">
-                                        RUT (opcional)
+                                        RUT *
                                     </label>
                                     <div class="input-with-icon">
                                         <i class="fas fa-id-card"></i>
                                         <input type="text" 
                                                id="rut" 
                                                name="rut"
-                                               placeholder="12345678-9">
+                                               required
+                                               placeholder="12.345.678-9">
+                                    </div>
+                                    <p id="rutError" style="display: none; color: #ef4444; font-size: 0.875rem; margin-top: 4px;">
+                                        <i class="fas fa-exclamation-circle"></i> <span id="rutErrorText">RUT inválido</span>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Dirección (Opcional) -->
+                            <div id="addressSection">
+                                <label class="form-label">
+                                    <i class="fas fa-map-marker-alt"></i> Dirección de Entrega (Opcional)
+                                </label>
+                                <p class="password-hint" style="margin-bottom: 8px;">
+                                    Puedes agregarla ahora o más tarde en el proceso de compra
+                                </p>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-home"></i>
+                                    <input type="text" 
+                                           id="addressLine1" 
+                                           name="addressLine1"
+                                           placeholder="Calle y número">
+                                </div>
+                                <!-- Tipo de dirección (Depto/Casa/Oficina) -->
+                                <div class="input-with-icon" style="margin-top: 8px; position: relative;">
+                                    <i class="fas fa-building" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); z-index: 1;"></i>
+                                    <select id="addressType" 
+                                            name="addressType"
+                                            style="width: 100%; padding: 12px 12px 12px 40px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem; appearance: none; background-color: white; cursor: pointer;">
+                                        <option value="">Tipo (opcional)</option>
+                                        <option value="Depto">Depto</option>
+                                        <option value="Casa">Casa</option>
+                                        <option value="Oficina">Oficina</option>
+                                    </select>
+                                    <i class="fas fa-chevron-down" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); pointer-events: none; color: #9ca3af;"></i>
+                                </div>
+                                
+                                <!-- Referencia (texto aparte) -->
+                                <div class="input-with-icon" style="margin-top: 8px;">
+                                    <i class="fas fa-info-circle"></i>
+                                    <input type="text" 
+                                           id="addressReference" 
+                                           name="addressReference"
+                                           placeholder="Referencia (opcional)">
+                                </div>
+                                
+                                <!-- Región (Combobox) -->
+                                <div class="input-with-icon" style="margin-top: 8px; position: relative;">
+                                    <i class="fas fa-globe-americas" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); z-index: 1;"></i>
+                                    <select id="region" 
+                                            name="region"
+                                            onchange="loadCitiesForRegion()"
+                                            style="width: 100%; padding: 12px 12px 12px 40px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem; appearance: none; background-color: white; cursor: pointer;">
+                                        <option value="">Selecciona una región</option>
+                                    </select>
+                                    <i class="fas fa-chevron-down" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); pointer-events: none; color: #9ca3af;"></i>
+                                </div>
+                                
+                                <!-- Ciudad (Combobox) -->
+                                <div class="input-with-icon" style="margin-top: 8px; position: relative;">
+                                    <i class="fas fa-city" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); z-index: 1;"></i>
+                                    <select id="city" 
+                                            name="city"
+                                            onchange="loadCommunesForCity()"
+                                            disabled
+                                            style="width: 100%; padding: 12px 12px 12px 40px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem; appearance: none; background-color: #f5f5f5; cursor: not-allowed; color: #999;">
+                                        <option value="">Primero selecciona una región</option>
+                                    </select>
+                                    <i class="fas fa-chevron-down" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); pointer-events: none; color: #9ca3af;"></i>
+                                </div>
+                                
+                                <!-- Comuna (Combobox) -->
+                                <div class="input-with-icon" style="margin-top: 8px; position: relative;">
+                                    <i class="fas fa-map-pin" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); z-index: 1;"></i>
+                                    <select id="commune" 
+                                            name="commune"
+                                            disabled
+                                            style="width: 100%; padding: 12px 12px 12px 40px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem; appearance: none; background-color: #f5f5f5; cursor: not-allowed; color: #999;">
+                                        <option value="">Primero selecciona una ciudad</option>
+                                    </select>
+                                    <i class="fas fa-chevron-down" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); pointer-events: none; color: #9ca3af;"></i>
+                                </div>
+                            </div>
+
+                            <!-- Fechas de Cesión de Cultivo -->
+                            <div class="form-grid-2" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--light-gray);">
+                                <div>
+                                    <label class="form-label">
+                                        <i class="fas fa-calendar-alt" style="color: var(--primary-green); margin-right: 6px;"></i>
+                                        Fecha Inicio de Cesión *
+                                    </label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-calendar-check"></i>
+                                        <input type="date" 
+                                               id="fechaInicio" 
+                                               name="fechaInicio"
+                                               required
+                                               min="">
+                                    </div>
+                                    <p class="password-hint" style="font-size: 0.85rem;">
+                                        Fecha desde la cual autorizas el cultivo
+                                    </p>
+                                </div>
+
+                                <div>                                   
+                                    <div id="fechaTerminoContainer">
+                                        <label class="form-label">
+                                            <i class="fas fa-calendar-times" style="color: var(--primary-green); margin-right: 6px;"></i>
+                                            Fecha Término de Cesión *
+                                        </label>
+                                        <div class="input-with-icon">
+                                            <i class="fas fa-calendar"></i>
+                                            <input type="date" 
+                                                   id="fechaTermino" 
+                                                   name="fechaTermino"
+                                                   required
+                                                   min="">
+                                        </div>
+                                        <p class="password-hint" style="font-size: 0.85rem;">
+                                            Ingresa la fecha de término de la cesión
+                                        </p>
+                                    </div>
+                                    <div style="margin-bottom: 8px;">
+                                        <label class="terms-checkbox-label" style="font-size: 0.95rem; font-weight: 600;">
+                                            <input type="checkbox" 
+                                                   id="esIndefinido"
+                                                   name="esIndefinido">
+                                            <span>Indefinido / Revocable</span>
+                                        </label>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Contraseña -->
-                            <div class="form-grid-2">
+                            <div class="form-grid-2" style="margin-top: 20px;">
                                 <div>
                                     <label class="form-label">
                                         Contraseña *
@@ -155,6 +287,12 @@
                                                minlength="6"
                                                placeholder="••••••••">
                                     </div>
+                                    <p id="passwordMatchError" style="display: none; color: #ef4444; font-size: 0.875rem; margin-top: 4px;">
+                                        <i class="fas fa-exclamation-circle"></i> Las contraseñas no coinciden
+                                    </p>
+                                    <p id="passwordMatchSuccess" style="display: none; color: #10b981; font-size: 0.875rem; margin-top: 4px;">
+                                        <i class="fas fa-check-circle"></i> Las contraseñas coinciden
+                                    </p>
                                 </div>
                             </div>
 
@@ -172,7 +310,7 @@
                         </div>
 
                         <div class="step-buttons">
-                            <button type="button" onclick="nextStep()" class="cta-button full-width">
+                            <button type="button" onclick="nextStep()" class="cta-button app-button app-button--primary full-width">
                                 Siguiente: Documentos <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>
                             </button>
                         </div>
@@ -194,19 +332,26 @@
                             </label>
                             <div class="upload-zone" id="uploadReceta" style="border: 2px dashed var(--light-gray); border-radius: var(--border-radius); padding: 30px; text-align: center; cursor: pointer; transition: all 0.3s; background: var(--white);">
                                 <input type="file" id="recetaFile" accept=".pdf,.jpg,.jpeg,.png" class="hidden" onchange="handleDocumentUpload(event, 'receta')">
+                                <!-- Contenedor de previsualización -->
+                                <div id="recetaImagePreview" style="display: none; margin-bottom: 20px; text-align: center;">
+                                    <img id="recetaImagePreviewImg" src="" alt="Vista previa" style="max-width: 200px; max-height: 200px; border-radius: 8px; border: 2px solid var(--light-gray); box-shadow: 0 2px 8px rgba(0,0,0,0.1); object-fit: contain; display: none;">
+                                    <div id="recetaPdfPreview" style="display: none; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 2px solid var(--light-gray); max-width: 200px; margin: 0 auto;">
+                                        <i class="fas fa-file-pdf" style="font-size: 3rem; color: #dc3545; margin-bottom: 8px; display: block;"></i>
+                                        <p id="recetaPdfFileName" style="font-size: 0.85rem; color: var(--medium-gray); margin: 0; word-break: break-word;"></p>
+                                    </div>
+                                </div>
                                 <div id="recetaPlaceholder">
                                     <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: var(--medium-gray); margin-bottom: 12px; display: block;"></i>
                                     <p style="color: var(--medium-gray); margin-bottom: 8px; font-weight: 600;">Arrastra tu receta médica aquí</p>
                                     <p style="color: var(--medium-gray); font-size: 0.85rem; margin-bottom: 16px;">o haz clic para seleccionar</p>
-                                    <button type="button" onclick="document.getElementById('recetaFile').click()" class="secondary-button">
+                                    <button type="button" onclick="document.getElementById('recetaFile').click()" class="secondary-button app-button app-button--secondary">
                                         <i class="fas fa-folder-open" style="margin-right: 8px;"></i>Seleccionar Archivo
                                     </button>
                                 </div>
                                 <div id="recetaPreview" style="display: none;">
-                                    <i class="fas fa-file-pdf" style="font-size: 3rem; color: var(--primary-green); margin-bottom: 12px; display: block;"></i>
                                     <p id="recetaFileName" style="font-weight: 600; color: var(--primary-green); margin-bottom: 8px;"></p>
                                     <p id="recetaFileSize" style="font-size: 0.85rem; color: var(--medium-gray); margin-bottom: 16px;"></p>
-                                    <button type="button" onclick="removeDocument('receta')" class="secondary-button" style="border-color: var(--error); color: var(--error);">
+                                    <button type="button" onclick="removeDocument('receta')" class="secondary-button app-button app-button--danger" style="border-color: var(--error); color: var(--error);">
                                         <i class="fas fa-trash" style="margin-right: 8px;"></i>Eliminar
                                     </button>
                                 </div>
@@ -220,19 +365,26 @@
     </label>
     <div class="upload-zone" id="uploadCarnet" style="border: 2px dashed var(--light-gray); border-radius: var(--border-radius); padding: 30px; text-align: center; cursor: pointer; transition: all 0.3s; background: var(--white);">
         <input type="file" id="carnetFile" accept=".pdf,.jpg,.jpeg,.png" class="hidden" onchange="handleDocumentUpload(event, 'carnet')">
+        <!-- Contenedor de previsualización -->
+        <div id="carnetImagePreview" style="display: none; margin-bottom: 20px; text-align: center;">
+            <img id="carnetImagePreviewImg" src="" alt="Vista previa" style="max-width: 200px; max-height: 200px; border-radius: 8px; border: 2px solid var(--light-gray); box-shadow: 0 2px 8px rgba(0,0,0,0.1); object-fit: contain; display: none;">
+            <div id="carnetPdfPreview" style="display: none; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 2px solid var(--light-gray); max-width: 200px; margin: 0 auto;">
+                <i class="fas fa-file-pdf" style="font-size: 3rem; color: #dc3545; margin-bottom: 8px; display: block;"></i>
+                <p id="carnetPdfFileName" style="font-size: 0.85rem; color: var(--medium-gray); margin: 0; word-break: break-word;"></p>
+            </div>
+        </div>
         <div id="carnetPlaceholder">
             <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: var(--medium-gray); margin-bottom: 12px; display: block;"></i>
             <p style="color: var(--medium-gray); margin-bottom: 8px; font-weight: 600;">Arrastra tu carnet aquí</p>
             <p style="color: var(--medium-gray); font-size: 0.85rem; margin-bottom: 16px;">o haz clic para seleccionar</p>
-            <button type="button" onclick="document.getElementById('carnetFile').click()" class="secondary-button">
+            <button type="button" onclick="document.getElementById('carnetFile').click()" class="secondary-button app-button app-button--secondary">
                 <i class="fas fa-folder-open" style="margin-right: 8px;"></i>Seleccionar Archivo
             </button>
         </div>
         <div id="carnetPreview" style="display: none;">
-            <i class="fas fa-file-image" style="font-size: 3rem; color: var(--primary-green); margin-bottom: 12px; display: block;"></i>
             <p id="carnetFileName" style="font-weight: 600; color: var(--primary-green); margin-bottom: 8px;"></p>
             <p id="carnetFileSize" style="font-size: 0.85rem; color: var(--medium-gray); margin-bottom: 16px;"></p>
-            <button type="button" onclick="removeDocument('carnet')" class="secondary-button" style="border-color: var(--error); color: var(--error);">
+            <button type="button" onclick="removeDocument('carnet')" class="secondary-button app-button app-button--danger" style="border-color: var(--error); color: var(--error);">
                 <i class="fas fa-trash" style="margin-right: 8px;"></i>Eliminar
             </button>
         </div>
@@ -247,19 +399,26 @@
     </label>
     <div class="upload-zone" id="uploadCertificado" style="border: 2px dashed var(--light-gray); border-radius: var(--border-radius); padding: 30px; text-align: center; cursor: pointer; transition: all 0.3s; background: var(--white);">
         <input type="file" id="certificadoFile" accept=".pdf,.jpg,.jpeg,.png" class="hidden" onchange="handleDocumentUpload(event, 'certificado')">
+        <!-- Contenedor de previsualización -->
+        <div id="certificadoImagePreview" style="display: none; margin-bottom: 20px; text-align: center;">
+            <img id="certificadoImagePreviewImg" src="" alt="Vista previa" style="max-width: 200px; max-height: 200px; border-radius: 8px; border: 2px solid var(--light-gray); box-shadow: 0 2px 8px rgba(0,0,0,0.1); object-fit: contain; display: none;">
+            <div id="certificadoPdfPreview" style="display: none; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 2px solid var(--light-gray); max-width: 200px; margin: 0 auto;">
+                <i class="fas fa-file-pdf" style="font-size: 3rem; color: #dc3545; margin-bottom: 8px; display: block;"></i>
+                <p id="certificadoPdfFileName" style="font-size: 0.85rem; color: var(--medium-gray); margin: 0; word-break: break-word;"></p>
+            </div>
+        </div>
         <div id="certificadoPlaceholder">
             <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: var(--medium-gray); margin-bottom: 12px; display: block;"></i>
             <p style="color: var(--medium-gray); margin-bottom: 8px; font-weight: 600;">Arrastra tu certificado aquí</p>
             <p style="color: var(--medium-gray); font-size: 0.85rem; margin-bottom: 16px;">o haz clic para seleccionar</p>
-            <button type="button" onclick="document.getElementById('certificadoFile').click()" class="secondary-button">
+            <button type="button" onclick="document.getElementById('certificadoFile').click()" class="secondary-button app-button app-button--secondary">
                 <i class="fas fa-folder-open" style="margin-right: 8px;"></i>Seleccionar Archivo
             </button>
         </div>
         <div id="certificadoPreview" style="display: none;">
-            <i class="fas fa-file-alt" style="font-size: 3rem; color: var(--primary-green); margin-bottom: 12px; display: block;"></i>
             <p id="certificadoFileName" style="font-weight: 600; color: var(--primary-green); margin-bottom: 8px;"></p>
             <p id="certificadoFileSize" style="font-size: 0.85rem; color: var(--medium-gray); margin-bottom: 16px;"></p>
-            <button type="button" onclick="removeDocument('certificado')" class="secondary-button" style="border-color: var(--error); color: var(--error);">
+            <button type="button" onclick="removeDocument('certificado')" class="secondary-button app-button app-button--danger" style="border-color: var(--error); color: var(--error);">
                 <i class="fas fa-trash" style="margin-right: 8px;"></i>Eliminar
             </button>
         </div>
@@ -267,11 +426,35 @@
     <input type="hidden" id="certificadoData">
 </div>
 
+<!-- Documento 4: Poder de Cultivo (Cesión) -->
+<div class="document-upload-area" style="margin-bottom: 24px;">
+    <label style="display: block; font-weight: 600; margin-bottom: 12px; color: var(--accent-black); display: flex; align-items: center; gap: 8px;">
+        <i class="fas fa-leaf" style="color: #0f766e;"></i> Poder de Cultivo (Cesión de Derechos) *
+    </label>
+    <p style="color: var(--medium-gray); font-size: 0.9rem; margin-bottom: 16px;">
+        Debes completar y generar el formulario de cesión de derechos de cultivo. Este documento es obligatorio según la Ley 20.000.
+    </p>
+    
+    <!-- Contenedor para el formulario de poder cultivo -->
+    <div id="poderCultivoContainer"></div>
+    
+    <input type="hidden" id="poderCultivoData">
+    <input type="hidden" id="poderCultivoFileName">
+    
+    <div id="poderCultivoStatus" style="display: none; margin-top: 12px; padding: 12px; background: #ecfdf5; border: 1px solid #10b981; border-radius: 8px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <i class="fas fa-check-circle" style="color: #10b981;"></i>
+            <span style="color: #065f46; font-weight: 600;">Documento de cesión generado correctamente</span>
+        </div>
+        <p id="poderCultivoFileNameDisplay" style="color: #047857; font-size: 0.85rem; margin: 8px 0 0 0;"></p>
+    </div>
+</div>
+
 <div style="margin-top: 32px; display: flex; gap: 12px;">
-    <button type="button" onclick="prevStep()" class="secondary-button" style="flex: 1;">
+    <button type="button" onclick="prevStep()" class="secondary-button app-button app-button--secondary" style="flex: 1;">
         <i class="fas fa-arrow-left" style="margin-right: 8px;"></i> Atrás
     </button>
-    <button type="button" onclick="submitForm()" id="submitBtn" class="cta-button" style="flex: 2;">
+    <button type="button" onclick="submitForm()" id="submitBtn" class="cta-button app-button app-button--primary" style="flex: 2;">
         <span id="btnText">Crear Cuenta</span>
         <i id="btnLoader" style="display: none;" class="fas fa-spinner fa-spin" style="margin-left: 8px;"></i>
     </button>
@@ -302,6 +485,114 @@
 <script src="./js/db_articulos.js"></script>
 <script src="./js/carrito.js"></script>
 
+<!-- Cargar componente de poder cultivo -->
+<script>
+// Cargar el componente de poder cultivo
+async function loadPoderCultivoForm() {
+    try {
+        const response = await fetch('./components/poder-cultivo-form.html');
+        if (response.ok) {
+            const html = await response.text();
+            const container = document.getElementById('poderCultivoContainer');
+            if (container) {
+                container.innerHTML = html;
+                // Ejecutar scripts del componente
+                const scripts = container.querySelectorAll('script');
+                scripts.forEach(oldScript => {
+                    const newScript = document.createElement('script');
+                    if (oldScript.src) {
+                        newScript.src = oldScript.src;
+                    } else {
+                        newScript.textContent = oldScript.textContent;
+                    }
+                    document.body.appendChild(newScript);
+                    oldScript.remove();
+                });
+                // Inicializar el formulario
+                if (window.initPoderCultivoForm) {
+                    window.initPoderCultivoForm();
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error cargando formulario de poder cultivo:', error);
+    }
+}
+
+// Escuchar evento cuando se genera el documento
+document.addEventListener('poderCultivoGenerated', async function(event) {
+    const { htmlBase64, fileName, cessionData } = event.detail;
+    
+    console.log('📝 Evento poderCultivoGenerated recibido:', {
+        htmlBase64_length: htmlBase64 ? htmlBase64.length : 0,
+        fileName: fileName,
+        preview: htmlBase64 ? htmlBase64.substring(0, 100) : 'null'
+    });
+    
+    // Guardar en el input hidden
+    const poderCultivoDataInput = document.getElementById('poderCultivoData');
+    const poderCultivoFileNameInput = document.getElementById('poderCultivoFileName');
+    
+    if (poderCultivoDataInput) {
+        poderCultivoDataInput.value = htmlBase64;
+        console.log('✅ Valor guardado en poderCultivoData:', {
+            value_length: poderCultivoDataInput.value ? poderCultivoDataInput.value.length : 0,
+            preview: poderCultivoDataInput.value ? poderCultivoDataInput.value.substring(0, 100) : 'null'
+        });
+    } else {
+        console.error('❌ No se encontró el elemento poderCultivoData');
+    }
+    
+    if (poderCultivoFileNameInput) {
+        poderCultivoFileNameInput.value = fileName;
+    } else {
+        console.error('❌ No se encontró el elemento poderCultivoFileName');
+    }
+    
+    // Guardar datos de cesión en localStorage temporalmente (se guardarán en BD al hacer submit)
+    if (cessionData) {
+        localStorage.setItem('tempCessionData', JSON.stringify(cessionData));
+    }
+    
+    // Mostrar estado
+    const statusDiv = document.getElementById('poderCultivoStatus');
+    const fileNameDisplay = document.getElementById('poderCultivoFileNameDisplay');
+    if (statusDiv) {
+        statusDiv.style.display = 'block';
+    }
+    if (fileNameDisplay) {
+        fileNameDisplay.textContent = `Archivo: ${fileName}`;
+    }
+    
+    notify.success('Documento de cesión generado correctamente');
+});
+
+// Cargar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', () => {
+    // Cargar cuando se muestre el step 2
+    const observer = new MutationObserver((mutations) => {
+        const step2 = document.getElementById('step2');
+        if (step2 && step2.style.display !== 'none') {
+            loadPoderCultivoForm();
+            observer.disconnect();
+        }
+    });
+    
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['style', 'class']
+    });
+    
+    // También intentar cargar inmediatamente si step2 ya está visible
+    const step2 = document.getElementById('step2');
+    if (step2 && step2.style.display !== 'none') {
+        loadPoderCultivoForm();
+    }
+});
+</script>
+
 <script>
 // ===========================================
 // VARIABLES GLOBALES
@@ -315,6 +606,71 @@ const totalSteps = 2;
 // ===========================================
 
 function nextStep() {
+    // Validar RUT y correo antes de avanzar (por si se autocompletaron incorrectamente)
+    const rutInput = document.getElementById('rut');
+    const emailInput = document.getElementById('email');
+    
+    // Validar RUT si existe y tiene valor
+    if (rutInput && rutInput.value.trim() !== '') {
+        const rutError = document.getElementById('rutError');
+        let cleanRUT = rutInput.value.trim().replace(/\./g, '').replace(/-/g, '').replace(/\s/g, '').toUpperCase();
+        
+        if (/^\d{7,8}[\dkK]$/.test(cleanRUT)) {
+            const body = cleanRUT.slice(0, -1);
+            const dv = cleanRUT.slice(-1).toUpperCase();
+            if (body.length >= 7 && body.length <= 8) {
+                let sum = 0;
+                let multiplier = 2;
+                for (let i = body.length - 1; i >= 0; i--) {
+                    sum += parseInt(body[i]) * multiplier;
+                    multiplier = multiplier === 7 ? 2 : multiplier + 1;
+                }
+                const remainder = sum % 11;
+                const calculatedDV = remainder === 0 ? '0' : remainder === 1 ? 'K' : (11 - remainder).toString();
+                
+                if (dv !== calculatedDV) {
+                    notify.error(`El RUT ingresado no es válido. El dígito verificador debería ser "${calculatedDV}"`);
+                    if (rutInput) {
+                        rutInput.style.borderColor = '#ef4444';
+                        rutInput.focus();
+                    }
+                    if (rutError) {
+                        const errorText = rutError.querySelector('#rutErrorText');
+                        if (errorText) {
+                            errorText.textContent = `Dígito verificador incorrecto. Debería ser "${calculatedDV}" en lugar de "${dv}"`;
+                        }
+                        rutError.style.display = 'block';
+                    }
+                    return false;
+                }
+            }
+        } else {
+            // Formato inválido
+            notify.error('El RUT ingresado no tiene un formato válido');
+            if (rutInput) {
+                rutInput.style.borderColor = '#ef4444';
+                rutInput.focus();
+            }
+            return false;
+        }
+    }
+    
+    // Validar correo si existe y tiene valor
+    if (emailInput && emailInput.value.trim() !== '') {
+        const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+        const isValid = emailRegex.test(emailInput.value.trim()) && emailInput.value.length <= 254;
+        
+        if (!isValid) {
+            notify.error('El correo electrónico ingresado no es válido. Por favor, corrígelo antes de continuar.');
+            if (emailInput) {
+                emailInput.style.borderColor = '#ef4444';
+                emailInput.focus();
+            }
+            return false;
+        }
+    }
+    
+    // Si pasa todas las validaciones, ejecutar validateStep1 y avanzar
     if (validateStep1()) {
         currentStep = 2;
         updateStepDisplay();
@@ -368,36 +724,181 @@ function updateStepDisplay() {
 // ===========================================
 
 function validateStep1() {
-const name = document.getElementById('name').value.trim();
-const email = document.getElementById('email').value.trim();
-const password = document.getElementById('password').value;
-const confirmPassword = document.getElementById('confirmPassword').value;
-const terms = document.getElementById('terms').checked;
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    const rut = document.getElementById('rut').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const fechaInicio = document.getElementById('fechaInicio').value;
+    const esIndefinido = document.getElementById('esIndefinido').checked;
+    const fechaTermino = document.getElementById('fechaTermino').value;
+    const terms = document.getElementById('terms').checked;
+    const rutError = document.getElementById('rutError');
+    const emailInput = document.getElementById('email');
+    const rutInput = document.getElementById('rut');
 
-if (!name || name.length < 3) {
-notify.warning('El nombre debe tener al menos 3 caracteres');
-return false;
-}
+    // Validar nombre
+    if (!name || name.length < 3) {
+        notify.error('El nombre debe tener al menos 3 caracteres');
+        document.getElementById('name').focus();
+        return false;
+    }
 
-if (!email) {
-notify.warning('Por favor ingresa tu correo electrónico');
-return false;
-}
+    // Validar email (obligatorio)
+    if (!email) {
+        notify.error('Por favor ingresa tu correo electrónico');
+        emailInput.style.borderColor = '#ef4444';
+        emailInput.focus();
+        return false;
+    }
 
-if (!password || password.length < 6) {
-notify.warning('La contraseña debe tener al menos 6 caracteres');
-return false;
-}
+    // Validar formato de email
+    let emailValid = false;
+    if (typeof Utils !== 'undefined' && Utils.isValidEmail) {
+        emailValid = Utils.isValidEmail(email);
+    } else {
+        const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+        emailValid = emailRegex.test(email.trim()) && email.length <= 254;
+    }
 
-if (password !== confirmPassword) {
-notify.warning('Las contraseñas no coinciden');
-return false;
-}
+    if (!emailValid) {
+        notify.error('Por favor ingresa un correo electrónico válido');
+        emailInput.style.borderColor = '#ef4444';
+        emailInput.focus();
+        return false;
+    } else {
+        emailInput.style.borderColor = '#10b981';
+    }
 
-if (!terms) {
-notify.warning('Debes aceptar los términos y condiciones');
-return false;
-}
+    // Validar teléfono (obligatorio)
+    if (!phone) {
+        notify.error('Por favor ingresa tu teléfono');
+        document.getElementById('phone').style.borderColor = '#ef4444';
+        document.getElementById('phone').focus();
+        return false;
+    } else {
+        document.getElementById('phone').style.borderColor = '';
+    }
+
+    // Validar RUT (obligatorio)
+    if (!rut || rut.trim() === '') {
+        notify.error('Por favor ingresa tu RUT');
+        if (rutInput) {
+            rutInput.style.borderColor = '#ef4444';
+            rutInput.focus();
+        }
+        if (rutError) {
+            const errorText = rutError.querySelector('#rutErrorText');
+            if (errorText) errorText.textContent = 'Debes ingresar tu RUT';
+            rutError.style.display = 'block';
+        }
+        return false;
+    }
+
+    // Validar que el RUT sea válido (validación estricta)
+    let rutValid = false;
+    let rutValidationError = '';
+    
+    // Limpiar RUT (eliminar puntos, guiones y espacios)
+    let cleanRUT = rut.trim().replace(/\./g, '').replace(/-/g, '').replace(/\s/g, '').toUpperCase();
+    
+    // Verificar formato básico
+    if (!/^\d{7,8}[\dkK]$/.test(cleanRUT)) {
+        rutValidationError = 'El RUT debe tener 7 u 8 dígitos seguidos de un dígito verificador (ej: 12345678-9)';
+    } else {
+        const body = cleanRUT.slice(0, -1);
+        const dv = cleanRUT.slice(-1).toUpperCase();
+        
+        if (body.length < 7 || body.length > 8) {
+            rutValidationError = 'El RUT debe tener 7 u 8 dígitos en el cuerpo';
+        } else {
+            // Calcular dígito verificador
+            let sum = 0;
+            let multiplier = 2;
+            for (let i = body.length - 1; i >= 0; i--) {
+                sum += parseInt(body[i]) * multiplier;
+                multiplier = multiplier === 7 ? 2 : multiplier + 1;
+            }
+            const remainder = sum % 11;
+            const calculatedDV = remainder === 0 ? '0' : remainder === 1 ? 'K' : (11 - remainder).toString();
+            
+            if (dv !== calculatedDV) {
+                rutValidationError = `El dígito verificador es incorrecto. Debería ser "${calculatedDV}" en lugar de "${dv}"`;
+            } else {
+                rutValid = true;
+            }
+        }
+    }
+
+    if (!rutValid) {
+        notify.error(rutValidationError || 'El RUT ingresado no es válido. Verifica el formato y el dígito verificador.');
+        if (rutInput) {
+            rutInput.style.borderColor = '#ef4444';
+            rutInput.focus();
+        }
+        if (rutError) {
+            const errorText = rutError.querySelector('#rutErrorText');
+            if (errorText) errorText.textContent = rutValidationError || 'RUT inválido. Verifica el formato y el dígito verificador.';
+            rutError.style.display = 'block';
+        }
+        return false;
+    } else {
+        if (rutInput) rutInput.style.borderColor = '#10b981';
+        if (rutError) rutError.style.display = 'none';
+    }
+
+    // Validar contraseña
+    if (!password || password.length < 6) {
+        notify.error('La contraseña debe tener al menos 6 caracteres');
+        document.getElementById('password').focus();
+        return false;
+    }
+
+    // Validar que las contraseñas coincidan
+    if (password !== confirmPassword) {
+        notify.error('Las contraseñas no coinciden');
+        document.getElementById('confirmPassword').focus();
+        return false;
+    }
+
+    // Validar fecha inicio
+    if (!fechaInicio) {
+        notify.error('Debes ingresar la fecha de inicio de la cesión');
+        document.getElementById('fechaInicio').focus();
+        return false;
+    }
+
+    // Validar fecha término (obligatoria si NO está marcado "Indefinido / Revocable")
+    if (!esIndefinido) {
+        if (!fechaTermino) {
+            notify.error('Debes ingresar la fecha de término de la cesión o marcar "Indefinido / Revocable"');
+            const fechaTerminoInput = document.getElementById('fechaTermino');
+            if (fechaTerminoInput) {
+                fechaTerminoInput.style.borderColor = '#ef4444';
+                fechaTerminoInput.focus();
+            }
+            return false;
+        }
+        
+        // Validar que fecha término sea mayor o igual a fecha inicio
+        if (fechaTermino < fechaInicio) {
+            notify.error('La fecha de término debe ser mayor o igual a la fecha de inicio');
+            const fechaTerminoInput = document.getElementById('fechaTermino');
+            if (fechaTerminoInput) {
+                fechaTerminoInput.style.borderColor = '#ef4444';
+                fechaTerminoInput.focus();
+            }
+            return false;
+        }
+    }
+
+    // Validar términos
+    if (!terms) {
+        notify.error('Debes aceptar los términos y condiciones');
+        document.getElementById('terms').focus();
+        return false;
+    }
 
 return true;
 }
@@ -483,7 +984,54 @@ const base64 = e.target.result;
 // Guardar en hidden input
 document.getElementById(`${type}Data`).value = base64;
 
-// Mostrar preview
+// Mostrar previsualización de imagen/PDF
+const imagePreview = document.getElementById(`${type}ImagePreview`);
+const imagePreviewImg = document.getElementById(`${type}ImagePreviewImg`);
+const pdfPreview = document.getElementById(`${type}PdfPreview`);
+const pdfFileName = document.getElementById(`${type}PdfFileName`);
+
+// Detectar si es PDF por tipo MIME o extensión
+const isPDF = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+const isImage = file.type.startsWith('image/');
+
+if (imagePreview) {
+    if (isImage) {
+        // Es una imagen - mostrar preview
+        imagePreview.style.display = 'block';
+        imagePreview.style.visibility = 'visible';
+        if (imagePreviewImg) {
+            imagePreviewImg.style.display = 'block';
+            imagePreviewImg.style.visibility = 'visible';
+            imagePreviewImg.src = base64;
+        }
+        if (pdfPreview) {
+            pdfPreview.style.display = 'none';
+            pdfPreview.style.visibility = 'hidden';
+        }
+    } else if (isPDF) {
+        // Es un PDF - mostrar ícono de PDF
+        imagePreview.style.display = 'block';
+        imagePreview.style.visibility = 'visible';
+        if (imagePreviewImg) {
+            imagePreviewImg.style.display = 'none';
+            imagePreviewImg.style.visibility = 'hidden';
+            imagePreviewImg.src = '';
+        }
+        if (pdfPreview) {
+            pdfPreview.style.display = 'block';
+            pdfPreview.style.visibility = 'visible';
+            if (pdfFileName) {
+                pdfFileName.textContent = file.name;
+            }
+        }
+    } else {
+        // Otro tipo - ocultar preview
+        imagePreview.style.display = 'none';
+        imagePreview.style.visibility = 'hidden';
+    }
+}
+
+// Mostrar preview de información
 document.getElementById(`${type}Placeholder`).style.display = 'none';
 document.getElementById(`${type}Preview`).style.display = 'block';
 document.getElementById(`${type}FileName`).textContent = file.name;
@@ -504,6 +1052,21 @@ function removeDocument(type) {
             document.getElementById(`${type}Data`).value = '';
             document.getElementById(`${type}Placeholder`).style.display = 'block';
             document.getElementById(`${type}Preview`).style.display = 'none';
+            
+            // Ocultar previsualización de imagen/PDF
+            const imagePreview = document.getElementById(`${type}ImagePreview`);
+            const imagePreviewImg = document.getElementById(`${type}ImagePreviewImg`);
+            const pdfPreview = document.getElementById(`${type}PdfPreview`);
+            
+            if (imagePreview) {
+                imagePreview.style.display = 'none';
+            }
+            if (imagePreviewImg) {
+                imagePreviewImg.src = '';
+            }
+            if (pdfPreview) {
+                pdfPreview.style.display = 'none';
+            }
             
             notify.info(`${getDocumentName(type)} eliminado`);
         }
@@ -530,42 +1093,94 @@ function removeDocument(type) {
         // ===========================================
         
         // Toggle password visibility
-        document.getElementById('togglePassword').addEventListener('click', function() {
-            const passwordInput = document.getElementById('password');
-            const icon = this.querySelector('i');
-            
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                passwordInput.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
-            }
-        });
-
-        // Formatear RUT mientras se escribe
-        document.getElementById('rut').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/[^0-9kK]/g, '');
-            if (value.length > 1) {
-                value = value.slice(0, -1) + '-' + value.slice(-1);
-            }
-            e.target.value = value;
-        });
+        const togglePasswordBtn = document.getElementById('togglePassword');
+        if (togglePasswordBtn) {
+            togglePasswordBtn.addEventListener('click', function() {
+                const passwordInput = document.getElementById('password');
+                const icon = this.querySelector('i');
+                
+                if (passwordInput && icon) {
+                    if (passwordInput.type === 'password') {
+                        passwordInput.type = 'text';
+                        icon.classList.remove('fa-eye');
+                        icon.classList.add('fa-eye-slash');
+                    } else {
+                        passwordInput.type = 'password';
+                        icon.classList.remove('fa-eye-slash');
+                        icon.classList.add('fa-eye');
+                    }
+                }
+            });
+        }
 
         // ===========================================
         // SUBMIT DEL FORMULARIO
         // ===========================================
         
         function submitForm() {
+            // Validar firma del cediente (obligatoria)
+            const cedenteSignatureCanvas = document.getElementById('cedenteSignatureCanvas');
+            const cedenteSignatureError = document.getElementById('cedenteSignatureError');
+            
+            // Verificar si existe el SignaturePad (puede estar en el scope del componente)
+            let hasSignature = false;
+            
+            // Intentar acceder al SignaturePad desde el scope global o del componente
+            if (typeof window.cedenteSignaturePad !== 'undefined' && window.cedenteSignaturePad) {
+                hasSignature = !window.cedenteSignaturePad.isEmpty();
+            } else {
+                // Buscar el canvas y verificar si tiene contenido
+                if (cedenteSignatureCanvas) {
+                    const ctx = cedenteSignatureCanvas.getContext('2d');
+                    const imageData = ctx.getImageData(0, 0, cedenteSignatureCanvas.width, cedenteSignatureCanvas.height);
+                    // Verificar si hay píxeles no blancos (firma)
+                    const hasNonWhitePixels = imageData.data.some((pixel, index) => {
+                        if (index % 4 === 3) return false; // Saltar canal alpha
+                        return pixel < 255;
+                    });
+                    hasSignature = hasNonWhitePixels;
+                }
+            }
+            
+            // También verificar si el poder de cultivo ya fue generado (contiene la firma)
+            const poderCultivoData = document.getElementById('poderCultivoData').value;
+            if (poderCultivoData && poderCultivoData.includes('data:image/png;base64')) {
+                hasSignature = true;
+            }
+            
+            if (!hasSignature) {
+                // Mostrar error en el componente
+                if (cedenteSignatureError) {
+                    cedenteSignatureError.style.display = 'block';
+                }
+                
+                // Scroll al campo de firma
+                if (cedenteSignatureCanvas) {
+                    cedenteSignatureCanvas.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    // Resaltar el canvas
+                    cedenteSignatureCanvas.style.border = '2px solid #ef4444';
+                    setTimeout(() => {
+                        cedenteSignatureCanvas.style.border = '';
+                    }, 3000);
+                }
+                
+                notify.error('Debes firmar el documento de poder de cultivo antes de continuar');
+                return;
+            }
+            
+            // Ocultar error si la firma está presente
+            if (cedenteSignatureError) {
+                cedenteSignatureError.style.display = 'none';
+            }
+            
             // Validar documentos
             const receta = document.getElementById('recetaData').value;
             const carnet = document.getElementById('carnetData').value;
             const certificado = document.getElementById('certificadoData').value;
+            const poderCultivo = document.getElementById('poderCultivoData').value;
             
-            if (!receta || !carnet || !certificado) {
-                notify.error('Debes cargar los 3 documentos requeridos');
+            if (!receta || !carnet || !certificado || !poderCultivo) {
+                notify.error('Debes cargar los 4 documentos requeridos (Receta Médica, Carnet de Identidad, Certificado de Antecedentes y Poder de Cultivo)');
                 return;
             }
             
@@ -599,14 +1214,221 @@ function removeDocument(type) {
                 const firstName = nameParts[0] || '';
                 const lastName = nameParts.slice(1).join(' ') || '';
                 
+                // Validar email (usar Utils si está disponible, sino validación inline)
+                let emailValid = false;
+                if (typeof Utils !== 'undefined' && Utils.isValidEmail) {
+                    emailValid = Utils.isValidEmail(email);
+                } else {
+                    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+                    emailValid = email && emailRegex.test(email.trim()) && email.length <= 254;
+                }
+                
+                if (!emailValid) {
+                    notify.error('Por favor ingresa un correo electrónico válido');
+                    const emailInput = document.getElementById('email');
+                    emailInput.style.borderColor = '#ef4444';
+                    emailInput.focus();
+                    resetSubmitButton();
+                    return;
+                } else {
+                    document.getElementById('email').style.borderColor = '#10b981';
+                }
+                
+                // Validar RUT (obligatorio)
+                const rut = document.getElementById('rut').value.trim();
+                const rutError = document.getElementById('rutError');
+                const rutInput = document.getElementById('rut');
+                
+                if (!rut || rut.trim() === '') {
+                    notify.error('El RUT es obligatorio');
+                    if (rutInput) {
+                        rutInput.style.borderColor = '#ef4444';
+                        rutInput.focus();
+                    }
+                    if (rutError) {
+                        const errorText = rutError.querySelector('#rutErrorText');
+                        if (errorText) errorText.textContent = 'Debes ingresar tu RUT';
+                        rutError.style.display = 'block';
+                    }
+                    resetSubmitButton();
+                    return;
+                }
+                
+                // Validar formato y dígito verificador del RUT
+                let rutValid = false;
+                // Limpiar RUT (eliminar puntos, guiones y espacios)
+                let cleanRUT = rut.trim().replace(/\./g, '').replace(/-/g, '').replace(/\s/g, '').toUpperCase();
+                
+                console.log('🔍 Validando RUT - Original:', rut, 'Limpiado:', cleanRUT);
+                
+                // Verificar formato básico (7-8 dígitos + dígito verificador)
+                if (/^\d{7,8}[\dkK]$/.test(cleanRUT)) {
+                    const body = cleanRUT.slice(0, -1);
+                    const dv = cleanRUT.slice(-1).toUpperCase();
+                    
+                    if (body.length >= 7 && body.length <= 8) {
+                        let sum = 0;
+                        let multiplier = 2;
+                        for (let i = body.length - 1; i >= 0; i--) {
+                            sum += parseInt(body[i]) * multiplier;
+                            multiplier = multiplier === 7 ? 2 : multiplier + 1;
+                        }
+                        const remainder = sum % 11;
+                        const calculatedDV = remainder === 0 ? '0' : remainder === 1 ? 'K' : (11 - remainder).toString();
+                        rutValid = dv === calculatedDV;
+                        
+                        console.log('🔍 RUT validación - Body:', body, 'DV ingresado:', dv, 'DV calculado:', calculatedDV, 'Válido:', rutValid);
+                    }
+                } else {
+                    console.log('🔍 RUT no cumple formato básico:', cleanRUT);
+                }
+                
+                if (!rutValid) {
+                    notify.error('El RUT ingresado no es válido. Verifica el formato (ej: 12.345.678-9) y el dígito verificador.');
+                    if (rutInput) {
+                        rutInput.style.borderColor = '#ef4444';
+                        rutInput.focus();
+                    }
+                    if (rutError) {
+                        const errorText = rutError.querySelector('#rutErrorText');
+                        if (errorText) errorText.textContent = 'RUT inválido. Verifica el formato y el dígito verificador.';
+                        rutError.style.display = 'block';
+                    }
+                    resetSubmitButton();
+                    return;
+                } else {
+                    if (rutInput) rutInput.style.borderColor = '#10b981';
+                    if (rutError) rutError.style.display = 'none';
+                    console.log('✅ RUT válido en frontend');
+                }
+                
+                // Validar teléfono (obligatorio)
+                const phone = document.getElementById('phone').value.trim();
+                if (!phone) {
+                    notify.error('El teléfono es obligatorio');
+                    const phoneInput = document.getElementById('phone');
+                    phoneInput.style.borderColor = '#ef4444';
+                    phoneInput.focus();
+                    resetSubmitButton();
+                    return;
+                } else {
+                    document.getElementById('phone').style.borderColor = '';
+                }
+
+                // Validar que las contraseñas coincidan
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                const passwordInput = document.getElementById('password');
+                const confirmPasswordInput = document.getElementById('confirmPassword');
+                if (password !== confirmPassword) {
+                    notify.error('Las contraseñas no coinciden');
+                    if (confirmPasswordInput) confirmPasswordInput.style.borderColor = '#ef4444';
+                    if (passwordInput) passwordInput.style.borderColor = '#ef4444';
+                    if (confirmPasswordInput) confirmPasswordInput.focus();
+                    resetSubmitButton();
+                    return;
+                } else {
+                    if (passwordInput) passwordInput.style.borderColor = '';
+                    if (confirmPasswordInput) confirmPasswordInput.style.borderColor = '';
+                }
+                
                 // Preparar datos según nueva estructura de base de datos
+                const addressLine1 = document.getElementById('addressLine1').value.trim();
+                const addressType = document.getElementById('addressType').value;
+                const addressReference = document.getElementById('addressReference').value.trim();
+                // Combinar tipo y referencia en addressLine2 si existe alguno
+                let addressLine2 = '';
+                if (addressType && addressReference) {
+                    addressLine2 = `${addressType} ${addressReference}`;
+                } else if (addressType) {
+                    addressLine2 = addressType;
+                } else if (addressReference) {
+                    addressLine2 = addressReference;
+                }
+                
+                const regionSelect = document.getElementById('region');
+                const citySelect = document.getElementById('city');
+                const communeSelect = document.getElementById('commune');
+                const region = regionSelect.value;
+                const city = citySelect.value;
+                const commune = communeSelect.value;
+                
+                // Limpiar y formatear RUT antes de enviar al backend
+                // El backend acepta RUT con o sin puntos, pero debe tener guión
+                let rutFormateado = rut.trim();
+                
+                // Limpiar puntos y espacios
+                let cleanRUTParaEnvio = rutFormateado.replace(/\./g, '').replace(/\s/g, '').toUpperCase();
+                
+                // Asegurar que tenga guión antes del dígito verificador
+                if (cleanRUTParaEnvio && !cleanRUTParaEnvio.includes('-')) {
+                    // Si no tiene guión, agregarlo antes del último carácter
+                    if (cleanRUTParaEnvio.length >= 8) {
+                        const body = cleanRUTParaEnvio.slice(0, -1);
+                        const dv = cleanRUTParaEnvio.slice(-1);
+                        cleanRUTParaEnvio = body + '-' + dv;
+                    }
+                }
+                
+                // El backend puede aceptar con o sin puntos, pero para asegurar compatibilidad
+                // enviaremos con formato estándar: 12.345.678-9
+                if (cleanRUTParaEnvio.includes('-')) {
+                    const parts = cleanRUTParaEnvio.split('-');
+                    if (parts.length === 2) {
+                        const body = parts[0];
+                        const dv = parts[1];
+                        // Agregar puntos cada 3 dígitos desde la derecha
+                        const formattedBody = body.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                        rutFormateado = formattedBody + '-' + dv;
+                    } else {
+                        rutFormateado = cleanRUTParaEnvio;
+                    }
+                } else {
+                    rutFormateado = cleanRUTParaEnvio;
+                }
+                
+                // Validar una vez más antes de enviar (doble verificación)
+                let cleanRUTFinal = rutFormateado.replace(/\./g, '').replace(/-/g, '').replace(/\s/g, '').toUpperCase();
+                if (/^\d{7,8}[\dkK]$/.test(cleanRUTFinal)) {
+                    const body = cleanRUTFinal.slice(0, -1);
+                    const dv = cleanRUTFinal.slice(-1).toUpperCase();
+                    if (body.length >= 7 && body.length <= 8) {
+                        let sum = 0;
+                        let multiplier = 2;
+                        for (let i = body.length - 1; i >= 0; i--) {
+                            sum += parseInt(body[i]) * multiplier;
+                            multiplier = multiplier === 7 ? 2 : multiplier + 1;
+                        }
+                        const remainder = sum % 11;
+                        const calculatedDV = remainder === 0 ? '0' : remainder === 1 ? 'K' : (11 - remainder).toString();
+                        
+                        if (dv !== calculatedDV) {
+                            console.error('❌ RUT inválido antes de enviar:', rutFormateado, 'DV esperado:', calculatedDV, 'DV recibido:', dv);
+                            notify.error(`Error: El RUT tiene un dígito verificador incorrecto. Debería ser "${calculatedDV}"`);
+                            resetSubmitButton();
+                            return;
+                        }
+                    }
+                }
+                
+                console.log('🔍 RUT original:', rut);
+                console.log('🔍 RUT formateado para enviar:', rutFormateado);
+                console.log('🔍 RUT limpio (sin puntos):', cleanRUTFinal);
+                
                 const userData = {
-                    email: document.getElementById('email').value.trim(),
-                    password: document.getElementById('password').value,
+                    email: email,
+                    password: password,
                     first_name: firstName,
                     last_name: lastName,
-                    phone: document.getElementById('phone').value.trim() || undefined,
-                    rut: document.getElementById('rut').value.trim() || undefined
+                    phone: phone,
+                    rut: rutFormateado || undefined,
+                    // Dirección solo si se completó al menos región, ciudad y comuna
+                    ...(region && city && commune ? {
+                        addressLine1: addressLine1 || undefined,
+                        addressLine2: addressLine2 || undefined,
+                        region: regionSelect.options[regionSelect.selectedIndex]?.textContent || undefined,
+                        city: citySelect.options[citySelect.selectedIndex]?.textContent || undefined,
+                        commune: commune || undefined
+                    } : {})
                 };
                 
                 console.log('📤 Enviando registro...');
@@ -618,6 +1440,16 @@ function removeDocument(type) {
                     // Guardar documentos después de crear el usuario
                     const userId = response.data.user.id;
                     console.log('📄 Guardando documentos para usuario ID:', userId);
+                    
+                    const poderCultivoData = document.getElementById('poderCultivoData').value;
+                    const poderCultivoFileName = document.getElementById('poderCultivoFileName').value || 'poder_cultivo.html';
+                    
+                    console.log('📄 Verificando poder_cultivo antes de guardar:', {
+                        has_value: !!poderCultivoData,
+                        value_length: poderCultivoData ? poderCultivoData.length : 0,
+                        file_name: poderCultivoFileName,
+                        preview: poderCultivoData ? poderCultivoData.substring(0, 100) : 'null'
+                    });
                     
                     const documentsData = [
                         {
@@ -634,11 +1466,96 @@ function removeDocument(type) {
                             document_type: 'certificado_antecedentes',
                             file_data: document.getElementById('certificadoData').value,
                             file_name: 'certificado_antecedentes.pdf'
+                        },
+                        {
+                            document_type: 'poder_cultivo',
+                            file_data: poderCultivoData,
+                            file_name: poderCultivoFileName,
+                            mime_type: 'text/html'
                         }
                     ];
                     
                     // Enviar documentos
                     await api.saveUserDocuments(userId, documentsData);
+                    
+                    // Guardar datos de cesión en user_registrations si existen
+                    const tempCessionData = localStorage.getItem('tempCessionData');
+                    if (tempCessionData) {
+                        try {
+                            const cessionData = JSON.parse(tempCessionData);
+                            
+                            // Preparar datos para user_registrations
+                            const registrationData = {
+                                user_id: userId,
+                                cedente_nombre: cessionData.cedente_nombre,
+                                cedente_rut: cessionData.cedente_rut,
+                                cedente_firma: cessionData.cedente_firma,
+                                enfermedad_condicion: cessionData.enfermedad_condicion, // Se encriptará en el backend
+                                fecha_inicio: cessionData.fecha_inicio,
+                                fecha_termino: cessionData.fecha_termino,
+                                es_indefinido: cessionData.es_indefinido,
+                                es_revocable: cessionData.es_revocable,
+                                dispensario_nombre: cessionData.dispensario_nombre,
+                                dispensario_rut: cessionData.dispensario_rut,
+                                dispensario_direccion: cessionData.dispensario_direccion,
+                                dispensario_firma: cessionData.dispensario_firma,
+                                documento_html: document.getElementById('poderCultivoData').value,
+                                fecha_cesion: cessionData.fecha_cesion
+                            };
+                            
+                            // Guardar registro en backend (se encriptará enfermedad/condición)
+                            const registrationResponse = await api.saveUserRegistration(registrationData);
+                            if (registrationResponse.success) {
+                                console.log('✅ Datos de registro de usuario guardados correctamente');
+                                const registrationId = registrationResponse.data.id;
+                                
+                                // Guardar documentos asociados a este registro de receta
+                                const registrationDocuments = [
+                                    {
+                                        document_type: 'receta_medica',
+                                        file_data: document.getElementById('recetaData').value,
+                                        file_name: 'receta_medica.pdf',
+                                        mime_type: 'application/pdf'
+                                    },
+                                    {
+                                        document_type: 'carnet_identidad',
+                                        file_data: document.getElementById('carnetData').value,
+                                        file_name: 'carnet_identidad.pdf',
+                                        mime_type: 'application/pdf'
+                                    },
+                                    {
+                                        document_type: 'certificado_antecedentes',
+                                        file_data: document.getElementById('certificadoData').value,
+                                        file_name: 'certificado_antecedentes.pdf',
+                                        mime_type: 'application/pdf'
+                                    },
+                                    {
+                                        document_type: 'poder_cultivo',
+                                        file_data: document.getElementById('poderCultivoData').value,
+                                        file_name: document.getElementById('poderCultivoFileName').value || 'poder_cultivo.html',
+                                        mime_type: 'text/html'
+                                    }
+                                ];
+                                
+                                try {
+                                    const docsResponse = await api.saveUserRegistrationDocuments(registrationId, userId, registrationDocuments);
+                                    if (docsResponse.success) {
+                                        console.log('✅ Documentos asociados al registro de receta guardados correctamente');
+                                    } else {
+                                        console.error('⚠️ Error guardando documentos de registro:', docsResponse.message);
+                                    }
+                                } catch (error) {
+                                    console.error('⚠️ Error guardando documentos de registro:', error);
+                                }
+                            }
+                            
+                            // Limpiar datos temporales
+                            localStorage.removeItem('tempCessionData');
+                        } catch (error) {
+                            console.error('Error guardando datos de registro:', error);
+                            // No bloquear el flujo si falla guardar el registro
+                        }
+                    }
                     
                     notify.success('¡Cuenta creada exitosamente! Tu cuenta está pendiente de aprobación. Serás notificado cuando sea aprobada.', 'Cuenta pendiente de aprobación');
                     
@@ -646,18 +1563,119 @@ function removeDocument(type) {
                         window.location.href = './login.html';
                     }, 3000);
                 } else {
-                    notify.error(response.message || 'Error al crear la cuenta');
-                    submitBtn.disabled = false;
-                    btnText.textContent = 'Crear Cuenta';
-                    btnLoader.style.display = 'none';
+                    // Manejar errores específicos con mensajes personalizados
+                    const errorCode = response.error_code;
+                    const field = response.field;
+                    let errorMessage = response.message || 'Error al crear la cuenta';
+                    let errorTitle = 'Error al registrar';
+                    
+                    // Mensajes personalizados según el código de error
+                    if (errorCode === 'EMAIL_ALREADY_EXISTS') {
+                        errorMessage = response.message || 'Este correo electrónico ya está registrado. Si ya tienes una cuenta, intenta iniciar sesión. Si olvidaste tu contraseña, puedes recuperarla.';
+                        errorTitle = 'Correo ya registrado';
+                        // Resaltar el campo de email
+                        const emailInput = document.getElementById('email');
+                        if (emailInput) {
+                            emailInput.style.borderColor = '#ef4444';
+                            emailInput.focus();
+                        }
+                        // Mostrar notificación con título
+                        notify.error(errorMessage, errorTitle);
+                    } else if (errorCode === 'RUT_ALREADY_EXISTS') {
+                        errorMessage = response.message || 'Este RUT ya está registrado. Cada persona solo puede tener una cuenta.';
+                        errorTitle = 'RUT ya registrado';
+                        // Resaltar el campo de RUT
+                        const rutInput = document.getElementById('rut');
+                        if (rutInput) {
+                            rutInput.style.borderColor = '#ef4444';
+                            rutInput.focus();
+                        }
+                        notify.error(errorMessage, errorTitle);
+                    } else if (errorCode === 'INVALID_RUT') {
+                        errorMessage = response.message || 'El RUT ingresado no es válido. Verifica el formato y el dígito verificador.';
+                        errorTitle = 'RUT inválido';
+                        const rutInput = document.getElementById('rut');
+                        if (rutInput) {
+                            rutInput.style.borderColor = '#ef4444';
+                            rutInput.focus();
+                        }
+                        notify.error(errorMessage, errorTitle);
+                    } else if (errorCode === 'INVALID_EMAIL_FORMAT') {
+                        errorMessage = response.message || 'El formato del correo electrónico no es válido.';
+                        errorTitle = 'Formato de correo inválido';
+                        const emailInput = document.getElementById('email');
+                        if (emailInput) {
+                            emailInput.style.borderColor = '#ef4444';
+                            emailInput.focus();
+                        }
+                        notify.error(errorMessage, errorTitle);
+                    } else {
+                        // Error genérico
+                        notify.error(errorMessage, errorTitle);
+                    }
+                    
+                    resetSubmitButton();
                 }
             } catch (error) {
                 console.error('Error en registro:', error);
-                notify.error('Error al conectar con el servidor: ' + error.message);
-                submitBtn.disabled = false;
-                btnText.textContent = 'Crear Cuenta';
-                btnLoader.style.display = 'none';
+                let errorMessage = 'Error al conectar con el servidor';
+                let errorTitle = 'Error al registrar';
+                
+                // Si el error tiene información del backend
+                if (error.response && error.response.data) {
+                    const errorData = error.response.data;
+                    errorMessage = errorData.message || error.message || 'Error al crear la cuenta';
+                    
+                    // Manejar códigos de error específicos
+                    if (error.error_code === 'EMAIL_ALREADY_EXISTS' || errorData.error_code === 'EMAIL_ALREADY_EXISTS') {
+                        errorMessage = errorData.message || 'El correo electrónico "' + (document.getElementById('email')?.value || '') + '" ya está registrado en nuestra plataforma. Si ya tienes una cuenta, intenta iniciar sesión. Si olvidaste tu contraseña, puedes recuperarla.';
+                        errorTitle = 'Correo ya registrado';
+                        const emailInput = document.getElementById('email');
+                        if (emailInput) {
+                            emailInput.style.borderColor = '#ef4444';
+                            emailInput.focus();
+                        }
+                    } else if (error.error_code === 'RUT_ALREADY_EXISTS' || errorData.error_code === 'RUT_ALREADY_EXISTS') {
+                        errorMessage = errorData.message || 'Este RUT ya está registrado. Cada persona solo puede tener una cuenta.';
+                        errorTitle = 'RUT ya registrado';
+                        const rutInput = document.getElementById('rut');
+                        if (rutInput) {
+                            rutInput.style.borderColor = '#ef4444';
+                            rutInput.focus();
+                        }
+                    } else if (error.error_code === 'INVALID_RUT' || errorData.error_code === 'INVALID_RUT') {
+                        errorMessage = errorData.message || 'El RUT ingresado no es válido. Verifica el formato y el dígito verificador.';
+                        errorTitle = 'RUT inválido';
+                        const rutInput = document.getElementById('rut');
+                        if (rutInput) {
+                            rutInput.style.borderColor = '#ef4444';
+                            rutInput.focus();
+                        }
+                    } else if (error.error_code === 'INVALID_EMAIL_FORMAT' || errorData.error_code === 'INVALID_EMAIL_FORMAT') {
+                        errorMessage = errorData.message || 'El formato del correo electrónico no es válido.';
+                        errorTitle = 'Formato de correo inválido';
+                        const emailInput = document.getElementById('email');
+                        if (emailInput) {
+                            emailInput.style.borderColor = '#ef4444';
+                            emailInput.focus();
+                        }
+                    }
+                } else if (error.message) {
+                    errorMessage = error.message;
+                }
+                
+                notify.error(errorMessage, errorTitle);
+                resetSubmitButton();
             }
+        }
+        
+        function resetSubmitButton() {
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            const btnLoader = document.getElementById('btnLoader');
+            if (submitBtn) submitBtn.disabled = false;
+            if (btnText) btnText.textContent = 'Crear Cuenta';
+            if (btnLoader) btnLoader.style.display = 'none';
         }
         
         // Prevenir submit del formulario
@@ -672,6 +1690,459 @@ function removeDocument(type) {
         // INICIALIZACIÓN
         // ===========================================
         
+        // ===========================================
+        // CARGAR Y FILTRAR COMBOBOX DE DIRECCIONES
+        // ===========================================
+        
+        let chileLocations = null;
+        
+        async function loadChileLocations() {
+            try {
+                const paths = [
+                    '../data/chile-locations.json',
+                    './data/chile-locations.json',
+                    '../../data/chile-locations.json',
+                    '/frontend/data/chile-locations.json',
+                    '/data/chile-locations.json'
+                ];
+                
+                let response = null;
+                let lastError = null;
+                
+                for (const path of paths) {
+                    try {
+                        console.log(`📂 Intentando cargar desde: ${path}`);
+                        response = await fetch(path);
+                        if (response.ok) {
+                            console.log(`✅ Archivo encontrado en: ${path}`);
+                            break;
+                        }
+                    } catch (err) {
+                        lastError = err;
+                        continue;
+                    }
+                }
+                
+                if (!response || !response.ok) {
+                    throw new Error(`No se pudo cargar datos de ubicaciones. Último error: ${lastError?.message || 'Archivo no encontrado'}`);
+                }
+                
+                chileLocations = await response.json();
+                
+                if (!chileLocations || !chileLocations.regions || chileLocations.regions.length === 0) {
+                    throw new Error('El archivo JSON no contiene datos válidos');
+                }
+                
+                populateRegions();
+                console.log(`✅ Ubicaciones de Chile cargadas correctamente: ${chileLocations.regions.length} regiones`);
+            } catch (error) {
+                console.error('⚠️ Error cargando ubicaciones:', error);
+                chileLocations = { regions: [] };
+                console.warn('⚠️ Usando estructura vacía de ubicaciones');
+                
+                const addressSection = document.getElementById('addressSection');
+                if (addressSection) {
+                    const errorMsg = document.createElement('p');
+                    errorMsg.style.cssText = 'color: #ef4444; font-size: 0.85rem; margin-top: 8px;';
+                    errorMsg.textContent = '⚠️ No se pudieron cargar las ubicaciones. Por favor, ingresa la dirección manualmente.';
+                    addressSection.appendChild(errorMsg);
+                }
+            }
+        }
+        
+        function populateRegions() {
+            const regionSelect = document.getElementById('region');
+            if (!regionSelect) {
+                console.error('❌ No se encontró el selector de región');
+                return;
+            }
+            
+            regionSelect.innerHTML = '<option value="">Selecciona una región</option>';
+            
+            if (chileLocations && chileLocations.regions) {
+                chileLocations.regions.forEach(region => {
+                    const option = document.createElement('option');
+                    option.value = region.id;
+                    option.textContent = region.name;
+                    option.dataset.regionData = JSON.stringify(region);
+                    regionSelect.appendChild(option);
+                });
+            }
+        }
+        
+        function loadCitiesForRegion() {
+            const regionSelect = document.getElementById('region');
+            const citySelect = document.getElementById('city');
+            const communeSelect = document.getElementById('commune');
+            
+            if (!regionSelect || !citySelect || !communeSelect) {
+                console.error('❌ Faltan elementos del formulario');
+                return;
+            }
+            
+            const selectedRegionId = regionSelect.value;
+            
+            citySelect.innerHTML = '<option value="">Selecciona una ciudad</option>';
+            communeSelect.innerHTML = '<option value="">Primero selecciona una ciudad</option>';
+            communeSelect.disabled = true;
+            communeSelect.style.backgroundColor = '#f5f5f5';
+            communeSelect.style.color = '#999';
+            communeSelect.style.cursor = 'not-allowed';
+            
+            if (!selectedRegionId) {
+                citySelect.disabled = true;
+                citySelect.style.backgroundColor = '#f5f5f5';
+                citySelect.style.color = '#999';
+                citySelect.style.cursor = 'not-allowed';
+                return;
+            }
+            
+            citySelect.disabled = false;
+            citySelect.style.backgroundColor = 'white';
+            citySelect.style.color = 'inherit';
+            citySelect.style.cursor = 'pointer';
+            
+            const selectedOption = regionSelect.options[regionSelect.selectedIndex];
+            if (!selectedOption) return;
+            
+            const regionData = JSON.parse(selectedOption.dataset.regionData || '{}');
+            
+            if (regionData.cities && regionData.cities.length > 0) {
+                regionData.cities.forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city.id;
+                    option.textContent = city.name;
+                    option.dataset.cityData = JSON.stringify(city);
+                    citySelect.appendChild(option);
+                });
+            }
+        }
+        
+        function loadCommunesForCity() {
+            const citySelect = document.getElementById('city');
+            const communeSelect = document.getElementById('commune');
+            
+            if (!citySelect || !communeSelect) {
+                console.error('❌ Faltan elementos del formulario');
+                return;
+            }
+            
+            const selectedCityId = citySelect.value;
+            
+            communeSelect.innerHTML = '<option value="">Selecciona una comuna</option>';
+            
+            if (!selectedCityId) {
+                communeSelect.disabled = true;
+                communeSelect.style.backgroundColor = '#f5f5f5';
+                communeSelect.style.color = '#999';
+                communeSelect.style.cursor = 'not-allowed';
+                return;
+            }
+            
+            communeSelect.disabled = false;
+            communeSelect.style.backgroundColor = 'white';
+            communeSelect.style.color = 'inherit';
+            communeSelect.style.cursor = 'pointer';
+            
+            const selectedOption = citySelect.options[citySelect.selectedIndex];
+            if (!selectedOption) return;
+            
+            const cityData = JSON.parse(selectedOption.dataset.cityData || '{}');
+            
+            if (cityData.communes && cityData.communes.length > 0) {
+                cityData.communes.forEach(commune => {
+                    const option = document.createElement('option');
+                    option.value = commune;
+                    option.textContent = commune;
+                    communeSelect.appendChild(option);
+                });
+            }
+        }
+        
+        // Inicializar validaciones cuando el DOM esté listo
+        function initializeValidations() {
+            // Formatear y validar RUT mientras se escribe
+            const rutInput = document.getElementById('rut');
+            const rutError = document.getElementById('rutError');
+            
+            // Función para validar RUT
+            function validateRUTInput(rutValue) {
+                if (!rutValue || rutValue.trim() === '') {
+                    if (rutError) {
+                        const errorText = rutError.querySelector('#rutErrorText');
+                        if (errorText) errorText.textContent = 'Debes ingresar tu RUT';
+                        rutError.style.display = 'block';
+                    }
+                    if (rutInput) rutInput.style.borderColor = '#ef4444';
+                    return false;
+                }
+                
+                let cleanRUT = rutValue.trim().replace(/\./g, '').replace(/-/g, '').replace(/\s/g, '').toUpperCase();
+                
+                if (!/^\d{7,8}[\dkK]$/.test(cleanRUT)) {
+                    if (rutError) {
+                        const errorText = rutError.querySelector('#rutErrorText');
+                        if (errorText) errorText.textContent = 'Formato inválido. Debe ser: 12345678-9';
+                        rutError.style.display = 'block';
+                    }
+                    if (rutInput) rutInput.style.borderColor = '#ef4444';
+                    return false;
+                }
+                
+                const body = cleanRUT.slice(0, -1);
+                const dv = cleanRUT.slice(-1).toUpperCase();
+                
+                if (body.length < 7 || body.length > 8) {
+                    if (rutError) {
+                        const errorText = rutError.querySelector('#rutErrorText');
+                        if (errorText) errorText.textContent = 'El RUT debe tener 7 u 8 dígitos';
+                        rutError.style.display = 'block';
+                    }
+                    if (rutInput) rutInput.style.borderColor = '#ef4444';
+                    return false;
+                }
+                
+                // Calcular dígito verificador
+                let sum = 0;
+                let multiplier = 2;
+                for (let i = body.length - 1; i >= 0; i--) {
+                    sum += parseInt(body[i]) * multiplier;
+                    multiplier = multiplier === 7 ? 2 : multiplier + 1;
+                }
+                const remainder = sum % 11;
+                const calculatedDV = remainder === 0 ? '0' : remainder === 1 ? 'K' : (11 - remainder).toString();
+                
+                if (dv !== calculatedDV) {
+                    if (rutError) {
+                        const errorText = rutError.querySelector('#rutErrorText');
+                        if (errorText) {
+                            errorText.textContent = `Dígito verificador incorrecto. Debería ser "${calculatedDV}" en lugar de "${dv}"`;
+                        }
+                        rutError.style.display = 'block';
+                    }
+                    if (rutInput) {
+                        rutInput.style.borderColor = '#ef4444';
+                        // Notificar también con notify si está disponible
+                        if (typeof notify !== 'undefined') {
+                            notify.error(`RUT inválido. El dígito verificador debería ser "${calculatedDV}"`);
+                        }
+                    }
+                    return false;
+                }
+                
+                // RUT válido
+                if (rutError) rutError.style.display = 'none';
+                if (rutInput) rutInput.style.borderColor = '#10b981';
+                return true;
+            }
+            
+            if (rutInput) {
+                let rutTimeout;
+                
+                // Formatear mientras se escribe
+                rutInput.addEventListener('input', function(e) {
+                    clearTimeout(rutTimeout);
+                    let value = e.target.value.replace(/[^0-9kK-]/g, '');
+                    
+                    // Limpiar y formatear
+                    const cleanValue = value.replace(/\./g, '').replace(/-/g, '').toUpperCase();
+                    
+                    if (cleanValue.length > 1) {
+                        // Agregar guión antes del último carácter
+                        value = cleanValue.slice(0, -1) + '-' + cleanValue.slice(-1);
+                        // Agregar puntos cada 3 dígitos desde la derecha
+                        const parts = value.split('-');
+                        if (parts.length === 2) {
+                            const body = parts[0];
+                            const dv = parts[1];
+                            let formatted = '';
+                            for (let i = body.length - 1, count = 0; i >= 0; i--, count++) {
+                                formatted = body[i] + formatted;
+                                if (count % 3 === 2 && i > 0) {
+                                    formatted = '.' + formatted;
+                                }
+                            }
+                            value = formatted + '-' + dv;
+                        }
+                    }
+                    
+                    e.target.value = value;
+                    
+                    // Validar en tiempo real después de un pequeño delay
+                    rutTimeout = setTimeout(() => {
+                        if (value.length > 0) {
+                            validateRUTInput(value);
+                        } else {
+                            if (rutError) rutError.style.display = 'none';
+                            if (rutInput) rutInput.style.borderColor = '';
+                        }
+                    }, 300);
+                });
+                
+                // Validar al perder el foco (blur)
+                rutInput.addEventListener('blur', function(e) {
+                    clearTimeout(rutTimeout);
+                    validateRUTInput(e.target.value);
+                });
+                
+                // Validar cuando se autocompleta (change) - se dispara cuando el navegador autocompleta
+                rutInput.addEventListener('change', function(e) {
+                    clearTimeout(rutTimeout);
+                    const isValid = validateRUTInput(e.target.value);
+                    // Si es inválido, mostrar notificación
+                    if (!isValid && typeof notify !== 'undefined') {
+                        notify.error('El RUT autocompletado no es válido. Por favor, corrígelo antes de continuar.');
+                    }
+                });
+                
+                // También validar cuando el campo recibe foco después de autocompletar
+                rutInput.addEventListener('focus', function(e) {
+                    // Pequeño delay para que el navegador complete el valor
+                    setTimeout(() => {
+                        if (e.target.value && e.target.value.trim() !== '') {
+                            validateRUTInput(e.target.value);
+                        }
+                    }, 100);
+                });
+                
+                // Validar cuando se pega contenido (paste)
+                rutInput.addEventListener('paste', function(e) {
+                    setTimeout(() => {
+                        validateRUTInput(e.target.value);
+                    }, 100);
+                });
+            }
+            
+            // Validar email en tiempo real
+            const emailInput = document.getElementById('email');
+            const emailError = document.getElementById('emailError') || (() => {
+                // Crear elemento de error si no existe
+                const error = document.createElement('p');
+                error.id = 'emailError';
+                error.style.cssText = 'display: none; color: #ef4444; font-size: 0.875rem; margin-top: 4px;';
+                if (emailInput && emailInput.parentElement) {
+                    emailInput.parentElement.parentElement.appendChild(error);
+                }
+                return error;
+            })();
+            
+            // Función para validar email
+            function validateEmailInput(emailValue) {
+                if (!emailValue || emailValue.trim() === '') {
+                    if (emailError) {
+                        emailError.textContent = 'Debes ingresar tu correo electrónico';
+                        emailError.style.display = 'block';
+                    }
+                    if (emailInput) emailInput.style.borderColor = '#ef4444';
+                    return false;
+                }
+                
+                const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+                const isValid = emailRegex.test(emailValue.trim()) && emailValue.length <= 254;
+                
+                if (!isValid) {
+                    if (emailError) {
+                        emailError.textContent = 'Formato de correo inválido. Ejemplo: usuario@dominio.com';
+                        emailError.style.display = 'block';
+                    }
+                    if (emailInput) emailInput.style.borderColor = '#ef4444';
+                    return false;
+                }
+                
+                // Email válido
+                if (emailError) emailError.style.display = 'none';
+                if (emailInput) emailInput.style.borderColor = '#10b981';
+                return true;
+            }
+            
+            if (emailInput) {
+                let emailTimeout;
+                
+                // Validar mientras se escribe (con delay para no validar en cada tecla)
+                emailInput.addEventListener('input', function(e) {
+                    clearTimeout(emailTimeout);
+                    const value = e.target.value.trim();
+                    
+                    emailTimeout = setTimeout(() => {
+                        if (value.length > 0) {
+                            validateEmailInput(value);
+                        } else {
+                            if (emailError) emailError.style.display = 'none';
+                            if (emailInput) emailInput.style.borderColor = '';
+                        }
+                    }, 300);
+                });
+                
+                // Validar al perder el foco (blur)
+                emailInput.addEventListener('blur', function(e) {
+                    clearTimeout(emailTimeout);
+                    validateEmailInput(e.target.value);
+                });
+                
+                // Validar cuando se autocompleta (change) - se dispara cuando el navegador autocompleta
+                emailInput.addEventListener('change', function(e) {
+                    clearTimeout(emailTimeout);
+                    const isValid = validateEmailInput(e.target.value);
+                    // Si es inválido, mostrar notificación
+                    if (!isValid && typeof notify !== 'undefined') {
+                        notify.error('El correo autocompletado no es válido. Por favor, corrígelo antes de continuar.');
+                    }
+                });
+                
+                // También validar cuando el campo recibe foco después de autocompletar
+                emailInput.addEventListener('focus', function(e) {
+                    // Pequeño delay para que el navegador complete el valor
+                    setTimeout(() => {
+                        if (e.target.value && e.target.value.trim() !== '') {
+                            validateEmailInput(e.target.value);
+                        }
+                    }, 100);
+                });
+                
+                // Validar cuando se pega contenido (paste)
+                emailInput.addEventListener('paste', function(e) {
+                    setTimeout(() => {
+                        validateEmailInput(e.target.value);
+                    }, 100);
+                });
+            }
+            
+            // Validación en tiempo real de contraseñas
+            const passwordInput = document.getElementById('password');
+            const confirmPasswordInput = document.getElementById('confirmPassword');
+            const passwordMatchError = document.getElementById('passwordMatchError');
+            const passwordMatchSuccess = document.getElementById('passwordMatchSuccess');
+
+            function validatePasswordMatch() {
+                const password = passwordInput.value;
+                const confirmPassword = confirmPasswordInput.value;
+                
+                if (confirmPassword.length === 0) {
+                    if (passwordMatchError) passwordMatchError.style.display = 'none';
+                    if (passwordMatchSuccess) passwordMatchSuccess.style.display = 'none';
+                    if (confirmPasswordInput) confirmPasswordInput.style.borderColor = '';
+                    return;
+                }
+                
+                if (password.length > 0 && confirmPassword.length > 0) {
+                    if (password === confirmPassword) {
+                        if (passwordMatchError) passwordMatchError.style.display = 'none';
+                        if (passwordMatchSuccess) passwordMatchSuccess.style.display = 'block';
+                        if (confirmPasswordInput) confirmPasswordInput.style.borderColor = '#10b981';
+                    } else {
+                        if (passwordMatchError) passwordMatchError.style.display = 'block';
+                        if (passwordMatchSuccess) passwordMatchSuccess.style.display = 'none';
+                        if (confirmPasswordInput) confirmPasswordInput.style.borderColor = '#ef4444';
+                    }
+                }
+            }
+
+            if (passwordInput && confirmPasswordInput) {
+                passwordInput.addEventListener('input', validatePasswordMatch);
+                confirmPasswordInput.addEventListener('input', validatePasswordMatch);
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             // Redirigir si ya está autenticado
             if (typeof authManager !== 'undefined' && authManager.isAuthenticated()) {
@@ -679,8 +2150,83 @@ function removeDocument(type) {
                 return;
             }
             
+            // Inicializar validaciones
+            initializeValidations();
+            
             setupDragAndDrop();
             updateStepDisplay();
+            
+            // Configurar fecha mínima para fecha inicio (hoy)
+            const fechaInicioInput = document.getElementById('fechaInicio');
+            if (fechaInicioInput) {
+                const today = new Date().toISOString().split('T')[0];
+                fechaInicioInput.min = today;
+                fechaInicioInput.value = today; // Valor por defecto: hoy
+            }
+            
+            // Configurar fecha mínima para fecha término (debe ser >= fecha inicio)
+            const fechaTerminoInput = document.getElementById('fechaTermino');
+            const esIndefinidoCheck = document.getElementById('esIndefinido');
+            
+            if (fechaInicioInput && fechaTerminoInput) {
+                fechaInicioInput.addEventListener('change', () => {
+                    fechaTerminoInput.min = fechaInicioInput.value;
+                    if (fechaTerminoInput.value && fechaTerminoInput.value < fechaInicioInput.value) {
+                        fechaTerminoInput.value = '';
+                    }
+                });
+            }
+            
+            // Manejar checkbox "Indefinido / Revocable"
+            if (esIndefinidoCheck && fechaTerminoInput) {
+                const fechaTerminoContainer = document.getElementById('fechaTerminoContainer');
+                
+                // Función para mostrar/ocultar campo de fecha término
+                const toggleFechaTermino = () => {
+                    if (esIndefinidoCheck.checked) {
+                        // Ocultar campo de fecha término
+                        if (fechaTerminoContainer) {
+                            fechaTerminoContainer.style.display = 'none';
+                        }
+                        fechaTerminoInput.value = '';
+                        fechaTerminoInput.removeAttribute('required');
+                    } else {
+                        // Mostrar campo de fecha término
+                        if (fechaTerminoContainer) {
+                            fechaTerminoContainer.style.display = 'block';
+                        }
+                        fechaTerminoInput.setAttribute('required', 'required');
+                    }
+                };
+                
+                // Aplicar estado inicial
+                toggleFechaTermino();
+                
+                // Escuchar cambios en el checkbox
+                esIndefinidoCheck.addEventListener('change', toggleFechaTermino);
+            }
+            
+            // Cargar ubicaciones de Chile
+            console.log('📍 Cargando ubicaciones de Chile...');
+            loadChileLocations();
+            
+            setTimeout(() => {
+                const regionSelect = document.getElementById('region');
+                const citySelect = document.getElementById('city');
+                const communeSelect = document.getElementById('commune');
+                
+                console.log('🔍 Verificando elementos:', {
+                    regionSelect: !!regionSelect,
+                    citySelect: !!citySelect,
+                    communeSelect: !!communeSelect
+                });
+                
+                if (!regionSelect || !citySelect || !communeSelect) {
+                    console.error('❌ Faltan elementos del formulario de dirección');
+                } else {
+                    console.log('✅ Todos los elementos de dirección están presentes');
+                }
+            }, 500);
         });
     </script>
 
@@ -688,15 +2234,16 @@ function removeDocument(type) {
     <div id="cartSidebar" class="cart-sidebar">
         <div class="cart-header">
             <h3><i class="fas fa-shopping-cart"></i> Carrito de Compras</h3>
-            <button id="closeCart" class="cta-button" style="padding: 6px 12px;">Cerrar</button>
+            <button id="closeCart" class="cta-button app-button app-button--primary" style="padding: 6px 12px;">Cerrar</button>
         </div>
         <div id="cartItems" class="cart-items"></div>
         <div class="cart-total">
             <div class="total-amount" id="cartTotal">Total: $0</div>
-            <a href="./carrito.html" class="cta-button full-width">Ver Carrito Completo</a>
+            <a href="./carrito.html" class="cta-button app-button app-button--primary full-width">Ver Carrito Completo</a>
         </div>
     </div>
     <div id="cartOverlay" class="cart-overlay" style="display: none;"></div>
 
 </body>
+</html>
 </html>

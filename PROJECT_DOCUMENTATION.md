@@ -137,16 +137,24 @@ frontend/api/
 - Se conecta a SQLite
 - Exporta todos los productos con imágenes
 - Genera `products.json`, `products-featured.json`
+- **Preserva JSON existente** si ya tiene productos (evita sobrescribir datos)
 
 **`backend/scripts/export-users-to-json.js`**
 - Exporta usuarios incluyendo `password_hash`
 - Calcula `account_status` basado en `is_verified` e `is_active`
+- Incluye `rejection_reason` si aplica
 - Genera `users.json`
 
 **`backend/scripts/export-orders-to-json.js`**
 - Exporta pedidos con items asociados
-- Incluye información de clientes
+- Incluye información de clientes desde tabla `users`
+- Normaliza tipos de datos (floats, booleans)
 - Genera `orders.json`
+
+**Otros scripts útiles:**
+- `backend/scripts/fix-pilar-password.js`: Convierte password a SHA-256
+- `backend/scripts/cli.js`: CLI de administración
+- `backend/scripts/backup.js`: Backup de base de datos
 
 #### 2. Cliente API (`frontend/js/api/apiClient.js`)
 

@@ -157,61 +157,6 @@
     padding: 0 24px 20px;
 }
 
-/* Hero específico */
-.hero-legal {
-    min-height: 50vh;
-    background: linear-gradient(135deg, var(--primary-green), var(--light-green));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-}
-
-.hero-legal::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-    opacity: 0.4;
-}
-
-.hero-legal-content {
-    position: relative;
-    z-index: 1;
-    text-align: center;
-    color: var(--white);
-    padding: 60px 20px;
-    max-width: 900px;
-    margin: 0 auto;
-}
-
-/* Stats boxes pequeños */
-.stat-mini {
-    text-align: center;
-    padding: 20px;
-    background: var(--white);
-    border-radius: var(--border-radius);
-    border: 2px solid var(--primary-green);
-    transition: var(--transition);
-}
-
-.stat-mini:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-}
-
-.stat-icon {
-    font-size: 2.5rem;
-    margin-bottom: 8px;
-}
-
-.stat-text {
-    font-size: 0.9rem;
-    color: var(--primary-green);
-    font-weight: 600;
-}
-
 /* Progress steps */
 .progress-step {
     display: flex;
@@ -325,22 +270,6 @@
         font-size: 24px;
     }
 
-    .hero-legal {
-        min-height: 40vh;
-    }
-    
-    .hero-legal-content {
-        padding: 40px 16px;
-    }
-    
-    .hero-legal-content h1 {
-        font-size: 2rem !important;
-    }
-    
-    .hero-legal-content p {
-        font-size: 1rem;
-    }
-
     .tab-buttons {
         flex-direction: column;
         gap: 8px;
@@ -387,19 +316,6 @@
         font-size: 0.9rem;
     }
     
-    .stat-mini {
-        padding: 16px;
-    }
-    
-    .stat-icon {
-        font-size: 1.8rem;
-    }
-    
-    .stat-text {
-        font-size: 0.85rem;
-    }
-}
-
     /* Ajustes adicionales para móviles pequeños */
     .timeline-item {
         padding-left: 60px;
@@ -414,14 +330,6 @@
     
     .timeline-content {
         padding: 16px;
-    }
-    
-    .hero-legal-content h1 {
-        font-size: 1.75rem !important;
-    }
-    
-    .hero-legal-content p {
-        font-size: 0.95rem;
     }
     
     .tabs-container {

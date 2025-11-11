@@ -19,8 +19,8 @@
     <div id="header-container"></div>
 
     <!-- Hero Section -->
-    <section class="shop-header">
-        <div class="container">
+    <section class="shop-header app-section">
+        <div class="container u-container">
             <h1>
                 <i class="fas fa-user-circle"></i> Mi Perfil
             </h1>
@@ -29,11 +29,11 @@
     </section>
 
     <!-- Main Content -->
-    <div class="profile-container">
-        <div class="container">
+    <div class="profile-container app-section">
+        <div class="container u-container">
             <div class="profile-grid">
                 <!-- Menú lateral -->
-                <div class="profile-sidebar">
+                <div class="profile-sidebar app-card">
                     <div class="profile-avatar">
                         <div class="profile-avatar-icon">
                             <i class="fas fa-user"></i>
@@ -72,7 +72,7 @@
                 <!-- Contenido -->
                 <div>
                     <!-- Información Personal -->
-                    <div id="infoSection" class="profile-section">
+                    <div id="infoSection" class="profile-section app-card">
                         <h2>
                             <i class="fas fa-user-edit"></i>
                             Información Personal
@@ -102,11 +102,11 @@
                             </div>
 
                             <div class="profile-actions">
-                                <button type="submit" class="cta-button">
+                                <button type="submit" class="cta-button app-button app-button--primary">
                                     <i class="fas fa-save"></i>
                                     <span>Guardar Cambios</span>
                                 </button>
-                                <button type="button" onclick="loadProfile()" class="secondary-button">
+                                <button type="button" onclick="loadProfile()" class="secondary-button app-button app-button--secondary">
                                     <i class="fas fa-undo"></i>
                                     <span>Cancelar</span>
                                 </button>
@@ -115,7 +115,7 @@
                     </div>
 
                     <!-- Cambiar Contraseña -->
-                    <div id="passwordSection" class="hidden profile-section">
+                    <div id="passwordSection" class="hidden profile-section app-card">
                         <h2>
                             <i class="fas fa-key"></i>
                             Cambiar Contraseña
@@ -153,11 +153,11 @@
                             </div>
 
                             <div class="profile-actions">
-                                <button type="submit" class="cta-button">
+                                <button type="submit" class="cta-button app-button app-button--primary">
                                     <i class="fas fa-key"></i>
                                     <span>Cambiar Contraseña</span>
                                 </button>
-                                <button type="button" onclick="document.getElementById('passwordForm').reset()" class="secondary-button">
+                                <button type="button" onclick="document.getElementById('passwordForm').reset()" class="secondary-button app-button app-button--secondary">
                                     <i class="fas fa-times"></i>
                                     <span>Limpiar</span>
                                 </button>
@@ -166,13 +166,13 @@
                     </div>
 
                     <!-- Mis Pedidos -->
-                    <div id="ordersSection" class="hidden profile-section">
+                    <div id="ordersSection" class="hidden profile-section app-card">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
                             <h2>
                                 <i class="fas fa-shopping-bag"></i>
                                 Mis Pedidos
                             </h2>
-                            <button onclick="loadOrders()" class="secondary-button" style="padding: 8px 16px;">
+                            <button onclick="loadOrders()" class="secondary-button app-button app-button--secondary" style="padding: 8px 16px;">
                                 <i class="fas fa-sync-alt"></i>
                                 <span>Actualizar</span>
                             </button>
@@ -402,7 +402,6 @@
                     const updatedUser = response.data.user || response.data;
                     const currentUser = authManager.getCurrentUser();
                     authManager.currentUser = { ...currentUser, ...updatedUser };
-                    localStorage.setItem('currentUser', JSON.stringify(authManager.currentUser));
                     
                     loadProfile();
                     

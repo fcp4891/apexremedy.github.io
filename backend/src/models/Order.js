@@ -45,28 +45,100 @@ class Order extends BaseModel {
 
     /**
      * Buscar órdenes con filtros
-     * ACTUALIZADO: Agregado filtro payment_status
+     * ACTUALIZADO: Agregado filtro payment_status y JOIN con users para obtener datos del cliente
      */
     async findAllWithFilters(filters = {}) {
-        let sql = `SELECT * FROM ${this.tableName} WHERE 1=1`;
+        // Verificar columnas disponibles en orders
+        let hasCustomerFields = false;
+        let hasPaymentMethod = false;
+        try {
+            const tableInfo = await this.db.all(`PRAGMA table_info(${this.tableName})`);
+            const columnNames = tableInfo.map(col => col.name);
+            hasCustomerFields = columnNames.includes('customer_name') && columnNames.includes('customer_email');
+            hasPaymentMethod = columnNames.includes('payment_method');
+        } catch (error) {
+            console.warn('⚠️ No se pudo verificar columnas de orders:', error.message);
+        }
+        
+        // Construir SQL con JOINs necesarios
+        let sql;
+        if (hasCustomerFields) {
+            // La tabla tiene los campos directamente, usarlos con fallback a users
+            sql = `SELECT o.*, 
+                   COALESCE(
+                       o.customer_name, 
+                       u.name, 
+                       CASE 
+                           WHEN u.first_name IS NOT NULL OR u.last_name IS NOT NULL 
+                           THEN TRIM(COALESCE(u.first_name, '') || ' ' || COALESCE(u.last_name, ''))
+                           ELSE NULL
+                       END
+                   ) as customer_name,
+                   COALESCE(o.customer_email, u.email) as customer_email,
+                   u.name as user_name,
+                   u.email as user_email`;
+        } else {
+            // La tabla no tiene los campos, obtenerlos del JOIN con users
+            sql = `SELECT o.*, 
+                   COALESCE(
+                       u.name,
+                       CASE 
+                           WHEN u.first_name IS NOT NULL OR u.last_name IS NOT NULL 
+                           THEN TRIM(COALESCE(u.first_name, '') || ' ' || COALESCE(u.last_name, ''))
+                           ELSE NULL
+                       END,
+                       'Cliente sin nombre'
+                   ) as customer_name,
+                   COALESCE(u.email, '') as customer_email,
+                   u.name as user_name,
+                   u.email as user_email`;
+        }
+        
+        // Agregar payment_method desde payments
+        // Si la tabla orders tiene payment_method, usarlo con fallback a payments
+        // Si no, obtenerlo solo desde payments
+        if (hasPaymentMethod) {
+            sql += `, 
+                   COALESCE(o.payment_method, p.method, 'cash') as payment_method,
+                   p.method as payment_method_from_payments`;
+        } else {
+            sql += `, 
+                   COALESCE(p.method, 'cash') as payment_method,
+                   p.method as payment_method_from_payments,
+                   p.status as payment_status_from_payments`;
+        }
+        
+        sql += ` FROM ${this.tableName} o
+                   LEFT JOIN users u ON o.user_id = u.id
+                   LEFT JOIN (
+                       SELECT p1.order_id, p1.method, p1.status
+                       FROM payments p1
+                       INNER JOIN (
+                           SELECT order_id, MAX(created_at) as max_created_at
+                           FROM payments
+                           GROUP BY order_id
+                       ) p2 ON p1.order_id = p2.order_id AND p1.created_at = p2.max_created_at
+                   ) p ON o.id = p.order_id
+                   WHERE 1=1`;
+        
         const params = [];
 
         if (filters.status) {
-            sql += ' AND status = ?';
+            sql += ' AND o.status = ?';
             params.push(filters.status);
         }
 
         if (filters.payment_status) {
-            sql += ' AND payment_status = ?';
+            sql += ' AND o.payment_status = ?';
             params.push(filters.payment_status);
         }
 
         if (filters.user_id) {
-            sql += ' AND user_id = ?';
+            sql += ' AND o.user_id = ?';
             params.push(filters.user_id);
         }
 
-        sql += ' ORDER BY created_at DESC';
+        sql += ' ORDER BY o.created_at DESC';
 
         if (filters.limit) {
             sql += ` LIMIT ${parseInt(filters.limit)}`;

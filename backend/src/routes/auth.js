@@ -63,4 +63,10 @@ router.post('/logout', authenticateToken, authController.logout);
  */
 router.post('/refresh', authController.refreshToken);
 
+/**
+ * GET /api/auth/csrf
+ * Obtener token CSRF (doble submit)
+ */
+router.get('/csrf', authController.getCsrfToken);
+
 module.exports = router;

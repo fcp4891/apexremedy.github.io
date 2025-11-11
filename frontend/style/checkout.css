@@ -281,8 +281,6 @@ input[type="radio"]:checked + div {
     .flex.gap-3 a {
         width: 100%;
     }
-}
-
     /* Ajustes adicionales para móviles pequeños */
     .modal-content {
         padding: 16px;

@@ -10,6 +10,7 @@
     <script src="./js/basePath.js"></script>
     <script src="./js/config.js"></script>
     <script src="./js/utils.js"></script>
+    <script type="module" src="./js/adminTemplate.legacy.js"></script>
     <script defer src="./js/adminTemplate.js"></script>
 </head>
 <body>
@@ -17,12 +18,12 @@
     <div id="header-container"></div>
 
     <!-- Header Section -->
-    <section class="shop-header">
-        <div class="container">
-            <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 12px;">
+    <section class="admin-page-header">
+        <div>
+            <h1 class="admin-page-title">
                 <i class="fas fa-shopping-cart mr-3"></i>Finalizar Compra
             </h1>
-            <p style="font-size: 1.1rem; opacity: 0.95;">
+            <p class="admin-page-subtitle">
                 Completa tu orden de forma segura
             </p>
         </div>
@@ -222,10 +223,8 @@
         </div>
         
         <!-- Botón de Compra -->
-        <button onclick="submitOrder()" 
-                id="submitBtn" 
-                class="w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-lg font-bold text-lg transition shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:bg-gray-400 disabled:transform-none disabled:cursor-not-allowed">
-            <i class="fas fa-lock mr-2"></i>Confirmar Pedido
+        <button class="admin-btn admin-btn--primary admin-full-width justify-center text-lg py-3" data-action="submit-order">
+            <i class="fas fa-lock admin-btn__icon"></i>Confirmar Pedido
         </button>
         
         <!-- Garantías -->
@@ -303,148 +302,9 @@
     <script src="./js/auth.js"></script>
     <script src="./js/sessionManager.js"></script>
     <script src="./js/notifications.js"></script>
-
-<!-- Modal de Éxito (Para pago contra entrega) -->
-<div id="successModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-<div class="bg-white rounded-lg shadow-xl max-w-md w-full p-8 text-center animate-fadeIn">
-<div class="mb-4">
-    <div class="bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-        <i class="fas fa-check-circle text-green-600 text-5xl"></i>
-    </div>
-</div>
-<h3 class="text-2xl font-bold text-gray-800 mb-2">¡Pedido Confirmado!</h3>
-<p class="text-gray-600 mb-6">
-    Tu pedido #<span id="orderId" class="font-mono font-bold text-green-600"></span> 
-    ha sido recibido exitosamente.
-</p>
-<div class="space-y-3">
-    <a href="./mis-pedidos.html" 
-       class="block bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold transition shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
-        <i class="fas fa-list mr-2"></i>Ver Mis Pedidos
-    </a>
-    <a href="./tienda.html" 
-       class="block bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded-lg font-semibold transition shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
-        <i class="fas fa-shopping-bag mr-2"></i>Seguir Comprando
-    </a>
-</div>
-</div>
-</div>
-
-<!-- Scripts -->
-<script src="../js/api/apiClient.js"></script>
-<script src="../js/auth.js"></script>
-<script src="../js/notifications.js"></script>
-<script src="../js/carrito.js"></script>
-<script src="../js/checkout.js"></script>
-
-<script>
-// ============================================
-// PROTECCIÓN DE RUTA - REQUIERE AUTENTICACIÓN
-// ============================================
-(function() {
-'use strict';
-function checkAuth() {
-    if (typeof authManager === 'undefined') {
-        console.warn('⚠️ authManager no disponible');
-        window.location.href = './login.html?redirect=checkout';
-        return;
-    }
-    if (!authManager.isAuthenticated()) {
-        notify.warning('Debes iniciar sesión para continuar con tu compra', 'Autenticación Requerida');
-        setTimeout(() => {
-            window.location.href = './login.html?redirect=checkout';
-        }, 2000);
-        return;
-    }
-    console.log('✅ Usuario autenticado');
-}
-
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', checkAuth);
-} else {
-    checkAuth();
-}
-})();
-</script>
-
-<style>
-/* Animaciones personalizadas */
-@keyframes fadeIn {
-from {
-    opacity: 0;
-    transform: scale(0.9);
-}
-to {
-    opacity: 1;
-    transform: scale(1);
-}
-}
-
-.animate-fadeIn {
-animation: fadeIn 0.3s ease-out;
-}
-
-/* Scroll personalizado para productos */
-#orderItems::-webkit-scrollbar {
-width: 6px;
-}
-
-#orderItems::-webkit-scrollbar-track {
-background: #f1f1f1;
-border-radius: 10px;
-}
-
-#orderItems::-webkit-scrollbar-thumb {
-background: #16a34a;
-border-radius: 10px;
-}
-
-#orderItems::-webkit-scrollbar-thumb:hover {
-background: #15803d;
-}
-
-/* Efecto hover en radio buttons */
-input[type="radio"]:checked + div {
-color: #15803d;
-}
-
-/* Loading skeleton para productos */
-.skeleton {
-background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-background-size: 200% 100%;
-animation: loading 1.5s infinite;
-}
-
-@keyframes loading {
-0% { background-position: 200% 0; }
-100% { background-position: -200% 0; }
-}
-
-/* Responsive sticky sidebar */
-@media (min-width: 1024px) {
-.sticky {
-    position: sticky;
-    top: 5rem;
-}
-}
-
-/* Print styles para instrucciones */
-@media print {
-body * {
-    visibility: hidden;
-}
-#transferModal, #transferModal * {
-    visibility: visible;
-}
-#transferModal {
-    position: absolute;
-    left: 0;
-    top: 0;
-}
-button, a[href] {
-    display: none !important;
-}
-}
-</style>
+    <script src="./js/carrito.js"></script>
+    <script src="./js/checkout.js"></script>
+    <script src="./js/pages/checkout-page.js" defer></script>
+    <link rel="stylesheet" href="style/checkout-page.css">
 </body>
 </html>

@@ -1,11 +1,16 @@
 // backend/src/controllers/authController.js
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const { isValidRUT } = require('../utils/rutValidator');
+const {
+    issueAuthTokens,
+    issueCsrfToken,
+    clearAuthCookies,
+    hashToken,
+    refreshTokenModel
+} = require('../utils/tokenService');
 
 const userModel = new User();
-const JWT_SECRET = process.env.JWT_SECRET || 'tu_secreto_super_seguro_cambialo_en_produccion';
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
 
 /**
  * Registrar nuevo usuario
@@ -29,31 +34,83 @@ const register = async (req, res) => {
             authorization_expires,
             prescribing_doctor,
             doctor_license,
-            medical_notes
+            medical_notes,
+            // Dirección
+            addressLine1,
+            addressLine2,
+            region,
+            city,
+            commune
         } = req.body;
 
         // Validar campos requeridos
-        if (!email || !password || !first_name || !last_name) {
+        if (!email || !password || !first_name || !last_name || !phone) {
             return res.status(400).json({
                 success: false,
-                message: 'Email, contraseña, nombre y apellido son requeridos'
+                message: 'Email, contraseña, nombre, apellido y teléfono son requeridos',
+                error_code: 'MISSING_REQUIRED_FIELDS'
+            });
+        }
+
+        // Validar formato de email
+        const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+        if (!emailRegex.test(email.trim()) || email.length > 254) {
+            return res.status(400).json({
+                success: false,
+                message: 'El formato del correo electrónico no es válido. Por favor, ingresa un email válido.',
+                error_code: 'INVALID_EMAIL_FORMAT'
             });
         }
 
         // Verificar si el email ya existe
-        const existingUser = await userModel.findByEmail(email);
-        if (existingUser) {
+        const existingUserByEmail = await userModel.findByEmail(email);
+        if (existingUserByEmail) {
             return res.status(409).json({
                 success: false,
-                message: 'El email ya está registrado'
+                message: `El correo electrónico "${email}" ya está registrado en nuestra plataforma. Si ya tienes una cuenta, intenta iniciar sesión. Si olvidaste tu contraseña, puedes recuperarla.`,
+                error_code: 'EMAIL_ALREADY_EXISTS',
+                field: 'email'
             });
+        }
+
+        // Validar RUT si se proporciona
+        if (rut && rut.trim() !== '') {
+            console.log('🔍 Backend - RUT recibido para validar:', rut, 'Tipo:', typeof rut);
+            
+            // Validar formato y dígito verificador del RUT
+            const rutIsValid = isValidRUT(rut);
+            console.log('🔍 Backend - Resultado de isValidRUT:', rutIsValid);
+            
+            if (!rutIsValid) {
+                console.error('❌ Backend - RUT inválido rechazado:', rut);
+                return res.status(400).json({
+                    success: false,
+                    message: 'El RUT ingresado no es válido. Por favor, verifica que el formato sea correcto (ej: 12345678-9) y que el dígito verificador sea válido.',
+                    error_code: 'INVALID_RUT',
+                    field: 'rut'
+                });
+            }
+            
+            console.log('✅ Backend - RUT válido:', rut);
+            
+            // Verificar si el RUT ya existe
+            const existingUserByRUT = await userModel.findByRUT(rut);
+            if (existingUserByRUT) {
+                return res.status(409).json({
+                    success: false,
+                    message: `El RUT "${rut}" ya está registrado en nuestra plataforma. Cada persona solo puede tener una cuenta asociada a su RUT. Si ya tienes una cuenta, intenta iniciar sesión.`,
+                    error_code: 'RUT_ALREADY_EXISTS',
+                    field: 'rut'
+                });
+            }
         }
 
         // Validar contraseña
         if (password.length < 6) {
             return res.status(400).json({
                 success: false,
-                message: 'La contraseña debe tener al menos 6 caracteres'
+                message: 'La contraseña debe tener al menos 6 caracteres',
+                error_code: 'WEAK_PASSWORD'
             });
         }
 
@@ -85,6 +142,35 @@ const register = async (req, res) => {
                 doctor_license,
                 medical_notes
             });
+        }
+
+        // Crear dirección si se proporciona
+        if (addressLine1 && region && city && commune) {
+            const db = require('../database/db').getInstance();
+            try {
+                await db.run(`
+                    INSERT INTO addresses (
+                        user_id, full_name, rut, line1, line2, 
+                        commune, city, region, country, phone,
+                        is_default_shipping, created_at, updated_at
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, datetime('now'), datetime('now'))
+                `, [
+                    userId,
+                    `${first_name} ${last_name}`.trim(),
+                    rut || null,
+                    addressLine1,
+                    addressLine2 || null,
+                    commune,
+                    city,
+                    region,
+                    'Chile',
+                    phone || null
+                ]);
+                console.log(`✅ Dirección creada para usuario ${userId}`);
+            } catch (error) {
+                console.error('⚠️ Error al crear dirección (continuando):', error.message);
+                // No fallar el registro si la dirección falla
+            }
         }
 
         console.log(`✅ Usuario registrado: ${email} (ID: ${userId})`);
@@ -132,6 +218,18 @@ const login = async (req, res) => {
         const user = await userModel.findByEmail(email);
 
         if (!user) {
+            console.log(`❌ Usuario no encontrado: ${email}`);
+            return res.status(401).json({
+                success: false,
+                message: 'Credenciales inválidas'
+            });
+        }
+
+        // Obtener hash (puede estar en 'password' o 'password_hash')
+        const storedHash = user.password_hash || user.password || null;
+        
+        if (!storedHash) {
+            console.log(`❌ Usuario sin hash de contraseña: ${email}`);
             return res.status(401).json({
                 success: false,
                 message: 'Credenciales inválidas'
@@ -142,26 +240,27 @@ const login = async (req, res) => {
         let isValidPassword = false;
         
         console.log('🔐 Verificando contraseña para:', email);
-        console.log('🔑 Hash almacenado (primeros 20 chars):', user.password_hash ? user.password_hash.substring(0, 20) : 'null');
+        console.log('🔑 Hash almacenado (primeros 20 chars):', storedHash.substring(0, 20) + '...');
         
         // Detectar tipo de hash: bcrypt siempre empieza con $2b$, $2a$ o $2y$
-        if (user.password_hash && user.password_hash.startsWith('$2')) {
+        if (storedHash.startsWith('$2')) {
             console.log('🔓 Usando bcrypt');
             // Hash bcrypt
             try {
-                isValidPassword = await bcrypt.compare(password, user.password_hash);
+                isValidPassword = await bcrypt.compare(password, storedHash);
+                console.log('✅ Resultado bcrypt:', isValidPassword);
             } catch (error) {
-                console.error('Error en bcrypt.compare:', error);
+                console.error('❌ Error en bcrypt.compare:', error);
                 isValidPassword = false;
             }
         } else {
-            console.log('🔓 Usando SHA-256');
-            // Hash SHA-256 (usuarios seed)
+            console.log('🔓 Usando SHA-256 (compatibilidad con seed antiguo)');
+            // Hash SHA-256 (usuarios seed antiguos)
             const crypto = require('crypto');
             const sha256Hash = crypto.createHash('sha256').update(password).digest('hex');
             console.log('🔑 Hash calculado:', sha256Hash.substring(0, 20) + '...');
-            console.log('🔑 Hash almacenado:', user.password_hash.substring(0, 20) + '...');
-            isValidPassword = (sha256Hash === user.password_hash);
+            console.log('🔑 Hash almacenado:', storedHash.substring(0, 20) + '...');
+            isValidPassword = (sha256Hash === storedHash);
             console.log('✅ Contraseña válida:', isValidPassword);
         }
 
@@ -173,21 +272,116 @@ const login = async (req, res) => {
         }
 
         // Verificar si la cuenta está activa
-        if (!user.is_active) {
+        // Para admins, permitir login incluso si está desactivado (para reactivar cuenta)
+        const isAdmin = user.role === 'admin';
+        const isActive = user.is_active !== undefined ? user.is_active : (user.status === 'active' ? 1 : 0);
+        
+        if (!isActive && !isAdmin) {
             return res.status(403).json({
                 success: false,
                 message: 'Tu cuenta ha sido desactivada. Contacta al administrador.'
             });
         }
+        
+        // Para admins, permitir login siempre (para que puedan reactivar otras cuentas)
+        if (!isActive && isAdmin) {
+            console.log(`⚠️ Admin ${email} intentando login con cuenta desactivada - permitido`);
+        }
 
         // ==========================================
         // VALIDAR ESTADO DE APROBACIÓN DE CUENTA
         // ==========================================
-        // Determinar account_status basado en is_active e is_verified
+        // Verificar si tiene aprobación forzada
+        const db = require('../database/db').getInstance();
+        let isForced = false;
+        try {
+            const forcedApproval = await db.all(
+                'SELECT * FROM user_forced_approvals WHERE user_id = ? LIMIT 1',
+                [user.id]
+            );
+            isForced = forcedApproval.length > 0;
+        } catch (error) {
+            // Si falla, continuar sin el flag
+        }
+        
+        // Para admins, siempre aprobados
+        if (isAdmin) {
+            const account_status = 'approved';
+
+            // Actualizar última fecha de login
+            await userModel.updateLastLogin(user.id);
+
+            console.log(`✅ Login exitoso (admin): ${email}`);
+
+            // Crear objeto de usuario
+            const userData = {
+                id: user.id,
+                email: user.email,
+                first_name: user.first_name || null,
+                last_name: user.last_name || null,
+                phone: user.phone || null,
+                role: user.role || 'admin',
+                is_verified: user.is_verified || 1,
+                is_active: isActive,
+                account_status
+            };
+
+            if (user.first_name || user.last_name) {
+                userData.name = `${user.first_name || ''} ${user.last_name || ''}`.trim();
+            } else if (user.name) {
+                userData.name = user.name;
+            } else {
+                userData.name = 'Administrador';
+            }
+
+            console.log('🔐 [AUTH CONTROLLER] Emitiendo tokens para admin:', userData.email);
+            await issueAuthTokens(res, { ...userData }, {
+                userAgent: req.get('user-agent'),
+                ip: req.ip
+            });
+            console.log('✅ [AUTH CONTROLLER] Tokens emitidos, emitiendo CSRF token...');
+            issueCsrfToken(res);
+            console.log('✅ [AUTH CONTROLLER] CSRF token emitido');
+
+            const responseData = {
+                success: true,
+                message: 'Login exitoso',
+                data: {
+                    user: userData
+                }
+            };
+            
+            console.log('📤 [AUTH CONTROLLER] Enviando respuesta al frontend:');
+            console.log('   - success:', responseData.success);
+            console.log('   - message:', responseData.message);
+            console.log('   - user.id:', responseData.data.user.id);
+            console.log('   - user.email:', responseData.data.user.email);
+            console.log('   - user.role:', responseData.data.user.role);
+            console.log('   - user.account_status:', responseData.data.user.account_status);
+            const setCookieHeader = res.getHeaders()['set-cookie'];
+            const cookieCount = Array.isArray(setCookieHeader) ? setCookieHeader.length : (setCookieHeader ? 1 : 0);
+            console.log('🍪 [AUTH CONTROLLER] Cookies en respuesta:', cookieCount);
+            if (setCookieHeader) {
+                console.log('🍪 [AUTH CONTROLLER] Headers Set-Cookie:');
+                const cookies = Array.isArray(setCookieHeader) ? setCookieHeader : [setCookieHeader];
+                cookies.forEach((cookie, idx) => {
+                    const name = cookie.split('=')[0];
+                    console.log(`   ${idx + 1}. ${name}`);
+                });
+            }
+            
+            return res.json(responseData);
+        }
+        
+        // Para usuarios no-admin, validar estado de aprobación
+        const isVerified = user.is_verified !== undefined ? (user.is_verified === 1 || user.is_verified === true) : false;
+        
         let account_status = 'pending';
-        if (user.is_verified && user.is_active) {
+        if (isForced && isVerified && isActive) {
+            account_status = 'forced_approved';
+        } else if (isVerified && isActive) {
             account_status = 'approved';
-        } else if (!user.is_active && !user.is_verified) {
+        } else if (!isActive && !isVerified) {
             account_status = 'rejected';
         }
         
@@ -212,48 +406,44 @@ const login = async (req, res) => {
         // Actualizar última fecha de login
         await userModel.updateLastLogin(user.id);
 
-        // Generar token JWT (incluyendo account_status)
-        const token = jwt.sign(
-            {
-                id: user.id,
-                email: user.email,
-                role: user.role,
-                account_status: account_status
-            },
-            JWT_SECRET,
-            { expiresIn: JWT_EXPIRES_IN }
-        );
-
         console.log(`✅ Login exitoso: ${email} (${account_status})`);
         
         // Crear objeto de usuario con campo name combinado (incluyendo account_status)
         const userData = {
             id: user.id,
             email: user.email,
-            first_name: user.first_name,
-            last_name: user.last_name,
-            phone: user.phone,
-            role: user.role,
-            is_verified: user.is_verified,
-            is_active: user.is_active,
+            first_name: user.first_name || null,
+            last_name: user.last_name || null,
+            phone: user.phone || null,
+            role: user.role || 'customer', // Asegurar que role existe
+            is_verified: user.is_verified || 0,
+            is_active: user.is_active !== undefined ? user.is_active : (user.status === 'active' ? 1 : 0),
             account_status: account_status
         };
         
         // Agregar campo 'name' combinado para compatibilidad con frontend
         if (user.first_name || user.last_name) {
             userData.name = `${user.first_name || ''} ${user.last_name || ''}`.trim();
+        } else if (user.name) {
+            // Si la BD tiene campo 'name' directamente
+            userData.name = user.name;
         }
         
-        // Si aún no tiene nombre, usar email
+        // Si aún no tiene nombre, usar email o 'Administrador'
         if (!userData.name) {
-            userData.name = user.email || 'Usuario sin nombre';
+            userData.name = userData.role === 'admin' ? 'Administrador' : (user.email || 'Usuario sin nombre');
         }
+
+        await issueAuthTokens(res, { ...userData }, {
+            userAgent: req.get('user-agent'),
+            ip: req.ip
+        });
+        issueCsrfToken(res);
 
         res.json({
             success: true,
             message: 'Login exitoso',
             data: {
-                token,
                 user: userData
             }
         });
@@ -275,7 +465,18 @@ const getMe = async (req, res) => {
     try {
         const userId = req.user.id;
 
-        const user = await userModel.findByIdWithMedicalInfo(userId);
+        let user;
+        try {
+            user = await userModel.findByIdWithMedicalInfo(userId);
+        } catch (error) {
+            // Si falla por tabla no existente, usar findById
+            if (error.code === 'SQLITE_ERROR' && error.message.includes('user_medical_info')) {
+                console.warn('⚠️ Usando findById como fallback para obtener usuario');
+                user = await userModel.findById(userId);
+            } else {
+                throw error;
+            }
+        }
 
         if (!user) {
             return res.status(404).json({
@@ -290,9 +491,39 @@ const getMe = async (req, res) => {
         delete user.reset_token;
         delete user.reset_token_expires;
         
-        // Calcular account_status basado en is_active e is_verified (igual que en middleware)
+        // Mapear campos si es necesario
+        if (user.status !== undefined && user.is_active === undefined) {
+            user.is_active = (user.status === 'active') ? 1 : 0;
+        }
+        if (user.is_active === undefined) {
+            user.is_active = 1;
+        }
+        if (!user.role) {
+            user.role = user.email && user.email.toLowerCase().includes('admin') ? 'admin' : 'customer';
+        }
+        
+        // Verificar si tiene aprobación forzada
+        const db = require('../database/db').getInstance();
+        let isForced = false;
+        try {
+            const forcedApproval = await db.all(
+                'SELECT * FROM user_forced_approvals WHERE user_id = ? LIMIT 1',
+                [userId]
+            );
+            isForced = forcedApproval.length > 0;
+        } catch (error) {
+            // Si falla, continuar sin el flag
+        }
+        
+        // Calcular account_status basado en is_active e is_verified
+        // Para admins, siempre aprobado
+        const isAdmin = user.role === 'admin';
         let account_status = 'pending';
-        if (user.is_verified && user.is_active) {
+        if (isAdmin) {
+            account_status = 'approved';
+        } else if (isForced && user.is_verified && user.is_active) {
+            account_status = 'forced_approved';
+        } else if (user.is_verified && user.is_active) {
             account_status = 'approved';
         } else if (!user.is_active && !user.is_verified) {
             account_status = 'rejected';
@@ -451,9 +682,24 @@ const updateProfile = async (req, res) => {
         delete updatedUser.reset_token;
         delete updatedUser.reset_token_expires;
         
+        // Verificar si tiene aprobación forzada
+        const db = require('../database/db').getInstance();
+        let isForced = false;
+        try {
+            const forcedApproval = await db.all(
+                'SELECT * FROM user_forced_approvals WHERE user_id = ? LIMIT 1',
+                [userId]
+            );
+            isForced = forcedApproval.length > 0;
+        } catch (error) {
+            // Si falla, continuar sin el flag
+        }
+        
         // Calcular account_status basado en is_active e is_verified (igual que en middleware)
         let account_status = 'pending';
-        if (updatedUser.is_verified && updatedUser.is_active) {
+        if (isForced && updatedUser.is_verified && updatedUser.is_active) {
+            account_status = 'forced_approved';
+        } else if (updatedUser.is_verified && updatedUser.is_active) {
             account_status = 'approved';
         } else if (!updatedUser.is_active && !updatedUser.is_verified) {
             account_status = 'rejected';
@@ -555,6 +801,29 @@ const changePassword = async (req, res) => {
  */
 const logout = async (req, res) => {
     try {
+        const refreshToken = req.cookies?.refresh_token;
+
+        if (refreshToken) {
+            try {
+                const tokenHash = hashToken(refreshToken);
+                const tokenRecord = await refreshTokenModel.findByHash(tokenHash);
+
+                if (tokenRecord && !tokenRecord.revoked_at) {
+                    await refreshTokenModel.markAsRevoked(tokenRecord.id, 'logout');
+                }
+            } catch (error) {
+                // Si la tabla no existe, continuar de todas formas (la migración se ejecutará en el próximo inicio)
+                if (error.message && error.message.includes('no such table')) {
+                    console.warn('⚠️ Tabla user_refresh_tokens no existe aún. La migración se ejecutará en el próximo reinicio del servidor.');
+                } else {
+                    // Otro error, loggear pero continuar con el logout
+                    console.warn('⚠️ Error al revocar refresh token (continuando con logout):', error.message);
+                }
+            }
+        }
+
+        clearAuthCookies(res);
+
         res.json({
             success: true,
             message: 'Sesión cerrada correctamente'
@@ -574,69 +843,134 @@ const logout = async (req, res) => {
  */
 const refreshToken = async (req, res) => {
     try {
-        const { token } = req.body;
+        const refreshTokenCookie = req.cookies?.refresh_token;
 
-        if (!token) {
+        if (!refreshTokenCookie) {
             return res.status(400).json({
                 success: false,
-                message: 'Token requerido'
+                message: 'Refresh token requerido'
             });
         }
 
-        // Verificar token
-        const decoded = jwt.verify(token, JWT_SECRET);
+        const tokenHash = hashToken(refreshTokenCookie);
+        const tokenRecord = await refreshTokenModel.findByHash(tokenHash);
 
-        // Verificar que el usuario existe
-        const user = await userModel.findById(decoded.id);
-
-        if (!user || !user.is_active) {
+        if (!tokenRecord) {
+            clearAuthCookies(res);
             return res.status(401).json({
                 success: false,
-                message: 'Token inválido'
+                message: 'Refresh token inválido'
             });
         }
 
-        // Calcular account_status actual
+        if (tokenRecord.revoked_at) {
+            await refreshTokenModel.revokeFamily(tokenRecord.user_id);
+            clearAuthCookies(res);
+            return res.status(401).json({
+                success: false,
+                message: 'Refresh token revocado'
+            });
+        }
+
+        if (new Date(tokenRecord.expires_at) <= new Date()) {
+            await refreshTokenModel.markAsRevoked(tokenRecord.id, 'expired');
+            clearAuthCookies(res);
+            return res.status(401).json({
+                success: false,
+                message: 'Refresh token expirado'
+            });
+        }
+
+        const user = await userModel.findById(tokenRecord.user_id);
+
+        if (!user || !user.is_active) {
+            await refreshTokenModel.markAsRevoked(tokenRecord.id, 'user_inactive');
+            clearAuthCookies(res);
+            return res.status(401).json({
+                success: false,
+                message: 'Usuario inactivo'
+            });
+        }
+
+        const db = require('../database/db').getInstance();
+        let isForced = false;
+        try {
+            const forcedApproval = await db.all(
+                'SELECT * FROM user_forced_approvals WHERE user_id = ? LIMIT 1',
+                [user.id]
+            );
+            isForced = forcedApproval.length > 0;
+        } catch (error) {
+            // Ignorar error de tabla faltante
+        }
+
         let account_status = 'pending';
-        if (user.is_verified && user.is_active) {
+        if (isForced && user.is_verified && user.is_active) {
+            account_status = 'forced_approved';
+        } else if (user.is_verified && user.is_active) {
             account_status = 'approved';
         } else if (!user.is_active && !user.is_verified) {
             account_status = 'rejected';
         }
 
-        // Generar nuevo token (incluyendo account_status actualizado)
-        const newToken = jwt.sign(
-            {
-                id: user.id,
-                email: user.email,
-                role: user.role,
-                account_status: account_status
-            },
-            JWT_SECRET,
-            { expiresIn: JWT_EXPIRES_IN }
+        const userData = {
+            id: user.id,
+            email: user.email,
+            first_name: user.first_name || null,
+            last_name: user.last_name || null,
+            phone: user.phone || null,
+            role: user.role || 'customer',
+            is_verified: user.is_verified || 0,
+            is_active: user.is_active !== undefined ? user.is_active : 1,
+            account_status
+        };
+
+        if (user.first_name || user.last_name) {
+            userData.name = `${user.first_name || ''} ${user.last_name || ''}`.trim();
+        } else if (user.name) {
+            userData.name = user.name;
+        } else if (!userData.name) {
+            userData.name = userData.role === 'admin' ? 'Administrador' : (user.email || 'Usuario sin nombre');
+        }
+
+        const newRefreshToken = await issueAuthTokens(res, userData, {
+            userAgent: req.get('user-agent'),
+            ip: req.ip
+        });
+
+        await refreshTokenModel.markAsRevoked(
+            tokenRecord.id,
+            'rotated',
+            newRefreshToken.refreshTokenHash
         );
+
+        issueCsrfToken(res);
 
         res.json({
             success: true,
-            data: { token: newToken }
+            data: {
+                user: userData
+            }
         });
-
     } catch (error) {
         console.error('❌ Error en refreshToken:', error);
         
-        if (error.name === 'TokenExpiredError') {
-            return res.status(401).json({
-                success: false,
-                message: 'Token expirado'
-            });
-        }
-
         res.status(500).json({
             success: false,
             message: 'Error al refrescar token',
             error: error.message
         });
     }
+};
+
+const getCsrfToken = (req, res) => {
+    const token = issueCsrfToken(res);
+    res.json({
+        success: true,
+        data: {
+            csrfToken: token
+        }
+    });
 };
 
 module.exports = {
@@ -647,5 +981,6 @@ module.exports = {
     updateProfile,
     changePassword,
     logout,
-    refreshToken
+    refreshToken,
+    getCsrfToken
 };

@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics Geográfico - ApexRemedy</title>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .header {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    }
+
+    .header h1 {
+      color: #2d3748;
+      font-size: 28px;
+      margin-bottom: 12px;
+    }
+
+    .filters {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      align-items: end;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .filter-group label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #4a5568;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .filter-group input,
+    .filter-group select,
+    .filter-group button {
+      padding: 10px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .filter-group input:focus,
+    .filter-group select:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 10px 24px !important;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    @media (min-width: 1024px) {
+      .grid {
+        grid-template-columns: 1.2fr 0.8fr;
+      }
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    }
+
+    .card h2 {
+      color: #2d3748;
+      font-size: 20px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge {
+      background: #667eea;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .chart-container {
+      width: 100%;
+      height: 560px;
+      position: relative;
+    }
+
+    .chart-container-small {
+      width: 100%;
+      height: 480px;
+    }
+
+    .loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: #a0aec0;
+    }
+
+    .spinner {
+      border: 3px solid #f3f4f6;
+      border-top: 3px solid #667eea;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 12px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, #f6f8fb 0%, #ffffff 100%);
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #718096;
+      font-weight: 600;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      color: #2d3748;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header con filtros -->
+    <div class="header">
+      <h1>📍 Analytics Geográfico</h1>
+      <div class="filters">
+        <div class="filter-group">
+          <label>Fecha inicio</label>
+          <input type="date" id="dateFrom" value="2025-10-01">
+        </div>
+        <div class="filter-group">
+          <label>Fecha fin</label>
+          <input type="date" id="dateTo" value="2025-11-04">
+        </div>
+        <div class="filter-group">
+          <label>Estado</label>
+          <select id="statusFilter">
+            <option value="">Todos</option>
+            <option value="pending">Pendiente</option>
+            <option value="paid">Pagado</option>
+            <option value="shipped">Enviado</option>
+            <option value="delivered">Entregado</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>&nbsp;</label>
+          <button class="btn-primary" onclick="loadCharts()">Actualizar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Grid de gráficos -->
+    <div class="grid">
+      <!-- Heatmap RM -->
+      <div class="card">
+        <h2>🗺️ Mapa de Calor - Región Metropolitana <span class="badge" id="rmTotal">0</span></h2>
+        <div class="chart-container">
+          <div id="mapRM"></div>
+          <div class="loading" id="loadingRM">
+            <div class="spinner"></div>
+            <p>Cargando mapa...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Barras resto del país -->
+      <div class="card">
+        <h2>📊 Resto del País por Región <span class="badge" id="restoTotal">0</span></h2>
+        <div class="chart-container-small">
+          <div id="barResto"></div>
+          <div class="loading" id="loadingResto">
+            <div class="spinner"></div>
+            <p>Cargando datos...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats generales -->
+    <div class="card" style="margin-top: 24px;">
+      <h2>📈 Estadísticas Generales</h2>
+      <div class="stats">
+        <div class="stat-card">
+          <div class="stat-label">Total Pedidos</div>
+          <div class="stat-value" id="statTotal">-</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Comuna Top RM</div>
+          <div class="stat-value" id="statTopComuna">-</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Región Top</div>
+          <div class="stat-value" id="statTopRegion">-</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Promedio/Comuna</div>
+          <div class="stat-value" id="statAvg">-</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Configuración
+    const API_BASE = ''; // Cambiar por tu URL de API si es necesario
+    let chartRM = null;
+    let chartResto = null;
+
+    // Normalizar strings (sin acentos)
+    const normalizar = s => s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toUpperCase().trim();
+
+    // Inicializar charts
+    function initCharts() {
+      const mapEl = document.getElementById('mapRM');
+      const barEl = document.getElementById('barResto');
+      
+      chartRM = echarts.init(mapEl);
+      chartResto = echarts.init(barEl);
+
+      // Responsive
+      window.addEventListener('resize', () => {
+        chartRM?.resize();
+        chartResto?.resize();
+      });
+    }
+
+    // Cargar datos y actualizar gráficos
+    async function loadCharts() {
+      const from = document.getElementById('dateFrom').value;
+      const to = document.getElementById('dateTo').value;
+      const status = document.getElementById('statusFilter').value;
+
+      if (!from || !to) {
+        alert('Por favor selecciona ambas fechas');
+        return;
+      }
+
+      // Mostrar loading
+      document.getElementById('loadingRM').style.display = 'block';
+      document.getElementById('loadingResto').style.display = 'block';
+
+      try {
+        // Cargar en paralelo
+        const [geojson, pedidosRM, pedidosResto] = await Promise.all([
+          fetch('/geo/rm_comunas.geojson').then(r => r.json()),
+          fetch(`${API_BASE}/analytics/orders-by-comuna?from=${from}&to=${to}${status ? '&status=' + status : ''}`).then(r => r.json()),
+          fetch(`${API_BASE}/analytics/orders-resto-por-region?from=${from}&to=${to}${status ? '&status=' + status : ''}`).then(r => r.json())
+        ]);
+
+        // Registrar mapa
+        echarts.registerMap('rm_comunas', geojson);
+
+        // Renderizar heatmap RM
+        renderHeatmapRM(pedidosRM);
+
+        // Renderizar barras resto
+        renderBarrasResto(pedidosResto);
+
+        // Actualizar stats
+        updateStats(pedidosRM, pedidosResto);
+
+      } catch (error) {
+        console.error('Error cargando datos:', error);
+        alert('Error al cargar los datos. Ver consola.');
+      } finally {
+        document.getElementById('loadingRM').style.display = 'none';
+        document.getElementById('loadingResto').style.display = 'none';
+      }
+    }
+
+    // Renderizar heatmap RM
+    function renderHeatmapRM(pedidos) {
+      const dataMap = pedidos.map(d => ({ 
+        name: d.comuna, 
+        value: d.orders 
+      }));
+
+      const maxVal = Math.max(1, ...dataMap.map(d => d.value || 0));
+      const totalRM = dataMap.reduce((sum, d) => sum + (d.value || 0), 0);
+
+      document.getElementById('rmTotal').textContent = totalRM.toLocaleString();
+
+      const option = {
+        tooltip: {
+          trigger: 'item',
+          formatter: p => `<strong>${p.name}</strong><br/>Pedidos: ${p.value ?? 0}`
+        },
+        visualMap: {
+          min: 0,
+          max: maxVal,
+          left: 'left',
+          bottom: 20,
+          calculable: true,
+          inRange: {
+            color: ['#e0f2fe', '#0284c7', '#0c4a6e']
+          },
+          text: ['Alto', 'Bajo'],
+          textStyle: { color: '#333' }
+        },
+        series: [{
+          name: 'Pedidos',
+          type: 'map',
+          map: 'rm_comunas',
+          roam: true,
+          scaleLimit: { min: 1, max: 3 },
+          emphasis: {
+            label: { show: true, color: '#fff', fontWeight: 'bold' },
+            itemStyle: { areaColor: '#fbbf24', borderColor: '#fff', borderWidth: 2 }
+          },
+          itemStyle: {
+            borderColor: '#fff',
+            borderWidth: 1
+          },
+          data: dataMap
+        }]
+      };
+
+      chartRM.setOption(option, true);
+    }
+
+    // Renderizar barras resto
+    function renderBarrasResto(pedidos) {
+      const cats = pedidos.map(d => d.region);
+      const vals = pedidos.map(d => d.orders);
+      const totalResto = vals.reduce((sum, v) => sum + v, 0);
+
+      document.getElementById('restoTotal').textContent = totalResto.toLocaleString();
+
+      const option = {
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: { type: 'shadow' }
+        },
+        grid: {
+          left: 140,
+          right: 40,
+          top: 20,
+          bottom: 40
+        },
+        xAxis: {
+          type: 'value',
+          axisLabel: { color: '#64748b' }
+        },
+        yAxis: {
+          type: 'category',
+          data: cats,
+          axisLabel: { color: '#64748b', fontSize: 12 }
+        },
+        series: [{
+          type: 'bar',
+          data: vals,
+          itemStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+              { offset: 0, color: '#667eea' },
+              { offset: 1, color: '#764ba2' }
+            ])
+          },
+          label: {
+            show: true,
+            position: 'right',
+            color: '#333',
+            fontWeight: 'bold'
+          },
+          barMaxWidth: 40
+        }]
+      };
+
+      chartResto.setOption(option, true);
+    }
+
+    // Actualizar estadísticas
+    function updateStats(pedidosRM, pedidosResto) {
+      const totalRM = pedidosRM.reduce((sum, d) => sum + d.orders, 0);
+      const totalResto = pedidosResto.reduce((sum, d) => sum + d.orders, 0);
+      const total = totalRM + totalResto;
+
+      const topComuna = pedidosRM[0]?.comuna || '-';
+      const topRegion = pedidosResto[0]?.region || '-';
+      const avgComuna = pedidosRM.length > 0 ? Math.round(totalRM / pedidosRM.length) : 0;
+
+      document.getElementById('statTotal').textContent = total.toLocaleString();
+      document.getElementById('statTopComuna').textContent = topComuna;
+      document.getElementById('statTopRegion').textContent = topRegion;
+      document.getElementById('statAvg').textContent = avgComuna.toLocaleString();
+    }
+
+    // Init al cargar
+    document.addEventListener('DOMContentLoaded', () => {
+      initCharts();
+      loadCharts();
+    });
+  </script>
+</body>
+</html>

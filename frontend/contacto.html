@@ -19,8 +19,8 @@
     <div id="header-container"></div>
 
     <!-- Hero Section -->
-    <section class="shop-header">
-        <div class="container">
+    <section class="shop-header app-section">
+        <div class="container u-container">
           <h1>
             <i class="fas fa-headset"></i> Contáctanos
           </h1>
@@ -31,12 +31,12 @@
       </section>
 
     <!-- Main Content -->
-    <section class="about-section">
-        <div class="container">
+    <section class="about-section app-section">
+        <div class="container u-container">
             <div class="contact-grid">
             <!-- Formulario de Contacto -->
             <div>
-                <div class="contact-form-card">
+                <div class="contact-form-card app-card">
                     <h2>Envíanos un Mensaje</h2>
                     
                     <form id="contactForm">
@@ -116,7 +116,7 @@
                         <button 
                             type="submit" 
                             id="submitBtn"
-                            class="cta-button full-width">
+                            class="cta-button app-button app-button--primary full-width">
                             <i class="fas fa-paper-plane"></i>
                             <span id="btnText">Enviar Mensaje</span>
                             <i id="btnLoader" class="fas fa-spinner fa-spin hidden"></i>
@@ -128,7 +128,7 @@
             <!-- Información de Contacto -->
             <div>
                 <!-- Información -->
-                <div class="contact-info-card">
+                <div class="contact-info-card app-card">
                     <h2>Información de Contacto</h2>
                     
                     <div class="contact-item-wrapper">
@@ -177,7 +177,7 @@
                 </div>
 
                 <!-- Redes Sociales -->
-                <div class="contact-info-card">
+                <div class="contact-info-card app-card">
                     <h2>Síguenos en Redes Sociales</h2>
                     
                     <div class="social-links">
@@ -197,7 +197,7 @@
                 </div>
 
                 <!-- Mapa -->
-                <div class="contact-info-card">
+                <div class="contact-info-card app-card">
                     <h2>Ubicación</h2>
                     <div class="map-placeholder">
                         <div class="map-placeholder-content">
@@ -355,12 +355,12 @@
 <div id="cartSidebar" class="cart-sidebar">
     <div class="cart-header">
       <h3><i class="fas fa-shopping-cart"></i> Carrito de Compras</h3>
-      <button id="closeCart" class="cta-button" style="padding: 6px 12px;">Cerrar</button>
+      <button id="closeCart" class="cta-button app-button app-button--primary" style="padding: 6px 12px;">Cerrar</button>
     </div>
     <div id="cartItems" class="cart-items"></div>
     <div class="cart-total">
       <div class="total-amount" id="cartTotal">Total: $0</div>
-      <a href="./carrito.html" class="cta-button full-width">Ver Carrito Completo</a>
+      <a href="./carrito.html" class="cta-button app-button app-button--primary full-width">Ver Carrito Completo</a>
     </div>
   </div>
   <div id="cartOverlay" class="cart-overlay" style="display: none;"></div>

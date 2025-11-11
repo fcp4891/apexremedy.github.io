@@ -10,7 +10,7 @@
 
     class SessionManager {
         constructor() {
-            this.inactivityTimeout = 60000; // 1 minuto en milisegundos
+            this.inactivityTimeout = 120000; // 2 minutos en milisegundos (120000ms)
             this.warningTimeout = 30000; // 30 segundos para responder
             this.inactivityTimer = null;
             this.warningTimer = null;

@@ -1,56 +1,70 @@
-<nav class="admin-nav">
-    <div class="admin-container">
-        <div class="admin-nav-container">
-            <!-- Logo y Título -->
-            <div class="admin-nav-logo-section">
-                <a href="./index.html" class="admin-nav-logo">
-                    <div class="admin-nav-logo-icon">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <span class="admin-nav-logo-text">Apexremedy <span class="admin-nav-logo-badge">Admin</span></span>
-                </a>
-                <span id="currentPageTitle" class="admin-nav-page-title"></span>
-            </div>
+<!-- Sidebar Admin - Vertical en Desktop -->
+<div class="admin-sidebar-wrapper" id="adminSidebarWrapper">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar" id="adminSidebar">
+        <!-- Logo y Toggle -->
+        <div class="admin-sidebar-header">
+            <a href="./index.html" class="admin-nav-logo">
+                <div class="admin-nav-logo-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <span class="admin-nav-logo-text">
+                    <span class="admin-logo-main">Apexremedy</span>
+                    <span class="admin-nav-logo-badge">Admin</span>
+                </span>
+            </a>
+        </div>
+        <div class="admin-sidebar-header">
+            <!-- Botón Toggle (Desktop) -->
+            <button class="admin-sidebar-toggle" id="adminSidebarToggle" title="Colapsar/Expandir menú">
+                <i class="fas fa-chevron-left"></i>
+            </button>   
+        </div>  
+        <!-- Menú de Navegación -->
+        <nav class="admin-sidebar-nav" id="adminNavMenu">
+            <a href="./index.html" class="admin-nav-link" data-page="index">
+                <i class="fas fa-home"></i>
+                <span class="admin-nav-link-text">Inicio</span>
+            </a>
+            <a href="./dashboard.html" class="admin-nav-link" data-page="dashboard">
+                <i class="fas fa-chart-line"></i>
+                <span class="admin-nav-link-text">Dashboard</span>
+            </a>
+            <a href="./users.html" class="admin-nav-link" data-page="users">
+                <i class="fas fa-users"></i>
+                <span class="admin-nav-link-text">Usuarios</span>
+            </a>
+            <a href="./products.html" class="admin-nav-link" data-page="products">
+                <i class="fas fa-box"></i>
+                <span class="admin-nav-link-text">Productos</span>
+            </a>
+            <a href="./orders.html" class="admin-nav-link" data-page="orders">
+                <i class="fas fa-shopping-bag"></i>
+                <span class="admin-nav-link-text">Pedidos</span>
+            </a>
+            <a href="./payments.html" class="admin-nav-link" data-page="payments">
+                <i class="fas fa-credit-card"></i>
+                <span class="admin-nav-link-text">Pagos</span>
+            </a>
+            <a href="./logistica.html" class="admin-nav-link" data-page="logistica">
+                <i class="fas fa-truck"></i>
+                <span class="admin-nav-link-text">Logística</span>
+            </a>
+            <a href="./dispensary.html" class="admin-nav-link" data-page="dispensary">
+                <i class="fas fa-building"></i>
+                <span class="admin-nav-link-text">Dispensario</span>
+            </a>
+        </nav>
 
-            <!-- Hamburger Menu Button (Mobile) -->
-            <div class="admin-hamburger" id="adminHamburgerBtn">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-
-            <!-- Menú de Navegación -->
-            <div class="admin-nav-menu" id="adminNavMenu">
-                <a href="./index.html" class="admin-nav-link" data-page="index">
-                    <i class="fas fa-home"></i>
-                    <span>Inicio</span>
-                </a>
-                <a href="./dashboard.html" class="admin-nav-link" data-page="dashboard">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="./users.html" class="admin-nav-link" data-page="users">
-                    <i class="fas fa-users"></i>
-                    <span>Usuarios</span>
-                </a>
-                <a href="./products.html" class="admin-nav-link" data-page="products">
-                    <i class="fas fa-box"></i>
-                    <span>Productos</span>
-                </a>
-                <a href="./orders.html" class="admin-nav-link" data-page="orders">
-                    <i class="fas fa-shopping-bag"></i>
-                    <span>Pedidos</span>
-                </a>
-            </div>
-
-            <!-- Menú de Usuario -->
-            <div class="admin-nav-user">
-                <div class="admin-nav-user-info">
+        <!-- Menú de Usuario -->
+        <div class="admin-sidebar-footer">
+            <div class="admin-nav-user" id="adminNavUser">
+                <div class="admin-nav-user-avatar" id="adminUserAvatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="admin-nav-user-info" id="adminUserInfo">
                     <p class="admin-nav-user-role">Administrador</p>
                     <p id="adminUserName" class="admin-nav-user-name">Cargando...</p>
-                </div>
-                <div class="admin-nav-user-avatar">
-                    <i class="fas fa-user"></i>
                 </div>
                 <div class="admin-nav-user-dropdown">
                     <div class="admin-nav-user-dropdown-header">
@@ -75,5 +89,21 @@
                 </div>
             </div>
         </div>
-    </div>
-</nav>
+    </aside>
+
+    <!-- Overlay para móvil -->
+    <div class="admin-sidebar-overlay" id="adminSidebarOverlay"></div>
+
+    <!-- Top Bar (Solo Mobile) -->
+    <nav class="admin-topbar" id="adminTopbar">
+        <!-- Hamburger Menu Button (Mobile) -->
+        <button class="admin-hamburger" id="adminHamburgerBtn" aria-label="Toggle menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        
+        <!-- Título de página (Mobile) -->
+        <span id="currentPageTitle" class="admin-nav-page-title"></span>
+    </nav>
+</div>

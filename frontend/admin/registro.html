@@ -10,6 +10,7 @@
     <script src="./js/basePath.js"></script>
     <script src="./js/config.js"></script>
     <script src="./js/utils.js"></script>
+    <script type="module" src="./js/adminTemplate.legacy.js"></script>
     <script defer src="./js/adminTemplate.js"></script>
 </head>
 <body>
@@ -71,13 +72,14 @@
                         <!-- Teléfono -->
                         <div>
                             <label style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--accent-black);">
-                                Teléfono
+                                Teléfono *
                             </label>
                             <div style="position: relative;">
                                 <i class="fas fa-phone" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--medium-gray);"></i>
                                 <input type="tel" 
                                        id="phone" 
                                        name="phone"
+                                       required
                                        style="width: 100%; padding: 12px 12px 12px 40px; border: 2px solid var(--light-gray); border-radius: 8px; font-size: 1rem;"
                                        placeholder="+56912345678">
                             </div>
@@ -93,9 +95,13 @@
                                 <input type="text" 
                                        id="rut" 
                                        name="rut"
+                                       onblur="formatRUTInput(this)"
                                        style="width: 100%; padding: 12px 12px 12px 40px; border: 2px solid var(--light-gray); border-radius: 8px; font-size: 1rem;"
-                                       placeholder="12345678-9">
+                                       placeholder="12345678-9 o 12.345.678-9">
                             </div>
+                            <p id="rutError" style="display: none; color: #dc2626; font-size: 0.85rem; margin-top: 4px;">
+                                <i class="fas fa-exclamation-circle"></i> RUT inválido
+                            </p>
                         </div>
 
                         <!-- Password -->
@@ -137,6 +143,120 @@
                                        minlength="6"
                                        style="width: 100%; padding: 12px 40px 12px 40px; border: 2px solid var(--light-gray); border-radius: 8px; font-size: 1rem;"
                                        placeholder="••••••••">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dirección (Opcional) -->
+                    <div id="addressSection" style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #e5e7eb; display: block;">
+                        <h4 style="font-size: 1.1rem; font-weight: 700; color: #1f2937; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-map-marker-alt" style="color: #10b981;"></i>
+                            Dirección de Entrega (Opcional)
+                        </h4>
+                        <p style="font-size: 0.9rem; color: #6b7280; margin-bottom: 16px;">
+                            Puedes agregarla ahora o más tarde en el proceso de compra
+                        </p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Calle y número -->
+                            <div class="md:col-span-2">
+                                <label style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--accent-black);">
+                                    Calle y número
+                                </label>
+                                <div style="position: relative;">
+                                    <i class="fas fa-home" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--medium-gray);"></i>
+                                    <input type="text" 
+                                           id="addressLine1" 
+                                           name="addressLine1"
+                                           style="width: 100%; padding: 12px 12px 12px 40px; border: 2px solid var(--light-gray); border-radius: 8px; font-size: 1rem;"
+                                           placeholder="Calle y número">
+                                </div>
+                            </div>
+                            
+                            <!-- Tipo de dirección (Depto/Casa/Oficina) -->
+                            <div>
+                                <label style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--accent-black);">
+                                    Tipo (opcional)
+                                </label>
+                                <div style="position: relative;">
+                                    <i class="fas fa-building" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--medium-gray); z-index: 1;"></i>
+                                    <select id="addressType" 
+                                            name="addressType"
+                                            style="width: 100%; padding: 12px 12px 12px 40px; border: 2px solid var(--light-gray); border-radius: 8px; font-size: 1rem; appearance: none; background-color: white; cursor: pointer;">
+                                        <option value="">Tipo (opcional)</option>
+                                        <option value="Depto">Depto</option>
+                                        <option value="Casa">Casa</option>
+                                        <option value="Oficina">Oficina</option>
+                                    </select>
+                                    <i class="fas fa-chevron-down" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--medium-gray); pointer-events: none;"></i>
+                                </div>
+                            </div>
+                            
+                            <!-- Referencia (texto aparte) -->
+                            <div>
+                                <label style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--accent-black);">
+                                    Referencia (opcional)
+                                </label>
+                                <div style="position: relative;">
+                                    <i class="fas fa-info-circle" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--medium-gray);"></i>
+                                    <input type="text" 
+                                           id="addressReference" 
+                                           name="addressReference"
+                                           style="width: 100%; padding: 12px 12px 12px 40px; border: 2px solid var(--light-gray); border-radius: 8px; font-size: 1rem;"
+                                           placeholder="Ej: Frente a plaza">
+                                </div>
+                            </div>
+                            
+                            <!-- Región -->
+                            <div>
+                                <label style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--accent-black);">
+                                    Región
+                                </label>
+                                <div style="position: relative;">
+                                    <i class="fas fa-globe-americas" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--medium-gray); z-index: 1;"></i>
+                                    <select id="region" 
+                                            name="region"
+                                            onchange="loadCitiesForRegion()"
+                                            style="width: 100%; padding: 12px 12px 12px 40px; border: 2px solid var(--light-gray); border-radius: 8px; font-size: 1rem; appearance: none; background-color: white; cursor: pointer;">
+                                        <option value="">Selecciona una región</option>
+                                    </select>
+                                    <i class="fas fa-chevron-down" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--medium-gray); pointer-events: none;"></i>
+                                </div>
+                            </div>
+                            
+                            <!-- Ciudad -->
+                            <div>
+                                <label style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--accent-black);">
+                                    Ciudad
+                                </label>
+                                <div style="position: relative;">
+                                    <i class="fas fa-city" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--medium-gray); z-index: 1;"></i>
+                                    <select id="city" 
+                                            name="city"
+                                            onchange="loadCommunesForCity()"
+                                            disabled
+                                            style="width: 100%; padding: 12px 12px 12px 40px; border: 2px solid var(--light-gray); border-radius: 8px; font-size: 1rem; appearance: none; background-color: #f5f5f5; cursor: not-allowed; color: #999;">
+                                        <option value="">Primero selecciona una región</option>
+                                    </select>
+                                    <i class="fas fa-chevron-down" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--medium-gray); pointer-events: none;"></i>
+                                </div>
+                            </div>
+                            
+                            <!-- Comuna -->
+                            <div>
+                                <label style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--accent-black);">
+                                    Comuna
+                                </label>
+                                <div style="position: relative;">
+                                    <i class="fas fa-map-pin" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--medium-gray); z-index: 1;"></i>
+                                    <select id="commune" 
+                                            name="commune"
+                                            disabled
+                                            style="width: 100%; padding: 12px 12px 12px 40px; border: 2px solid var(--light-gray); border-radius: 8px; font-size: 1rem; appearance: none; background-color: #f5f5f5; cursor: not-allowed; color: #999;">
+                                        <option value="">Primero selecciona una ciudad</option>
+                                    </select>
+                                    <i class="fas fa-chevron-down" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--medium-gray); pointer-events: none;"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -231,9 +351,34 @@
             const confirmPassword = document.getElementById('confirmPassword').value;
             
             // Validación básica
-            if (!name || !email || !password) {
-                showError('Por favor completa todos los campos obligatorios');
+            if (!name || !email || !password || !phone) {
+                showError('Por favor completa todos los campos obligatorios (nombre, email, teléfono y contraseña)');
+                if (!phone) {
+                    document.getElementById('phone').focus();
+                }
                 return;
+            }
+            
+            // Dividir nombre en first_name y last_name
+            const nameParts = name.split(' ').filter(part => part.trim() !== '');
+            const first_name = nameParts[0] || name;
+            const last_name = nameParts.slice(1).join(' ') || first_name;
+            
+            // Validar email
+            if (!Utils.isValidEmail(email)) {
+                showError('Por favor ingresa un correo electrónico válido');
+                document.getElementById('email').focus();
+                return;
+            }
+            
+            // Validar RUT si se ingresó
+            if (rut && !Utils.isValidRUT(rut)) {
+                showError('Por favor ingresa un RUT válido (formato: 12345678-9)');
+                document.getElementById('rut').focus();
+                document.getElementById('rutError').style.display = 'block';
+                return;
+            } else {
+                document.getElementById('rutError').style.display = 'none';
             }
             
             if (password.length < 6) {
@@ -253,13 +398,42 @@
             hideMessages();
             
             try {
-                // Preparar datos
+                // Preparar datos (incluir dirección si se completó)
+                const addressLine1 = document.getElementById('addressLine1').value.trim();
+                const addressType = document.getElementById('addressType').value;
+                const addressReference = document.getElementById('addressReference').value.trim();
+                // Combinar tipo y referencia en addressLine2 si existe alguno
+                let addressLine2 = '';
+                if (addressType && addressReference) {
+                    addressLine2 = `${addressType} ${addressReference}`;
+                } else if (addressType) {
+                    addressLine2 = addressType;
+                } else if (addressReference) {
+                    addressLine2 = addressReference;
+                }
+                
+                const regionSelect = document.getElementById('region');
+                const citySelect = document.getElementById('city');
+                const communeSelect = document.getElementById('commune');
+                const region = regionSelect.value;
+                const city = citySelect.value;
+                const commune = communeSelect.value;
+                
                 const userData = {
-                    name,
                     email,
                     password,
-                    phone: phone || undefined,
-                    rut: rut || undefined
+                    first_name,
+                    last_name,
+                    phone: phone,
+                    rut: rut || undefined,
+                    // Dirección solo si se completó al menos región, ciudad y comuna
+                    ...(region && city && commune ? {
+                        addressLine1: addressLine1 || undefined,
+                        addressLine2: addressLine2 || undefined,
+                        region: regionSelect.options[regionSelect.selectedIndex]?.textContent || undefined,
+                        city: citySelect.options[citySelect.selectedIndex]?.textContent || undefined,
+                        commune: commune || undefined
+                    } : {})
                 };
                 
                 // Intentar registro
@@ -274,13 +448,59 @@
                         window.location.href = './index.html';
                     }, 1500);
                 } else {
+                    // Manejar errores específicos con mensajes personalizados
+                    const errorCode = result.error_code;
+                    const field = result.field;
+                    let errorMessage = result.message || 'Error al crear la cuenta';
+                    
+                    // Mensajes personalizados según el código de error
+                    if (errorCode === 'EMAIL_ALREADY_EXISTS') {
+                        errorMessage = result.message || 'Este correo electrónico ya está registrado. Si ya tienes una cuenta, intenta iniciar sesión.';
+                        const emailInput = document.getElementById('email');
+                        if (emailInput) {
+                            emailInput.style.borderColor = '#dc2626';
+                            emailInput.focus();
+                        }
+                    } else if (errorCode === 'RUT_ALREADY_EXISTS') {
+                        errorMessage = result.message || 'Este RUT ya está registrado. Cada persona solo puede tener una cuenta.';
+                        const rutInput = document.getElementById('rut');
+                        if (rutInput) {
+                            rutInput.style.borderColor = '#dc2626';
+                            rutInput.focus();
+                        }
+                    } else if (errorCode === 'INVALID_RUT') {
+                        errorMessage = result.message || 'El RUT ingresado no es válido. Verifica el formato y el dígito verificador.';
+                        const rutInput = document.getElementById('rut');
+                        if (rutInput) {
+                            rutInput.style.borderColor = '#dc2626';
+                            document.getElementById('rutError').style.display = 'block';
+                            rutInput.focus();
+                        }
+                    } else if (errorCode === 'INVALID_EMAIL_FORMAT') {
+                        errorMessage = result.message || 'El formato del correo electrónico no es válido.';
+                        const emailInput = document.getElementById('email');
+                        if (emailInput) {
+                            emailInput.style.borderColor = '#dc2626';
+                            emailInput.focus();
+                        }
+                    }
+                    
                     // Error
-                    showError(result.message || 'Error al crear la cuenta');
+                    showError(errorMessage);
                     resetButton();
                 }
             } catch (error) {
                 console.error('Error en registro:', error);
-                showError(error.message || 'Error al conectar con el servidor');
+                let errorMessage = 'Error al conectar con el servidor';
+                
+                // Si el error tiene un mensaje del backend
+                if (error.response && error.response.data && error.response.data.message) {
+                    errorMessage = error.response.data.message;
+                } else if (error.message) {
+                    errorMessage = error.message;
+                }
+                
+                showError(errorMessage);
                 resetButton();
             }
         });
@@ -324,13 +544,204 @@
             btnLoader.style.display = 'none';
         }
         
-        // Redirigir si ya está autenticado
+        // Formatear RUT al perder el foco
+        function formatRUTInput(input) {
+            const rutValue = input.value.trim();
+            if (rutValue && Utils.isValidRUT(rutValue)) {
+                input.value = Utils.formatRUT(rutValue);
+                document.getElementById('rutError').style.display = 'none';
+            } else if (rutValue) {
+                document.getElementById('rutError').style.display = 'block';
+            }
+        }
+
+        // Cargar datos de regiones, ciudades y comunas
+        let chileLocations = null;
+        
+        async function loadChileLocations() {
+            try {
+                // Intentar cargar desde diferentes rutas posibles
+                const paths = [
+                    '../data/chile-locations.json',
+                    './data/chile-locations.json',
+                    '../../data/chile-locations.json',
+                    '/frontend/data/chile-locations.json',
+                    '/data/chile-locations.json'
+                ];
+                
+                let response = null;
+                let lastError = null;
+                
+                for (const path of paths) {
+                    try {
+                        console.log(`📂 Intentando cargar desde: ${path}`);
+                        response = await fetch(path);
+                        if (response.ok) {
+                            console.log(`✅ Archivo encontrado en: ${path}`);
+                            break;
+                        }
+                    } catch (err) {
+                        lastError = err;
+                        continue;
+                    }
+                }
+                
+                if (!response || !response.ok) {
+                    throw new Error(`No se pudo cargar datos de ubicaciones. Último error: ${lastError?.message || 'Archivo no encontrado'}`);
+                }
+                
+                chileLocations = await response.json();
+                
+                if (!chileLocations || !chileLocations.regions || chileLocations.regions.length === 0) {
+                    throw new Error('El archivo JSON no contiene datos válidos');
+                }
+                
+                populateRegions();
+                console.log(`✅ Ubicaciones de Chile cargadas correctamente: ${chileLocations.regions.length} regiones`);
+            } catch (error) {
+                console.error('⚠️ Error cargando ubicaciones:', error);
+                // Crear estructura básica si falla
+                chileLocations = { regions: [] };
+                console.warn('⚠️ Usando estructura vacía de ubicaciones');
+                
+                // Mostrar mensaje al usuario
+                const addressSection = document.getElementById('addressSection');
+                if (addressSection) {
+                    const errorMsg = document.createElement('p');
+                    errorMsg.style.cssText = 'color: #ef4444; font-size: 0.85rem; margin-top: 8px;';
+                    errorMsg.textContent = '⚠️ No se pudieron cargar las ubicaciones. Por favor, ingresa la dirección manualmente.';
+                    addressSection.appendChild(errorMsg);
+                }
+            }
+        }
+        
+        function populateRegions() {
+            const regionSelect = document.getElementById('region');
+            regionSelect.innerHTML = '<option value="">Selecciona una región</option>';
+            
+            if (chileLocations && chileLocations.regions) {
+                chileLocations.regions.forEach(region => {
+                    const option = document.createElement('option');
+                    option.value = region.id;
+                    option.textContent = region.name;
+                    option.dataset.regionData = JSON.stringify(region);
+                    regionSelect.appendChild(option);
+                });
+            }
+        }
+        
+        function loadCitiesForRegion() {
+            const regionSelect = document.getElementById('region');
+            const citySelect = document.getElementById('city');
+            const communeSelect = document.getElementById('commune');
+            
+            const selectedRegionId = regionSelect.value;
+            
+            // Resetear ciudades y comunas
+            citySelect.innerHTML = '<option value="">Selecciona una ciudad</option>';
+            communeSelect.innerHTML = '<option value="">Primero selecciona una ciudad</option>';
+            communeSelect.disabled = true;
+            
+            if (!selectedRegionId) {
+                citySelect.disabled = true;
+                citySelect.style.backgroundColor = '#f5f5f5';
+                citySelect.style.color = '#999';
+                citySelect.style.cursor = 'not-allowed';
+                return;
+            }
+            
+            // Habilitar selector de ciudad
+            citySelect.disabled = false;
+            citySelect.style.backgroundColor = 'white';
+            citySelect.style.color = 'inherit';
+            citySelect.style.cursor = 'pointer';
+            
+            // Obtener región seleccionada
+            const selectedOption = regionSelect.options[regionSelect.selectedIndex];
+            const regionData = JSON.parse(selectedOption.dataset.regionData || '{}');
+            
+            if (regionData.cities && regionData.cities.length > 0) {
+                regionData.cities.forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city.id;
+                    option.textContent = city.name;
+                    option.dataset.cityData = JSON.stringify(city);
+                    citySelect.appendChild(option);
+                });
+            }
+        }
+        
+        function loadCommunesForCity() {
+            const regionSelect = document.getElementById('region');
+            const citySelect = document.getElementById('city');
+            const communeSelect = document.getElementById('commune');
+            
+            const selectedCityId = citySelect.value;
+            
+            // Resetear comunas
+            communeSelect.innerHTML = '<option value="">Selecciona una comuna</option>';
+            
+            if (!selectedCityId) {
+                communeSelect.disabled = true;
+                communeSelect.style.backgroundColor = '#f5f5f5';
+                communeSelect.style.color = '#999';
+                communeSelect.style.cursor = 'not-allowed';
+                return;
+            }
+            
+            // Habilitar selector de comuna
+            communeSelect.disabled = false;
+            communeSelect.style.backgroundColor = 'white';
+            communeSelect.style.color = 'inherit';
+            communeSelect.style.cursor = 'pointer';
+            
+            // Obtener ciudad seleccionada
+            const selectedOption = citySelect.options[citySelect.selectedIndex];
+            const cityData = JSON.parse(selectedOption.dataset.cityData || '{}');
+            
+            if (cityData.communes && cityData.communes.length > 0) {
+                cityData.communes.forEach(commune => {
+                    const option = document.createElement('option');
+                    option.value = commune;
+                    option.textContent = commune;
+                    communeSelect.appendChild(option);
+                });
+            }
+        }
+        
+        // Redirigir si ya está autenticado y cargar ubicaciones
         document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 if (typeof authManager !== 'undefined' && authManager.isAuthenticated()) {
                     window.location.href = './index.html';
                 }
             }, 100);
+            
+            // Cargar ubicaciones de Chile
+            console.log('📍 Cargando ubicaciones de Chile...');
+            loadChileLocations();
+            
+            // Verificar que los elementos existan
+            setTimeout(() => {
+                const regionSelect = document.getElementById('region');
+                const citySelect = document.getElementById('city');
+                const communeSelect = document.getElementById('commune');
+                const addressSection = document.getElementById('addressSection');
+                
+                console.log('🔍 Verificando elementos:', {
+                    regionSelect: !!regionSelect,
+                    citySelect: !!citySelect,
+                    communeSelect: !!communeSelect,
+                    addressSection: !!addressSection,
+                    addressSectionVisible: addressSection ? window.getComputedStyle(addressSection).display : 'N/A'
+                });
+                
+                if (!regionSelect || !citySelect || !communeSelect) {
+                    console.error('❌ Faltan elementos del formulario de dirección');
+                } else {
+                    console.log('✅ Todos los elementos de dirección están presentes');
+                }
+            }, 500);
         });
     </script>
 </body>

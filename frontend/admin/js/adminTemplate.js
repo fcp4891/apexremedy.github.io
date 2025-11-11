@@ -18,6 +18,7 @@
         'users.html': 'Usuarios',
         'products.html': 'Productos',
         'orders.html': 'Pedidos',
+        'payments.html': 'Pagos',
         'perfil.html': 'Mi Perfil'
     };
     
@@ -167,11 +168,12 @@
             container.innerHTML = html;
             
             // Debug: verificar que el HTML se insertó correctamente
-            const insertedNav = container.querySelector('.admin-nav');
+            // Buscar tanto la nueva estructura (sidebar) como la antigua (nav) para compatibilidad
+            const insertedNav = container.querySelector('.admin-sidebar-wrapper') || container.querySelector('.admin-nav');
             if (insertedNav) {
                 console.log('✅ Header cargado correctamente - HTML insertado');
             } else {
-                console.error('❌ Header HTML vacío o sin .admin-nav');
+                console.error('❌ Header HTML vacío o sin estructura válida');
                 console.log('HTML recibido:', html.substring(0, 200));
             }
             
@@ -315,66 +317,226 @@
     // ============================================
     
     /**
-     * Configurar menú hamburguesa móvil para admin
+     * Configurar sidebar y toggle para admin
      */
-    function setupAdminMobileMenu() {
+    function setupAdminSidebar() {
+        const sidebarWrapper = document.getElementById('adminSidebarWrapper');
+        const sidebarToggle = document.getElementById('adminSidebarToggle');
         const hamburger = document.getElementById('adminHamburgerBtn');
-        const navMenu = document.getElementById('adminNavMenu');
+        const overlay = document.getElementById('adminSidebarOverlay');
         
-        if (!hamburger || !navMenu) {
-            console.warn('⚠️ Elementos del menú móvil admin no encontrados');
+        if (!sidebarWrapper) {
+            console.warn('⚠️ Sidebar wrapper no encontrado');
             return;
         }
 
-        hamburger.addEventListener('click', () => {
-            const isOpen = navMenu.style.display === 'flex' || navMenu.classList.contains('open');
-            
-            if (window.innerWidth <= 767) {
-                if (isOpen) {
-                    navMenu.style.display = 'none';
-                    navMenu.classList.remove('open');
-                } else {
-                    navMenu.style.display = 'flex';
-                    navMenu.classList.add('open');
-                }
-            }
-            
-            hamburger.classList.toggle('active');
-        });
+        // Cargar estado del sidebar desde localStorage
+        const savedState = localStorage.getItem('adminSidebarCollapsed');
+        const isCollapsed = savedState === 'true';
+        
+        if (isCollapsed && window.innerWidth >= 1024) {
+            sidebarWrapper.classList.add('sidebar-collapsed');
+            document.body.classList.add('sidebar-collapsed');
+        }
 
-        // Cerrar menú al hacer click en un link (móvil)
-        navMenu.querySelectorAll('.admin-nav-link').forEach(link => {
-            link.addEventListener('click', () => {
-                if (window.innerWidth <= 767) {
-                    navMenu.style.display = 'none';
-                    navMenu.classList.remove('open');
-                    hamburger.classList.remove('active');
+        // Toggle Desktop (botón de colapsar/expandir)
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebarWrapper.classList.toggle('sidebar-collapsed');
+                    document.body.classList.toggle('sidebar-collapsed');
+                    
+                    // Guardar estado
+                    const isNowCollapsed = sidebarWrapper.classList.contains('sidebar-collapsed');
+                    localStorage.setItem('adminSidebarCollapsed', isNowCollapsed.toString());
                 }
             });
-        });
+        }
+
+        // Toggle Mobile (hamburger menu)
+        if (hamburger) {
+            hamburger.addEventListener('click', () => {
+                if (window.innerWidth < 1024) {
+                    sidebarWrapper.classList.toggle('sidebar-open');
+                    hamburger.classList.toggle('active');
+                    
+                    if (overlay) {
+                        overlay.classList.toggle('active');
+                    }
+                }
+            });
+        }
+
+        // Cerrar sidebar móvil al hacer click en overlay
+        if (overlay) {
+            overlay.addEventListener('click', () => {
+                if (window.innerWidth < 1024) {
+                    sidebarWrapper.classList.remove('sidebar-open');
+                    if (hamburger) {
+                        hamburger.classList.remove('active');
+                    }
+                    overlay.classList.remove('active');
+                }
+            });
+        }
+
+        // Cerrar sidebar móvil al hacer click en un link
+        const navMenu = document.getElementById('adminNavMenu');
+        if (navMenu) {
+            navMenu.querySelectorAll('.admin-nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth < 1024) {
+                        sidebarWrapper.classList.remove('sidebar-open');
+                        if (hamburger) {
+                            hamburger.classList.remove('active');
+                        }
+                        if (overlay) {
+                            overlay.classList.remove('active');
+                        }
+                    }
+                });
+            });
+        }
 
         // Manejar resize de ventana
+        let resizeTimeout;
         window.addEventListener('resize', () => {
-            if (window.innerWidth > 767) {
-                navMenu.style.display = 'flex';
-                navMenu.classList.remove('open');
-                hamburger.classList.remove('active');
-            } else {
-                if (!navMenu.classList.contains('open')) {
-                    navMenu.style.display = 'none';
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                if (window.innerWidth >= 1024) {
+                    // Desktop: aplicar estado guardado
+                    const savedState = localStorage.getItem('adminSidebarCollapsed');
+                    const isCollapsed = savedState === 'true';
+                    
+                    sidebarWrapper.classList.remove('sidebar-open');
+                    if (hamburger) {
+                        hamburger.classList.remove('active');
+                    }
+                    if (overlay) {
+                        overlay.classList.remove('active');
+                    }
+                    
+                    if (isCollapsed) {
+                        sidebarWrapper.classList.add('sidebar-collapsed');
+                        document.body.classList.add('sidebar-collapsed');
+                    } else {
+                        sidebarWrapper.classList.remove('sidebar-collapsed');
+                        document.body.classList.remove('sidebar-collapsed');
+                    }
+                } else {
+                    // Mobile: cerrar sidebar
+                    sidebarWrapper.classList.remove('sidebar-open', 'sidebar-collapsed');
+                    document.body.classList.remove('sidebar-collapsed');
+                    if (hamburger) {
+                        hamburger.classList.remove('active');
+                    }
+                    if (overlay) {
+                        overlay.classList.remove('active');
+                    }
                 }
-                hamburger.classList.remove('active');
-            }
+            }, 100);
         });
+    }
+
+    /**
+     * Configurar posición del dropdown del usuario cuando sidebar está colapsado
+     */
+    function setupUserDropdownPosition() {
+        const sidebarWrapper = document.getElementById('adminSidebarWrapper');
+        const navUser = document.getElementById('adminNavUser');
+        const dropdown = document.querySelector('.admin-nav-user-dropdown');
         
-        // Asegurar estado inicial correcto
-        if (window.innerWidth > 767) {
-            navMenu.style.display = 'flex';
-            navMenu.classList.remove('open');
-        } else {
-            navMenu.style.display = 'none';
-            navMenu.classList.remove('open');
+        if (!sidebarWrapper || !navUser || !dropdown) {
+            return;
         }
+
+        function updateDropdownPosition() {
+            const isCollapsed = sidebarWrapper.classList.contains('sidebar-collapsed');
+            
+            if (isCollapsed && window.innerWidth >= 1024) {
+                // Calcular posición del avatar del usuario
+                const userRect = navUser.getBoundingClientRect();
+                
+                // Guardar estado original del dropdown
+                const originalVisibility = dropdown.style.visibility;
+                const originalOpacity = dropdown.style.opacity;
+                const originalDisplay = dropdown.style.display;
+                
+                // Hacer el dropdown visible temporalmente para medir su altura
+                dropdown.style.visibility = 'hidden';
+                dropdown.style.opacity = '0';
+                dropdown.style.display = 'block';
+                dropdown.style.position = 'fixed';
+                dropdown.style.left = '-9999px'; // Fuera de vista para medir
+                
+                // Forzar reflow para obtener medidas reales
+                void dropdown.offsetHeight;
+                
+                const dropdownHeight = dropdown.offsetHeight || 280; // Altura estimada si no se puede medir
+                
+                // Posicionar el dropdown a la derecha del sidebar colapsado
+                dropdown.style.left = '88px'; // 80px (sidebar) + 8px (espacio)
+                dropdown.style.width = '280px';
+                
+                // Calcular posición vertical: aparecer encima del área del usuario
+                const viewportHeight = window.innerHeight;
+                const spaceAbove = userRect.top;
+                const spaceBelow = viewportHeight - userRect.bottom;
+                
+                // Si hay más espacio arriba, posicionar arriba; si no, ajustar hacia abajo
+                if (spaceAbove >= dropdownHeight + 20) {
+                    // Posicionar encima del avatar
+                    dropdown.style.bottom = `${viewportHeight - userRect.top + 8}px`;
+                    dropdown.style.top = 'auto';
+                } else if (spaceBelow >= dropdownHeight + 20) {
+                    // Posicionar debajo del avatar
+                    dropdown.style.top = `${userRect.bottom + 8}px`;
+                    dropdown.style.bottom = 'auto';
+                } else {
+                    // Si no cabe ni arriba ni abajo, posicionar en el centro disponible
+                    dropdown.style.bottom = '20px';
+                    dropdown.style.top = 'auto';
+                    dropdown.style.maxHeight = `${viewportHeight - 40}px`;
+                    dropdown.style.overflowY = 'auto';
+                }
+                
+                // Restaurar visibilidad original
+                dropdown.style.visibility = originalVisibility || '';
+                dropdown.style.opacity = originalOpacity || '';
+                dropdown.style.display = originalDisplay || '';
+            } else {
+                // Resetear estilos cuando no está colapsado
+                dropdown.style.position = '';
+                dropdown.style.left = '';
+                dropdown.style.top = '';
+                dropdown.style.bottom = '';
+                dropdown.style.width = '';
+                dropdown.style.maxHeight = '';
+                dropdown.style.overflowY = '';
+            }
+        }
+
+        // Actualizar posición al cambiar el estado del sidebar
+        const observer = new MutationObserver(updateDropdownPosition);
+        observer.observe(sidebarWrapper, {
+            attributes: true,
+            attributeFilter: ['class']
+        });
+
+        // Actualizar posición al hacer hover sobre el usuario
+        if (navUser) {
+            navUser.addEventListener('mouseenter', () => {
+                setTimeout(updateDropdownPosition, 10);
+            });
+        }
+
+        // Actualizar posición al redimensionar
+        window.addEventListener('resize', () => {
+            setTimeout(updateDropdownPosition, 100);
+        });
+
+        // Actualizar posición inicial
+        setTimeout(updateDropdownPosition, 100);
     }
 
     /**
@@ -386,7 +548,8 @@
         setCurrentPageTitle();
         markActiveLink();
         loadUserInfo();
-        setupAdminMobileMenu(); // Agregar menú móvil
+        setupAdminSidebar(); // Configurar sidebar y toggle
+        setupUserDropdownPosition(); // Configurar posición del dropdown
         
         console.log('✅ Header inicializado');
     }
@@ -428,15 +591,50 @@
     /**
      * Cargar información del usuario desde authManager
      */
-    function loadUserInfo() {
+    let authManagerRetryCount = 0;
+    const MAX_AUTH_RETRIES = 100; // Máximo 10 segundos (100 * 100ms)
+    let authManagerWarningShown = false;
+    
+    async function loadUserInfo() {
         if (typeof authManager === 'undefined') {
-            console.warn('⏳ authManager no disponible aún, reintentando...');
-            setTimeout(loadUserInfo, 100);
+            authManagerRetryCount++;
+            if (authManagerRetryCount < MAX_AUTH_RETRIES) {
+                // Solo mostrar UN warning después de 20 intentos (2 segundos)
+                if (authManagerRetryCount === 20 && !authManagerWarningShown) {
+                    console.warn('⏳ authManager cargando...');
+                    authManagerWarningShown = true;
+                }
+                setTimeout(loadUserInfo, 100);
+            } else if (!authManagerWarningShown) {
+                // Solo mostrar error final si nunca se cargó
+                console.warn('⚠️ authManager no disponible después de múltiples intentos');
+                authManagerWarningShown = true;
+            }
             return;
         }
         
+        // Resetear contador cuando authManager está disponible
+        authManagerRetryCount = 0;
+        authManagerWarningShown = false;
+        
+        // ESPERAR A QUE BOOTSTRAP TERMINE
+        if (!authManager.sessionReady) {
+            console.log('⏳ [adminTemplate] Esperando a que bootstrap termine...');
+            try {
+                if (authManager.bootstrapPromise) {
+                    await authManager.bootstrapPromise;
+                    console.log('✅ [adminTemplate] Bootstrap completado');
+                } else {
+                    // Si no hay promise, esperar un poco
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                }
+            } catch (error) {
+                console.error('❌ [adminTemplate] Error en bootstrap:', error);
+            }
+        }
+        
         if (!authManager.isAuthenticated()) {
-            console.warn('⚠️ Usuario no autenticado');
+            console.warn('⚠️ [adminTemplate] Usuario no autenticado después de bootstrap');
             return;
         }
         
@@ -471,13 +669,24 @@
      * Función global para logout
      */
     window.handleAdminLogout = async function() {
+        let confirmed = false;
+        
         if (typeof notify !== 'undefined' && notify.confirmLogout) {
-            const confirmed = await notify.confirmLogout();
-            if (!confirmed) return;
+            confirmed = await notify.confirmLogout();
+        } else if (typeof notify !== 'undefined' && notify.confirm) {
+            confirmed = await notify.confirm({
+                title: '¿Cerrar sesión?',
+                message: '¿Estás seguro de que deseas cerrar sesión?',
+                confirmText: 'Cerrar sesión',
+                cancelText: 'Cancelar'
+            });
         } else {
-            if (!confirm('¿Estás seguro de que deseas cerrar sesión?')) {
-                return;
-            }
+            // Fallback: usar confirm nativo solo si no hay sistema de notificaciones
+            confirmed = confirm('¿Estás seguro de que deseas cerrar sesión?');
+        }
+        
+        if (!confirmed) {
+            return;
         }
         
         console.log('👋 Cerrando sesión...');

@@ -15,21 +15,39 @@
     <!-- Cargar antes de los otros scripts para asegurar disponibilidad -->
     <script src="https://cdn.jsdelivr.net/npm/bcryptjs@2.4.3/dist/bcrypt.min.js" 
             onerror="console.error('❌ Error cargando bcryptjs desde CDN')"
-            onload="console.log('✅ bcryptjs cargado correctamente'); window.bcryptjsReady = true; window.bcryptjs = bcryptjs || window.bcryptjs;"></script>
+            onload="try { console.log('✅ bcryptjs cargado correctamente'); window.bcryptjsReady = true; if (typeof bcryptjs !== 'undefined') { window.bcryptjs = bcryptjs; } else if (typeof window.bcryptjs !== 'undefined') { /* ya está disponible */ } } catch(e) { console.warn('⚠️ Advertencia al inicializar bcryptjs:', e.message); }"></script>
     
-    <script src="./js/basePath.js"></script>
-    <script src="./js/config.js"></script>
-    <script src="./js/utils.js"></script>
-    <script src="./js/api/apiClient.js"></script>
-    <script src="./js/auth.js"></script>
-    <script defer src="./js/template.js"></script>
+    <script>
+        // Log inmediato para verificar que los scripts se van a cargar
+        console.log('📦 [LOGIN HTML] Scripts a punto de cargarse');
+        console.log('📦 [LOGIN HTML] Timestamp:', new Date().toISOString());
+        console.log('📦 [LOGIN HTML] URL actual:', window.location.href);
+    </script>
+    <!-- Sistema de logging persistente - DEBE CARGARSE PRIMERO -->
+    <script src="./js/logPersister.js" onerror="console.error('❌ Error cargando logPersister.js')" onload="console.log('✅ logPersister.js cargado')"></script>
+    <script src="./js/basePath.js" onerror="console.error('❌ Error cargando basePath.js')" onload="console.log('✅ basePath.js cargado')"></script>
+    <script src="./js/config.js" onerror="console.error('❌ Error cargando config.js')" onload="console.log('✅ config.js cargado')"></script>
+    <script src="./js/utils.js" onerror="console.error('❌ Error cargando utils.js')" onload="console.log('✅ utils.js cargado')"></script>
+    <script src="./js/api/apiClient.js" onerror="console.error('❌ Error cargando apiClient.js')" onload="console.log('✅ apiClient.js cargado')"></script>
+    <script src="./js/auth.js" onerror="console.error('❌ Error cargando auth.js')" onload="console.log('✅ auth.js cargado')"></script>
+    <script defer src="./js/template.js" onerror="console.error('❌ Error cargando template.js')" onload="console.log('✅ template.js cargado')"></script>
 </head>
 <body class="login-page">
     <!-- Header template -->
     <div id="header-container"></div>
 
-    <!-- Formulario de Login -->
-    <div class="login-container">
+    <!-- Hero Section -->
+    <section class="shop-header app-section">
+        <div class="container u-container">
+          <h1>
+            <i class="fas fa-user-circle"></i> Mi Perfil
+          </h1>
+          <p>Gestiona tu información personal y preferencias</p>
+        </div>
+      </section>
+
+     <!-- Formulario de Login -->
+    <div class="login-container app-section">
         <div class="login-form-wrapper">
             <!-- Header -->
             <div class="login-header">
@@ -41,7 +59,7 @@
             </div>
 
             <!-- Formulario -->
-            <div class="about-card">
+            <div class="about-card app-card">
                 <form id="loginForm" class="login-form">
                     <!-- Email -->
                     <div>
@@ -100,7 +118,7 @@
                     <!-- Botón Submit -->
                     <button type="submit" 
                             id="submitBtn"
-                            class="cta-button full-width submit-btn-with-loader">
+                            class="cta-button app-button app-button--primary full-width submit-btn-with-loader">
                         <span id="btnText">Iniciar Sesión</span>
                         <i id="btnLoader" style="display: none;" class="fas fa-spinner fa-spin"></i>
                     </button>
@@ -110,8 +128,7 @@
                         <p>Credenciales de prueba:</p>
                         <p><strong>Admin:</strong> admin@apexremedy.local / Admin123!</p>
                         <p><strong>Cliente_1 (permiso pdte):</strong> paciente.medicinal@apexremedy.local / Medicinal123!</p>
-                        <p><strong>Cliente_2 (permiso pdte):</strong> felipe.cliente@apexremedy.local / Cliente123!</p>
-                        <p><strong>Cliente_3 (permiso aprobado):</strong> pila@123.com / 123456789</p>
+                        <p><strong>Cliente_3 (permiso aprobado):</strong> felipe.cespedes.perez@test.com / 123456</p>
                     </div>
                 </form>
 
@@ -133,12 +150,12 @@
     <div id="cartSidebar" class="cart-sidebar">
         <div class="cart-header">
             <h3><i class="fas fa-shopping-cart"></i> Carrito de Compras</h3>
-            <button id="closeCart" class="cta-button" style="padding: 6px 12px;">Cerrar</button>
+            <button id="closeCart" class="cta-button app-button app-button--primary" style="padding: 6px 12px;">Cerrar</button>
         </div>
         <div id="cartItems" class="cart-items"></div>
         <div class="cart-total">
             <div class="total-amount" id="cartTotal">Total: $0</div>
-            <a href="./carrito.html" class="cta-button full-width">Ver Carrito Completo</a>
+            <a href="./carrito.html" class="cta-button app-button app-button--primary full-width">Ver Carrito Completo</a>
         </div>
     </div>
     <div id="cartOverlay" class="cart-overlay" style="display: none;"></div>
@@ -189,12 +206,22 @@
     btnLoader.classList.remove('hidden');
     
     try {
+        console.log('🔐 [LOGIN HTML] Iniciando login...');
         const result = await authManager.login(email, password);
         
-        if (result.success) {
+        console.log('🔍 [LOGIN HTML] Resultado del login:', result);
+        console.log('🔍 [LOGIN HTML] result.success:', result?.success);
+        
+        if (result && result.success) {
+            console.log('✅ [LOGIN HTML] Login exitoso, mostrando notificación...');
             notify.success('¡Bienvenido!', 'Inicio de sesión exitoso');
             // La redirección se maneja en authManager.login()
+            // NO hacer nada más aquí, el login() ya redirige
+            console.log('✅ [LOGIN HTML] Notificación mostrada, esperando redirección...');
         } else {
+            console.log('❌ [LOGIN HTML] Login fallido:', result?.message);
+            // ⚠️ IMPORTANTE: NO redirigir cuando falla
+            // Mantener al usuario en login.html para que pueda reintentar
             // ==========================================
             // MANEJAR DIFERENTES ESTADOS DE CUENTA
             // ==========================================
@@ -259,6 +286,19 @@
             document.getElementById('successMessage').style.display = 'none';
         }
         
+        // Redirigir si ya está autenticado
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                if (typeof authManager !== 'undefined' && authManager.isAuthenticated()) {
+                if (authManager.isAdmin()) {
+                    window.location.href = './admin/perfil.html';
+                } else {
+                    window.location.href = './perfil.html';
+                }
+                }
+            }, 100);
+        });
+
         function resetButton() {
             const submitBtn = document.getElementById('submitBtn');
             const btnText = document.getElementById('btnText');
@@ -269,15 +309,20 @@
             btnLoader.style.display = 'none';
         }
         
-        // Redirigir si ya está autenticado
+        // ============================================
+        // PREVENIR LOOP: Redirigir si ya está autenticado
+        // ============================================
         document.addEventListener('DOMContentLoaded', () => {
+            // Esperar a que authManager esté completamente inicializado
             setTimeout(() => {
                 if (typeof authManager !== 'undefined' && authManager.isAuthenticated()) {
-                if (authManager.isAdmin()) {
-                    window.location.href = './admin/perfil.html';
-                } else {
-                    window.location.href = './perfil.html';
-                }
+                    console.log('✅ Usuario ya autenticado, redirigiendo...');
+                    
+                    if (authManager.isAdmin()) {
+                        window.location.replace('./admin/perfil.html');
+                    } else {
+                        window.location.replace('./perfil.html');
+                    }
                 }
             }, 100);
         });

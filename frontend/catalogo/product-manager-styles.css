@@ -1,0 +1,93 @@
+/* product-manager-styles.css - Estilos para gestión de productos */
+
+/* Toolbar del editor */
+.editor-toolbar {
+    display: flex;
+    gap: 10px;
+    padding: 15px;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 12px;
+    margin-bottom: 15px;
+    border: 1px solid rgba(46, 204, 113, 0.2);
+}
+
+.btn-add-product,
+.btn-add-page {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Poppins', sans-serif;
+}
+
+.btn-add-product {
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+    color: white;
+}
+
+.btn-add-product:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);
+}
+
+.btn-add-page {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    color: white;
+}
+
+.btn-add-page:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+}
+
+.btn-delete-page {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    color: white;
+}
+
+.btn-delete-page:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+}
+
+.btn-add-product svg,
+.btn-add-page svg,
+.btn-delete-page svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* Botón de exportar en la navegación */
+#exportBtn {
+    background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+}
+
+#exportBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(155, 89, 182, 0.4);
+}
+
+/* Mejorar el modal para que sea más ancho cuando se muestran botones */
+.modal-content {
+    max-width: 1200px !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .editor-toolbar {
+        flex-direction: column;
+    }
+    
+    .btn-add-product,
+    .btn-add-page,
+    .btn-delete-page {
+        width: 100%;
+        justify-content: center;
+    }
+}

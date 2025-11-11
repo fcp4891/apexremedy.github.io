@@ -5,26 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tienda - Apexremedy</title>
+    <script src="./js/pages/tienda-tailwind-config.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-          safelist: [
-            'from-amber-200','via-yellow-200','to-amber-200',
-            'from-violet-200','via-purple-200','to-violet-200',
-            'from-emerald-200','via-green-200','to-emerald-200',
-            'from-sky-200','via-cyan-200','to-sky-200',
-            'from-cyan-100','via-sky-100','to-cyan-100',
-            'text-stone-900','text-amber-800','text-purple-800','text-emerald-800','text-sky-800','text-cyan-700',
-            'bg-yellow-100','text-yellow-800',
-            'bg-purple-100','text-purple-800',
-            'bg-emerald-100','text-emerald-800',
-            'bg-sky-100','text-sky-800',
-            'bg-cyan-50','text-cyan-700',
-            'border-yellow-300','border-purple-300','border-green-300','border-sky-300','border-cyan-200',
-            'bg-gradient-to-r','bg-gradient-to-br','shadow-sm','shadow-lg','px-3','py-1','rounded-full'
-          ]
-        }
-    </script>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="./style/css_home.css">
@@ -41,8 +23,8 @@
     <div id="header-container"></div>
 
     <!-- Hero de Tienda -->
-    <section class="shop-header">
-        <div class="container">
+    <section class="shop-header app-section">
+        <div class="container u-container">
             <h1>
                 <i class="fas fa-store mr-3"></i>Nuestra Tienda
             </h1>
@@ -52,8 +34,8 @@
         </div>
     </section>
 
-    <section id="registro-catalogo" class="registration-notice-section" style="background: linear-gradient(135deg, rgba(166, 137, 65, 0.05), rgba(244, 208, 63, 0.03)); padding: 60px 20px;">
-        <div class="container">
+    <section id="registro-catalogo" class="registration-notice-section app-section" style="background: linear-gradient(135deg, rgba(166, 137, 65, 0.05), rgba(244, 208, 63, 0.03)); padding: 60px 20px;">
+        <div class="container u-container">
           <!-- Alerta principal -->
           <div style="max-width: 900px; margin: 0 auto; padding: 40px; background: var(--white); border-radius: var(--border-radius); box-shadow: var(--box-shadow); border-top: 5px solid var(--primary-green);">
             
@@ -115,7 +97,7 @@
       
             <!-- Botones de acción -->
             <div style="text-align: center;">
-              <a href="./registro.html" class="cta-button" style="display: inline-flex; align-items: center; gap: 10px; padding: 16px 40px; font-size: 1.1rem; margin-bottom: 15px;">
+              <a href="./registro.html" class="cta-button app-button app-button--primary" style="display: inline-flex; align-items: center; gap: 10px; padding: 16px 40px; font-size: 1.1rem; margin-bottom: 15px;">
                 <i class="fas fa-user-plus"></i>
                 Registrarse Ahora
               </a>
@@ -216,20 +198,22 @@
                     </div>
                     
                     <!-- Botones -->
-                    <button onclick="applyFilters()" 
-                            class="cta-button full-width" 
+                    <button 
+                            class="cta-button app-button app-button--primary full-width" 
+                            data-action="apply-filters"
                             style="margin-bottom: 10px;">
                         Aplicar Filtros
                     </button>
-                    <button onclick="clearFilters()" 
-                            class="secondary-button full-width">
+                    <button 
+                            class="secondary-button app-button app-button--secondary full-width"
+                            data-action="clear-filters">
                         Limpiar Filtros
                     </button>
                     
                     <!-- Botón para actualizar acceso medicinal (solo usuarios autenticados) -->
                     <button id="refreshAccessBtn"
-                            onclick="refreshUserToken()"
-                            class="secondary-button full-width"
+                            class="secondary-button app-button app-button--secondary full-width"
+                            data-action="refresh-access"
                             style="background: #f59e0b; color: white; margin-top: 8px; display: none; font-size: 0.9rem;"
                             title="Actualiza tu acceso a productos medicinales sin cerrar sesión">
                         <i class="fas fa-sync mr-2"></i>Actualizar Acceso
@@ -242,7 +226,7 @@
                 <!-- Botón para abrir filtros en móvil -->
                 <button id="openFiltersBtn" 
                         class="filters-mobile-btn"
-                        onclick="openFiltersModal()"
+                        data-action="open-filters-modal"
                         style="display: none; width: 100%; margin-bottom: 20px; padding: 14px 20px; background: var(--primary-green); color: white; border: none; border-radius: var(--border-radius); font-weight: 600; cursor: pointer; box-shadow: var(--box-shadow);">
                     <i class="fas fa-filter mr-2"></i>Filtros y Búsqueda
                 </button>
@@ -272,7 +256,7 @@
     <div id="cartSidebar" class="cart-sidebar">
         <div class="cart-header">
             <h3><i class="fas fa-shopping-cart"></i> Carrito de Compras</h3>
-            <button id="closeCart" class="cta-button" style="padding: 6px 12px;">Cerrar</button>
+            <button id="closeCart" class="cta-button app-button app-button--primary" style="padding: 6px 12px;">Cerrar</button>
         </div>
         <div id="cartItems" class="cart-items"></div>
         <div class="cart-total">
@@ -1235,7 +1219,7 @@
   
                     <!-- Botón Agregar al Carrito -->
                     <div class="px-4 pb-4">
-                        <button onclick="addToCartFromModal()" class="cta-button">
+                        <button onclick="addToCartFromModal()" class="cta-button app-button app-button--primary">
                             <i class="fas fa-shopping-cart text-lg"></i>
                             <span class="text-base">Agregar al Carrito</span>
                         </button>
@@ -1342,13 +1326,13 @@
 
     <!-- Modal de Filtros para Móvil -->
     <div id="filtersModal" class="filters-modal hidden">
-        <div class="filters-modal-overlay" onclick="closeFiltersModal()"></div>
+        <div class="filters-modal-overlay" data-action="close-filters-modal"></div>
         <div class="filters-modal-content">
             <div class="filters-modal-header">
                 <h2>
                     <i class="fas fa-filter mr-2"></i>Filtros y Búsqueda
                 </h2>
-                <button onclick="closeFiltersModal()" class="filters-modal-close">
+                <button class="filters-modal-close" data-action="close-filters-modal">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -1356,10 +1340,10 @@
                 <!-- El contenido de los filtros se copiará aquí dinámicamente -->
             </div>
             <div class="filters-modal-footer">
-                <button onclick="clearFilters(); closeFiltersModal();" class="secondary-button">
+                <button class="secondary-button app-button app-button--secondary" data-action="clear-filters-modal">
                     Limpiar
                 </button>
-                <button onclick="applyFilters(); closeFiltersModal();" class="cta-button">
+                <button class="cta-button app-button app-button--primary" data-action="apply-filters-modal">
                     Aplicar Filtros
                 </button>
             </div>
@@ -1367,6 +1351,7 @@
     </div>
 
     <!-- Scripts -->
+    <script src="./js/env-detector.js"></script>
     <script src="./js/api/apiClient.js"></script>
     <script src="./js/auth.js"></script>
     <script src="./js/sessionManager.js"></script>
@@ -1374,288 +1359,6 @@
     <script src="./js/carrito.js"></script>
     <script src="./js/productModal.js"></script>
     <script src="./js/db_articulos.js"></script>
-    
-    <script>
-        let allProducts = [];
-        
-        // 🆕 Cargar categorías según permisos del usuario
-        async function loadCategories() {
-            const categoriesResponse = await productManager.getCategories();
-            const select = document.getElementById('categoryFilter');
-            
-            // Limpiar opciones existentes excepto "Todas"
-            select.innerHTML = '<option value="all">Todas</option>';
-            
-            // Extraer array de categorías (puede ser un array directo o estar en response.data.categories)
-            let categories = [];
-            if (Array.isArray(categoriesResponse)) {
-                categories = categoriesResponse;
-            } else if (categoriesResponse && Array.isArray(categoriesResponse.data?.categories)) {
-                categories = categoriesResponse.data.categories;
-            } else if (categoriesResponse && Array.isArray(categoriesResponse.data)) {
-                categories = categoriesResponse.data;
-            }
-            
-            // 🆕 Verificar si el usuario puede ver productos medicinales
-            const canViewMedicinal = productManager.canViewMedicinal();
-            
-            // Agregar categorías disponibles (evitar duplicados)
-            const addedCategories = new Set();
-            const addedNames = new Set(); // Para evitar duplicados por nombre también
-            
-            categories.forEach(cat => {
-                // cat puede ser un string o un objeto {id, name, slug}
-                const catSlug = typeof cat === 'string' ? cat : (cat.slug || cat.id || '');
-                const catName = typeof cat === 'string' ? cat : (cat.name || catSlug);
-                
-                // Validar que tengamos un slug válido
-                if (!catSlug || typeof catSlug !== 'string') {
-                    console.warn('⚠️ Categoría inválida ignorada:', cat);
-                    return;
-                }
-                
-                // 🆕 FILTRAR categorías medicinales si el usuario no tiene acceso
-                if (!canViewMedicinal) {
-                    const isMedicinalCategory = catSlug === 'medicinal' ||
-                                               catSlug === 'medicinal-flores' ||
-                                               catSlug === 'medicinal-aceites' ||
-                                               catSlug === 'medicinal-concentrados' ||
-                                               catSlug.includes('medicinal');
-                    if (isMedicinalCategory) {
-                        return; // Saltar esta categoría
-                    }
-                }
-                
-                // Normalizar categoría para evitar duplicados
-                const normalizedCat = catSlug.toLowerCase().trim();
-                const categoryName = productManager.categoriesMap && productManager.categoriesMap.has(catSlug)
-                    ? productManager.categoriesMap.get(catSlug)
-                    : formatCategoryName(catSlug);
-                const normalizedName = (categoryName || catName || catSlug).toLowerCase().trim();
-                
-                // Verificar tanto por slug como por nombre para evitar duplicados
-                if (!addedCategories.has(normalizedCat) && !addedNames.has(normalizedName)) {
-                    addedCategories.add(normalizedCat);
-                    addedNames.add(normalizedName);
-                    const option = document.createElement('option');
-                    option.value = catSlug; // Usar el slug para filtros
-                    option.textContent = categoryName || catName || catSlug; // Usar el nombre formateado para mostrar
-                    select.appendChild(option);
-                }
-            });
-            
-            console.log('✅ Categorías cargadas:', categories.length);
-            console.log('📋 Categorías en select:', Array.from(select.options).map(opt => ({value: opt.value, text: opt.textContent})));
-        }
-        
-        // Formatear nombre de categoría para mostrar
-        function formatCategoryName(category) {
-            const names = {
-                'semillas_coleccion': 'Semillas de Colección',
-                'accesorios': 'Accesorios',
-                'indoors': 'Indoors',
-                'iluminacion': 'Iluminación',
-                'aditivos': 'Aditivos',
-                'vapo': 'Vaporizadores',
-                'parafernalia': 'Parafernalia',
-                'smartshop': 'Smartshop',
-                'merchandising': 'Merchandising',
-                'ofertas': 'Ofertas',
-                'medicinal': '🏥 Medicinal'
-            };
-            return names[category] || category;
-        }
-        
-        // Cargar productos
-        async function loadProducts() {
-            productManager.showLoading();
-            allProducts = await productManager.loadProducts();
-            applyFilters();
-        }
-        
-        // Aplicar filtros
-        function applyFilters() {
-            const search = document.getElementById('searchInput').value;
-            const category = document.getElementById('categoryFilter').value;
-            const minPrice = document.getElementById('minPrice').value;
-            const maxPrice = document.getElementById('maxPrice').value;
-            const inStock = document.getElementById('inStockFilter').checked;
-            const featured = document.getElementById('featuredFilter').checked;
-            
-            const filters = {
-                search: search || undefined,
-                category: category !== 'all' ? category : undefined,
-                minPrice: minPrice ? parseInt(minPrice) : undefined,
-                maxPrice: maxPrice ? parseInt(maxPrice) : undefined,
-                inStock: inStock || undefined,
-                featured: featured || undefined
-            };
-            
-            const filtered = productManager.filterProducts(filters);
-            productManager.renderProducts(filtered);
-            
-            // Actualizar contador
-            document.getElementById('resultCount').textContent = 
-                `${filtered.length} producto${filtered.length !== 1 ? 's' : ''} encontrado${filtered.length !== 1 ? 's' : ''}`;
-        }
-        
-        // Limpiar filtros
-        function clearFilters() {
-            document.getElementById('searchInput').value = '';
-            document.getElementById('categoryFilter').value = 'all';
-            document.getElementById('minPrice').value = '';
-            document.getElementById('maxPrice').value = '';
-            document.getElementById('inStockFilter').checked = false;
-            document.getElementById('featuredFilter').checked = false;
-            document.getElementById('sortBy').value = 'created_at DESC';
-            
-            applyFilters();
-        }
-        
-        // Búsqueda en tiempo real
-        let searchTimeout;
-        document.getElementById('searchInput').addEventListener('input', () => {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(applyFilters, 500);
-        });
-        
-        // Verificar si mostrar botón de actualización de acceso
-        function checkAccessButton() {
-            const btn = document.getElementById('refreshAccessBtn');
-            if (!btn) return;
-            
-            // Solo mostrar en casos excepcionales donde el token esté desactualizado
-            if (window.authManager && window.authManager.isAuthenticated()) {
-                const user = window.authManager.getCurrentUser();
-                
-                // Solo mostrar si:
-                // 1. No es admin Y
-                // 2. No tiene account_status definido (token viejo) O tiene status pending/rejected
-                const needsRefresh = user && user.role !== 'admin' && 
-                                   (typeof user.account_status === 'undefined' || 
-                                    user.account_status !== 'approved');
-                
-                if (needsRefresh) {
-                    btn.style.display = 'block';
-                    console.log('🔧 Token desactualizado - botón de actualización disponible');
-                } else {
-                    btn.style.display = 'none';
-                }
-            } else {
-                btn.style.display = 'none';
-            }
-        }
-
-        // Funciones para modal de filtros en móvil
-        function openFiltersModal() {
-            const modal = document.getElementById('filtersModal');
-            const modalBody = document.getElementById('filtersModalBody');
-            const filtersCard = document.getElementById('filtersCard');
-            
-            if (modal && filtersCard) {
-                // Copiar contenido del sidebar al modal (sin el h2 que ya está en el header)
-                const filtersContent = filtersCard.cloneNode(true);
-                // Remover el título ya que está en el header del modal
-                const title = filtersContent.querySelector('h2');
-                if (title) title.remove();
-                // Remover los botones ya que están en el footer del modal
-                const buttons = filtersContent.querySelectorAll('button');
-                buttons.forEach(btn => {
-                    if (btn.textContent.includes('Aplicar') || btn.textContent.includes('Limpiar') || btn.id === 'refreshAccessBtn') {
-                        btn.remove();
-                    }
-                });
-                
-                modalBody.innerHTML = '';
-                modalBody.appendChild(filtersContent);
-                
-                modal.classList.remove('hidden');
-                document.body.style.overflow = 'hidden'; // Prevenir scroll del body
-            }
-        }
-        
-        function closeFiltersModal() {
-            const modal = document.getElementById('filtersModal');
-            if (modal) {
-                modal.classList.add('hidden');
-                document.body.style.overflow = ''; // Restaurar scroll del body
-            }
-        }
-        
-        // Cerrar modal con ESC
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeFiltersModal();
-            }
-        });
-
-        // Inicializar
-        document.addEventListener('DOMContentLoaded', async () => {
-            await loadCategories();
-            await loadProducts();
-            
-            // Verificar botón de acceso después de cargar
-            setTimeout(checkAccessButton, 1000);
-            
-            // Mostrar/ocultar botón de filtros según tamaño de pantalla
-            function toggleFiltersButton() {
-                const btn = document.getElementById('openFiltersBtn');
-                if (btn) {
-                    if (window.innerWidth <= 767) {
-                        btn.style.display = 'flex';
-                    } else {
-                        btn.style.display = 'none';
-                    }
-                }
-            }
-            
-            toggleFiltersButton();
-            window.addEventListener('resize', toggleFiltersButton);
-        });
-    </script>
-<script>
-    // 🔒 Control de visibilidad según estado de autenticación
-    document.addEventListener('DOMContentLoaded', async function() {
-      const registroSection = document.getElementById('registro-catalogo'); // index
-      const userNotice = document.getElementById('unregistered-user-notice'); // tienda
-      
-      // Función para verificar si está logueado
-      function isUserLoggedIn() {
-        // Método 1: Verificar token en localStorage
-        const token = localStorage.getItem('authToken');
-        if (token) return true;
-        
-        // Método 2: Verificar token en sessionStorage
-        const sessionToken = sessionStorage.getItem('authToken');
-        if (sessionToken) return true;
-        
-        // Método 3: Verificar objeto de usuario
-        const user = localStorage.getItem('user');
-        if (user) {
-          try {
-            const userObj = JSON.parse(user);
-            return userObj && userObj.id;
-          } catch (e) {
-            return false;
-          }
-        }
-        
-        return false;
-      }
-      
-      const isLoggedIn = isUserLoggedIn();
-      
-      // Ocultar/mostrar según estado
-      if (registroSection) {
-        registroSection.style.display = isLoggedIn ? 'none' : 'block';
-      }
-      
-      if (userNotice) {
-        userNotice.style.display = isLoggedIn ? 'none' : 'block';
-      }
-      
-      console.log('Estado de autenticación:', isLoggedIn ? '✅ Logueado' : '❌ No logueado');
-    });
-  </script>
+    <script src="./js/pages/tienda-page.js" defer></script>
 </body>
 </html>

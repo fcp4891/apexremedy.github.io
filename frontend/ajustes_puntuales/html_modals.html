@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema CRUD de Productos Mejorado - ApexRemedy</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Estilos del Sistema de Modales Mejorado -->
+    <link rel="stylesheet" href="products-modal-enhanced.css">
+    
+    <!-- Tus estilos existentes -->
+    <link rel="stylesheet" href="style/css_admin.css">
+    <link rel="stylesheet" href="style/products.css">
+    
+    <style>
+        /* Animación para fadeOut */
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        /* Estilos para el demo */
+        .demo-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .demo-header {
+            background: linear-gradient(135deg, #16a34a, #059669);
+            padding: 2rem;
+            border-radius: 16px;
+            color: white;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 25px rgba(22, 163, 74, 0.3);
+        }
+
+        .demo-section {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .demo-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, #16a34a, #059669);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .demo-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .demo-button-secondary {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+
+        .demo-button-danger {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+        }
+
+        .code-block {
+            background: #1f2937;
+            color: #e5e7eb;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            margin: 1rem 0;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .feature-card {
+            background: #f9fafb;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid #16a34a;
+        }
+
+        .feature-card h4 {
+            color: #16a34a;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .feature-card p {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        .integration-steps {
+            counter-reset: step-counter;
+            list-style: none;
+            padding: 0;
+        }
+
+        .integration-steps li {
+            counter-increment: step-counter;
+            position: relative;
+            padding-left: 3rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .integration-steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 2rem;
+            height: 2rem;
+            background: linear-gradient(135deg, #16a34a, #059669);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+<div class="demo-container">
+    <!-- Header -->
+    <div class="demo-header">
+        <h1 class="text-3xl font-bold mb-2">
+            <i class="fas fa-rocket mr-3"></i>
+            Sistema CRUD de Productos Mejorado
+        </h1>
+        <p class="text-green-100 text-lg">
+            Sistema completo de gestión de productos con modales especializados por categoría
+        </p>
+    </div>
+
+    <!-- Características Principales -->
+    <div class="demo-section">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">
+            <i class="fas fa-star text-yellow-500 mr-2"></i>
+            Características Principales
+        </h2>
+        
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h4><i class="fas fa-palette"></i> Diseño Moderno</h4>
+                <p>Interfaz visual atractiva con gradientes, sombras y animaciones suaves</p>
+            </div>
+            
+            <div class="feature-card">
+                <h4><i class="fas fa-check-circle"></i> Validación en Tiempo Real</h4>
+                <p>Validación de campos con feedback visual instantáneo</p>
+            </div>
+            
+            <div class="feature-card">
+                <h4><i class="fas fa-layer-group"></i> Modales Especializados</h4>
+                <p>Formularios personalizados para cada categoría de producto</p>
+            </div>
+            
+            <div class="feature-card">
+                <h4><i class="fas fa-mobile-alt"></i> 100% Responsive</h4>
+                <p>Perfecto en desktop, tablet y móvil</p>
+            </div>
+            
+            <div class="feature-card">
+                <h4><i class="fas fa-cannabis"></i> Cannabis Específico</h4>
+                <p>Campos para cannabinoides, terpenos, info terapéutica</p>
+            </div>
+            
+            <div class="feature-card">
+                <h4><i class="fas fa-tag"></i> Variantes de Precio</h4>
+                <p>Sistema dinámico de variantes con múltiples presentaciones</p>
+            </div>
+            
+            <div class="feature-card">
+                <h4><i class="fas fa-shield-alt"></i> Información de Seguridad</h4>
+                <p>Contraindicaciones, efectos secundarios y advertencias</p>
+            </div>
+            
+            <div class="feature-card">
+                <h4><i class="fas fa-sync-alt"></i> CRUD Completo</h4>
+                <p>Crear, leer, actualizar y eliminar productos</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Demo Buttons -->
+    <div class="demo-section">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">
+            <i class="fas fa-play-circle text-blue-500 mr-2"></i>
+            Prueba el Sistema
+        </h2>
+        
+        <div class="flex flex-wrap gap-3 mb-4">
+            <button onclick="openCategorySelector()" class="demo-button">
+                <i class="fas fa-plus"></i>
+                Crear Nuevo Producto
+            </button>
+            
+            <button onclick="openProductModal('medicinal-flores', demoProduct)" class="demo-button demo-button-secondary">
+                <i class="fas fa-edit"></i>
+                Editar Producto Demo
+            </button>
+            
+            <button onclick="openProductModal('medicinal-aceites', null)" class="demo-button">
+                <i class="fas fa-tint"></i>
+                Crear Aceite Medicinal
+            </button>
+            
+            <button onclick="openProductModal('semillas', null)" class="demo-button">
+                <i class="fas fa-seedling"></i>
+                Crear Semilla
+            </button>
+        </div>
+        
+        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+            <p class="text-blue-800 text-sm">
+                <i class="fas fa-info-circle mr-2"></i>
+                <strong>Nota:</strong> Haz clic en cualquier botón para ver el sistema en acción. Los modales se adaptan automáticamente según la categoría del producto.
+            </p>
+        </div>
+    </div>
+
+    <!-- Integración -->
+    <div class="demo-section">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">
+            <i class="fas fa-code text-purple-500 mr-2"></i>
+            Cómo Integrar en tu Proyecto
+        </h2>
+        
+        <ol class="integration-steps">
+            <li>
+                <h3 class="font-bold text-gray-800 mb-2">Incluye los archivos CSS y JS</h3>
+                <div class="code-block">
+&lt;!-- CSS del sistema de modales --&gt;
+&lt;link rel="stylesheet" href="products-modal-enhanced.css"&gt;
+
+&lt;!-- JavaScript del sistema de modales --&gt;
+&lt;script src="products-modal-enhanced.js"&gt;&lt;/script&gt;
+                </div>
+            </li>
+            
+            <li>
+                <h3 class="font-bold text-gray-800 mb-2">Reemplaza tus funciones existentes</h3>
+                <p class="text-gray-600 mb-2">El nuevo sistema es compatible con tus funciones actuales:</p>
+                <div class="code-block">
+// Crear nuevo producto
+openCreateModal(); // O mejor: openCategorySelector()
+
+// Editar producto existente
+openEditModal(product); // O mejor: openProductModal(categorySlug, product)
+                </div>
+            </li>
+            
+            <li>
+                <h3 class="font-bold text-gray-800 mb-2">Configura tu API</h3>
+                <p class="text-gray-600 mb-2">Asegúrate de tener las funciones de API disponibles:</p>
+                <div class="code-block">
+const api = {
+    createProduct: async (data) => { /* POST /api/products */ },
+    updateProduct: async (id, data) => { /* PUT /api/products/:id */ },
+    deleteProduct: async (id) => { /* DELETE /api/products/:id */ },
+    getCategories: async () => { /* GET /api/products/categories */ },
+};
+                </div>
+            </li>
+            
+            <li>
+                <h3 class="font-bold text-gray-800 mb-2">Personaliza las categorías</h3>
+                <p class="text-gray-600 mb-2">Edita el objeto PRODUCT_CATEGORIES en el JS para adaptar a tus necesidades:</p>
+                <div class="code-block">
+const PRODUCT_CATEGORIES = {
+    'medicinal-flores': {
+        name: 'Flores Medicinales',
+        icon: 'fa-cannabis',
+        color: '#16a34a',
+        fields: ['cannabinoids', 'terpenes', 'strain', 'therapeutic', 'usage', 'safety']
+    },
+    // ... más categorías
+};
+                </div>
+            </li>
+            
+            <li>
+                <h3 class="font-bold text-gray-800 mb-2">¡Listo para usar!</h3>
+                <p class="text-gray-600">El sistema está completamente funcional y listo para producción.</p>
+            </li>
+        </ol>
+    </div>
+
+    <!-- Estructura de Datos -->
+    <div class="demo-section">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">
+            <i class="fas fa-database text-green-500 mr-2"></i>
+            Estructura de Datos del Producto
+        </h2>
+        
+        <p class="text-gray-600 mb-3">
+            El sistema envía y recibe productos con la siguiente estructura:
+        </p>
+        
+        <div class="code-block">
+{
+    "id": 1,
+    "name": "Blue Dream - Flor Premium",
+    "sku": "BD-001",
+    "description": "Flor de cannabis medicinal de alta calidad...",
+    "short_description": "Flor medicinal balanceada ideal para el día",
+    "category_slug": "medicinal-flores",
+    "brand_id": 1,
+    "base_price": 15000,
+    "stock_quantity": 100,
+    "stock_unit": "gramos",
+    "image_url": "https://ejemplo.com/imagen.jpg",
+    "featured": 1,
+    "status": "active",
+    "is_medicinal": 1,
+    "requires_prescription": 1,
+    "cannabinoid_profile": {
+        "THC": 18.5,
+        "CBD": 2.3,
+        "CBN": 0.5
+    },
+    "terpene_profile": {
+        "Mirceno": 0.8,
+        "Limoneno": 1.2,
+        "Cariofileno": 0.6
+    },
+    "strain_info": {
+        "type": "hybrid",
+        "genetics": "60% Sativa / 40% Indica",
+        "lineage": "(Blueberry x Haze)"
+    },
+    "therapeutic_info": {
+        "benefits": "Alivia el estrés y mejora el estado de ánimo",
+        "indications": "Ansiedad, depresión, dolor crónico"
+    },
+    "usage_info": {
+        "dosage": "0.1-0.3g por uso",
+        "method": "Vaporización, inhalación",
+        "instructions": "Comenzar con dosis bajas..."
+    },
+    "safety_info": {
+        "contraindications": "No usar durante el embarazo",
+        "side_effects": "Sequedad bucal, ojos rojos",
+        "warnings": "No conducir después del uso"
+    },
+    "price_variants": [
+        {
+            "variant_name": "1 gramo",
+            "quantity": 1,
+            "unit": "g",
+            "price": 15000
+        },
+        {
+            "variant_name": "5 gramos",
+            "quantity": 5,
+            "unit": "g",
+            "price": 65000
+        }
+    ]
+}
+        </div>
+    </div>
+
+    <!-- Compatibilidad -->
+    <div class="demo-section">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">
+            <i class="fas fa-puzzle-piece text-orange-500 mr-2"></i>
+            Compatibilidad
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                <h3 class="font-bold text-green-800 mb-2 flex items-center gap-2">
+                    <i class="fas fa-check-circle"></i>
+                    Compatible con
+                </h3>
+                <ul class="text-green-700 space-y-1 text-sm">
+                    <li>✓ Todos los navegadores modernos</li>
+                    <li>✓ Chrome, Firefox, Safari, Edge</li>
+                    <li>✓ Dispositivos móviles (iOS/Android)</li>
+                    <li>✓ Tablets y desktop</li>
+                    <li>✓ Tu sistema actual de ApexRemedy</li>
+                </ul>
+            </div>
+            
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h3 class="font-bold text-blue-800 mb-2 flex items-center gap-2">
+                    <i class="fas fa-plug"></i>
+                    Integración
+                </h3>
+                <ul class="text-blue-700 space-y-1 text-sm">
+                    <li>✓ No requiere dependencias adicionales</li>
+                    <li>✓ Compatible con tu API actual</li>
+                    <li>✓ Usa las mismas rutas de backend</li>
+                    <li>✓ Mantiene la estructura de datos</li>
+                    <li>✓ Plug & play - listo para usar</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Soporte -->
+    <div class="demo-section">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">
+            <i class="fas fa-life-ring text-red-500 mr-2"></i>
+            Soporte y Documentación
+        </h2>
+        
+        <div class="bg-gray-50 border-l-4 border-gray-400 p-4 rounded">
+            <p class="text-gray-700 mb-3">
+                <strong>Archivos del sistema:</strong>
+            </p>
+            <ul class="text-gray-600 space-y-2 text-sm">
+                <li>
+                    <i class="fas fa-file-code text-blue-500 mr-2"></i>
+                    <code class="bg-gray-200 px-2 py-1 rounded">products-modal-enhanced.css</code> - Estilos del sistema (16KB)
+                </li>
+                <li>
+                    <i class="fas fa-file-code text-yellow-500 mr-2"></i>
+                    <code class="bg-gray-200 px-2 py-1 rounded">products-modal-enhanced.js</code> - Lógica y funcionalidad (50KB)
+                </li>
+                <li>
+                    <i class="fas fa-file-alt text-green-500 mr-2"></i>
+                    <code class="bg-gray-200 px-2 py-1 rounded">integration-example.html</code> - Este archivo de ejemplo
+                </li>
+            </ul>
+        </div>
+        
+        <div class="mt-4 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
+            <p class="text-yellow-800 text-sm">
+                <i class="fas fa-lightbulb mr-2"></i>
+                <strong>Tip:</strong> Revisa el código JavaScript para personalizar los campos y validaciones según tus necesidades específicas.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript del sistema -->
+<script src="products-modal-enhanced.js"></script>
+
+<!-- Mock API y datos de demo -->
+<script>
+    // Mock API para el demo
+    window.api = {
+        createProduct: async (data) => {
+            console.log('📤 Creando producto:', data);
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            return { success: true, data: { ...data, id: Date.now() } };
+        },
+        updateProduct: async (id, data) => {
+            console.log('📤 Actualizando producto:', id, data);
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            return { success: true, data: { ...data, id } };
+        },
+        deleteProduct: async (id) => {
+            console.log('🗑️ Eliminando producto:', id);
+            await new Promise(resolve => setTimeout(resolve, 500));
+            return { success: true };
+        },
+        getCategories: async () => {
+            return {
+                success: true,
+                data: {
+                    categories: [
+                        'Flores Medicinales',
+                        'Aceites Medicinales',
+                        'Concentrados Medicinales',
+                        'Semillas',
+                        'Vaporizadores',
+                        'Ropa',
+                        'Accesorios'
+                    ]
+                }
+            };
+        }
+    };
+
+    // Mock de marcas
+    window.allBrands = [
+        { id: 1, name: 'Apex Remedy' },
+        { id: 2, name: 'Sensi Seeds' },
+        { id: 3, name: 'Royal Queen Seeds' },
+        { id: 4, name: 'DNA Genetics' }
+    ];
+
+    // Producto de demostración
+    window.demoProduct = {
+        id: 1,
+        name: 'Blue Dream - Flor Premium',
+        sku: 'BD-001',
+        description: 'Flor de cannabis medicinal de alta calidad con perfil balanceado. Ideal para uso diurno.',
+        short_description: 'Flor medicinal balanceada ideal para el día',
+        category_slug: 'medicinal-flores',
+        brand_id: 1,
+        base_price: 15000,
+        stock_quantity: 100,
+        stock_unit: 'gramos',
+        unit_type: 'weight',
+        base_unit: 'g',
+        unit_size: 1,
+        image_url: 'https://via.placeholder.com/400x400/16a34a/ffffff?text=Blue+Dream',
+        featured: 1,
+        status: 'active',
+        is_medicinal: 1,
+        requires_prescription: 1,
+        medical_category: 'balanced',
+        cannabinoid_profile: {
+            THC: 18.5,
+            CBD: 2.3,
+            CBN: 0.5,
+            CBG: 0.8,
+            THCV: 0.2
+        },
+        terpene_profile: {
+            Mirceno: 0.8,
+            Limoneno: 1.2,
+            Cariofileno: 0.6,
+            Pineno: 0.4,
+            Linalool: 0.3,
+            Humuleno: 0.2
+        },
+        strain_info: {
+            type: 'hybrid',
+            genetics: '60% Sativa / 40% Indica',
+            lineage: '(Blueberry x Haze)'
+        },
+        therapeutic_info: {
+            benefits: 'Alivia el estrés, mejora el estado de ánimo, reduce la ansiedad y ayuda con el dolor crónico',
+            indications: 'Ansiedad, depresión, dolor crónico, migrañas, TEPT'
+        },
+        usage_info: {
+            dosage: '0.1-0.3g por uso',
+            method: 'Vaporización, inhalación',
+            instructions: 'Comenzar con dosis bajas y aumentar gradualmente según tolerancia. No exceder 1g por día.'
+        },
+        safety_info: {
+            contraindications: 'No usar durante el embarazo o lactancia. No recomendado para menores de 18 años.',
+            side_effects: 'Sequedad bucal, ojos rojos, mareos leves, aumento del apetito',
+            warnings: 'No conducir vehículos después del uso. Puede causar somnolencia. Consultar con médico si está tomando otros medicamentos.'
+        },
+        price_variants: [
+            { variant_name: '1 gramo', quantity: 1, unit: 'g', price: 15000 },
+            { variant_name: '5 gramos', quantity: 5, unit: 'g', price: 65000 },
+            { variant_name: '10 gramos', quantity: 10, unit: 'g', price: 120000 }
+        ]
+    };
+
+    // Mock notify function
+    window.notify = {
+        success: (msg) => {
+            console.log('✅ Success:', msg);
+            alert('✅ ' + msg);
+        },
+        error: (msg) => {
+            console.log('❌ Error:', msg);
+            alert('❌ ' + msg);
+        },
+        warning: (msg) => {
+            console.log('⚠️ Warning:', msg);
+            alert('⚠️ ' + msg);
+        },
+        info: (msg) => {
+            console.log('ℹ️ Info:', msg);
+            alert('ℹ️ ' + msg);
+        }
+    };
+
+    // Mock loadProducts function
+    window.loadProducts = async (forceRefresh = false) => {
+        console.log('🔄 Recargando productos...', forceRefresh ? '(forzado)' : '');
+        await new Promise(resolve => setTimeout(resolve, 500));
+        console.log('✅ Productos recargados');
+    };
+
+    console.log('✅ Demo cargado correctamente - El sistema está listo para usar');
+</script>
+
+</body>
+</html>

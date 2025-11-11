@@ -29,15 +29,10 @@ div.container.tienda-container {
     padding: 0;
 }
 
-.tienda-filters-sidebar .about-card,
-.tienda-filter-card {
+/* Override del padding por defecto de about-card para el sidebar de filtros */
+.tienda-filters-sidebar .about-card {
     box-sizing: border-box;
     width: 100%;
-}
-
-/* Override del padding por defecto de about-card para el sidebar de filtros */
-.tienda-filters-sidebar .about-card,
-.tienda-filter-card {
     padding: 24px !important;
 }
 
@@ -108,10 +103,6 @@ div.container.tienda-container {
     
     aside {
         position: static !important;
-    }
-    
-    .shop-filters {
-        padding: 16px 0;
     }
     
     .filter-container {
@@ -221,10 +212,6 @@ div.container.tienda-container {
     }
     
     /* Filtros en móvil */
-    .shop-filters {
-        padding: 12px 0;
-    }
-    
     .filter-container {
         flex-direction: column;
         align-items: stretch;
@@ -251,8 +238,7 @@ div.container.tienda-container {
     }
     
     /* Badges y chips */
-    .badge,
-    .chip {
+    .badge {
         font-size: 0.8rem;
         padding: 4px 10px;
     }
@@ -391,18 +377,4 @@ div.container.tienda-container {
 .filters-modal-footer .cta-button,
 .filters-modal-footer .secondary-button {
     flex: 1;
-    padding: 14px 20px;
-    font-size: 1rem;
-    font-weight: 600;
-}
-
-/* Ocultar botón de filtros en desktop */
-@media (min-width: 768px) {
-    .filters-mobile-btn {
-        display: none !important;
-    }
-    
-    .tienda-filters-sidebar {
-        display: block !important;
-    }
 }

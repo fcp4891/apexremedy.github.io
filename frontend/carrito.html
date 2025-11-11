@@ -18,8 +18,8 @@
     <div id="header-container"></div>
 
     <!-- Header -->
-    <section class="shop-header">
-        <div class="container">
+    <section class="shop-header app-section">
+        <div class="container u-container">
           <h1>
             <i class="fas fa-shopping-basket"></i>Carrito de Compras
           </h1>
@@ -30,7 +30,7 @@
       </section>
 
     <!-- Contenido del Carrito -->
-    <div class="container" style="padding: 40px 20px;">
+    <div class="container u-container" style="padding: 40px 20px;">
         <div id="cartContainer">
             <!-- El carrito se renderizará aquí dinámicamente -->
         </div>
@@ -62,7 +62,7 @@
                         <i class="fas fa-shopping-cart" style="font-size: 4rem; color: var(--medium-gray); margin-bottom: 20px; display: block;"></i>
                         <h3 style="font-size: 1.75rem; font-weight: 700; color: var(--accent-black); margin-bottom: 12px; font-family: var(--font-primary);">Tu carrito está vacío</h3>
                         <p style="color: var(--medium-gray); margin-bottom: 24px; font-family: var(--font-primary);">Agrega productos desde nuestra tienda</p>
-                        <a href="./tienda.html" class="cta-button">
+                        <a href="./tienda.html" class="cta-button app-button app-button--primary">
                             <i class="fas fa-store"></i>
                             <span>Ir a la Tienda</span>
                         </a>
@@ -78,7 +78,7 @@
                     
                     <!-- Resumen del pedido -->
                     <div>
-                        <div style="background: var(--white); border-radius: var(--border-radius); box-shadow: var(--box-shadow); padding: 24px; position: sticky; top: 100px;">
+                        <div class="app-card" style="background: var(--white); border-radius: var(--border-radius); box-shadow: var(--box-shadow); padding: 24px; position: sticky; top: 100px;">
                             <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--accent-black); margin-bottom: 24px; font-family: var(--font-primary); display: flex; align-items: center;">
                                 <i class="fas fa-receipt" style="color: var(--primary-green); margin-right: 12px;"></i>
                                 Resumen del Pedido
@@ -99,12 +99,12 @@
                                 </div>
                             </div>
                             
-                            <button onclick="proceedToCheckout()" class="cta-button" style="width: 100%; justify-content: center; padding: 16px 24px; font-size: 1.125rem;">
+                            <button onclick="proceedToCheckout()" class="cta-button app-button app-button--primary" style="width: 100%; justify-content: center; padding: 16px 24px; font-size: 1.125rem;">
                                 <i class="fas fa-lock"></i>
                                 <span>Proceder al Pago</span>
                             </button>
                             
-                            <button onclick="if(confirm('¿Estás seguro de vaciar el carrito?')) { cart.clearCart(); renderFullCartPage(); }" class="secondary-button danger" style="width: 100%; justify-content: center; margin-top: 12px; padding: 12px 24px;">
+                            <button onclick="if(confirm('¿Estás seguro de vaciar el carrito?')) { cart.clearCart(); renderFullCartPage(); }" class="secondary-button app-button app-button--secondary app-button--danger danger" style="width: 100%; justify-content: center; margin-top: 12px; padding: 12px 24px;">
                                 <i class="fas fa-trash"></i>
                                 <span>Vaciar Carrito</span>
                             </button>

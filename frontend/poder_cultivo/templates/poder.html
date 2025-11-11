@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<style>
+  body{font-family: Georgia, 'Times New Roman', serif; color:#0f172a; margin:40px}
+  h1{font-size:20px;margin:0 0 4px}
+  .muted{color:#334155}
+  .box{border:1px solid #cbd5e1;padding:14px;border-radius:8px;margin:10px 0}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .sep{height:1px;background:#e2e8f0;margin:18px 0}
+  .sign{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:24px}
+  .sign-box{border-top:1px solid #94a3b8;padding-top:6px;text-align:center}
+  img.sig{width:100%;max-height:120px;object-fit:contain}
+  .small{font-size:12px;color:#475569}
+</style>
+</head>
+<body>
+  <h1>Poder simple – Traspaso de derechos de cultivo</h1>
+  <div class="muted">Conforme Ley 20.000 (uso personal, medicinal o científico). Fecha: {{ hoy }}</div>
+
+  <div class="box">
+    <strong>Finalidad:</strong> {{ finalidad }}. 
+    <strong>Vigencia:</strong> {{ vigencia_texto }}.
+  </div>
+
+  <h3>1) Cedente</h3>
+  <div class="grid box">
+    <div><strong>Nombre:</strong> {{ cedente_nombre }}</div>
+    <div><strong>RUT:</strong> {{ cedente_rut }}</div>
+    <div><strong>Domicilio:</strong> {{ cedente_domicilio }}</div>
+    <div><strong>Email:</strong> {{ cedente_email }}</div>
+  </div>
+
+  <h3>2) Cesionario/Autorizado</h3>
+  <div class="grid box">
+    <div><strong>Nombre:</strong> {{ cesionario_nombre }}</div>
+    <div><strong>RUT:</strong> {{ cesionario_rut }}</div>
+    <div><strong>Domicilio:</strong> {{ cesionario_domicilio }}</div>
+    <div><strong>Email:</strong> {{ cesionario_email }}</div>
+  </div>
+
+  <h3>3) Lugar de cultivo</h3>
+  <div class="box">
+    <div><strong>Dirección:</strong> {{ direccion_cultivo }}</div>
+    <div><strong>Comuna/Región:</strong> {{ comuna_region }}</div>
+    <div><strong>Cantidad estimada de plantas:</strong> {{ cantidad_plantas or 'No especificado' }}</div>
+  </div>
+
+  <div class="sep"></div>
+
+  <h3>Declaración</h3>
+  <div class="box">{{ declaracion }}</div>
+
+  <p class="small">
+    Este documento se firma electrónicamente (firma simple o avanzada según proveedor) y genera evidencia técnica.
+  </p>
+
+  {% if firma_cedente or firma_cesionario %}
+  <div class="sign">
+    <div>
+      {% if firma_cedente %}<img class="sig" src="{{ firma_cedente }}" alt="Firma Cedente" />{% endif %}
+      <div class="sign-box">
+        {{ cedente_nombre }} · RUT {{ cedente_rut }}<br/>Cedente
+      </div>
+    </div>
+    <div>
+      {% if firma_cesionario %}<img class="sig" src="{{ firma_cesionario }}" alt="Firma Cesionario" />{% endif %}
+      <div class="sign-box">
+        {{ cesionario_nombre }} · RUT {{ cesionario_rut }}<br/>Cesionario/Autorizado
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</body>
+</html>

@@ -278,6 +278,22 @@ exports.getAllOrders = async (req, res) => {
         };
 
         const orders = await orderModel.findAllWithFilters(filters);
+        
+        // Log del primer pedido para debugging
+        if (orders.length > 0) {
+            const firstOrder = orders[0];
+            console.log('📋 [GET ALL ORDERS] Primer pedido devuelto:', {
+                id: firstOrder.id,
+                customer_name: firstOrder.customer_name,
+                customer_email: firstOrder.customer_email,
+                user_name: firstOrder.user_name,
+                user_email: firstOrder.user_email,
+                user_id: firstOrder.user_id,
+                created_at: firstOrder.created_at,
+                status: firstOrder.status,
+                total: firstOrder.total
+            });
+        }
 
         res.json({
             success: true,

@@ -10,6 +10,7 @@
     <script src="./js/basePath.js"></script>
     <script src="./js/config.js"></script>
     <script src="./js/utils.js"></script>
+    <script type="module" src="./js/adminTemplate.legacy.js"></script>
     <script defer src="./js/adminTemplate.js"></script>
 </head>
 <body>
@@ -18,7 +19,12 @@
 
     <!-- Main Content -->
     <div class="container mx-auto px-4 py-8 min-h-screen">
-        <h1 class="text-3xl font-bold text-gray-800 mb-8">Mi Carrito de Compras</h1>
+        <div class="admin-page-header">
+            <div>
+                <h1 class="admin-page-title">Mi Carrito de Compras</h1>
+                <p class="admin-page-subtitle">Gestiona tus productos antes de finalizar</p>
+            </div>
+        </div>
 
         <div class="grid lg:grid-cols-3 gap-8">
             <!-- Lista de productos -->
@@ -49,12 +55,12 @@
                         <span id="total" class="text-green-600">$0</span>
                     </div>
                     
-                    <button id="checkoutBtn" onclick="proceedToCheckout()" class="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold transition mb-3 disabled:bg-gray-400 disabled:cursor-not-allowed">
-                        <i class="fas fa-credit-card mr-2"></i>Proceder al Pago
+                    <button id="checkoutBtn" class="admin-btn admin-btn--primary admin-full-width justify-center mb-3 disabled:bg-gray-400 disabled:cursor-not-allowed" data-action="checkout">
+                        <i class="fas fa-credit-card admin-btn__icon"></i>Proceder al Pago
                     </button>
                     
-                    <a href="./productos.html" class="block text-center text-green-600 hover:text-green-700 font-semibold">
-                        <i class="fas fa-arrow-left mr-2"></i>Continuar Comprando
+                    <a href="./productos.html" class="admin-btn admin-btn--muted admin-btn--compact admin-full-width justify-center">
+                        <i class="fas fa-arrow-left admin-btn__icon"></i>Continuar Comprando
                     </a>
                 </div>
             </div>
@@ -71,162 +77,6 @@
     <script src="./js/notifications.js"></script>
     <script src="./js/db_articulos.js"></script>
     <script src="./js/carrito.js"></script>
-    <script>
-        // Cargar carrito al iniciar
-        function loadCart() {
-            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-            displayCart(cart);
-            updateSummary(cart);
-        }
-
-        // Mostrar items del carrito
-        function displayCart(cart) {
-            const container = document.getElementById('cartItems');
-            
-            if (cart.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-12">
-                        <i class="fas fa-shopping-cart text-6xl text-gray-300 mb-4"></i>
-                        <h3 class="text-xl font-semibold text-gray-600 mb-2">Tu carrito está vacío</h3>
-                        <p class="text-gray-500 mb-6">¡Agrega algunos productos para comenzar!</p>
-                        <a href="./productos.html" class="inline-block bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition">
-                            <i class="fas fa-shopping-bag mr-2"></i>Ver Productos
-                        </a>
-                    </div>
-                `;
-                document.getElementById('checkoutBtn').disabled = true;
-                return;
-            }
-
-            document.getElementById('checkoutBtn').disabled = false;
-
-            container.innerHTML = `
-                <div class="space-y-4">
-                    ${cart.map((item, index) => `
-                        <div class="flex items-center gap-4 border-b pb-4">
-                            <div class="w-24 h-24 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-box text-3xl text-gray-400"></i>
-                            </div>
-                            <div class="flex-1">
-                                <h3 class="font-semibold text-gray-800 mb-1">${item.name}</h3>
-                                <p class="text-green-600 font-bold">$${item.price.toLocaleString()}</p>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button onclick="updateQuantity(${index}, ${item.quantity - 1})" class="bg-gray-200 hover:bg-gray-300 w-8 h-8 rounded">
-                                    <i class="fas fa-minus text-xs"></i>
-                                </button>
-                                <span class="w-12 text-center font-semibold">${item.quantity}</span>
-                                <button onclick="updateQuantity(${index}, ${item.quantity + 1})" class="bg-gray-200 hover:bg-gray-300 w-8 h-8 rounded">
-                                    <i class="fas fa-plus text-xs"></i>
-                                </button>
-                            </div>
-                            <div class="text-right">
-                                <p class="font-bold text-gray-800">$${(item.price * item.quantity).toLocaleString()}</p>
-                                <button onclick="removeItem(${index})" class="text-red-600 hover:text-red-800 text-sm mt-1">
-                                    <i class="fas fa-trash mr-1"></i>Eliminar
-                                </button>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-                <div class="mt-6 flex justify-between items-center">
-                    <button onclick="clearCart()" class="text-red-600 hover:text-red-800 font-semibold">
-                        <i class="fas fa-trash-alt mr-2"></i>Vaciar Carrito
-                    </button>
-                </div>
-            `;
-        }
-
-        // Actualizar resumen
-        function updateSummary(cart) {
-            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const tax = Math.round(subtotal * 0.19);
-            const total = subtotal + tax;
-            const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-
-            document.getElementById('itemCount').textContent = itemCount;
-            document.getElementById('subtotal').textContent = `$${subtotal.toLocaleString()}`;
-            document.getElementById('tax').textContent = `$${tax.toLocaleString()}`;
-            document.getElementById('total').textContent = `$${total.toLocaleString()}`;
-        }
-
-        // Actualizar cantidad
-        function updateQuantity(index, newQuantity) {
-            if (newQuantity < 1) return;
-            
-            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-            cart[index].quantity = newQuantity;
-            localStorage.setItem('cart', JSON.stringify(cart));
-            
-            loadCart();
-            
-            // Actualizar contador en header si existe
-            if (typeof window.actualizarContadorCarrito === 'function') {
-                window.actualizarContadorCarrito();
-            }
-        }
-
-        // Eliminar item
-        function removeItem(index) {
-            if (confirm('¿Eliminar este producto del carrito?')) {
-                const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-                cart.splice(index, 1);
-                localStorage.setItem('cart', JSON.stringify(cart));
-                
-                loadCart();
-                
-                if (typeof window.actualizarContadorCarrito === 'function') {
-                    window.actualizarContadorCarrito();
-                }
-            }
-        }
-
-        // Vaciar carrito
-        function clearCart() {
-            if (confirm('¿Estás seguro de vaciar todo el carrito?')) {
-                localStorage.removeItem('cart');
-                loadCart();
-                
-                if (typeof window.actualizarContadorCarrito === 'function') {
-                    window.actualizarContadorCarrito();
-                }
-            }
-        }
-
-        // Proceder al checkout
-        function proceedToCheckout() {
-            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-            
-            if (cart.length === 0) {
-                notify.warning('Tu carrito está vacío', 'Carrito Vacío');
-                return;
-            }
-
-            // Verificar si está autenticado
-            if (!authManager.isAuthenticated()) {
-                notify.confirm({
-                    type: 'info',
-                    icon: 'question',
-                    title: 'Iniciar Sesión Requerido',
-                    message: 'Debes iniciar sesión para continuar. ¿Deseas ir al login?',
-                    confirmText: 'Sí, Ir al Login',
-                    cancelText: 'Cancelar',
-                    confirmClass: 'primary'
-                }).then(confirmed => {
-                    if (confirmed) {
-                        window.location.href = './login.html?redirect=checkout';
-                    }
-                });
-                return;
-            }
-
-            window.location.href = './checkout.html';
-        }
-
-        // Inicializar
-        document.addEventListener('DOMContentLoaded', () => {
-            loadCart();
-        });
-    </script>
+    <script src="./js/pages/cart-page.js" defer></script>
 </body>
 </html>

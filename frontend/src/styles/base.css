@@ -1,0 +1,30 @@
+/* base.css – Reset y estilos base para frontend público
+   Estado: Migración en progreso; las reglas también existen en style/css_home.css. */
+
+/* Reset básico */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-primary, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif);
+  line-height: 1.6;
+  color: var(--accent-black, #1a1a1a);
+  background: var(--white, #ffffff);
+}
+
+body.login-page,
+body.register-page {
+  background: var(--light-gray, #f8f9fa);
+}
+
+

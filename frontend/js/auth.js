@@ -1,44 +1,128 @@
 // frontend/js/auth.js
 // Gestor de autenticación del frontend
 
+// Log inmediato para verificar que el script se carga
+try {
+    console.log('📦 [AUTH] Script auth.js cargado');
+    console.log('📦 [AUTH] Timestamp:', new Date().toISOString());
+    console.log('📦 [AUTH] URL actual:', window.location.href);
+} catch (e) {
+    console.error('❌ [AUTH] Error en log inicial:', e);
+}
+
 // Prevenir doble declaración
 if (typeof AuthManager === 'undefined') {
+    console.log('📦 [AUTH] Creando clase AuthManager...');
     class AuthManager {
         constructor() {
             this.currentUser = null;
-            this.token = null;
-            this.loadFromStorage();
+            this.sessionReady = false;
+            this.sessionToken = null;
+            this.bootstrapPromise = this.bootstrap();
         }
 
-        // Cargar datos de localStorage
-        loadFromStorage() {
-            const token = localStorage.getItem('authToken');
-            const user = localStorage.getItem('currentUser');
-            
-            if (token && user) {
-                this.token = token;
-                try {
-                    this.currentUser = JSON.parse(user);
-                } catch (e) {
-                    this.clearStorage();
+        async bootstrap() {
+            // Si no hay API configurada, no hay sesión
+            if (!api || typeof api.getProfile !== 'function' || !api.baseURL) {
+                this.sessionReady = true;
+                this.currentUser = null;
+                this.clearSession();
+                return;
+            }
+
+            try {
+                // Verificar si hay cookies de autenticación antes de hacer la petición
+                const hasAuthCookie = this.hasAuthCookie();
+                
+                if (!hasAuthCookie) {
+                    // No hay cookies, no hay sesión
+                    this.currentUser = null;
+                    this.clearSession();
+                    this.sessionReady = true;
+                    this.updateUI();
+                    return;
                 }
+
+                // Intentar obtener perfil del servidor
+                const response = await api.getProfile();
+                
+                // Validar respuesta estrictamente
+                if (response && response.success && response.data?.user) {
+                    const user = response.data.user;
+                    
+                    // Validar que el usuario tenga datos mínimos requeridos
+                    if (user.id && user.email) {
+                        this.currentUser = user;
+                    } else {
+                        // Datos incompletos, limpiar sesión
+                        this.currentUser = null;
+                        this.clearSession();
+                    }
+                } else {
+                    // Respuesta inválida, limpiar sesión
+                    this.currentUser = null;
+                    this.clearSession();
+                }
+            } catch (error) {
+                // Cualquier error (401, 403, network, etc.) = no hay sesión válida
+                console.log('🔒 No hay sesión válida o error al verificar:', error.message);
+                this.currentUser = null;
+                this.clearSession();
+            } finally {
+                this.sessionReady = true;
+                this.updateUI();
             }
         }
 
-        // Guardar en localStorage
-        saveToStorage() {
-            if (this.token && this.currentUser) {
-                localStorage.setItem('authToken', this.token);
-                localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+        // Verificar si hay cookies de autenticación
+        hasAuthCookie() {
+            if (typeof document === 'undefined') {
+                return false;
             }
+            
+            const cookies = document.cookie ? document.cookie.split('; ') : [];
+            const hasAccessToken = cookies.some(cookie => cookie.startsWith('access_token='));
+            const hasRefreshToken = cookies.some(cookie => cookie.startsWith('refresh_token='));
+            
+            return hasAccessToken || hasRefreshToken;
         }
 
-        // Limpiar localStorage
-        clearStorage() {
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('currentUser');
-            this.token = null;
+        clearSession() {
             this.currentUser = null;
+            this.sessionToken = null;
+            this.sessionReady = true;
+            
+            // Limpiar cookies de autenticación del lado del cliente
+            this.clearAuthCookies();
+        }
+
+        // Limpiar cookies de autenticación manualmente
+        clearAuthCookies() {
+            if (typeof document === 'undefined') {
+                return;
+            }
+
+            // Lista de cookies a limpiar
+            const cookiesToClear = [
+                'access_token',
+                'refresh_token',
+                'csrf_token'
+            ];
+
+            // Limpiar cada cookie con diferentes configuraciones de path
+            cookiesToClear.forEach(cookieName => {
+                // Limpiar con path raíz
+                document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+                // Limpiar con path /api/auth (para refresh_token)
+                document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/api/auth;`;
+                // Limpiar con path actual
+                const currentPath = window.location.pathname;
+                const pathParts = currentPath.split('/').filter(p => p);
+                for (let i = pathParts.length; i >= 0; i--) {
+                    const path = '/' + pathParts.slice(0, i).join('/');
+                    document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${path};`;
+                }
+            });
         }
 
         // Registrar nuevo usuario
@@ -55,26 +139,69 @@ if (typeof AuthManager === 'undefined') {
                     };
                 }
                 
-                return { success: false, message: response.message };
+                return { 
+                    success: false, 
+                    message: response.message,
+                    error_code: response.error_code,
+                    field: response.field
+                };
             } catch (error) {
-                return { success: false, message: error.message };
+                return { 
+                    success: false, 
+                    message: error.message || 'Error al registrar usuario',
+                    error_code: error.error_code,
+                    field: error.field
+                };
             }
         }
 
         // Iniciar sesión - ACTUALIZADO CON REDIRECCIÓN SEGÚN ROL
         async login(email, password) {
+            console.log('🔐 [AUTH] Iniciando login para:', email);
             try {
                 // NO verificar baseURL aquí - api.login() manejará la autenticación estática si no hay backend
                 // Llamar directamente a api.login() que decidirá usar loginStatic() si baseURL es null
+                console.log('📡 [AUTH] Llamando a api.login()...');
                 const response = await api.login({ email, password });
+                console.log('📥 [AUTH] Respuesta de api.login():', response?.success ? '✅ Éxito' : '❌ Fallo', response);
                 
                 if (response.success) {
-                    const { token, user } = response.data;
+                    console.log('✅ [AUTH] Login exitoso, procesando respuesta...');
+                    const { token = null, user } = response.data;
                     
-                    // Guardar token y usuario
-                    this.token = token;
+                    // Verificar cookies recibidas (nota: httpOnly cookies no son visibles en document.cookie)
+                    console.log('🍪 [AUTH] Verificando cookies después del login...');
+                    const allCookies = document.cookie.split(';').map(c => c.trim());
+                    console.log('🍪 [AUTH] Total de cookies visibles (no httpOnly):', allCookies.length);
+                    const authCookies = allCookies.filter(c => 
+                        c.startsWith('access_token') || 
+                        c.startsWith('refresh_token') || 
+                        c.startsWith('csrf_token')
+                    );
+                    console.log('🍪 [AUTH] Cookies de autenticación visibles:', authCookies.length);
+                    if (authCookies.length > 0) {
+                        authCookies.forEach(cookie => {
+                            const [name] = cookie.split('=');
+                            console.log('   -', name, '(visible)');
+                        });
+                    } else {
+                        console.log('   ℹ️ Las cookies httpOnly (access_token, refresh_token) no son visibles en JavaScript');
+                        console.log('   ℹ️ Esto es normal y esperado - las cookies se enviarán automáticamente en las peticiones');
+                    }
+                    
+                    console.log('👤 [AUTH] Datos del usuario recibidos:', {
+                        id: user?.id,
+                        email: user?.email,
+                        role: user?.role,
+                        account_status: user?.account_status
+                    });
+                    
+                    this.sessionToken = token;
                     this.currentUser = user;
-                    this.saveToStorage();
+                    this.sessionReady = true;
+                    
+                    console.log('✅ [AUTH] Estado actualizado - sessionReady:', this.sessionReady);
+                    console.log('✅ [AUTH] currentUser establecido:', this.currentUser?.email);
                     
                     window.dispatchEvent(new Event('userLoggedIn'));
         
@@ -99,21 +226,101 @@ if (typeof AuthManager === 'undefined') {
                             const cleanPath = path.startsWith('/') ? path.substring(1) : path;
                             return window.BASE_PATH + cleanPath;
                         }
-                        // Si no hay basePath (local), usar la ruta tal cual
+                        // Si no hay basePath (local), convertir rutas absolutas a relativas
+                        if (path.startsWith('/')) {
+                            // En desarrollo local, convertir /admin/perfil.html a ./admin/perfil.html
+                            // o ../admin/perfil.html dependiendo de dónde estemos
+                            const currentPath = window.location.pathname;
+                            const isInAdmin = currentPath.includes('/admin/');
+                            const isInRoot = !currentPath.includes('/admin/') && !currentPath.includes('/frontend/');
+                            
+                            // Si estamos en login.html (raíz), usar ./admin/perfil.html
+                            if (isInRoot || currentPath.endsWith('login.html')) {
+                                return '.' + path;
+                            }
+                            // Si estamos en admin, usar ./perfil.html o ../admin/perfil.html según corresponda
+                            if (isInAdmin) {
+                                // Si la ruta es /admin/..., usar ./
+                                if (path.startsWith('/admin/')) {
+                                    return '.' + path;
+                                }
+                                // Si la ruta es /perfil.html, usar ../perfil.html
+                                return '..' + path;
+                            }
+                            // Por defecto, usar ./
+                            return '.' + path;
+                        }
+                        // Si ya es relativa, devolverla tal cual
                         return path;
                     };
                     
-                    if (redirect) {
-                        const redirectPath = redirect.startsWith('/') ? getFullPath(redirect) :
-                                             redirect.startsWith('./') ? redirect :
-                                             `./${redirect}`;
-                        window.location.href = redirectPath;
-                      } else if (user.role === 'admin') {
-                        window.location.href = getFullPath('/admin/perfil.html');
-                      } else {
-                        window.location.href = getFullPath('/perfil.html');
-                      }
+                    console.log('🔄 [AUTH] Preparando redirección...');
+                    console.log('🔄 [AUTH] Redirect param:', redirect);
+                    console.log('🔄 [AUTH] User role:', user.role);
                     
+                    if (redirect) {
+                        // Manejar redirect con diferentes formatos
+                        let redirectPath;
+                        let processedRedirect = redirect; // Crear nueva variable para modificar
+                        
+                        console.log('🔄 [AUTH] Procesando redirect:', processedRedirect);
+                        
+                        if (redirect.startsWith('/')) {
+                            // Ruta absoluta: /admin/perfil o /admin/perfil.html
+                            // Agregar .html si no tiene extensión
+                            if (!processedRedirect.includes('.html') && !processedRedirect.includes('.php') && !processedRedirect.endsWith('/')) {
+                                processedRedirect = processedRedirect + '.html';
+                            }
+                            redirectPath = getFullPath(processedRedirect);
+                        } else if (redirect.startsWith('./')) {
+                            // Ya es relativa con ./
+                            redirectPath = redirect;
+                        } else {
+                            // Ruta relativa sin ./: admin/perfil o admin/perfil.html
+                            // Agregar .html si no tiene extensión y no termina en /
+                            if (!processedRedirect.includes('.html') && !processedRedirect.includes('.php') && !processedRedirect.endsWith('/')) {
+                                processedRedirect = processedRedirect + '.html';
+                            }
+                            redirectPath = `./${processedRedirect}`;
+                        }
+                        console.log('🔄 [AUTH] Redirigiendo a:', redirectPath);
+                        console.log('🔄 [AUTH] URL completa será:', window.location.origin + window.location.pathname.replace(/[^/]*$/, '') + redirectPath.replace(/^\./, ''));
+                        console.log('🔄 [AUTH] Estado antes de redirección:');
+                        console.log('   - sessionReady:', this.sessionReady);
+                        console.log('   - currentUser:', this.currentUser?.email);
+                        console.log('   - Cookies disponibles:', document.cookie.split(';').filter(c => c.includes('token')).length);
+                        console.log('⏳ [AUTH] Ejecutando redirección en 100ms...');
+                        setTimeout(() => {
+                            console.log('🚀 [AUTH] Redirigiendo ahora a:', redirectPath);
+                            window.location.href = redirectPath;
+                        }, 100);
+                    } else if (user.role === 'admin') {
+                        const adminPath = getFullPath('/admin/perfil.html');
+                        console.log('🔄 [AUTH] Admin detectado, redirigiendo a:', adminPath);
+                        console.log('🔄 [AUTH] Estado antes de redirección:');
+                        console.log('   - sessionReady:', this.sessionReady);
+                        console.log('   - currentUser:', this.currentUser?.email);
+                        console.log('   - Cookies disponibles:', document.cookie.split(';').filter(c => c.includes('token')).length);
+                        console.log('⏳ [AUTH] Ejecutando redirección en 100ms...');
+                        setTimeout(() => {
+                            console.log('🚀 [AUTH] Redirigiendo ahora a:', adminPath);
+                            window.location.href = adminPath;
+                        }, 100);
+                    } else {
+                        const clientPath = getFullPath('/perfil.html');
+                        console.log('🔄 [AUTH] Cliente detectado, redirigiendo a:', clientPath);
+                        console.log('🔄 [AUTH] Estado antes de redirección:');
+                        console.log('   - sessionReady:', this.sessionReady);
+                        console.log('   - currentUser:', this.currentUser?.email);
+                        console.log('   - Cookies disponibles:', document.cookie.split(';').filter(c => c.includes('token')).length);
+                        console.log('⏳ [AUTH] Ejecutando redirección en 100ms...');
+                        setTimeout(() => {
+                            console.log('🚀 [AUTH] Redirigiendo ahora a:', clientPath);
+                            window.location.href = clientPath;
+                        }, 100);
+                    }
+                    
+                    console.log('✅ [AUTH] Retornando success: true');
                     return { success: true, user };
                 } else {
                     // Retornar account_status y rejection_reason si están disponibles
@@ -165,20 +372,35 @@ if (typeof AuthManager === 'undefined') {
             }
         }
 
-        // Cerrar sesión - MEJORADO
-        logout() {
-            const wasAdmin = this.currentUser?.role === 'admin';
+        // Cerrar sesión - MEJORADO Y SEGURO
+        async logout() {
+            console.log('👋 Iniciando proceso de cierre de sesión...');
             
-            // ✅ AGREGAR: Disparar evento para limpiar carrito
+            // Guardar información antes de limpiar
+            const wasAdmin = this.currentUser?.role === 'admin';
+            const currentPath = window.location.pathname;
+            
+            // ✅ Disparar evento para limpiar carrito y otros datos
             window.dispatchEvent(new Event('userLoggedOut'));
             
-            // Limpiar datos
-            this.clearStorage();
+            // Limpiar datos locales primero
+            this.clearSession();
             
-            // Llamar a API logout si existe
+            // Llamar a API logout si existe (pero no esperar si falla)
             if (typeof api !== 'undefined' && api.logout) {
-                api.logout();
+                try {
+                    await Promise.race([
+                        api.logout(),
+                        new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 2000))
+                    ]);
+                } catch (error) {
+                    // No importa si falla, ya limpiamos localmente
+                    console.log('⚠️ Error al cerrar sesión en backend (continuando de todas formas):', error.message);
+                }
             }
+            
+            // Asegurar que las cookies estén limpiadas
+            this.clearAuthCookies();
             
             // Actualizar UI
             this.updateUI();
@@ -195,29 +417,33 @@ if (typeof AuthManager === 'undefined') {
                 return path;
             };
             
-            // Redirigir según tipo de usuario
+            // Pequeño delay para asegurar que todo se limpió
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            // Redirigir según tipo de usuario y ubicación actual
+            // SIEMPRE redirigir a login o index, NUNCA a perfil
             if (wasAdmin) {
-                if (window.location.pathname.includes('admin')) {
-                    window.location.href = getFullPath('../login.html');
-                } else {
-                    window.location.href = getFullPath('./login.html');
-                }
+                // Admin siempre va a login
+                const loginPath = currentPath.includes('admin') 
+                    ? getFullPath('../login.html') 
+                    : getFullPath('./login.html');
+                console.log('🔄 Redirigiendo admin a login:', loginPath);
+                window.location.href = loginPath;
             } else {
-                if (window.location.pathname.includes('admin')) {
-                    window.location.href = getFullPath('../index.html');
-                } else {
-                    window.location.href = getFullPath('./index.html');
-                }
+                // Cliente siempre va a index (nunca a perfil)
+                const indexPath = currentPath.includes('admin') 
+                    ? getFullPath('../index.html') 
+                    : getFullPath('./index.html');
+                console.log('🔄 Redirigiendo cliente a index:', indexPath);
+                window.location.href = indexPath;
             }
         }
 
         // Verificar si está autenticado
         isAuthenticated() {
-            // Verificar que existan ambos: token y usuario
-            if (!this.token || !this.currentUser) {
+            if (!this.currentUser) {
                 return false;
             }
-            // Verificar que el usuario tenga estructura válida
             if (!this.currentUser.id || !this.currentUser.email) {
                 return false;
             }
@@ -240,7 +466,7 @@ if (typeof AuthManager === 'undefined') {
 
         // Obtener token
         getToken() {
-            return this.token;
+            return this.sessionToken;
         }
 
         // Actualizar perfil
@@ -250,7 +476,6 @@ if (typeof AuthManager === 'undefined') {
                 
                 if (response.success) {
                     this.currentUser = response.data.user;
-                    this.saveToStorage();
                     this.updateUI();
                     return { success: true, user: this.currentUser };
                 }
@@ -263,25 +488,22 @@ if (typeof AuthManager === 'undefined') {
 
         // Verificar token válido con el servidor
         async verifyToken() {
-            if (!this.token) {
-                return false;
+            if (!api || typeof api.getMe !== 'function' || !api.baseURL) {
+                return !!this.sessionToken;
             }
-            
+
             try {
                 const response = await api.getMe();
                 if (response.success) {
                     this.currentUser = response.data.user;
-                    this.saveToStorage();
+                    this.sessionReady = true;
+                    this.updateUI();
                     return true;
                 }
                 return false;
             } catch (error) {
-                // Solo hacer logout si es específicamente un error de token inválido
-                if (error.message.includes('Token') || 
-                    error.message.includes('Usuario no encontrado') || 
-                    error.message.includes('Unauthorized')) {
-                    this.logout();
-                }
+                this.clearSession();
+                this.updateUI();
                 return false;
             }
         }
@@ -370,6 +592,15 @@ if (typeof AuthManager === 'undefined') {
 
         // Requerir autenticación (para páginas protegidas) - MEJORADO
         requireAuth(redirectPath = 'login.html') {
+            if (!this.sessionReady) {
+                if (this.bootstrapPromise) {
+                    this.bootstrapPromise.finally(() => {
+                        this.requireAuth(redirectPath);
+                    });
+                }
+                return true;
+            }
+
             if (!this.isAuthenticated()) {
                 notify.warning('Debes iniciar sesión para acceder a esta página', 'Autenticación requerida');
                 
@@ -401,6 +632,15 @@ if (typeof AuthManager === 'undefined') {
 
         // Requerir rol admin (para páginas admin) - MEJORADO
         requireAdmin() {
+            if (!this.sessionReady) {
+                if (this.bootstrapPromise) {
+                    this.bootstrapPromise.finally(() => {
+                        this.requireAdmin();
+                    });
+                }
+                return true;
+            }
+
             // Función helper para construir rutas con basePath
             const getFullPath = (path) => {
                 if (path.startsWith('http') || path.startsWith('//')) return path;

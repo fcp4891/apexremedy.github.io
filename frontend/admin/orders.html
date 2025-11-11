@@ -11,6 +11,7 @@
     <script src="./js/basePath.js"></script>
     <script src="./js/config.js"></script>
     <script src="./js/utils.js"></script>
+    <script type="module" src="./js/adminTemplate.legacy.js"></script>
     <script defer src="./js/adminTemplate.js"></script>
 </head>
 <body>
@@ -19,14 +20,16 @@
 
     <!-- Main Content -->
     <div class="container mx-auto px-4 py-8">
-        <div class="flex justify-between items-center mb-8">
+        <div class="admin-page-header">
             <div>
-                <h1 class="text-3xl font-bold text-gray-800">Gestión de Pedidos</h1>
-                <p class="text-gray-600">Administra todos los pedidos de clientes</p>
+                <h1 class="admin-page-title">Gestión de Pedidos</h1>
+                <p class="admin-page-subtitle">Administra todos los pedidos de clientes</p>
             </div>
-            <button onclick="loadOrders()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg">
-                <i class="fas fa-sync-alt mr-2"></i>Actualizar
-            </button>
+            <div class="admin-page-actions">
+                <button class="admin-btn admin-btn--primary admin-btn--compact" data-action="refresh-orders">
+                    <i class="fas fa-sync-alt admin-btn__icon"></i>Actualizar
+                </button>
+            </div>
         </div>
 
         <!-- ✅ FILTROS MEJORADOS -->
@@ -38,7 +41,7 @@
                 <!-- Filtro por Estado -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Estado</label>
-                    <select id="filterStatus" onchange="applyFilters()" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                    <select id="filterStatus" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
                         <option value="">Todos los estados</option>
                         <option value="pending_transfer">Pendiente Transferencia</option>
                         <option value="pending_cash">Pendiente Efectivo</option>
@@ -53,7 +56,7 @@
                 <!-- ✅ NUEVO: Filtro por Cliente -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Cliente</label>
-                    <select id="filterCustomer" onchange="applyFilters()" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                    <select id="filterCustomer" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
                         <option value="">Todos los clientes</option>
                         <!-- Se llenará dinámicamente -->
                     </select>
@@ -62,12 +65,12 @@
                 <!-- Filtro por Fecha -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Desde</label>
-                    <input type="date" id="filterDateFrom" onchange="applyFilters()" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                    <input type="date" id="filterDateFrom" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Hasta</label>
-                    <input type="date" id="filterDateTo" onchange="applyFilters()" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                    <input type="date" id="filterDateTo" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
                 </div>
             </div>
 
@@ -76,11 +79,11 @@
                 <label class="block text-sm font-medium text-gray-700 mb-2">Buscar por ID de Pedido</label>
                 <div class="flex gap-2">
                     <input type="text" id="searchOrderId" placeholder="Ej: 123" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
-                    <button onclick="searchByOrderId()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg">
-                        <i class="fas fa-search mr-2"></i>Buscar
+                    <button class="admin-btn admin-btn--accent admin-btn--compact" data-action="search-order-id">
+                        <i class="fas fa-search admin-btn__icon"></i>Buscar
                     </button>
-                    <button onclick="clearFilters()" class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-6 py-2 rounded-lg">
-                        <i class="fas fa-times mr-2"></i>Limpiar
+                    <button class="admin-btn admin-btn--muted admin-btn--compact" data-action="clear-filters">
+                        <i class="fas fa-times admin-btn__icon"></i>Limpiar
                     </button>
                 </div>
             </div>
@@ -186,7 +189,7 @@
                         <p class="text-gray-500">Cliente: <span id="modalCustomer" class="font-semibold"></span></p>
                         <p class="text-gray-500">Fecha: <span id="modalDate"></span></p>
                     </div>
-                    <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+                    <button class="text-gray-400 hover:text-gray-600" data-action="close-order-modal">
                         <i class="fas fa-times text-2xl"></i>
                     </button>
                 </div>
@@ -202,8 +205,8 @@
                         <option value="delivered">Entregado</option>
                         <option value="cancelled">Cancelado</option>
                     </select>
-                    <button onclick="updateOrderStatus()" class="mt-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
-                        <i class="fas fa-save mr-2"></i>Actualizar Estado
+                    <button class="admin-btn admin-btn--accent admin-btn--compact admin-mt-1" data-action="update-order-status">
+                        <i class="fas fa-save admin-btn__icon"></i>Actualizar Estado
                     </button>
                 </div>
 
@@ -250,20 +253,21 @@
     <div id="footer-container"></div>
 
     <!-- Scripts -->
+    <script type="module" src="./js/adminTemplate.legacy.js"></script>
     <script src="./js/api/apiClient.js"></script>
     <script src="./js/auth.js"></script>
     <script src="./js/sessionManager.js"></script>
     <script src="./js/notifications.js"></script>
 
 <!-- Modal revisión de pago -->
-<div id="reviewModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" onclick="closeReviewModal(event)">
-    <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl" onclick="event.stopPropagation()">
+<div id="reviewModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" data-action="review-overlay">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl" data-stop-propagation="true">
       <div class="px-6 py-4 border-b flex items-center justify-between bg-gradient-to-r from-orange-500 to-amber-500">
         <h3 class="text-xl font-bold text-white flex items-center">
           <i id="reviewModalIcon" class="fas fa-university mr-3"></i>
           <span id="reviewModalTitle">Revisión de Pago</span>
         </h3>
-        <button class="text-white hover:text-gray-200" onclick="hideReviewModal()">
+        <button class="text-white hover:text-gray-200" data-action="hide-review-modal">
           <i class="fas fa-times text-2xl"></i>
         </button>
       </div>
@@ -290,7 +294,8 @@
             id="rejectButton"
             data-reject
             class="px-5 py-2.5 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 font-semibold transition flex items-center gap-2"
-            onclick="validateTransfer(false)">
+            data-action="validate-transfer"
+            data-approved="false">
             <i class="fas fa-times-circle"></i>
             <span>Rechazar</span>
           </button>
@@ -298,7 +303,8 @@
             id="approveButton"
             data-approve
             class="px-5 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold transition flex items-center gap-2"
-            onclick="validateTransfer(true)">
+            data-action="validate-transfer"
+            data-approved="true">
             <i class="fas fa-check-circle"></i>
             <span>Aprobar</span>
           </button>
@@ -308,14 +314,14 @@
   </div>
 
 <!-- Modal Rechazo de Pago -->
-<div id="rejectModal" class="hidden fixed inset-0 bg-black/60 z-[60] flex items-center justify-center p-4" onclick="if(event.target.id==='rejectModal') hideRejectModal()">
-    <div class="bg-white rounded-xl shadow-2xl w-full max-w-md" onclick="event.stopPropagation()">
+<div id="rejectModal" class="hidden fixed inset-0 bg-black/60 z-[60] flex items-center justify-center p-4" data-action="reject-overlay">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-md" data-stop-propagation="true">
       <div class="px-6 py-4 border-b flex items-center justify-between bg-gradient-to-r from-red-500 to-red-600">
         <h3 class="text-xl font-bold text-white flex items-center">
           <i class="fas fa-times-circle mr-3"></i>
           Rechazar Pago
         </h3>
-        <button class="text-white hover:text-gray-200" onclick="hideRejectModal()">
+        <button class="text-white hover:text-gray-200" data-action="hide-reject-modal">
           <i class="fas fa-times text-2xl"></i>
         </button>
       </div>
@@ -342,12 +348,12 @@
 
         <div class="flex items-center justify-end gap-3 pt-4 border-t">
           <button 
-            onclick="hideRejectModal()"
+            data-action="hide-reject-modal"
             class="px-5 py-2.5 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-semibold transition">
             Cancelar
           </button>
           <button 
-            onclick="confirmReject()"
+            data-action="confirm-reject"
             class="px-5 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 font-semibold transition flex items-center gap-2">
             <i class="fas fa-times-circle"></i>
             Confirmar Rechazo
@@ -358,631 +364,11 @@
 </div>
 
     <!-- Scripts -->
-    <script src="../js/config.js"></script>
-    <script src="../js/utils.js"></script>
+    <!-- Nota: config.js y utils.js ya se cargaron en el <head>, no duplicar -->
     <script src="../js/api/apiClient.js"></script>
     <script src="../js/auth.js"></script>
     <script src="../js/notifications.js"></script>
     <script src="../js/adminTemplate.js"></script>
-    <script>
-        let allOrders = [];
-        let filteredOrders = [];
-        let currentOrderId = null;
-
-        document.addEventListener('DOMContentLoaded', () => {
-            if (!authManager.requireAdmin()) return;
-            loadOrders();
-            loadCustomers();
-        });
-
-        async function loadOrders() {
-            try {
-                console.log('📦 Cargando todos los pedidos...');
-                const response = await api.getAllOrders({ limit: 1000 });
-                
-                console.log('📊 Respuesta completa:', response);
-                console.log('📊 response.success:', response?.success);
-                console.log('📊 response.data:', response?.data);
-                console.log('📊 response.data.orders:', response?.data?.orders);
-                
-                if (response && response.success) {
-                    allOrders = response.data?.orders || response.data || [];
-                    console.log(`✅ ${allOrders.length} pedidos cargados desde API`);
-                    
-                    if (allOrders.length === 0) {
-                        console.warn('⚠️ No se encontraron pedidos en la respuesta');
-                        // Mostrar mensaje pero continuar con el flujo
-                    }
-                    
-                    filteredOrders = allOrders.map(order => {
-                        const displayOrder = { ...order };
-                        
-                        // Asegurar que tenemos datos mínimos
-                        if (!displayOrder.customer_name && displayOrder.customer_email) {
-                            displayOrder.customer_name = displayOrder.customer_email.split('@')[0];
-                        }
-                        if (!displayOrder.created_at && displayOrder.date) {
-                            displayOrder.created_at = displayOrder.date;
-                        }
-                        
-                        // Normalizar estado de pago
-                        if (displayOrder.status === 'pending_payment' || displayOrder.status === 'pending') {
-                            if (displayOrder.payment_method === 'transfer') {
-                                displayOrder.status = 'pending_transfer';
-                            } else if (displayOrder.payment_method === 'cash' || !displayOrder.payment_method) {
-                                displayOrder.status = 'pending_cash';
-                            }
-                        }
-                        
-                        return displayOrder;
-                    });
-                    
-                    console.log(`✅ ${filteredOrders.length} pedidos procesados para mostrar`);
-                    updateStatistics();
-                    displayOrders(filteredOrders);
-                } else {
-                    console.error('❌ Respuesta no exitosa:', response);
-                    allOrders = [];
-                    filteredOrders = [];
-                    updateStatistics();
-                    displayOrders([]);
-                    
-                    // Verificar si el mensaje indica JSON vacío
-                    if (response?.message?.includes('JSON vacío') || response?.message?.includes('No hay pedidos')) {
-                        notify.warning('El archivo orders.json está vacío. Ejecuta el script de exportación: node backend/scripts/export-orders-to-json.js', 'JSON Vacío');
-                    } else {
-                        notify.warning('No se pudieron cargar los pedidos. Verifica la conexión o el archivo orders.json');
-                    }
-                }
-            } catch (error) {
-                console.error('❌ Error al cargar pedidos:', error);
-                console.error('❌ Detalles del error:', error.message, error.stack);
-                allOrders = [];
-                filteredOrders = [];
-                updateStatistics();
-                displayOrders([]);
-                notify.error('Error al cargar pedidos: ' + error.message);
-            }
-        }
-
-        async function loadCustomers() {
-            try {
-                const response = await api.getUsers({ role: 'customer' });
-                
-                if (response.success) {
-                    const users = response.data.users || [];
-                    const select = document.getElementById('filterCustomer');
-                    
-                    const customerIds = [...new Set(allOrders.map(o => o.customer_id))];
-                    const customers = users.filter(u => customerIds.includes(u.id));
-                    
-                    customers.forEach(customer => {
-                        const option = document.createElement('option');
-                        option.value = customer.id;
-                        option.textContent = `${customer.name} (${customer.email})`;
-                        select.appendChild(option);
-                    });
-                }
-            } catch (error) {
-                console.error('Error al cargar clientes:', error);
-            }
-        }
-
-        function applyFilters() {
-            const statusFilter = document.getElementById('filterStatus').value;
-            const customerFilter = document.getElementById('filterCustomer').value;
-            const dateFrom = document.getElementById('filterDateFrom').value;
-            const dateTo = document.getElementById('filterDateTo').value;
-
-            filteredOrders = allOrders.map(order => {
-                const displayOrder = { ...order };
-                if (displayOrder.status === 'pending_payment' || displayOrder.status === 'pending') {
-                    if (displayOrder.payment_method === 'transfer') {
-                        displayOrder.status = 'pending_transfer';
-                    } else if (displayOrder.payment_method === 'cash' || !displayOrder.payment_method) {
-                        displayOrder.status = 'pending_cash';
-                    }
-                }
-                return displayOrder;
-            }).filter(order => {
-                if (statusFilter && order.status !== statusFilter) return false;
-                if (customerFilter && order.customer_id != customerFilter) return false;
-                if (dateFrom) {
-                    const orderDate = new Date(order.created_at).toISOString().split('T')[0];
-                    if (orderDate < dateFrom) return false;
-                }
-                if (dateTo) {
-                    const orderDate = new Date(order.created_at).toISOString().split('T')[0];
-                    if (orderDate > dateTo) return false;
-                }
-                return true;
-            });
-
-            updateStatistics();
-            displayOrders(filteredOrders);
-            notify.info(`${filteredOrders.length} pedido(s) encontrado(s)`);
-        }
-
-        function searchByOrderId() {
-            const searchId = document.getElementById('searchOrderId').value.trim();
-            
-            if (!searchId) {
-                notify.warning('Ingresa un ID de pedido');
-                return;
-            }
-
-            const order = allOrders.find(o => o.id == searchId);
-            
-            if (order) {
-                filteredOrders = [order];
-                displayOrders(filteredOrders);
-                notify.success('Pedido encontrado');
-            } else {
-                notify.error('Pedido no encontrado');
-                filteredOrders = [];
-                displayOrders(filteredOrders);
-            }
-        }
-
-        function clearFilters() {
-            document.getElementById('filterStatus').value = '';
-            document.getElementById('filterCustomer').value = '';
-            document.getElementById('filterDateFrom').value = '';
-            document.getElementById('filterDateTo').value = '';
-            document.getElementById('searchOrderId').value = '';
-            
-            filteredOrders = allOrders.map(order => {
-                const displayOrder = { ...order };
-                if (displayOrder.status === 'pending_payment' || displayOrder.status === 'pending') {
-                    if (displayOrder.payment_method === 'transfer') {
-                        displayOrder.status = 'pending_transfer';
-                    } else if (displayOrder.payment_method === 'cash' || !displayOrder.payment_method) {
-                        displayOrder.status = 'pending_cash';
-                    }
-                }
-                return displayOrder;
-            });
-            
-            updateStatistics();
-            displayOrders(filteredOrders);
-            notify.info('Filtros limpiados');
-        }
-
-        function updateStatistics() {
-            const stats = {
-                total: filteredOrders.length,
-                pending_transfer: filteredOrders.filter(o => o.status === 'pending_transfer').length,
-                pending_cash: filteredOrders.filter(o => o.status === 'pending_cash').length,
-                processing: filteredOrders.filter(o => o.status === 'processing').length,
-                shipped: filteredOrders.filter(o => o.status === 'shipped').length,
-                delivered: filteredOrders.filter(o => o.status === 'delivered').length,
-                cancelled: filteredOrders.filter(o => o.status === 'cancelled').length
-            };
-
-            document.getElementById('totalOrders').textContent = stats.total;
-            document.getElementById('pendingTransferOrders').textContent = stats.pending_transfer;
-            document.getElementById('pendingCashOrders').textContent = stats.pending_cash;
-            document.getElementById('processingOrders').textContent = stats.processing;
-            document.getElementById('deliveredOrders').textContent = stats.delivered;
-            document.getElementById('cancelledOrders').textContent = stats.cancelled;
-        }
-
-        function displayOrders(orders) {
-            const tbody = document.getElementById('ordersTableBody');
-            
-            if (orders.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="6" class="px-6 py-12 text-center">
-                            <i class="fas fa-inbox text-6xl text-gray-300 mb-4"></i>
-                            <p class="text-gray-600 font-semibold mb-2">No hay pedidos para mostrar</p>
-                            <p class="text-sm text-gray-500 mb-4">El archivo orders.json está vacío o no contiene pedidos</p>
-                            <div class="text-xs text-gray-400 space-y-1">
-                                <p>💡 Para generar orders.json con datos:</p>
-                                <p class="font-mono bg-gray-100 p-2 rounded mt-2">node backend/scripts/export-orders-to-json.js</p>
-                                <p class="text-xs mt-2">Asegúrate de tener la base de datos en backend/database/apexremedy.db</p>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-
-            const statusConfig = {
-                pending_transfer: { 
-                    class: 'bg-orange-100 text-orange-800 border border-orange-300', 
-                    label: 'Pendiente Transferencia',
-                    icon: 'fas fa-university'
-                },
-                pending_cash: { 
-                    class: 'bg-amber-100 text-amber-800 border border-amber-300', 
-                    label: 'Pendiente Efectivo',
-                    icon: 'fas fa-money-bill-wave'
-                },
-                pending: {
-                    class: 'bg-amber-100 text-amber-800 border border-amber-300', 
-                    label: 'Pendiente Efectivo',
-                    icon: 'fas fa-money-bill-wave'
-                },
-                pending_payment: {
-                    class: 'bg-yellow-100 text-yellow-800 border border-yellow-300', 
-                    label: 'Pendiente de Pago',
-                    icon: 'fas fa-clock'
-                },
-                payment_verified: {
-                    class: 'bg-teal-100 text-teal-800 border border-teal-300', 
-                    label: 'Pago Verificado',
-                    icon: 'fas fa-check-double'
-                },
-                processing: { 
-                    class: 'bg-blue-100 text-blue-800 border border-blue-300', 
-                    label: 'Procesando',
-                    icon: 'fas fa-cog'
-                },
-                shipped: { 
-                    class: 'bg-purple-100 text-purple-800 border border-purple-300', 
-                    label: 'Enviado',
-                    icon: 'fas fa-shipping-fast'
-                },
-                delivered: { 
-                    class: 'bg-green-100 text-green-800 border border-green-300', 
-                    label: 'Entregado',
-                    icon: 'fas fa-check-circle'
-                },
-                cancelled: { 
-                    class: 'bg-red-100 text-red-800 border border-red-300', 
-                    label: 'Cancelado',
-                    icon: 'fas fa-times-circle'
-                }
-            };
-
-            tbody.innerHTML = orders.map(order => {
-                const status = statusConfig[order.status] || { 
-                    class: 'bg-gray-100 text-gray-800 border border-gray-300', 
-                    label: order.status,
-                    icon: 'fas fa-question-circle'
-                };
-                
-                let actionIconColor = 'text-blue-600 hover:text-blue-800';
-                
-                if (order.status === 'pending_transfer') {
-                    actionIconColor = 'text-orange-600 hover:text-orange-800';
-                } else if (order.status === 'pending_cash' || order.status === 'pending') {
-                    actionIconColor = 'text-amber-600 hover:text-amber-800';
-                } else if (order.status === 'pending_payment') {
-                    actionIconColor = 'text-yellow-600 hover:text-yellow-800';
-                } else if (order.status === 'payment_verified') {
-                    actionIconColor = 'text-teal-600 hover:text-teal-800';
-                } else if (order.status === 'processing') {
-                    actionIconColor = 'text-blue-600 hover:text-blue-800';
-                } else if (order.status === 'shipped') {
-                    actionIconColor = 'text-purple-600 hover:text-purple-800';
-                } else if (order.status === 'delivered') {
-                    actionIconColor = 'text-green-600 hover:text-green-800';
-                } else if (order.status === 'cancelled') {
-                    actionIconColor = 'text-red-600 hover:text-red-800';
-                }
-                
-                return `
-                    <tr class="border-b hover:bg-gray-50">
-                        <td class="px-6 py-4 font-semibold text-gray-800">#${order.id}</td>
-                        <td class="px-6 py-4">
-                            <div class="text-sm">
-                                <p class="font-medium text-gray-800">${order.customer_name}</p>
-                                <p class="text-gray-500 text-xs">${order.customer_email || ''}</p>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            ${new Date(order.created_at).toLocaleDateString('es-CL', { 
-                                year: 'numeric', 
-                                month: 'short', 
-                                day: 'numeric'
-                            })}
-                        </td>
-                        <td class="px-6 py-4 font-bold text-green-600">${Utils.formatPrice(order.total)}</td>
-                        <td class="px-6 py-4">
-                            <span class="px-3 py-1 rounded-full text-xs font-semibold ${status.class} inline-flex items-center gap-1.5">
-                                <i class="${status.icon}"></i>
-                                ${status.label}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 text-center">
-                            ${
-                                (order.status === 'pending_transfer' || order.status === 'pending_cash' || order.status === 'pending' || order.status === 'pending_payment')
-                                ? `
-                                    <button class="${actionIconColor} transition" title="Revisar pago"
-                                            onclick="openTransferReview(${order.id})">
-                                        <i class="fas fa-search-dollar fa-lg"></i>
-                                    </button>
-                                `
-                                : `
-                                    <button onclick="viewOrderDetails(${order.id})" class="${actionIconColor} transition" title="Ver detalles">
-                                        <i class="fas fa-eye fa-lg"></i>
-                                    </button>
-                                `
-                            }
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        async function viewOrderDetails(orderId) {
-            currentOrderId = orderId;
-            
-            try {
-                const response = await api.request(`/orders/${orderId}`);
-                
-                if (response.success) {
-                    const order = response.data.order;
-                    
-                    document.getElementById('modalOrderId').textContent = order.id;
-                    document.getElementById('modalCustomer').textContent = order.customer_name;
-                    document.getElementById('modalDate').textContent = new Date(order.created_at).toLocaleString('es-CL');
-                    
-                    let backendStatus = order.status;
-                    const validBackendStates = ['pending_payment', 'payment_verified', 'processing', 'shipped', 'delivered', 'cancelled'];
-                    
-                    if (!validBackendStates.includes(backendStatus)) {
-                        if (backendStatus === 'pending_transfer' || backendStatus === 'pending_cash') {
-                            backendStatus = 'pending_payment';
-                        }
-                    }
-                    
-                    document.getElementById('modalStatusSelect').value = backendStatus;
-                    
-                    const itemsHtml = order.items.map(item => `
-                        <tr class="border-b">
-                            <td class="py-2">${item.product_name}</td>
-                            <td class="text-right">${item.quantity}</td>
-                            <td class="text-right">${Utils.formatPrice(item.price)}</td>
-                            <td class="text-right font-semibold">${Utils.formatPrice(item.quantity * item.price)}</td>
-                        </tr>
-                    `).join('');
-                    
-                    document.getElementById('modalItems').innerHTML = itemsHtml;
-                    
-                    const subtotal = order.total / 1.19;
-                    const tax = order.total - subtotal;
-                    
-                    document.getElementById('modalSubtotal').textContent = Utils.formatPrice(subtotal);
-                    document.getElementById('modalTax').textContent = Utils.formatPrice(tax);
-                    document.getElementById('modalTotal').textContent = Utils.formatPrice(order.total);
-                    
-                    document.getElementById('orderModal').classList.remove('hidden');
-                }
-            } catch (error) {
-                console.error('❌ Error al cargar detalles:', error);
-                notify.error('Error al cargar detalles: ' + error.message);
-            }
-        }
-
-        function closeModal() {
-            document.getElementById('orderModal').classList.add('hidden');
-            currentOrderId = null;
-        }
-
-        async function updateOrderStatus() {
-            if (!currentOrderId) return;
-
-            const newStatus = document.getElementById('modalStatusSelect').value;
-
-            try {
-                const response = await api.request(`/orders/${currentOrderId}/status`, {
-                    method: 'PATCH',
-                    body: JSON.stringify({ status: newStatus })
-                });
-
-                if (response.success) {
-                    notify.success('Estado actualizado correctamente');
-                    closeModal();
-                    await loadOrders();
-                }
-            } catch (error) {
-                console.error('❌ Error al actualizar estado:', error);
-                notify.error('Error al actualizar estado: ' + error.message);
-            }
-        }
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeModal();
-                hideRejectModal();
-                hideReviewModal();
-            }
-        });
-
-        document.getElementById('orderModal').addEventListener('click', (e) => {
-            if (e.target.id === 'orderModal') closeModal();
-        });
-    </script>
-<script>
-async function openTransferReview(orderId) {
-  try {
-    const res = await api.request(`/orders/${orderId}`);
-    const o = res?.data?.order;
-    if (!o) {
-      notify.error('No se pudo cargar el pedido');
-      return;
-    }
-
-    let normalizedStatus = o.status;
-    let effectivePaymentMethod = o.payment_method;
-    
-    if (o.status === 'pending' || o.status === 'pending_payment') {
-        if (o.payment_method === 'transfer') {
-            normalizedStatus = 'pending_transfer';
-            effectivePaymentMethod = 'transfer';
-        } else if (o.payment_method === 'cash' || !o.payment_method) {
-            normalizedStatus = 'pending_cash';
-            effectivePaymentMethod = 'cash';
-        }
-    }
-    
-    if (o.status === 'pending' && !o.payment_method) {
-        normalizedStatus = 'pending_cash';
-        effectivePaymentMethod = 'cash';
-    }
-
-    const paymentMethodText =
-      effectivePaymentMethod === 'cash' ? 'Efectivo' :
-      effectivePaymentMethod === 'transfer' ? 'Transferencia' : 'Efectivo (por defecto)';
-
-    document.getElementById('reviewTransferId').value = o.id;
-    document.getElementById('reviewInfo').innerHTML = `
-      <div class="flex justify-between"><strong>Pedido:</strong> <span>#${o.id}</span></div>
-      <div class="flex justify-between"><strong>Cliente:</strong> <span>${o.customer_name || o.user_name || ''}</span></div>
-      <div class="flex justify-between"><strong>Fecha:</strong> <span>${new Date(o.created_at).toLocaleString('es-CL')}</span></div>
-      <div class="flex justify-between"><strong>Monto:</strong> <span class="font-bold text-green-600">${(o.total || 0).toLocaleString('es-CL',{style:'currency',currency:'CLP'})}</span></div>
-      <div class="flex justify-between"><strong>Método de pago:</strong> <span>${paymentMethodText}</span></div>
-      <div class="flex justify-between"><strong>Estado:</strong> <span class="font-semibold">${normalizedStatus}</span></div>
-    `;
-
-    const link = document.getElementById('reviewReceiptLink');
-    const linkText = document.getElementById('reviewReceiptText');
-    const approveBtn = document.getElementById('approveButton');
-    const rejectBtn = document.getElementById('rejectButton');
-    const modalIcon = document.getElementById('reviewModalIcon');
-    const modalTitle = document.getElementById('reviewModalTitle');
-    const paymentLabel = document.getElementById('reviewPaymentTypeLabel');
-
-    link.classList.remove('pointer-events-none', 'text-gray-400');
-    link.removeAttribute('title');
-
-    if (effectivePaymentMethod === 'transfer') {
-      modalIcon.className = 'fas fa-university mr-3';
-      modalTitle.textContent = 'Revisión de Transferencia';
-      paymentLabel.textContent = 'Comprobante de Transferencia';
-      
-      if (o.payment_proof) {
-        link.href = o.payment_proof;
-        linkText.textContent = 'Ver comprobante adjunto';
-      } else {
-        link.href = '#';
-        linkText.textContent = 'Sin comprobante adjunto';
-        link.classList.add('pointer-events-none', 'text-gray-400');
-        link.title = 'Aún no se adjunta comprobante';
-      }
-
-      approveBtn.querySelector('span').textContent = 'Aprobar Transferencia';
-      approveBtn.disabled = !o.payment_proof;
-      approveBtn.title = o.payment_proof ? '' : 'Adjunte comprobante para aprobar';
-      approveBtn.className = o.payment_proof 
-        ? 'px-5 py-2.5 bg-orange-600 text-white rounded-lg hover:bg-orange-700 font-semibold transition flex items-center gap-2'
-        : 'px-5 py-2.5 bg-gray-300 text-gray-500 rounded-lg font-semibold flex items-center gap-2 cursor-not-allowed';
-      
-      rejectBtn.querySelector('span').textContent = 'Rechazar';
-      rejectBtn.disabled = false;
-      rejectBtn.className = 'px-5 py-2.5 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 font-semibold transition flex items-center gap-2';
-
-    } else {
-      modalIcon.className = 'fas fa-money-bill-wave mr-3';
-      modalTitle.textContent = 'Revisión de Pago en Efectivo';
-      paymentLabel.textContent = 'Información de Pago';
-      
-      link.href = '#';
-      linkText.textContent = 'Pago en efectivo al momento de entrega';
-      link.classList.add('pointer-events-none', 'text-gray-400');
-
-      const canApprove = (
-        normalizedStatus === 'pending_cash' || 
-        o.status === 'pending' || 
-        (o.status === 'pending_payment' && effectivePaymentMethod === 'cash')
-      );
-      
-      approveBtn.querySelector('span').textContent = 'Confirmar Pago Efectivo';
-      approveBtn.disabled = !canApprove;
-      approveBtn.title = canApprove ? 'Confirmar que se recibió el pago en efectivo' : 'Este pedido no está pendiente de pago';
-      approveBtn.className = canApprove
-        ? 'px-5 py-2.5 bg-amber-600 text-white rounded-lg hover:bg-amber-700 font-semibold transition flex items-center gap-2'
-        : 'px-5 py-2.5 bg-gray-300 text-gray-500 rounded-lg font-semibold flex items-center gap-2 cursor-not-allowed';
-      
-      rejectBtn.querySelector('span').textContent = 'Rechazar';
-      rejectBtn.disabled = !canApprove;
-      rejectBtn.title = canApprove ? 'Rechazar este pedido' : 'No se puede rechazar este pedido';
-      rejectBtn.className = canApprove
-        ? 'px-5 py-2.5 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 font-semibold transition flex items-center gap-2'
-        : 'px-5 py-2.5 bg-gray-300 text-gray-500 rounded-lg font-semibold flex items-center gap-2 cursor-not-allowed';
-    }
-
-    document.getElementById('reviewModal').classList.remove('hidden');
-  } catch (e) {
-    console.error(e);
-    notify.error('No se pudo cargar el pedido');
-  }
-}
-    
-function hideReviewModal(){ 
-    document.getElementById('reviewModal').classList.add('hidden'); 
-}
-
-function closeReviewModal(e){ 
-    if (e.target.id === 'reviewModal') hideReviewModal(); 
-}
-
-let currentRejectOrderId = null;
-
-async function validateTransfer(approved){
-    const orderId = document.getElementById('reviewTransferId').value;
-    
-    if (!approved) {
-        currentRejectOrderId = orderId;
-        document.getElementById('rejectModal').classList.remove('hidden');
-        return;
-    }
-    
-    try {
-        const res = await api.request(`/orders/${orderId}/confirm-payment`, { 
-            method: 'POST' 
-        });
-
-        if (res?.success) {
-            notify.success('Pago confirmado correctamente');
-            hideReviewModal();
-            await loadOrders();
-        } else {
-            throw new Error(res?.message || 'No se pudo actualizar');
-        }
-    } catch (e) {
-        console.error(e);
-        notify.error('Error al confirmar pago: ' + e.message);
-    }
-}
-
-async function confirmReject() {
-    const orderId = currentRejectOrderId;
-    const reasonInput = document.getElementById('rejectReason').value.trim();
-    const reason = reasonInput || 'Rechazado por administrador';
-    
-    try {
-        const res = await api.request(`/orders/${orderId}/status`, {
-            method: 'PATCH',
-            body: JSON.stringify({ 
-                status: 'cancelled'
-            })
-        });
-
-        if (res?.success) {
-            notify.success(`Pedido cancelado correctamente`);
-            hideRejectModal();
-            hideReviewModal();
-            await loadOrders();
-        } else {
-            throw new Error(res?.message || 'No se pudo cancelar el pedido');
-        }
-    } catch (e) {
-        console.error('❌ Error al cancelar:', e);
-        notify.error('Error al cancelar pedido: ' + e.message);
-    }
-}
-
-function hideRejectModal() {
-    document.getElementById('rejectModal').classList.add('hidden');
-    document.getElementById('rejectReason').value = '';
-    currentRejectOrderId = null;
-}
-    
-</script>
-    
+    <script src="./js/orders-page.js" defer></script>
 </body>
 </html>

@@ -8,10 +8,17 @@ const path = require('path');
 const fs = require('fs');
 const { initDatabase, getDatabase } = require('../src/config/database');
 const Product = require('../src/models/Product');
+const UnifiedProductIngestion = require('../database/ingestion/UnifiedProductIngestion');
 
-async function exportProducts() {
+async function exportProducts(useUnified = false) {
     try {
         console.log('🚀 Iniciando exportación de productos a JSON...');
+        
+        // Si se usa el sistema unificado (recomendado)
+        if (useUnified || process.env.USE_UNIFIED_EXPORT === 'true') {
+            console.log('🔄 Usando sistema de ingesta unificado para exportación...\n');
+            return await exportWithUnified();
+        }
         
         // VERIFICAR PRIMERO si ya existe un JSON con productos
         const apiDir = path.join(__dirname, '../../frontend/api');
@@ -325,5 +332,66 @@ if (require.main === module) {
         });
 }
 
-module.exports = { exportProducts };
+/**
+ * Exportación usando el sistema unificado
+ */
+async function exportWithUnified() {
+    try {
+        const UnifiedProductIngestion = require('../database/ingestion/UnifiedProductIngestion');
+        const {
+            FLORES_MEDICINALES,
+            ACEITES_MEDICINALES,
+            CONCENTRADOS_MEDICINALES,
+            CAPSULAS_MEDICINALES,
+            TOPICOS_MEDICINALES,
+            SEMILLAS,
+            VAPORIZADORES,
+            ACCESORIOS,
+            ROPA,
+            CBD_PUBLICO
+        } = require('../database/seeders/data/products-data');
+        const { CATEGORIES } = require('../database/seeders/data/seed-config');
+        
+        // Combinar todos los productos
+        const allProducts = [
+            ...FLORES_MEDICINALES,
+            ...ACEITES_MEDICINALES,
+            ...CONCENTRADOS_MEDICINALES,
+            ...CAPSULAS_MEDICINALES,
+            ...TOPICOS_MEDICINALES,
+            ...SEMILLAS,
+            ...VAPORIZADORES,
+            ...ACCESORIOS,
+            ...ROPA,
+            ...CBD_PUBLICO
+        ];
+        
+        // Configurar salida JSON
+        const outputDir = process.env.JSON_OUTPUT_DIR || path.join(__dirname, '../../frontend/api');
+        const ingestion = new UnifiedProductIngestion('json', { outputDir });
+        
+        await ingestion.initialize();
+        
+        const result = await ingestion.processProducts(allProducts, {
+            force: false,
+            category: null
+        });
+        
+        await ingestion.close();
+        
+        return {
+            success: true,
+            productsCount: result.inserted,
+            featuredCount: 0, // Se calcula en saveJSONFiles
+            categoriesCount: 0, // Se calcula en saveJSONFiles
+            preserved: false
+        };
+        
+    } catch (error) {
+        console.error('❌ Error en exportación unificada:', error);
+        throw error;
+    }
+}
+
+module.exports = { exportProducts, exportWithUnified };
 

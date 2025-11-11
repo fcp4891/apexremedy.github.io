@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Payment Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script src="./js/basePath.js"></script>
+    <script src="./js/config.js"></script>
+    <script src="./js/api/apiClient.js"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-7xl mx-auto">
+        <h1 class="text-3xl font-bold mb-6">Test - Payment Dashboard</h1>
+        
+        <!-- Test Connection -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4">Test de Conexión</h2>
+            <button onclick="testConnection()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                Probar Conexión API
+            </button>
+            <div id="connection-result" class="mt-4 p-4 bg-gray-50 rounded"></div>
+        </div>
+
+        <!-- Test Data Display -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4">Datos de Métricas</h2>
+            <button onclick="loadMetrics()" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                Cargar Métricas
+            </button>
+            <div id="metrics-result" class="mt-4 p-4 bg-gray-50 rounded"></div>
+        </div>
+
+        <!-- Test KPIs -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4">KPIs</h2>
+            <div id="kpis" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow-lg p-6 text-white">
+                    <p class="text-green-100 text-sm">GMV</p>
+                    <p id="kpi-gmv" class="text-3xl font-bold">$0</p>
+                </div>
+                <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-lg p-6 text-white">
+                    <p class="text-blue-100 text-sm">Net Revenue</p>
+                    <p id="kpi-net-revenue" class="text-3xl font-bold">$0</p>
+                </div>
+                <div class="bg-gradient-to-br from-red-500 to-red-600 rounded-lg shadow-lg p-6 text-white">
+                    <p class="text-red-100 text-sm">Refund Rate</p>
+                    <p id="kpi-refund-rate" class="text-3xl font-bold">0%</p>
+                </div>
+                <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg shadow-lg p-6 text-white">
+                    <p class="text-purple-100 text-sm">Approval Rate</p>
+                    <p id="kpi-approval-rate" class="text-3xl font-bold">0%</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Charts -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4">Gráfico de Test</h2>
+            <div id="test-chart" style="width: 100%; height: 400px;"></div>
+        </div>
+
+        <!-- Raw Data -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-bold mb-4">Datos Raw</h2>
+            <pre id="raw-data" class="bg-gray-900 text-green-400 p-4 rounded overflow-auto max-h-96"></pre>
+        </div>
+    </div>
+
+    <script>
+        let api;
+        
+        // Initialize API
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                api = new APIClient();
+                console.log('✅ API Client inicializado');
+            } catch (error) {
+                console.error('❌ Error inicializando API:', error);
+            }
+        });
+
+        // Test Connection
+        async function testConnection() {
+            const resultDiv = document.getElementById('connection-result');
+            resultDiv.innerHTML = '<p class="text-blue-600">Probando conexión...</p>';
+            
+            try {
+                if (!api) {
+                    api = new APIClient();
+                }
+                
+                const response = await api.getPaymentMetrics();
+                resultDiv.innerHTML = `
+                    <p class="text-green-600 font-bold">✅ Conexión exitosa</p>
+                    <p class="text-sm text-gray-600 mt-2">Success: ${response.success}</p>
+                    <p class="text-sm text-gray-600">Datos recibidos: ${response.data ? 'Sí' : 'No'}</p>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <p class="text-red-600 font-bold">❌ Error de conexión</p>
+                    <p class="text-sm text-gray-600 mt-2">${error.message}</p>
+                `;
+            }
+        }
+
+        // Load Metrics
+        async function loadMetrics() {
+            const resultDiv = document.getElementById('metrics-result');
+            const rawDataDiv = document.getElementById('raw-data');
+            
+            resultDiv.innerHTML = '<p class="text-blue-600">Cargando métricas...</p>';
+            
+            try {
+                if (!api) {
+                    api = new APIClient();
+                }
+                
+                const response = await api.getPaymentMetrics();
+                
+                if (response && response.success && response.data) {
+                    // Update KPIs
+                    updateKPI('kpi-gmv', formatCurrency(response.data.financial?.gmv || 0));
+                    updateKPI('kpi-net-revenue', formatCurrency(response.data.financial?.net_revenue || 0));
+                    updateKPI('kpi-refund-rate', (response.data.financial?.refund_rate || 0).toFixed(2) + '%');
+                    updateKPI('kpi-approval-rate', (response.data.financial?.approval_rate || 0).toFixed(2) + '%');
+                    
+                    // Show raw data
+                    rawDataDiv.textContent = JSON.stringify(response.data, null, 2);
+                    
+                    // Render chart
+                    renderTestChart(response.data);
+                    
+                    resultDiv.innerHTML = `
+                        <p class="text-green-600 font-bold">✅ Métricas cargadas exitosamente</p>
+                        <p class="text-sm text-gray-600 mt-2">GMV: ${formatCurrency(response.data.financial?.gmv || 0)}</p>
+                        <p class="text-sm text-gray-600">Net Revenue: ${formatCurrency(response.data.financial?.net_revenue || 0)}</p>
+                    `;
+                } else {
+                    resultDiv.innerHTML = '<p class="text-red-600">❌ No se recibieron datos</p>';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <p class="text-red-600 font-bold">❌ Error cargando métricas</p>
+                    <p class="text-sm text-gray-600 mt-2">${error.message}</p>
+                `;
+                console.error('Error:', error);
+            }
+        }
+
+        // Update KPI
+        function updateKPI(id, value) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.textContent = value;
+                console.log(`✅ Actualizado ${id}:`, value);
+            } else {
+                console.warn(`⚠️ Elemento ${id} no encontrado`);
+            }
+        }
+
+        // Format Currency
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('es-CL', {
+                style: 'currency',
+                currency: 'CLP',
+                minimumFractionDigits: 0
+            }).format(amount);
+        }
+
+        // Render Test Chart
+        function renderTestChart(data) {
+            const chartDom = document.getElementById('test-chart');
+            if (!chartDom) {
+                console.error('Chart container not found');
+                return;
+            }
+
+            const myChart = echarts.init(chartDom);
+            
+            const evolution = data.evolution || {};
+            const payments = (evolution.payments || []).reverse();
+            const refunds = (evolution.refunds || []).reverse();
+            
+            const months = payments.length > 0 ? payments.map(p => p.month) : [];
+            const revenueData = payments.map(p => p.total_amount || 0);
+            const refundData = months.map(month => {
+                const refund = refunds.find(r => r.month === month);
+                return refund ? (refund.total_refund_amount || 0) : 0;
+            });
+
+            const option = {
+                tooltip: { trigger: 'axis' },
+                legend: { data: ['Ingresos', 'Reembolsos'] },
+                xAxis: { type: 'category', data: months.length > 0 ? months : ['Sin datos'] },
+                yAxis: { type: 'value' },
+                series: [
+                    {
+                        name: 'Ingresos',
+                        type: 'line',
+                        data: revenueData.length > 0 ? revenueData : [0],
+                        itemStyle: { color: '#3B82F6' },
+                        areaStyle: { opacity: 0.3 }
+                    },
+                    {
+                        name: 'Reembolsos',
+                        type: 'line',
+                        data: refundData.length > 0 ? refundData : [0],
+                        itemStyle: { color: '#EF4444' }
+                    }
+                ]
+            };
+
+            myChart.setOption(option);
+            console.log('✅ Gráfico renderizado');
+        }
+
+        // Auto-load on page load
+        window.addEventListener('load', () => {
+            console.log('📄 Página cargada, probando conexión automáticamente...');
+            setTimeout(() => {
+                testConnection();
+                setTimeout(() => {
+                    loadMetrics();
+                }, 1000);
+            }, 500);
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+

@@ -55,9 +55,30 @@ class ProductManager {
             console.log('📦 Respuesta de getProducts:', response);
             
             if (response && response.success && response.data && response.data.products) {
-                const mappedProducts = this.mapProductFields(response.data.products);
+                let mappedProducts = this.mapProductFields(response.data.products);
                 console.log(`✅ ${mappedProducts.length} productos cargados y mapeados`);
+                
+                // 🆕 FILTRAR productos medicinales automáticamente si el usuario no tiene acceso
+                if (!this.canViewMedicinal()) {
+                    const beforeFilter = mappedProducts.length;
+                    mappedProducts = mappedProducts.filter(p => {
+                        // Excluir productos medicinales y categoría medicinal
+                        const isMedicinal = p.requires_prescription === true || 
+                                          p.is_medicinal === true ||
+                                          p.category_slug === 'medicinal' ||
+                                          p.category_slug === 'medicinal-flores' ||
+                                          p.category_slug === 'medicinal-aceites' ||
+                                          p.category_slug === 'medicinal-concentrados' ||
+                                          p.category_slug === 'medicinal-capsulas' ||
+                                          p.category_slug === 'medicinal-topicos' ||
+                                          (p.category && p.category.toLowerCase().includes('medicinal'));
+                        return !isMedicinal;
+                    });
+                    console.log(`🔒 Productos medicinales filtrados automáticamente (${beforeFilter} → ${mappedProducts.length})`);
+                }
+                
                 this.products = mappedProducts;
+                console.log(`✅ Total productos disponibles: ${this.products.length}`);
                 return this.products;
             }
             
@@ -122,10 +143,12 @@ class ProductManager {
     async getFeaturedProducts(limit = 6) {
         try {
             const response = await api.getFeaturedProducts();
+            console.log('📦 Respuesta getFeaturedProducts:', response);
             
             if (response && response.success && response.data && response.data.products) {
                 // Mapear campos del backend al formato esperado por el frontend
                 let products = this.mapProductFields(response.data.products);
+                console.log(`📊 Productos destacados antes de filtrar: ${products.length}`);
                 
                 // 🆕 FILTRAR productos medicinales si el usuario no tiene acceso
                 if (!this.canViewMedicinal()) {
@@ -142,6 +165,35 @@ class ProductManager {
                         return !isMedicinal;
                     });
                     console.log(`🔒 Productos medicinales filtrados (${beforeFilter} → ${products.length})`);
+                }
+                
+                // Si después de filtrar no hay productos destacados, buscar productos alternativos
+                if (products.length === 0) {
+                    console.log('⚠️ No hay productos destacados no medicinales. Buscando productos alternativos...');
+                    // Intentar cargar todos los productos y filtrar los no medicinales
+                    const allProducts = await this.loadProducts({ limit: 50 });
+                    products = allProducts.filter(p => {
+                        const isMedicinal = p.requires_prescription === true || 
+                                          p.is_medicinal === true ||
+                                          p.category_slug === 'medicinal' ||
+                                          p.category_slug === 'medicinal-flores' ||
+                                          p.category_slug === 'medicinal-aceites' ||
+                                          p.category_slug === 'medicinal-concentrados' ||
+                                          (p.category && p.category.toLowerCase().includes('medicinal'));
+                        return !isMedicinal;
+                    });
+                    
+                    // Si hay productos no medicinales, tomar los primeros disponibles
+                    if (products.length > 0) {
+                        console.log(`✅ Productos alternativos encontrados: ${products.length}`);
+                        // Priorizar productos destacados si existen, sino tomar los primeros
+                        const featuredNonMedicinal = products.filter(p => p.featured);
+                        if (featuredNonMedicinal.length > 0) {
+                            products = featuredNonMedicinal;
+                        }
+                    } else {
+                        console.warn('⚠️ No se encontraron productos no medicinales disponibles');
+                    }
                 }
                 
                 // Limitar resultados después del filtro
@@ -211,6 +263,9 @@ class ProductManager {
                                        product.category_slug === 'medicinal-flores' ||
                                        product.category_slug === 'medicinal-aceites' ||
                                        product.category_slug === 'medicinal-concentrados' ||
+                                       product.category_slug === 'medicinal-capsulas' ||
+                                       product.category_slug === 'medicinal-topicos' ||
+                                       (product.category_slug && product.category_slug.includes('medicinal')) ||
                                        (product.category && product.category.toLowerCase().includes('medicinal'));
                     if (isMedicinal) {
                         return; // Saltar este producto
@@ -275,6 +330,7 @@ class ProductManager {
         console.log('📦 Productos antes de filtrar:', filtered.length);
         
         // Filtrar productos medicinales PRIMERO si el usuario no tiene acceso
+        // Nota: esto es redundante ya que loadProducts ya los filtra, pero lo mantenemos como seguridad
         if (!this.canViewMedicinal()) {
             const beforeMedicinal = filtered.length;
             filtered = filtered.filter(p => {
@@ -285,10 +341,14 @@ class ProductManager {
                                    p.category_slug === 'medicinal-flores' ||
                                    p.category_slug === 'medicinal-aceites' ||
                                    p.category_slug === 'medicinal-concentrados' ||
+                                   p.category_slug === 'medicinal-capsulas' ||
+                                   p.category_slug === 'medicinal-topicos' ||
                                    (p.category && p.category.toLowerCase().includes('medicinal'));
                 return !isMedicinal;
             });
-            console.log(`   → Después de filtrar productos medicinales (${beforeMedicinal} → ${filtered.length})`);
+            if (beforeMedicinal !== filtered.length) {
+                console.log(`   → Después de filtrar productos medicinales (${beforeMedicinal} → ${filtered.length})`);
+            }
         }
         
         if (filters.category && filters.category !== 'all') {
@@ -615,9 +675,6 @@ async function refreshUserToken() {
             
             // Actualizar datos en authManager
             window.authManager.currentUser = updatedUser;
-            
-            // Guardar en localStorage
-            localStorage.setItem('currentUser', JSON.stringify(updatedUser));
             
             // Recargar productos
             if (window.productManager) {

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="icon" type="image/png" href="../assets/images/logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi Perfil - Apexremedy Admin</title>
@@ -8,9 +9,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style/css_admin.css">
     <link rel="stylesheet" href="style/perfil.css">
+    <!-- Sistema de logging persistente - DEBE CARGARSE PRIMERO -->
+    <script src="../js/logPersister.js" onerror="console.error('❌ Error cargando logPersister.js')" onload="console.log('✅ logPersister.js cargado')"></script>
     <script src="./js/basePath.js"></script>
     <script src="./js/config.js"></script>
     <script src="./js/utils.js"></script>
+    <script type="module" src="./js/adminTemplate.legacy.js"></script>
     <script defer src="./js/adminTemplate.js"></script>
 </head>
 <body>
@@ -39,11 +43,11 @@
                     </div>
 
                     <nav class="space-y-2">
-                        <button onclick="showSection('info')" class="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-100 transition flex items-center gap-3 section-btn active font-semibold" style="background: linear-gradient(135deg, rgba(192, 86, 33, 0.1), rgba(192, 86, 33, 0.05)); color: var(--admin-primary-red);">
+                        <button data-action="show-section" data-section-name="info" class="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-100 transition flex items-center gap-3 section-btn active font-semibold" style="background: linear-gradient(135deg, rgba(192, 86, 33, 0.1), rgba(192, 86, 33, 0.05)); color: var(--admin-primary-red);">
                             <i class="fas fa-user-circle"></i>
                             <span>Información Personal</span>
                         </button>
-                        <button onclick="showSection('password')" class="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-100 transition flex items-center gap-3 section-btn">
+                        <button data-action="show-section" data-section-name="password" class="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-100 transition flex items-center gap-3 section-btn">
                             <i class="fas fa-lock"></i>
                             <span>Cambiar Contraseña</span>
                         </button>
@@ -95,11 +99,11 @@
                         </div>
 
                         <div class="flex gap-3 pt-4">
-                            <button type="submit" class="text-white px-6 py-3 rounded-lg font-semibold transition" style="background: linear-gradient(135deg, var(--admin-primary-red), var(--admin-dark-red));" onmouseover="this.style.background='linear-gradient(135deg, var(--admin-light-red), var(--admin-primary-red))'" onmouseout="this.style.background='linear-gradient(135deg, var(--admin-primary-red), var(--admin-dark-red))'">
+                            <button type="submit" class="text-white px-6 py-3 rounded-lg font-semibold transition profile-submit-btn" style="background: linear-gradient(135deg, var(--admin-primary-red), var(--admin-dark-red));">
                                 <i class="fas fa-save mr-2"></i>Guardar Cambios
                             </button>
-                            <button type="button" onclick="loadProfile()" class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-6 py-3 rounded-lg font-semibold transition">
-                                <i class="fas fa-undo mr-2"></i>Cancelar
+                            <button type="button" data-action="load-profile" class="admin-btn admin-btn--muted">
+                                <i class="fas fa-undo admin-btn__icon"></i>Cancelar
                             </button>
                         </div>
                     </form>
@@ -147,12 +151,12 @@
                         </div>
 
                         <div class="flex gap-3 pt-4">
-                            <button type="submit" class="text-white px-6 py-3 rounded-lg font-semibold transition" style="background: linear-gradient(135deg, var(--admin-primary-red), var(--admin-dark-red));" onmouseover="this.style.background='linear-gradient(135deg, var(--admin-light-red), var(--admin-primary-red))'" onmouseout="this.style.background='linear-gradient(135deg, var(--admin-primary-red), var(--admin-dark-red))'">
+                            <button type="submit" class="text-white px-6 py-3 rounded-lg font-semibold transition profile-submit-btn" style="background: linear-gradient(135deg, var(--admin-primary-red), var(--admin-dark-red));">
                                 <i class="fas fa-key mr-2"></i>Cambiar Contraseña
                             </button>
-                            <button type="button" onclick="document.getElementById('passwordForm').reset()" 
-                                    class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-6 py-3 rounded-lg font-semibold transition">
-                                <i class="fas fa-times mr-2"></i>Limpiar
+                            <button type="button" data-action="reset-password-form" 
+                                    class="admin-btn admin-btn--muted">
+                                <i class="fas fa-times admin-btn__icon"></i>Limpiar
                             </button>
                         </div>
                     </form>
@@ -165,233 +169,16 @@
     <div id="footer-container"></div>
 
     <!-- Scripts -->
-    <script src="./js/api/apiClient.js"></script>
-    <script src="./js/auth.js"></script>
-    <script src="./js/notifications.js"></script>
     <script>
-        // ============================================
-        // PROTECCIÓN DE RUTA - REQUIERE AUTENTICACIÓN
-        // ============================================
-        (function() {
-            'use strict';
-            function checkAuth() {
-                if (typeof authManager === 'undefined') {
-                    console.error('authManager no disponible');
-                    window.location.href = '../login.html';
-                    return;
-                }
-                if (!authManager.isAuthenticated()) {
-                    notify.warning('Debes iniciar sesión para acceder a tu perfil', 'Autenticación Requerida');
-                    window.location.href = '../login.html?redirect=admin/perfil';
-                    return;
-                }
-                console.log('✅ Usuario autenticado');
-            }
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', checkAuth);
-            } else {
-                checkAuth();
-            }
-        })();
-
-        // DESPUÉS de la protección, cargar perfil
-        document.addEventListener('DOMContentLoaded', () => {
-            loadProfile();
-        });
-
-// Cargar perfil
-async function loadProfile() {
-    try {
-        console.log('📥 Cargando perfil del usuario...');
-        
-        const response = await api.getProfile();
-        
-        if (response && response.success) {
-            const user = response.data.user || response.data;
-            console.log('✅ Perfil cargado desde API:', user);
-            updateUIWithUser(user);
-        } else {
-            throw new Error('No se pudo cargar el perfil');
-        }
-    } catch (error) {
-        console.warn('⚠️ Error al cargar desde API:', error.message);
-        
-        // Fallback: usar datos del localStorage
-        const currentUser = authManager.getCurrentUser();
-        if (currentUser) {
-            console.log('✅ Usando perfil desde localStorage:', currentUser);
-            updateUIWithUser(currentUser);
-        } else {
-            showNotification('Error al cargar perfil. Por favor, inicia sesión nuevamente.', 'error');
-            setTimeout(() => {
-                authManager.logout();
-            }, 2000);
-        }
-    }
-}
-
-        // Actualizar UI con datos del usuario
-        function updateUIWithUser(user) {
-            const userName = user.name || `${user.first_name || ''} ${user.last_name || ''}`.trim() || 'Usuario';
-            document.getElementById('userName').textContent = userName;
-            document.getElementById('userEmail').textContent = user.email || '';
-            document.getElementById('userRole').textContent = user.role === 'admin' ? 'Administrador' : 'Cliente';
-            
-            // Actualizar navbar
-            const adminNameNav = document.getElementById('adminNameNav');
-            if (adminNameNav) {
-                const firstName = userName.split(' ')[0];
-                adminNameNav.textContent = firstName;
-            }
-            
-            document.getElementById('name').value = user.name || `${user.first_name || ''} ${user.last_name || ''}`.trim() || '';
-            document.getElementById('email').value = user.email || '';
-            document.getElementById('phone').value = user.phone || '';
-            document.getElementById('rut').value = user.rut || '';
-        }
-
-        // Actualizar perfil
-        document.getElementById('profileForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const data = {
-                name: document.getElementById('name').value.trim(),
-                email: document.getElementById('email').value.trim(),
-                phone: document.getElementById('phone').value.trim(),
-                rut: document.getElementById('rut').value.trim()
-            };
-
-            if (!data.name || !data.email) {
-                showNotification('El nombre y email son obligatorios', 'error');
-                return;
-            }
-
-            try {
-                const response = await api.updateProfile(data);
-
-                if (response && response.success) {
-                    showNotification('Perfil actualizado correctamente', 'success');
-                    
-                    const updatedUser = response.data.user || response.data;
-                    const currentUser = authManager.getCurrentUser();
-                    authManager.currentUser = { ...currentUser, ...updatedUser };
-                    localStorage.setItem('currentUser', JSON.stringify(authManager.currentUser));
-                    
-                    loadProfile();
-                    
-                    if (authManager.updateUI) {
-                        authManager.updateUI();
-                    }
-                } else {
-                    throw new Error(response.message || 'Error al actualizar perfil');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                showNotification('Error al actualizar perfil: ' + error.message, 'error');
-            }
-        });
-
-        // Cambiar contraseña
-        document.getElementById('passwordForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const currentPassword = document.getElementById('currentPassword').value;
-            const newPassword = document.getElementById('newPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-
-            if (!currentPassword || !newPassword || !confirmPassword) {
-                showNotification('Todos los campos son obligatorios', 'error');
-                return;
-            }
-
-            if (newPassword.length < 6) {
-                showNotification('La nueva contraseña debe tener al menos 6 caracteres', 'error');
-                return;
-            }
-
-            if (newPassword !== confirmPassword) {
-                showNotification('Las contraseñas no coinciden', 'error');
-                return;
-            }
-
-            try {
-                const response = await api.request('/auth/change-password', {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        currentPassword,
-                        newPassword
-                    })
-                });
-
-                if (response && response.success) {
-                    showNotification('Contraseña cambiada correctamente', 'success');
-                    document.getElementById('passwordForm').reset();
-                } else {
-                    throw new Error(response.message || 'Error al cambiar contraseña');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                
-                if (error.message.includes('404') || error.message.includes('Not Found')) {
-                    showNotification('La funcionalidad de cambio de contraseña aún no está implementada. Contacta al administrador.', 'warning');
-                } else {
-                    showNotification('Error al cambiar contraseña: ' + error.message, 'error');
-                }
-            }
-        });
-
-        // Cambiar sección
-        function showSection(section) {
-            document.getElementById('infoSection').classList.add('hidden');
-            document.getElementById('passwordSection').classList.add('hidden');
-
-            document.querySelectorAll('.section-btn').forEach(btn => {
-                btn.classList.remove('active', 'font-semibold');
-                btn.style.background = '';
-                btn.style.color = '';
-            });
-
-            const clickedBtn = event.target.closest('.section-btn');
-            
-            if (section === 'info') {
-                document.getElementById('infoSection').classList.remove('hidden');
-                if (clickedBtn) {
-                    clickedBtn.classList.add('active', 'font-semibold');
-                    clickedBtn.style.background = 'linear-gradient(135deg, rgba(192, 86, 33, 0.1), rgba(192, 86, 33, 0.05))';
-                    clickedBtn.style.color = 'var(--admin-primary-red)';
-                }
-            } else if (section === 'password') {
-                document.getElementById('passwordSection').classList.remove('hidden');
-                if (clickedBtn) {
-                    clickedBtn.classList.add('active', 'font-semibold');
-                    clickedBtn.style.background = 'linear-gradient(135deg, rgba(192, 86, 33, 0.1), rgba(192, 86, 33, 0.05))';
-                    clickedBtn.style.color = 'var(--admin-primary-red)';
-                }
-            }
-        }
-
-        // Confirmar logout
-        function confirmLogout() {
-            if (confirm('¿Estás seguro de cerrar sesión?')) {
-                authManager.logout();
-            }
-        }
-
-        // Sistema de notificaciones
-        function showNotification(message, type = 'info') {
-            if (typeof notify !== 'undefined') {
-                notify[type](message);
-            } else {
-                const icons = {
-                    success: '✅',
-                    error: '❌',
-                    warning: '⚠️',
-                    info: 'ℹ️'
-                };
-                alert(`${icons[type]} ${message}`);
-            }
-        }
+        // Log inmediato para verificar que los scripts se van a cargar
+        console.log('📦 [PERFIL HTML] Scripts a punto de cargarse');
+        console.log('📦 [PERFIL HTML] Timestamp:', new Date().toISOString());
+        console.log('📦 [PERFIL HTML] URL actual:', window.location.href);
     </script>
+    <script src="./js/api/apiClient.js" onerror="console.error('❌ Error cargando apiClient.js')" onload="console.log('✅ apiClient.js cargado')"></script>
+    <script src="./js/auth.js" onerror="console.error('❌ Error cargando auth.js')" onload="console.log('✅ auth.js cargado')"></script>
+    <script src="./js/notifications.js" onerror="console.error('❌ Error cargando notifications.js')" onload="console.log('✅ notifications.js cargado')"></script>
+    <script defer src="./js/pages/perfil-page.js" onerror="console.error('❌ Error cargando perfil-page.js')" onload="console.log('✅ perfil-page.js cargado')"></script>
 
     <style>
     .group:hover .group-hover\:opacity-100 {
@@ -399,6 +186,9 @@ async function loadProfile() {
     }
     .group:hover .group-hover\:visible {
         visibility: visible;
+    }
+    .profile-submit-btn:hover {
+        background: linear-gradient(135deg, var(--admin-light-red), var(--admin-primary-red)) !important;
     }
     </style>
 </body>

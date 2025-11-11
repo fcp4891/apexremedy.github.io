@@ -1,0 +1,52 @@
+:root {
+    /* Colores principales rojizos/otoñales */
+    --admin-primary-red: #c05621;
+    --admin-dark-red: #7c2d12;
+    --admin-light-red: #ea580c;
+    --admin-burnt-orange: #d97706;
+    --admin-amber: #f59e0b;
+    --admin-accent-yellow: #fbbf24;
+
+    /* Colores de soporte */
+    --admin-blue: #3b82f6;
+    --admin-blue-dark: #2563eb;
+    --admin-purple: #9333ea;
+    --admin-purple-dark: #7c3aed;
+    --admin-soft-white: #f9fafb;
+    --admin-soft-gray: #f3f4f6;
+    --admin-warm-gray: #6b7280;
+    --admin-slate: #4b5563;
+    --admin-charcoal: #1f2937;
+    --admin-warning-orange: #ff9800;
+    --admin-warning-orange-dark: #f97316;
+
+    /* Colores neutros */
+    --admin-black: #1a1a1a;
+    --admin-dark-gray: #2c2c2c;
+    --admin-medium-gray: #6c757d;
+    --admin-light-gray: #f8f9fa;
+    --admin-white: #ffffff;
+
+    /* Colores de estado */
+    --admin-success: #28a745;
+    --admin-success-dark: #1e7e34;
+    --admin-warning: #ffc107;
+    --admin-error: #dc3545;
+    --admin-error-dark: #c82333;
+    --admin-info: #17a2b8;
+
+    /* Fondos otoñales */
+    --admin-bg-cream: #fef7ed;
+    --admin-bg-beige: #fef3c7;
+    --admin-bg-warm: #fff7ed;
+
+    /* Tipografía */
+    --admin-font-primary: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+    /* Espaciado y efectos */
+    --admin-border-radius: 12px;
+    --admin-box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --admin-shadow-lg: 0 10px 25px rgba(124, 45, 18, 0.15);
+    --admin-transition: all 0.3s ease;
+}
+

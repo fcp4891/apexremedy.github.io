@@ -1,0 +1,25 @@
+/* tokens.css – Variables de diseño para frontend público
+   Nota: todavía no se importa desde los estilos legacy; mantener sincronizado con style/css_home.css hasta completar migración. */
+
+:root {
+  --primary-green: hsl(49, 57%, 44%);
+  --light-green: #8d523b;
+  --primary-red: #501f16;
+  --light-red: #7c584a;
+  --accent-yellow: #f4d03f;
+  --dark-yellow: #d4ac0d;
+  --accent-black: #1a1a1a;
+  --light-black: #2c2c2c;
+  --white: #ffffff;
+  --light-gray: #f8f9fa;
+  --medium-gray: #6c757d;
+  --success: #28a745;
+  --warning: #ffc107;
+  --error: #dc3545;
+  --font-primary: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --border-radius: 12px;
+  --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --transition: all 0.3s ease;
+}
+
+

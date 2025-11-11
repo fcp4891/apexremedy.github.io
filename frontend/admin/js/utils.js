@@ -32,20 +32,39 @@ class Utils {
 
     // Validar email
     static isValidEmail(email) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
+        if (!email || email.trim() === '') return false;
+        // Validación más estricta de email
+        const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+        return emailRegex.test(email.trim()) && email.length <= 254;
     }
 
-    // Validar RUT chileno
+    // Validar RUT chileno (acepta formato con o sin puntos)
     static isValidRUT(rut) {
-        const rutRegex = /^\d{1,2}\.\d{3}\.\d{3}-[\dkK]$/;
-        if (!rutRegex.test(rut)) return false;
+        if (!rut || rut.trim() === '') return false;
         
-        // Validar dígito verificador
-        const cleanRUT = rut.replace(/\./g, '').replace('-', '');
+        // Limpiar RUT y normalizar formato
+        let cleanRUT = rut.trim().replace(/\./g, '').toUpperCase();
+        
+        // Verificar formato básico (puede tener guión o no)
+        const rutRegex = /^(\d{7,8})[-]?([\dkK])$/;
+        if (!rutRegex.test(cleanRUT)) {
+            // Intentar formato con guión
+            cleanRUT = cleanRUT.replace('-', '');
+            if (!/^\d{7,8}[\dkK]$/.test(cleanRUT)) {
+                return false;
+            }
+        }
+        
+        // Separar cuerpo y dígito verificador
         const body = cleanRUT.slice(0, -1);
         const dv = cleanRUT.slice(-1).toUpperCase();
         
+        // Validar que el cuerpo tenga 7 u 8 dígitos
+        if (body.length < 7 || body.length > 8) {
+            return false;
+        }
+        
+        // Calcular dígito verificador
         let sum = 0;
         let multiplier = 2;
         
@@ -58,6 +77,16 @@ class Utils {
         const calculatedDV = remainder === 0 ? '0' : remainder === 1 ? 'K' : (11 - remainder).toString();
         
         return dv === calculatedDV;
+    }
+    
+    // Formatear RUT chileno (agregar puntos y guión)
+    static formatRUT(rut) {
+        if (!rut) return '';
+        const cleanRUT = rut.replace(/\./g, '').replace('-', '').toUpperCase();
+        if (cleanRUT.length < 8) return rut;
+        const body = cleanRUT.slice(0, -1);
+        const dv = cleanRUT.slice(-1);
+        return body.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + '-' + dv;
     }
 
     // Validar teléfono chileno
@@ -297,6 +326,9 @@ class Utils {
 
 // Exportar para uso global
 window.Utils = Utils;
+
+
+
 
 
 

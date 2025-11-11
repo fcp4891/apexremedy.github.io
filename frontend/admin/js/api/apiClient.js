@@ -1,9 +1,19 @@
-// frontend/js/api/apiClient.js
-// Cliente API para comunicación con el backend
+// frontend/admin/js/api/apiClient.js
+// Cliente API para comunicación con el backend ADMIN
 // ✅ ACTUALIZADO CON SOPORTE MEDICINAL Y JSON ESTÁTICO
+
+// Log inmediato para verificar que el script se carga
+try {
+    console.log('📦 [ADMIN API] Script apiClient.js cargado');
+    console.log('📦 [ADMIN API] Timestamp:', new Date().toISOString());
+    console.log('📦 [ADMIN API] URL actual:', window.location.href);
+} catch (e) {
+    console.error('❌ [ADMIN API] Error en log inicial:', e);
+}
 
 // Prevenir doble declaración
 if (typeof APIClient === 'undefined') {
+    console.log('📦 [ADMIN API] Creando clase APIClient...');
     class APIClient {
         constructor() {
             // Detectar entorno y configurar URL de API
@@ -28,8 +38,7 @@ if (typeof APIClient === 'undefined') {
                     : 'http://localhost:3000/api';
             }
             
-            // Sincronizar token con localStorage al inicializar
-            this.token = localStorage.getItem('authToken');
+            this.token = null;
             
             // Log para debug
             if (isProduction) {
@@ -40,16 +49,58 @@ if (typeof APIClient === 'undefined') {
                 console.log('🔗 API URL:', this.baseURL);
             }
         }
+
+        getCsrfTokenFromCookie() {
+            if (typeof document === 'undefined') {
+                return null;
+            }
+            const cookies = document.cookie ? document.cookie.split('; ') : [];
+            const entry = cookies.find((row) => row.startsWith('csrf_token='));
+            if (!entry) {
+                return null;
+            }
+            return decodeURIComponent(entry.split('=')[1] || '');
+        }
+
+        async ensureCsrfToken() {
+            if (!this.baseURL) {
+                return null;
+            }
+
+            const existing = this.getCsrfTokenFromCookie();
+            if (existing) {
+                return existing;
+            }
+
+            try {
+                const response = await fetch(`${this.baseURL}/auth/csrf`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                if (data?.data?.csrfToken) {
+                    return data.data.csrfToken;
+                }
+            } catch (error) {
+                console.warn('⚠️ No se pudo obtener token CSRF:', error.message);
+            }
+
+            return this.getCsrfTokenFromCookie();
+        }
         
-        // Método para sincronizar token desde localStorage
-        syncToken() {
-            const storedToken = localStorage.getItem('authToken');
-            if (storedToken !== this.token) {
-                this.token = storedToken;
+        // Método auxiliar para hacer peticiones
+        handleUnauthorized() {
+            if (typeof window !== 'undefined') {
+                window.dispatchEvent(new Event('userLoggedOut'));
+            }
+            if (typeof authManager !== 'undefined' && authManager.clearSession) {
+                authManager.clearSession();
+                if (typeof authManager.updateUI === 'function') {
+                    authManager.updateUI();
+                }
             }
         }
 
-        // Método auxiliar para hacer peticiones
         async request(endpoint, options = {}) {
             // Verificar si hay backend configurado
             if (!this.baseURL) {
@@ -57,39 +108,42 @@ if (typeof APIClient === 'undefined') {
                 error.code = 'NO_BACKEND_CONFIGURED';
                 throw error;
             }
-            
-            // Sincronizar token antes de cada petición
-            this.syncToken();
-            
+
             const url = `${this.baseURL}${endpoint}`;
             const headers = {
                 'Content-Type': 'application/json',
                 ...options.headers
             };
 
-            // Agregar token si existe (sincronizado desde localStorage)
-            if (this.token) {
-                headers['Authorization'] = `Bearer ${this.token}`;
+            const method = (options.method || 'GET').toUpperCase();
+            const requiresCsrf = !['GET', 'HEAD', 'OPTIONS'].includes(method);
+
+            if (requiresCsrf) {
+                const csrfToken = await this.ensureCsrfToken();
+                if (csrfToken) {
+                    headers['X-CSRF-Token'] = csrfToken;
+                }
             }
 
             try {
                 const response = await fetch(url, {
                     ...options,
-                    headers
+                    headers,
+                    credentials: options.credentials || 'include'
                 });
 
                 const data = await response.json();
 
                 if (!response.ok) {
-                    // Si es error 401, limpiar token y redirigir
                     if (response.status === 401) {
-                        this.token = null;
-                        localStorage.removeItem('authToken');
-                        if (typeof authManager !== 'undefined') {
-                            authManager.logout();
-                        }
+                        this.handleUnauthorized();
                     }
-                    throw new Error(data.message || 'Error en la petición');
+                    const error = new Error(data.message || 'Error en la petición');
+                    error.response = {
+                        status: response.status,
+                        data
+                    };
+                    throw error;
                 }
 
                 return data;
@@ -106,16 +160,51 @@ if (typeof APIClient === 'undefined') {
             }
         }
 
+        // Métodos HTTP wrapper (get, post, put, delete, patch)
+        async get(endpoint, options = {}) {
+            return await this.request(endpoint, {
+                ...options,
+                method: 'GET'
+            });
+        }
+
+        async post(endpoint, data = null, options = {}) {
+            return await this.request(endpoint, {
+                ...options,
+                method: 'POST',
+                body: data ? JSON.stringify(data) : undefined
+            });
+        }
+
+        async put(endpoint, data = null, options = {}) {
+            return await this.request(endpoint, {
+                ...options,
+                method: 'PUT',
+                body: data ? JSON.stringify(data) : undefined
+            });
+        }
+
+        async patch(endpoint, data = null, options = {}) {
+            return await this.request(endpoint, {
+                ...options,
+                method: 'PATCH',
+                body: data ? JSON.stringify(data) : undefined
+            });
+        }
+
+        async delete(endpoint, options = {}) {
+            return await this.request(endpoint, {
+                ...options,
+                method: 'DELETE'
+            });
+        }
+
         // Métodos de autenticación
         async register(userData) {
             const response = await this.request('/auth/register', {
                 method: 'POST',
                 body: JSON.stringify(userData)
             });
-
-            if (response.success && response.data.token) {
-                this.setToken(response.data.token);
-            }
 
             return response;
         }
@@ -130,10 +219,6 @@ if (typeof APIClient === 'undefined') {
                 method: 'POST',
                 body: JSON.stringify(credentials)
             });
-
-            if (response.success && response.data.token) {
-                this.setToken(response.data.token);
-            }
 
             return response;
         }
@@ -375,7 +460,43 @@ if (typeof APIClient === 'undefined') {
         }
 
         async getProfile() {
-            return await this.request('/auth/profile');
+            // Si no hay backend, no hay perfil
+            if (!this.baseURL) {
+                throw new Error('Backend no configurado');
+            }
+
+            try {
+                const response = await this.request('/auth/profile');
+                
+                // Validar respuesta estrictamente
+                if (!response || !response.success) {
+                    throw new Error('Respuesta inválida del servidor');
+                }
+                
+                return response;
+            } catch (error) {
+                // Si es 401 (no autorizado), limpiar token y lanzar error
+                if (error.response && error.response.status === 401) {
+                    this.clearToken();
+                    // Limpiar cookies también
+                    this.clearAuthCookies();
+                    throw new Error('Sesión expirada o inválida');
+                }
+                throw error;
+            }
+        }
+
+        // Limpiar cookies de autenticación
+        clearAuthCookies() {
+            if (typeof document === 'undefined') {
+                return;
+            }
+
+            const cookiesToClear = ['access_token', 'refresh_token', 'csrf_token'];
+            cookiesToClear.forEach(cookieName => {
+                document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+                document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/api/auth;`;
+            });
         }
 
         async updateProfile(data) {
@@ -394,20 +515,33 @@ if (typeof APIClient === 'undefined') {
             }
         }
 
-        logout() {
+        async logout() {
             this.clearToken();
-            localStorage.removeItem('currentUser');
-            localStorage.removeItem('cart');
+
+            if (!this.baseURL) {
+                return { success: true };
+            }
+
+            try {
+                const response = await this.request('/auth/logout', {
+                    method: 'POST',
+                    body: JSON.stringify({})
+                });
+                return response;
+            } catch (error) {
+                if (error.response && error.response.status === 401) {
+                    return { success: true, message: 'Sesión expirada' };
+                }
+                throw error;
+            }
         }
 
         setToken(token) {
             this.token = token;
-            localStorage.setItem('authToken', token);
         }
 
         clearToken() {
             this.token = null;
-            localStorage.removeItem('authToken');
         }
 
         // Método auxiliar para cargar JSON estático (fallback en producción)
@@ -468,7 +602,10 @@ if (typeof APIClient === 'undefined') {
                 console.log('✅ JSON estático cargado exitosamente:', filename);
                 return data;
             } catch (error) {
-                console.warn(`⚠️ No se pudo cargar ${filename} estático:`, error.message);
+                // Solo mostrar warning si no es un 404 (archivo no encontrado es esperado)
+                if (!error.message.includes('404') && !error.message.includes('File not found')) {
+                    console.warn(`⚠️ No se pudo cargar ${filename} estático:`, error.message);
+                }
                 return null;
             }
         }
@@ -1041,7 +1178,9 @@ if (typeof APIClient === 'undefined') {
             // SIEMPRE intentar JSON estático PRIMERO (más rápido y funciona sin backend)
             try {
                 const staticData = await this.loadStaticJSON('users.json');
-                console.log('🔍 JSON estático de users cargado:', staticData);
+                if (staticData) {
+                    console.log('🔍 JSON estático de users cargado:', staticData);
+                }
                 if (staticData && staticData.success && staticData.data && staticData.data.users) {
                     let users = applyFiltersToUsers(staticData.data.users, filters);
                     console.log('✅ Usuarios cargados desde JSON estático:', users.length);
@@ -1118,10 +1257,13 @@ if (typeof APIClient === 'undefined') {
             });
         }
 
-        async approveUser(id, notes = '') {
+        async approveUser(id, notes = '', isForced = false) {
             return await this.request(`/users/${id}/approve`, {
                 method: 'POST',
-                body: JSON.stringify({ admin_notes: notes })
+                body: JSON.stringify({ 
+                    admin_notes: notes,
+                    is_forced: isForced
+                })
             });
         }
 
@@ -1168,16 +1310,12 @@ if (typeof APIClient === 'undefined') {
             const url = `${this.baseURL}/orders/${orderId}/payment-proof`;
             const headers = {};
 
-            // Agregar token si existe
-            if (this.token) {
-                headers['Authorization'] = `Bearer ${this.token}`;
-            }
-
             try {
                 const response = await fetch(url, {
                     method: 'POST',
                     headers,
-                    body: formData // No incluir Content-Type, el navegador lo manejará
+                    body: formData, // No incluir Content-Type, el navegador lo manejará
+                    credentials: 'include'
                 });
 
                 const data = await response.json();
@@ -1233,13 +1371,11 @@ if (typeof APIClient === 'undefined') {
             const url = `${this.baseURL}/payments/bank-transfer`;
             const headers = {};
 
-            // token
-            if (this.token) headers['Authorization'] = `Bearer ${this.token}`;
-
             const response = await fetch(url, {
                 method: 'POST',
                 headers,          // sin Content-Type; fetch lo define por boundary
-                body: formData
+                body: formData,
+                credentials: 'include'
             });
 
             const data = await response.json();
@@ -1267,11 +1403,177 @@ if (typeof APIClient === 'undefined') {
             });
         }
 
+        // Obtener métricas del dashboard de pagos
+        async getPaymentMetrics(dateFrom = null, dateTo = null) {
+            let endpoint = '/payments/metrics/dashboard';
+            const params = [];
+            if (dateFrom) params.push(`date_from=${encodeURIComponent(dateFrom)}`);
+            if (dateTo) params.push(`date_to=${encodeURIComponent(dateTo)}`);
+            if (params.length > 0) {
+                endpoint += '?' + params.join('&');
+            }
+            return await this.request(endpoint);
+        }
+
+        // ============================================
+        // LOGÍSTICA
+        // ============================================
+
+        // Obtener métricas del dashboard de logística
+        async getLogisticsMetrics(dateFrom = null, dateTo = null) {
+            let endpoint = '/logistics/metrics/dashboard';
+            const params = [];
+            if (dateFrom) params.push(`date_from=${encodeURIComponent(dateFrom)}`);
+            if (dateTo) params.push(`date_to=${encodeURIComponent(dateTo)}`);
+            if (params.length > 0) {
+                endpoint += '?' + params.join('&');
+            }
+            return await this.request(endpoint);
+        }
+
+        // ============================================
+        // ANALYTICS
+        // ============================================
+
+        // Obtener pedidos agrupados por comuna
+        async getOrdersByComuna(filters = {}) {
+            let endpoint = '/analytics/orders-by-comuna';
+            const params = [];
+            
+            if (filters.from) params.push(`from=${encodeURIComponent(filters.from)}`);
+            if (filters.to) params.push(`to=${encodeURIComponent(filters.to)}`);
+            if (filters.status) {
+                const statusParam = Array.isArray(filters.status) ? filters.status.join(',') : filters.status;
+                params.push(`status=${encodeURIComponent(statusParam)}`);
+            }
+            if (filters.shipping_provider) params.push(`shipping_provider=${encodeURIComponent(filters.shipping_provider)}`);
+            if (filters.min_ticket) params.push(`min_ticket=${encodeURIComponent(filters.min_ticket)}`);
+            if (filters.product_type) params.push(`product_type=${encodeURIComponent(filters.product_type)}`);
+            
+            if (params.length > 0) {
+                endpoint += '?' + params.join('&');
+            }
+            return await this.request(endpoint);
+        }
+
+        // Obtener GeoJSON de comunas de la RM
+        async getRMComunasGeoJson() {
+            return await this.request('/geo/rm-comunas');
+        }
+
+        // ============================================
+        // ANALYTICS - DASHBOARDS COMPLETOS
+        // ============================================
+
+        // Executive Dashboard
+        async getExecutiveDashboard(period = '30d') {
+            return await this.request(`/analytics/executive?period=${period}`);
+        }
+
+        async getRevenueTrend(type = 'daily', period = '30d') {
+            return await this.request(`/analytics/executive/revenue-trend?type=${type}&period=${period}`);
+        }
+
+        // Dashboard Comercial/Ventas
+        async getCommercialDashboard(period = '30d') {
+            return await this.request(`/analytics/commercial?period=${period}`);
+        }
+
+        async getTopProducts(period = '30d', sort = 'revenue', limit = 10) {
+            return await this.request(`/analytics/commercial/top-products?period=${period}&sort=${sort}&limit=${limit}`);
+        }
+
+        async getTemporalPerformance(period = '30d') {
+            return await this.request(`/analytics/commercial/temporal?period=${period}`);
+        }
+
+        // Dashboard de Clientes
+        async getCustomersDashboard(period = '30d') {
+            return await this.request(`/analytics/customers?period=${period}`);
+        }
+
+        async getRFMSegmentation() {
+            return await this.request('/analytics/customers/rfm');
+        }
+
+        async getCohortAnalysis() {
+            return await this.request('/analytics/customers/cohort');
+        }
+
+        // Dashboard de Marketing
+        async getMarketingDashboard(period = '30d') {
+            return await this.request(`/analytics/marketing?period=${period}`);
+        }
+
+        // Dashboard de Producto
+        async getProductsDashboard(period = '30d') {
+            return await this.request(`/analytics/products?period=${period}`);
+        }
+
+        // Dashboard de Inventario
+        async getInventoryDashboard() {
+            return await this.request('/analytics/inventory');
+        }
+
+        // Dashboard de Operaciones
+        async getOperationsDashboard(period = '30d') {
+            return await this.request(`/analytics/operations?period=${period}`);
+        }
+
+        // Dashboard de UX
+        async getUXDashboard(period = '30d') {
+            return await this.request(`/analytics/ux?period=${period}`);
+        }
+
+        // Dashboard Financiero
+        async getFinancialDashboard(period = '30d') {
+            return await this.request(`/analytics/financial?period=${period}`);
+        }
+
+        // Dashboard de Servicio al Cliente
+        async getCustomerServiceDashboard(period = '30d') {
+            return await this.request(`/analytics/customer-service?period=${period}`);
+        }
+
+        // ============================================
+        // ALERTAS Y NOTIFICACIONES
+        // ============================================
+
+        // Verificar todas las alertas
+        async checkAlerts() {
+            return await this.request('/alerts/check');
+        }
+
+        // Verificar stock crítico
+        async checkLowStock() {
+            return await this.request('/alerts/low-stock');
+        }
+
+        // Detectar anomalías de revenue
+        async checkRevenueAnomalies() {
+            return await this.request('/alerts/revenue-anomalies');
+        }
+
+        // Detectar fraude
+        async checkFraud() {
+            return await this.request('/alerts/fraud');
+        }
+
     }
 
     // Crear instancia global solo si no existe
-    if (typeof api === 'undefined') {
+    console.log('📦 [ADMIN API] Verificando si api existe...', typeof window !== 'undefined' ? typeof window.api : 'window no disponible');
+    if (typeof window !== 'undefined' && typeof window.api === 'undefined') {
+        console.log('📦 [ADMIN API] Creando instancia de APIClient...');
         window.api = new APIClient();
+        console.log('✅ [ADMIN API] Instancia creada:', window.api);
+    } else {
+        console.log('⚠️ [ADMIN API] api ya existe, usando existente');
+    }
+
+    // Exponer la clase APIClient globalmente para uso con new
+    if (typeof window !== 'undefined') {
+        window.APIClient = APIClient;
     }
 
     // Exportar para uso en módulos

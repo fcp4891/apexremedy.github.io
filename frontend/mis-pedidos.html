@@ -19,8 +19,8 @@
     <div id="header-container"></div>
 
     <!-- Hero Section -->
-    <section class="shop-header">
-        <div class="container">
+    <section class="shop-header app-section">
+        <div class="container u-container">
             <h1>
                 <i class="fas fa-shopping-bag"></i> Mis Pedidos
             </h1>
@@ -29,8 +29,8 @@
     </section>
 
     <!-- Main Content -->
-    <div class="orders-container">
-        <div class="container">
+    <div class="orders-container app-section">
+        <div class="container u-container">
             <!-- Lista de pedidos -->
             <div id="ordersList" class="orders-list">
                 <!-- Loading -->
@@ -314,7 +314,7 @@
                 <i class="fas fa-shopping-bag"></i>
                 <h3>No tienes pedidos aún</h3>
                 <p>Comienza a comprar en nuestro catálogo</p>
-                <a href="./productos.html" class="cta-button" style="display: inline-flex; align-items: center; gap: 8px;">
+                <a href="./productos.html" class="cta-button app-button app-button--primary" style="display: inline-flex; align-items: center; gap: 8px;">
                     <i class="fas fa-shopping-bag"></i>
                     <span>Ver Productos</span>
                 </a>
@@ -345,7 +345,7 @@
                 : baseStatus;
 
         return `
-            <div class="order-card">
+            <div class="order-card app-card">
                 <div class="order-header">
                     <div>
                         <h4 class="order-title">Pedido #${order.id}</h4>
@@ -373,7 +373,7 @@
                             order.payment_method === 'transfer'
                                 ? `
                                 <button onclick="openTransferModal('${order.id}', ${order.total || 0})"
-                                        class="cta-button"
+                                        class="cta-button app-button app-button--secondary"
                                         style="padding: 8px 16px; font-size: 0.9rem;"
                                         title="Enviar transferencia">
                                     <i class="fas fa-receipt"></i>
@@ -384,7 +384,7 @@
                         }
 
                         <button onclick="viewOrderDetails(${order.id})"
-                                class="cta-button"
+                                class="cta-button app-button app-button--primary"
                                 style="padding: 8px 16px; font-size: 0.9rem;">
                             <i class="fas fa-eye"></i>
                             <span>Ver Detalles</span>

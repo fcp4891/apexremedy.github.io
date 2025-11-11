@@ -9,7 +9,8 @@
 }
 
 /* Formulario de contacto */
-.contact-form-card {
+.contact-form-card,
+.app-card {
     background: var(--white);
     padding: 32px;
     border-radius: var(--border-radius);
@@ -353,8 +354,6 @@
     .social-links {
         justify-content: center;
     }
-}
-
     /* Ajustes adicionales para móviles pequeños */
     .contact-form-card,
     .contact-info-card {

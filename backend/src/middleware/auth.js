@@ -11,7 +11,9 @@ const userModel = new User();
 const authenticateToken = async (req, res, next) => {
     try {
         const authHeader = req.headers['authorization'];
-        const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+        const tokenFromHeader = authHeader && authHeader.split(' ')[1];
+        const tokenFromCookie = req.cookies && req.cookies.access_token;
+        const token = tokenFromHeader || tokenFromCookie;
 
         if (!token) {
             return res.status(401).json({
@@ -33,8 +35,24 @@ const authenticateToken = async (req, res, next) => {
             });
         }
 
-        // Verificar que la cuenta esté activa
-        if (!user.is_active) {
+        // Mapear campos si es necesario (compatibilidad con esquemas antiguos)
+        // Mapear status → is_active
+        if (user.status !== undefined && user.is_active === undefined) {
+            user.is_active = (user.status === 'active') ? 1 : 0;
+        }
+        // Si no hay status ni is_active, asumir activo
+        if (user.is_active === undefined) {
+            user.is_active = 1;
+        }
+        
+        // Mapear rol si no existe
+        if (!user.role) {
+            user.role = user.email && user.email.toLowerCase().includes('admin') ? 'admin' : 'customer';
+        }
+
+        // Verificar que la cuenta esté activa (excepto admins)
+        const isAdmin = user.role === 'admin';
+        if (!user.is_active && !isAdmin) {
             return res.status(403).json({
                 success: false,
                 message: 'Tu cuenta ha sido desactivada'
@@ -42,8 +60,11 @@ const authenticateToken = async (req, res, next) => {
         }
 
         // Calcular account_status basado en is_active e is_verified
+        // Para admins, siempre aprobado
         let account_status = 'pending';
-        if (user.is_verified && user.is_active) {
+        if (isAdmin) {
+            account_status = 'approved';
+        } else if (user.is_verified && user.is_active) {
             account_status = 'approved';
         } else if (!user.is_active && !user.is_verified) {
             account_status = 'rejected';
@@ -122,7 +143,9 @@ const requireOwnerOrAdmin = (req, res, next) => {
 const optionalAuth = async (req, res, next) => {
     try {
         const authHeader = req.headers['authorization'];
-        const token = authHeader && authHeader.split(' ')[1];
+        const tokenFromHeader = authHeader && authHeader.split(' ')[1];
+        const tokenFromCookie = req.cookies && req.cookies.access_token;
+        const token = tokenFromHeader || tokenFromCookie;
 
         if (token) {
             const decoded = jwt.verify(token, JWT_SECRET);

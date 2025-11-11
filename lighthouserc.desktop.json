@@ -1,0 +1,33 @@
+{
+  "ci": {
+    "collect": {
+      "staticDistDir": "./frontend",
+      "url": [
+        "index.html",
+        "tienda.html",
+        "contacto.html",
+        "marco-legal.html"
+      ],
+      "numberOfRuns": 1,
+      "settings": {
+        "formFactor": "desktop",
+        "screenEmulation": {
+          "mobile": false,
+          "width": 1350,
+          "height": 940,
+          "deviceScaleFactor": 1,
+          "disabled": false
+        },
+        "chromeFlags": "--headless --no-sandbox"
+      }
+    },
+    "assert": {
+      "assertions": {}
+    },
+    "upload": {
+      "target": "filesystem",
+      "outputDir": "./reports/lighthouse/desktop"
+    }
+  }
+}
+

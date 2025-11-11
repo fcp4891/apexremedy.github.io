@@ -1,0 +1,222 @@
+/* components.css – Componentes reutilizables para frontend público
+   Prefijo app-* siguiendo convención BEM ligera. Todavía no reemplaza clases legacy. */
+
+/* Navbar */
+.app-navbar {
+  background: linear-gradient(135deg, var(--primary-green), var(--light-green));
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  box-shadow: var(--box-shadow);
+  backdrop-filter: blur(10px);
+}
+
+.app-navbar__container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 70px;
+}
+
+.app-navbar__logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--white);
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.app-navbar__menu {
+  display: flex;
+  list-style: none;
+  gap: 30px;
+  align-items: center;
+}
+
+.app-navbar__link {
+  color: var(--white);
+  text-decoration: none;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+  position: relative;
+  display: inline-block;
+  font-family: var(--font-primary);
+  font-size: 0.95rem;
+}
+
+.app-navbar__link:hover {
+  background: rgba(244, 208, 63, 0.2);
+  color: var(--accent-yellow);
+}
+
+.app-navbar__link--active {
+  background: rgba(244, 208, 63, 0.25);
+  color: var(--accent-yellow);
+}
+
+.app-navbar__link--cta {
+  background: linear-gradient(135deg, var(--accent-yellow), var(--dark-yellow));
+  color: var(--accent-black);
+  font-weight: 700;
+  padding: 8px 18px;
+  border-radius: var(--border-radius);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+.app-navbar__link--cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(244, 208, 63, 0.4);
+}
+
+.app-navbar__cart-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: var(--accent-yellow);
+  color: var(--accent-black);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+/* Botones */
+.app-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 24px;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.app-button--primary {
+  background: linear-gradient(135deg, var(--accent-yellow), var(--dark-yellow));
+  color: var(--accent-black);
+  border: none;
+  box-shadow: 0 6px 20px rgba(244, 208, 63, 0.4);
+}
+
+.app-button--secondary {
+  background: transparent;
+  color: var(--primary-green);
+  border: 2px solid var(--primary-green);
+}
+
+.app-button--secondary:hover {
+  background: var(--primary-green);
+  color: var(--white);
+}
+
+.app-button--danger {
+  color: var(--error);
+  border-color: var(--error);
+}
+
+.app-button--danger:hover {
+  background: var(--error);
+  color: var(--white);
+}
+
+/* Cards */
+.app-card {
+  background: var(--white);
+  padding: 28px 22px;
+  border-radius: var(--border-radius);
+  text-align: center;
+  box-shadow: var(--box-shadow);
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.app-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.app-card__icon {
+  width: 70px;
+  height: 70px;
+  background: linear-gradient(135deg, var(--primary-green), var(--light-green));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 18px;
+  transition: var(--transition);
+  color: var(--accent-yellow);
+  font-size: 1.7rem;
+}
+
+.app-card:hover .app-card__icon {
+  transform: scale(1.06);
+}
+
+/* Secciones */
+.app-section {
+  padding: 60px 0;
+}
+
+.app-section--muted {
+  background: var(--light-gray);
+}
+
+.app-section__header {
+  text-align: center;
+  margin: 40px 0 24px;
+}
+
+.app-section__title {
+  font-size: 2rem;
+  color: var(--primary-green);
+  margin-bottom: 10px;
+}
+
+.app-section__subtitle {
+  font-size: 1rem;
+  color: var(--medium-gray);
+}
+
+/* Modales / overlays */
+.app-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+}
+
+.app-overlay--visible {
+  display: flex;
+}
+
+.app-modal {
+  background: var(--white);
+  border-radius: var(--border-radius);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
+  width: min(640px, 95vw);
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Envíos - Apexremedy Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style/css_admin.css">
+    <script src="./js/basePath.js"></script>
+    <script src="./js/config.js"></script>
+    <script src="./js/utils.js"></script>
+    <script src="./js/api/apiClient.js"></script>
+    <script src="./js/auth.js"></script>
+    <script src="./js/notifications.js"></script>
+    <script defer src="./js/adminTemplate.js"></script>
+</head>
+<body>
+    <div id="header-container"></div>
+
+<div class="container mx-auto px-4 py-8">
+    <div class="admin-page-header">
+        <div>
+            <h1 class="admin-page-title">Gestión de Envíos</h1>
+            <p class="admin-page-subtitle">Rastrea y gestiona todos los envíos de pedidos</p>
+        </div>
+        <div class="admin-page-actions">
+            <button data-action="navigate" data-href="logistica.html" class="admin-btn admin-btn--muted">
+                <i class="fas fa-arrow-left admin-btn__icon"></i>Volver
+            </button>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <select id="statusFilter" class="px-4 py-3 border border-gray-300 rounded-lg">
+                <option value="">Todos los estados</option>
+                <option value="pending">Pendiente</option>
+                <option value="processing">Procesando</option>
+                <option value="shipped">Enviado</option>
+                <option value="in_transit">En Tránsito</option>
+                <option value="delivered">Entregado</option>
+                <option value="cancelled">Cancelado</option>
+            </select>
+            <input type="text" id="trackingFilter" placeholder="Buscar por tracking..." class="px-4 py-3 border border-gray-300 rounded-lg">
+            <input type="text" id="orderFilter" placeholder="Buscar por orden..." class="px-4 py-3 border border-gray-300 rounded-lg">
+            <button class="admin-btn admin-btn--primary admin-btn--compact" data-action="apply-filters">
+                <i class="fas fa-search admin-btn__icon"></i>Buscar
+            </button>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">ID</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Orden</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Tracking</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Proveedor</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Estado</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Costo</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Fecha</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="shipmentsTableBody" class="divide-y divide-gray-200">
+                    <tr>
+                        <td colspan="8" class="px-6 py-12 text-center">
+                            <i class="fas fa-spinner fa-spin text-4xl text-green-600"></i>
+                            <p class="text-gray-500 mt-2">Cargando envíos...</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- Paginación -->
+        <div id="paginationContainer" class="hidden px-6 py-4 border-t border-gray-200 bg-gray-50">
+            <div class="flex items-center justify-between">
+                <div class="text-sm text-gray-700">
+                    Mostrando <span id="showingFrom">1</span> a <span id="showingTo">20</span> de <span id="totalRecords">0</span> registros
+                </div>
+                <div class="flex gap-2">
+                    <button id="prevPage" class="admin-btn admin-btn--muted admin-btn--compact" data-action="change-page" data-direction="-1">
+                        <i class="fas fa-chevron-left admin-btn__icon"></i>Anterior
+                    </button>
+                    <span id="pageInfo" class="px-4 py-2 text-sm text-gray-700">Página 1</span>
+                    <button id="nextPage" class="admin-btn admin-btn--muted admin-btn--compact" data-action="change-page" data-direction="1">
+                        Siguiente <i class="fas fa-chevron-right admin-btn__icon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Detalle Envío -->
+<div id="shipmentModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" data-action="close-modal-overlay">
+    <div class="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto" data-role="modal-content">
+        <div class="p-6">
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <h2 id="modalTitle" class="text-2xl font-bold text-gray-800">Envío #<span id="modalShipmentId"></span></h2>
+                    <p class="text-gray-500 mt-1">Tracking: <span id="modalTracking" class="font-semibold"></span></p>
+                </div>
+                <button class="admin-btn admin-btn--muted admin-btn--compact" title="Cerrar (ESC)" data-action="close-modal">
+                    <i class="fas fa-times admin-btn__icon"></i>Cerrar
+                </button>
+            </div>
+
+            <!-- Estado actual -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Estado del Envío</label>
+                <select id="modalStatusSelect" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                    <option value="pending">Pendiente</option>
+                    <option value="processing">Procesando</option>
+                    <option value="shipped">Enviado</option>
+                    <option value="in_transit">En Tránsito</option>
+                    <option value="delivered">Entregado</option>
+                    <option value="cancelled">Cancelado</option>
+                </select>
+                <button class="admin-btn admin-btn--primary admin-btn--compact admin-mt-1" data-action="update-status">
+                    <i class="fas fa-save admin-btn__icon"></i>Actualizar Estado
+                </button>
+            </div>
+
+            <div id="shipmentDetails" class="space-y-4">
+                <!-- Se llenará dinámicamente -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="./js/sessionManager.js"></script>
+<script src="./js/pages/logistica-envios-page.js" defer></script>
+
+</body>
+</html>

@@ -1,0 +1,892 @@
+<!-- Componente de Formulario de Poder de Cultivo (Cesión de Derechos) -->
+<div id="poderCultivoForm" style="padding: 20px; background: #f8f9fa; border-radius: 8px; margin-bottom: 20px;">
+    <h4 style="color: var(--primary-green); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+        <i class="fas fa-leaf"></i> Declaración de Cesión de Cultivo
+    </h4>
+    
+    <p style="color: var(--medium-gray); font-size: 0.9rem; margin-bottom: 20px;">
+        Completa los siguientes datos para generar tu declaración de cesión de derechos de cultivo. 
+        Los datos marcados con * se obtendrán automáticamente de tu información personal.
+    </p>
+
+    <!-- Campo: Enfermedad/Condición (Sistema de Tags) -->
+    <div style="margin-bottom: 20px;">
+        <label style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--accent-black);">
+            <i class="fas fa-heartbeat" style="color: #ef4444; margin-right: 6px;"></i>
+            Enfermedad/Condición Médica *
+        </label>
+        
+        <!-- Selector de condiciones predefinidas -->
+        <div style="margin-bottom: 12px;">
+            <div class="input-with-icon" style="position: relative;">
+                <i class="fas fa-stethoscope" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); z-index: 1; color: var(--medium-gray);"></i>
+                <select id="condicionSelector" 
+                        style="width: 100%; padding: 12px 12px 12px 40px; border: 2px solid var(--light-gray); border-radius: 8px; font-size: 1rem; appearance: none; background-color: white; cursor: pointer;">
+                    <option value="">Selecciona una condición</option>
+                    <option value="Estrés">Estrés</option>
+                    <option value="Insomnio">Insomnio</option>
+                    <option value="Mareos">Mareos</option>
+                    <option value="Angustia">Angustia</option>
+                    <option value="Dolor Crónico">Dolor Crónico</option>
+                    <option value="Epilepsia">Epilepsia</option>
+                    <option value="Esclerosis Múltiple">Esclerosis Múltiple</option>
+                    <option value="Artritis">Artritis</option>
+                    <option value="Fibromialgia">Fibromialgia</option>
+                    <option value="Ansiedad">Ansiedad</option>
+                    <option value="Depresión">Depresión</option>
+                    <option value="Migraña">Migraña</option>
+                    <option value="Náuseas">Náuseas</option>
+                    <option value="Pérdida de Apetito">Pérdida de Apetito</option>
+                    <option value="Glaucoma">Glaucoma</option>
+                    <option value="Síndrome de Tourette">Síndrome de Tourette</option>
+                    <option value="Autismo">Autismo</option>
+                    <option value="TDAH">TDAH</option>
+                    <option value="PTSD (Trastorno de Estrés Postraumático)">PTSD (Trastorno de Estrés Postraumático)</option>
+                    <option value="Síndrome de Dolor Regional Complejo">Síndrome de Dolor Regional Complejo</option>
+                    <option value="Cáncer (síntomas relacionados)">Cáncer (síntomas relacionados)</option>
+                    <option value="VIH/SIDA (síntomas relacionados)">VIH/SIDA (síntomas relacionados)</option>
+                    <option value="Otros">Otros (personalizado)</option>
+                </select>
+                <i class="fas fa-chevron-down" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); pointer-events: none; color: #9ca3af;"></i>
+            </div>
+        </div>
+        <p style="color: #ef4444; font-size: 0.85rem; margin-bottom: 8px; font-weight: 600;">
+            <i class="fas fa-shield-alt"></i> Nota importante: Estos datos serán confidenciales y encriptados para proteger tu privacidad.
+        </p>
+        <!-- Input para condición personalizada -->
+        <div id="customCondicionContainer" style="display: none; margin-bottom: 12px;">
+            <div class="input-with-icon">
+                <i class="fas fa-edit"></i>
+                <input type="text" 
+                       id="customCondicion" 
+                       placeholder="Describe tu condición personalizada"
+                       style="width: 100%; padding: 12px 12px 12px 40px; border: 2px solid var(--light-gray); border-radius: 8px; font-size: 1rem;">
+            </div>
+            <button type="button" 
+                    id="addCustomCondicionBtn"
+                    class="secondary-button"
+                    style="margin-top: 8px; padding: 8px 16px; font-size: 0.9rem;">
+                <i class="fas fa-plus" style="margin-right: 6px;"></i>Agregar
+            </button>
+        </div>
+        
+        <!-- Contenedor de tags seleccionados -->
+        <div id="condicionesTags" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; min-height: 40px; padding: 12px; background: #f8f9fa; border-radius: 8px; border: 2px dashed var(--light-gray);">
+            <p id="noCondicionesMsg" style="color: var(--medium-gray); font-size: 0.9rem; margin: 0; width: 100%; text-align: center;">
+                No hay condiciones seleccionadas. Selecciona o agrega al menos una.
+            </p>
+        </div>
+        <input type="hidden" id="enfermedadCondicion" name="enfermedadCondicion" required>
+        <p id="condicionError" style="display: none; color: #ef4444; font-size: 0.85rem; margin-top: 8px;">
+            <i class="fas fa-exclamation-circle"></i> Debes seleccionar o agregar al menos una condición médica
+        </p>
+    </div>
+
+    <!-- Información que se obtiene automáticamente (solo lectura) -->
+    <div style="background: #ecfdf5; border: 1px solid #10b981; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+        <h5 style="color: #065f46; margin-bottom: 12px; font-size: 0.95rem;">
+            <i class="fas fa-info-circle"></i> Datos obtenidos de tu información personal:
+        </h5>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; font-size: 0.9rem;">
+            <div>
+                <strong style="color: var(--medium-gray);">Nombre Cedente:</strong>
+                <span id="displayCedenteNombre" style="color: var(--accent-black); display: block; margin-top: 4px;">-</span>
+            </div>
+            <div>
+                <strong style="color: var(--medium-gray);">RUT Cedente:</strong>
+                <span id="displayCedenteRut" style="color: var(--accent-black); display: block; margin-top: 4px;">-</span>
+            </div>
+            <div>
+                <strong style="color: var(--medium-gray);">Fecha Inicio:</strong>
+                <span id="displayFechaInicio" style="color: var(--accent-black); display: block; margin-top: 4px;">-</span>
+            </div>
+            <div>
+                <strong style="color: var(--medium-gray);">Fecha Término:</strong>
+                <span id="displayFechaTermino" style="color: var(--accent-black); display: block; margin-top: 4px;">-</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firma del Cediente -->
+    <div style="margin-bottom: 20px;">
+        <label style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--accent-black);">
+            <i class="fas fa-signature" style="color: var(--primary-green); margin-right: 6px;"></i>
+            Firma del Cediente *
+        </label>
+        <p style="color: var(--medium-gray); font-size: 0.85rem; margin-bottom: 12px;">
+            Firma en el recuadro inferior con tu mouse o dedo
+        </p>
+        <div style="border: 2px solid var(--light-gray); border-radius: 8px; background: white; position: relative;">
+            <canvas id="cedenteSignatureCanvas" 
+                    style="width: 100%; height: 200px; cursor: crosshair; border-radius: 6px;">
+            </canvas>
+            <button type="button" 
+                    id="clearCedenteSignature" 
+                    class="secondary-button"
+                    style="position: absolute; top: 8px; right: 8px; padding: 6px 12px; font-size: 0.85rem;">
+                <i class="fas fa-eraser"></i> Limpiar
+            </button>
+        </div>
+        <p id="cedenteSignatureError" style="display: none; color: #ef4444; font-size: 0.85rem; margin-top: 8px;">
+            <i class="fas fa-exclamation-circle"></i> Debes firmar el documento
+        </p>
+    </div>
+
+    <!-- Botones de acción -->
+    <div style="display: flex; gap: 12px; margin-top: 24px;">
+        <button type="button" 
+                id="generateDocumentBtn" 
+                class="cta-button"
+                style="flex: 1;">
+            <i class="fas fa-file-pdf" style="margin-right: 8px;"></i>
+            Generar Documento
+        </button>
+        <button type="button" 
+                id="previewDocumentBtn" 
+                class="secondary-button"
+                style="flex: 1;">
+            <i class="fas fa-eye" style="margin-right: 8px;"></i>
+            Vista Previa
+        </button>
+    </div>
+
+    <!-- Vista previa del documento (oculta inicialmente) -->
+    <div id="documentPreview" style="display: none; margin-top: 24px; padding: 20px; background: white; border: 2px solid var(--light-gray); border-radius: 8px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h5 style="color: var(--accent-black);">Vista Previa del Documento</h5>
+            <button type="button" 
+                    id="closePreviewBtn" 
+                    class="secondary-button"
+                    style="padding: 6px 12px;">
+                <i class="fas fa-times"></i> Cerrar
+            </button>
+        </div>
+        <div id="previewContent" style="max-height: 600px; overflow-y: auto; padding: 20px; background: #f8f9fa; border-radius: 4px;">
+            <!-- El contenido se generará aquí -->
+        </div>
+    </div>
+</div>
+
+<script>
+// Variables globales
+let cedenteSignaturePad = null;
+let dispensaryData = null;
+
+function normalizeSignatureDataUrl(value) {
+    if (!value) return null;
+    let data = String(value).trim();
+    if (!data) return null;
+
+    const prefixRegex = /^data:image\/[a-zA-Z0-9+\-.]+;base64,/;
+    let prefix = 'data:image/png;base64,';
+    let payload = data;
+
+    const initialMatch = data.match(prefixRegex);
+    if (initialMatch) {
+        prefix = initialMatch[0];
+        payload = data.slice(prefix.length);
+    }
+
+    while (prefixRegex.test(payload)) {
+        const match = payload.match(prefixRegex);
+        if (!match) break;
+        payload = payload.slice(match[0].length);
+    }
+
+    payload = payload.replace(/\s+/g, '');
+    return `${prefix}${payload}`;
+}
+
+// Inicializar el formulario
+async function initPoderCultivoForm() {
+    console.log('🔧 Inicializando formulario de poder cultivo...');
+    
+    // Obtener datos del dispensario (con reintentos y valores por defecto)
+    try {
+        const apiBaseUrl = window.CONFIG?.API_BASE_URL || (window.api?.baseURL || '/api');
+        const response = await fetch(`${apiBaseUrl}/dispensary`);
+        if (response.ok) {
+            const result = await response.json();
+            if (result.success && result.data) {
+                dispensaryData = result.data;
+                if (dispensaryData) {
+                    dispensaryData.signature = normalizeSignatureDataUrl(dispensaryData.signature);
+                }
+                console.log('✅ Datos del dispensario cargados:', {
+                    name: dispensaryData?.name,
+                    rut: dispensaryData?.rut,
+                    has_signature: !!dispensaryData?.signature
+                });
+            } else {
+                console.warn('⚠️ Respuesta del dispensario sin datos, usando valores por defecto');
+                dispensaryData = {
+                    name: 'Apexremedy',
+                    rut: '76.237.243-6',
+                    address: 'Oficina Virtual',
+                    signature: null
+                };
+            }
+        } else {
+            console.warn('⚠️ No se pudo cargar datos del dispensario, usando valores por defecto');
+            dispensaryData = {
+                name: 'Apexremedy',
+                rut: '76.237.243-6',
+                address: 'Oficina Virtual',
+                signature: null
+            };
+        }
+    } catch (error) {
+        console.error('❌ Error cargando datos del dispensario:', error);
+        // Usar valores por defecto si falla
+        dispensaryData = {
+            name: 'Apexremedy',
+            rut: '76.237.243-6',
+            address: 'Oficina Virtual',
+            signature: null
+        };
+    }
+
+    // Inicializar SignaturePad para firma del cedente
+    const canvas = document.getElementById('cedenteSignatureCanvas');
+    if (canvas) {
+        cedenteSignaturePad = new SignaturePad(canvas, {
+            backgroundColor: 'rgb(255, 255, 255)',
+            penColor: 'rgb(0, 0, 0)',
+            minWidth: 2,
+            maxWidth: 4
+        });
+
+        // Ajustar tamaño del canvas
+        function resizeCanvas() {
+            const ratio = Math.max(window.devicePixelRatio || 1, 1);
+            canvas.width = canvas.offsetWidth * ratio;
+            canvas.height = canvas.offsetHeight * ratio;
+            canvas.getContext('2d').scale(ratio, ratio);
+            cedenteSignaturePad.clear();
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        
+        // Hacer SignaturePad accesible globalmente para validación
+        window.cedenteSignaturePad = cedenteSignaturePad;
+        
+        // Escuchar cambios en la firma para ocultar error automáticamente
+        cedenteSignaturePad.addEventListener('endStroke', () => {
+            const errorMsg = document.getElementById('cedenteSignatureError');
+            if (errorMsg && !cedenteSignaturePad.isEmpty()) {
+                errorMsg.style.display = 'none';
+            }
+        });
+        
+        console.log('✅ SignaturePad inicializado para firma del cediente');
+    }
+
+    // Botón limpiar firma
+    const clearBtn = document.getElementById('clearCedenteSignature');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+            if (cedenteSignaturePad) {
+                cedenteSignaturePad.clear();
+            }
+        });
+    }
+
+    // Cargar datos de información personal
+    loadPersonalData();
+
+    // Inicializar sistema de tags de condiciones
+    initCondicionesTags();
+
+    // Event listeners
+    const generateBtn = document.getElementById('generateDocumentBtn');
+    const previewBtn = document.getElementById('previewDocumentBtn');
+    const closePreviewBtn = document.getElementById('closePreviewBtn');
+
+    if (generateBtn) {
+        generateBtn.addEventListener('click', generateDocument);
+    }
+    if (previewBtn) {
+        previewBtn.addEventListener('click', previewDocument);
+    }
+    if (closePreviewBtn) {
+        closePreviewBtn.addEventListener('click', () => {
+            document.getElementById('documentPreview').style.display = 'none';
+        });
+    }
+}
+
+// Cargar datos de información personal del formulario
+function loadPersonalData() {
+    const nameInput = document.getElementById('name');
+    const rutInput = document.getElementById('rut');
+    const fechaInicioInput = document.getElementById('fechaInicio');
+    const fechaTerminoInput = document.getElementById('fechaTermino');
+
+    // Actualizar displays
+    if (nameInput) {
+        document.getElementById('displayCedenteNombre').textContent = nameInput.value || '-';
+    }
+    if (rutInput) {
+        document.getElementById('displayCedenteRut').textContent = rutInput.value || '-';
+    }
+    if (fechaInicioInput) {
+        document.getElementById('displayFechaInicio').textContent = fechaInicioInput.value || '-';
+    }
+    if (fechaTerminoInput) {
+        const termino = fechaTerminoInput.value;
+        const esIndefinido = document.getElementById('esIndefinido')?.checked;
+        document.getElementById('displayFechaTermino').textContent = 
+            esIndefinido ? 'INDEFINIDO / REVOCABLE' : (termino || '-');
+    }
+
+    // Escuchar cambios en tiempo real
+    if (nameInput) {
+        nameInput.addEventListener('input', () => {
+            document.getElementById('displayCedenteNombre').textContent = nameInput.value || '-';
+        });
+    }
+    if (rutInput) {
+        rutInput.addEventListener('input', () => {
+            document.getElementById('displayCedenteRut').textContent = rutInput.value || '-';
+        });
+    }
+    if (fechaInicioInput) {
+        fechaInicioInput.addEventListener('change', () => {
+            document.getElementById('displayFechaInicio').textContent = fechaInicioInput.value || '-';
+        });
+    }
+    if (fechaTerminoInput) {
+        fechaTerminoInput.addEventListener('change', () => {
+            const esIndefinido = document.getElementById('esIndefinido')?.checked;
+            document.getElementById('displayFechaTermino').textContent = 
+                esIndefinido ? 'INDEFINIDO / REVOCABLE' : (fechaTerminoInput.value || '-');
+        });
+    }
+    const esIndefinidoCheck = document.getElementById('esIndefinido');
+    if (esIndefinidoCheck) {
+        esIndefinidoCheck.addEventListener('change', () => {
+            const termino = document.getElementById('fechaTermino')?.value;
+            document.getElementById('displayFechaTermino').textContent = 
+                esIndefinidoCheck.checked ? 'INDEFINIDO / REVOCABLE' : (termino || '-');
+        });
+    }
+}
+
+// Generar documento
+async function generateDocument() {
+    // Validar campos
+    const enfermedad = document.getElementById('enfermedadCondicion').value.trim();
+    const errorMsg = document.getElementById('condicionError');
+    
+    if (!enfermedad || condicionesSeleccionadas.length === 0) {
+        if (errorMsg) errorMsg.style.display = 'block';
+        if (typeof notify !== 'undefined') {
+            notify.error('Debes seleccionar o agregar al menos una enfermedad/condición médica');
+        } else {
+            alert('Debes seleccionar o agregar al menos una enfermedad/condición médica');
+        }
+        document.getElementById('condicionSelector').focus();
+        return;
+    }
+    
+    if (errorMsg) errorMsg.style.display = 'none';
+
+    if (!cedenteSignaturePad || cedenteSignaturePad.isEmpty()) {
+        document.getElementById('cedenteSignatureError').style.display = 'block';
+        if (typeof notify !== 'undefined') {
+            notify.error('Debes firmar el documento');
+        } else {
+            alert('Debes firmar el documento');
+        }
+        return;
+    }
+    document.getElementById('cedenteSignatureError').style.display = 'none';
+
+    // Obtener datos del formulario
+    const personalData = getPersonalData();
+    if (!personalData.nombre || !personalData.rut) {
+        if (typeof notify !== 'undefined') {
+            notify.error('Faltan datos de información personal. Por favor completa el paso 1 del formulario.');
+        } else {
+            alert('Faltan datos de información personal. Por favor completa el paso 1 del formulario.');
+        }
+        return;
+    }
+
+    // Verificar que los datos del dispensario estén cargados
+    if (!dispensaryData) {
+        console.warn('⚠️ Datos del dispensario no cargados, intentando cargar nuevamente...');
+        // Intentar cargar nuevamente
+        const apiBaseUrl = window.CONFIG?.API_BASE_URL || (window.api?.baseURL || '/api');
+        try {
+            const response = await fetch(`${apiBaseUrl}/dispensary`);
+            if (response.ok) {
+                const result = await response.json();
+                if (result.success && result.data) {
+                    dispensaryData = result.data;
+                    if (dispensaryData) {
+                        dispensaryData.signature = normalizeSignatureDataUrl(dispensaryData.signature);
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Error cargando datos del dispensario:', error);
+        }
+        
+        // Si aún no hay datos, usar valores por defecto
+        if (!dispensaryData) {
+            dispensaryData = {
+                name: 'Apexremedy',
+                rut: '76.237.243-6',
+                address: 'Oficina Virtual',
+                signature: null
+            };
+        }
+    }
+
+    // Generar HTML del documento (es async, necesita await)
+    const documentHtml = await generateDocumentHTML(personalData, enfermedad);
+
+    // Verificar que el HTML se generó correctamente
+    if (!documentHtml || typeof documentHtml !== 'string') {
+        console.error('❌ Error: documentHtml no es un string válido:', typeof documentHtml);
+        if (typeof notify !== 'undefined') {
+            notify.error('Error al generar el documento. Por favor, intenta nuevamente.');
+        } else {
+            alert('Error al generar el documento. Por favor, intenta nuevamente.');
+        }
+        return;
+    }
+
+    console.log('✅ HTML generado correctamente, longitud:', documentHtml.length);
+
+    // Convertir a base64
+    const htmlBase64 = btoa(unescape(encodeURIComponent(documentHtml)));
+    
+    console.log('✅ Base64 generado, longitud:', htmlBase64.length);
+    const fileName = `declaracion_cesion_${personalData.rut.replace(/[^0-9kK]/g, '')}_${Date.now()}.html`;
+
+    // Preparar datos de cesión para guardar en BD
+    const cessionData = {
+        cedente_nombre: personalData.nombre,
+        cedente_rut: personalData.rut,
+        cedente_firma: normalizeSignatureDataUrl(personalData.firmaCedente),
+        enfermedad_condicion: enfermedad, // Se encriptará en el backend
+        fecha_inicio: personalData.fechaInicio,
+        fecha_termino: personalData.esIndefinido ? null : personalData.fechaTermino,
+        es_indefinido: personalData.esIndefinido ? 1 : 0,
+        es_revocable: 1,
+        dispensario_nombre: dispensaryData?.name || 'Apexremedy',
+        dispensario_rut: dispensaryData?.rut || '76.237.243-6',
+        dispensario_direccion: dispensaryData?.address || 'Oficina Virtual',
+        dispensario_firma: normalizeSignatureDataUrl(dispensaryData?.signature),
+        fecha_cesion: new Date().toISOString().split('T')[0],
+        template_version: '2025_01',
+        provider_name: dispensaryData?.name || 'Apexremedy',
+        signature_type: 'digital',
+        signature_hash: personalData.firmaCedente ? btoa(personalData.firmaCedente).substring(0, 50) : '',
+        signed_at: new Date().toISOString()
+    };
+
+    // Disparar evento para que registro.html lo capture
+    const event = new CustomEvent('poderCultivoGenerated', {
+        detail: { htmlBase64, fileName, cessionData }
+    });
+    document.dispatchEvent(event);
+
+    if (typeof notify !== 'undefined') {
+        notify.success('Documento de cesión generado correctamente');
+    } else {
+        console.log('✅ Documento de cesión generado correctamente');
+    }
+}
+
+// Vista previa del documento
+async function previewDocument() {
+    const enfermedad = document.getElementById('enfermedadCondicion').value.trim();
+    if (!enfermedad || condicionesSeleccionadas.length === 0) {
+        if (typeof notify !== 'undefined') {
+            notify.error('Debes seleccionar o agregar al menos una enfermedad/condición médica para ver la vista previa');
+        } else {
+            alert('Debes seleccionar o agregar al menos una enfermedad/condición médica para ver la vista previa');
+        }
+        return;
+    }
+
+    const personalData = getPersonalData();
+    if (!personalData.nombre || !personalData.rut) {
+        if (typeof notify !== 'undefined') {
+            notify.error('Faltan datos de información personal');
+        } else {
+            alert('Faltan datos de información personal');
+        }
+        return;
+    }
+
+    try {
+        const documentHtml = await generateDocumentHTML(personalData, enfermedad);
+        
+        // Crear un iframe para mostrar el HTML
+        const previewContent = document.getElementById('previewContent');
+        if (!previewContent) {
+            console.error('No se encontró el elemento previewContent');
+            return;
+        }
+        
+        previewContent.innerHTML = '';
+        
+        const iframe = document.createElement('iframe');
+        iframe.style.width = '100%';
+        iframe.style.minHeight = '600px';
+        iframe.style.border = '1px solid #ddd';
+        iframe.style.borderRadius = '4px';
+        iframe.style.backgroundColor = '#fff';
+        
+        // Escribir el HTML en el iframe usando srcdoc
+        iframe.srcdoc = documentHtml;
+        
+        previewContent.appendChild(iframe);
+        
+        const previewDiv = document.getElementById('documentPreview');
+        if (previewDiv) {
+            previewDiv.style.display = 'block';
+            // Scroll suave al modal
+            setTimeout(() => {
+                previewDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+        }
+    } catch (error) {
+        console.error('Error generando vista previa:', error);
+        if (typeof notify !== 'undefined') {
+            notify.error('Error al generar la vista previa del documento');
+        } else {
+            alert('Error al generar la vista previa del documento');
+        }
+    }
+}
+
+// Obtener datos personales del formulario
+function getPersonalData() {
+    return {
+        nombre: document.getElementById('name')?.value.trim() || '',
+        rut: document.getElementById('rut')?.value.trim() || '',
+        direccion: getFullAddress(),
+        fechaInicio: document.getElementById('fechaInicio')?.value || new Date().toISOString().split('T')[0],
+        fechaTermino: document.getElementById('fechaTermino')?.value || '',
+        esIndefinido: document.getElementById('esIndefinido')?.checked || false,
+        firmaCedente: cedenteSignaturePad ? normalizeSignatureDataUrl(cedenteSignaturePad.toDataURL('image/png')) : null
+    };
+}
+
+// Obtener dirección completa
+function getFullAddress() {
+    const addressLine1 = document.getElementById('addressLine1')?.value.trim() || '';
+    const region = document.getElementById('region')?.options[document.getElementById('region')?.selectedIndex]?.textContent || '';
+    const city = document.getElementById('city')?.options[document.getElementById('city')?.selectedIndex]?.textContent || '';
+    const commune = document.getElementById('commune')?.value || '';
+    
+    const parts = [addressLine1, commune, city, region].filter(p => p);
+    return parts.length > 0 ? parts.join(', ') : 'No especificada';
+}
+
+// Generar HTML del documento usando el template
+async function generateDocumentHTML(personalData, enfermedad) {
+    const normalizedCedenteSignature = normalizeSignatureDataUrl(personalData.firmaCedente);
+    const normalizedDispensarySignature = normalizeSignatureDataUrl(dispensaryData?.signature);
+    // Cargar template
+    let template = '';
+    try {
+        const response = await fetch('./admin/components/declaracion_2025_01.txt');
+        if (response.ok) {
+            template = await response.text();
+        } else {
+            // Template por defecto si no se encuentra
+            template = `Declaración de Autorización de Cultivo y Derecho Exclusivo de Adquisición
+
+Yo, [NOMBRE COMPLETO DEL CEDENTE], cédula de identidad Nº [RUT DEL CEDENTE], domiciliado en [DIRECCIÓN], en adelante el "Cedente", declaro lo siguiente:
+
+1. Finalidad médico-terapéutica
+
+Que soy paciente diagnosticado con [ENFERMEDAD/CONDICIÓN], contando con receta o indicación médica emitida por [NOMBRE DEL MÉDICO], con fecha [FECHA], para uso de cannabis medicinal.
+
+2. Autorización de cultivo
+
+Autorizo a [NOMBRE DEL DISPENSARIO / CESIONARIO], RUT [RUT DISPENSARIO], domiciliado en [DIRECCIÓN], en adelante el "Cesionario", a cultivar plantas de cannabis exclusivamente para la elaboración de productos medicinales destinados a mi tratamiento personal.
+
+3. Derecho exclusivo de adquisición (no comercialización abierta)
+
+El Cedente mantiene la titularidad de los derechos sobre el cultivo producido en su nombre.
+
+El Cesionario/Dispensario solo podrá entregar o vender dichos productos exclusivamente al Cedente, a precio que represente costos de producción, acondicionamiento y gestión, sin fines de lucro comercial libre.
+
+Queda prohibida la venta o entrega a terceros que no cuenten con autorización del Cedente.
+
+4. Naturaleza de la relación
+
+No constituye una cesión comercial de derechos ni transferencia de propiedad definitiva.
+
+El cultivo se realiza bajo un modelo de producción solidaria o dispensación controlada, conforme a la Ley 20.000, su reglamento y normativa vigente de uso medicinal.
+
+El Cesionario no podrá disponer del material vegetal ni de sus derivados para fines recreativos o comerciales fuera de este acuerdo.
+
+5. Vigencia
+
+La presente autorización rige desde el [FECHA INICIO] hasta [FECHA TÉRMINO o INDEFINIDO / REVOCABLE], pudiendo ser revocada por el Cedente con aviso previo por escrito.
+
+Firmas
+Cedente	Cesionario
+`;
+        }
+    } catch (error) {
+        console.error('Error cargando template:', error);
+    }
+
+    // Reemplazar placeholders
+    const fechaActual = new Date().toLocaleDateString('es-CL', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+    });
+    
+    const fechaTerminoTexto = personalData.esIndefinido 
+        ? 'INDEFINIDO / REVOCABLE' 
+        : (personalData.fechaTermino || 'No especificada');
+
+    let html = template
+        .replace(/\[NOMBRE COMPLETO DEL CEDENTE\]/g, personalData.nombre)
+        .replace(/\[RUT DEL CEDENTE\]/g, personalData.rut)
+        .replace(/\[DIRECCIÓN\]/g, personalData.direccion)
+        .replace(/\[ENFERMEDAD\/CONDICIÓN\]/g, enfermedad)
+        .replace(/\[NOMBRE DEL DISPENSARIO \/ CESIONARIO\]/g, dispensaryData?.name || 'Apexremedy')
+        .replace(/\[RUT DISPENSARIO\]/g, dispensaryData?.rut || '76.237.243-6')
+        .replace(/\[FECHA INICIO\]/g, personalData.fechaInicio)
+        .replace(/\[FECHA TÉRMINO o INDEFINIDO \/ REVOCABLE\]/g, fechaTerminoTexto)
+        .replace(/\[FECHA\]/g, fechaActual)
+        .replace(/\[NOMBRE DEL MÉDICO\]/g, 'Médico tratante');
+
+    // Convertir a HTML con formato
+    html = `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Declaración de Cesión de Cultivo</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 40px;
+            line-height: 1.6;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            font-size: 1.5em;
+            margin-bottom: 16px;
+            margin-top: 0;
+            font-weight: bold;
+        }
+        p {
+            margin: 4px 0;
+            text-align: justify;
+        }
+        .section {
+            margin: 8px 0;
+        }
+        .section-title {
+            font-weight: bold;
+            margin-bottom: 4px;
+            margin-top: 8px;
+        }
+        .signatures {
+            margin-top: 36px;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 32px;
+        }
+        .signature-cell {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            min-height: 240px;
+        }
+        .signature-footer {
+            width: 100%;
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px solid #333;
+            font-size: 0.95em;
+            line-height: 1.4;
+            text-align: center;
+        }
+        .signature-footer strong {
+            display: block;
+            margin-bottom: 4px;
+        }
+        .signature-image {
+            margin-top: 12px;
+            max-width: 280px;
+            max-height: 180px;
+            height: 180px;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+    <h1>${html.split('\n')[0]}</h1>
+    <div class="content">
+        ${html.split('\n').slice(1).map(line => {
+            if (line.trim() === '') return '<br>';
+            if (/^\d+\./.test(line.trim())) {
+                return `<div class="section"><div class="section-title">${line}</div></div>`;
+            }
+            return `<p>${line}</p>`;
+        }).join('')}
+    </div>
+    <div class="signatures">
+        <div class="signature-cell">
+            ${normalizedCedenteSignature ? `<img src="${normalizedCedenteSignature}" class="signature-image" alt="Firma Cedente">` : ''}
+            <div class="signature-footer">
+                <strong>Cedente</strong>
+                ${personalData.nombre}<br>
+                RUT: ${personalData.rut}<br>
+                Fecha: ${fechaActual}
+            </div>
+        </div>
+        <div class="signature-cell">
+            ${normalizedDispensarySignature ? 
+                `<img src="${normalizedDispensarySignature}" class="signature-image" alt="Firma Cesionario">` : 
+                `<div class="signature-placeholder" style="min-height: 180px; display: flex; align-items: center; justify-content: center; color: #999; font-style: italic; border: 1px dashed #ccc; border-radius: 4px; margin: 12px 0;">
+                    Firma del Cesionario<br>
+                    <small style="font-size: 0.8em;">(Pendiente de firma)</small>
+                </div>`
+            }
+            <div class="signature-footer">
+                <strong>Cesionario</strong>
+                ${dispensaryData?.name || 'Apexremedy'}<br>
+                RUT: ${dispensaryData?.rut || '76.237.243-6'}<br>
+                Fecha: ${fechaActual}
+            </div>
+        </div>
+    </div>
+</body>
+</html>`;
+
+    return html;
+}
+
+// Sistema de tags para condiciones médicas
+let condicionesSeleccionadas = [];
+
+function initCondicionesTags() {
+    const selector = document.getElementById('condicionSelector');
+    const customContainer = document.getElementById('customCondicionContainer');
+    const addCustomBtn = document.getElementById('addCustomCondicionBtn');
+    const customInput = document.getElementById('customCondicion');
+    
+    if (selector) {
+        selector.addEventListener('change', function() {
+            const value = this.value.trim();
+            if (value && value !== '') {
+                if (value === 'Otros') {
+                    customContainer.style.display = 'block';
+                    customInput.focus();
+                } else {
+                    addCondicion(value);
+                    this.value = '';
+                    customContainer.style.display = 'none';
+                    customInput.value = '';
+                }
+            }
+        });
+    }
+    
+    if (addCustomBtn && customInput) {
+        addCustomBtn.addEventListener('click', function() {
+            const customValue = customInput.value.trim();
+            if (customValue && customValue !== '') {
+                addCondicion(customValue);
+                customInput.value = '';
+                customContainer.style.display = 'none';
+                selector.value = '';
+            }
+        });
+        
+        customInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addCustomBtn.click();
+            }
+        });
+    }
+}
+
+function addCondicion(condicion) {
+    if (!condicionesSeleccionadas.includes(condicion)) {
+        condicionesSeleccionadas.push(condicion);
+        updateCondicionesTags();
+        updateCondicionesInput();
+    }
+}
+
+function removeCondicion(condicion) {
+    condicionesSeleccionadas = condicionesSeleccionadas.filter(c => c !== condicion);
+    updateCondicionesTags();
+    updateCondicionesInput();
+}
+
+function updateCondicionesTags() {
+    const container = document.getElementById('condicionesTags');
+    const noMsg = document.getElementById('noCondicionesMsg');
+    const errorMsg = document.getElementById('condicionError');
+    
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    if (condicionesSeleccionadas.length === 0) {
+        if (noMsg) {
+            container.appendChild(noMsg);
+        } else {
+            const msg = document.createElement('p');
+            msg.id = 'noCondicionesMsg';
+            msg.style.cssText = 'color: var(--medium-gray); font-size: 0.9rem; margin: 0; width: 100%; text-align: center;';
+            msg.textContent = 'No hay condiciones seleccionadas. Selecciona o agrega al menos una.';
+            container.appendChild(msg);
+        }
+        if (errorMsg) errorMsg.style.display = 'none';
+    } else {
+        condicionesSeleccionadas.forEach(condicion => {
+            const tag = document.createElement('div');
+            tag.style.cssText = 'display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--primary-green); color: white; border-radius: 20px; font-size: 0.9rem; font-weight: 500;';
+            tag.innerHTML = `
+                <span>${condicion}</span>
+                <button type="button" 
+                        onclick="removeCondicionTag('${condicion.replace(/'/g, "\\'")}')"
+                        style="background: rgba(255,255,255,0.3); border: none; border-radius: 50%; width: 20px; height: 20px; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; padding: 0;">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            container.appendChild(tag);
+        });
+        if (errorMsg) errorMsg.style.display = 'none';
+    }
+}
+
+function removeCondicionTag(condicion) {
+    removeCondicion(condicion);
+}
+
+function updateCondicionesInput() {
+    const input = document.getElementById('enfermedadCondicion');
+    if (input) {
+        input.value = condicionesSeleccionadas.join(', ');
+    }
+}
+
+// Hacer funciones globales
+window.initPoderCultivoForm = initPoderCultivoForm;
+window.removeCondicionTag = removeCondicionTag;

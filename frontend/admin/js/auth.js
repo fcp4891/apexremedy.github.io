@@ -1,45 +1,132 @@
-// frontend/js/auth.js
-// Gestor de autenticación del frontend
+// frontend/admin/js/auth.js
+// Gestor de autenticación del frontend ADMIN
+
+// Log inmediato para verificar que el script se carga
+try {
+    console.log('📦 [ADMIN AUTH] Script auth.js cargado');
+    console.log('📦 [ADMIN AUTH] Timestamp:', new Date().toISOString());
+    console.log('📦 [ADMIN AUTH] URL actual:', window.location.href);
+} catch (e) {
+    console.error('❌ [ADMIN AUTH] Error en log inicial:', e);
+}
 
 // Prevenir doble declaración
 if (typeof AuthManager === 'undefined') {
+    console.log('📦 [ADMIN AUTH] Creando clase AuthManager...');
     class AuthManager {
         constructor() {
             this.currentUser = null;
-            this.token = null;
-            this.loadFromStorage();
+            this.sessionToken = null;
+            this.sessionReady = false;
+            this.bootstrapPromise = this.bootstrap();
         }
 
-        // Cargar datos de localStorage
-        loadFromStorage() {
-            const token = localStorage.getItem('authToken');
-            const user = localStorage.getItem('currentUser');
+        async bootstrap() {
+            console.log('🚀 [auth.js] Iniciando bootstrap...');
             
-            if (token && user) {
-                this.token = token;
-                try {
-                    this.currentUser = JSON.parse(user);
-                } catch (e) {
-                    console.error('Error al parsear usuario:', e);
-                    this.clearStorage();
+            // Si no hay API configurada, no hay sesión
+            if (!api || typeof api.getProfile !== 'function' || !api.baseURL) {
+                console.log('⚠️ [auth.js] No hay API configurada');
+                this.sessionReady = true;
+                this.currentUser = null;
+                this.clearSession();
+                return;
+            }
+
+            try {
+                // NOTA: No podemos verificar cookies httpOnly desde JavaScript
+                // Las cookies access_token y refresh_token son httpOnly y no son visibles en document.cookie
+                // Simplemente intentamos obtener el perfil - si las cookies están presentes,
+                // el navegador las enviará automáticamente. Si no, el servidor responderá con 401.
+                console.log('📡 [auth.js] Verificando sesión con el servidor...');
+                console.log('ℹ️ [auth.js] Las cookies httpOnly se envían automáticamente si están presentes');
+                
+                // Intentar obtener perfil del servidor
+                const response = await api.getProfile();
+                console.log('📥 [auth.js] Respuesta del servidor:', response?.success ? '✅ Éxito' : '❌ Fallo');
+                
+                // Validar respuesta estrictamente
+                if (response && response.success && response.data?.user) {
+                    const user = response.data.user;
+                    console.log('👤 [auth.js] Usuario recibido:', user.email, 'Rol:', user.role);
+                    
+                    // Validar que el usuario tenga datos mínimos requeridos
+                    if (user.id && user.email) {
+                        this.currentUser = user;
+                        console.log('✅ [auth.js] Usuario establecido correctamente');
+                    } else {
+                        // Datos incompletos, limpiar sesión
+                        console.log('❌ [auth.js] Usuario sin datos completos (id o email faltante)');
+                        this.currentUser = null;
+                        this.clearSession();
+                    }
+                } else {
+                    // Respuesta inválida, limpiar sesión
+                    console.log('❌ [auth.js] Respuesta inválida del servidor');
+                    this.currentUser = null;
+                    this.clearSession();
                 }
+            } catch (error) {
+                // Cualquier error (401, 403, network, etc.) = no hay sesión válida
+                console.log('❌ [auth.js] Error al verificar sesión:', error.message);
+                this.currentUser = null;
+                this.clearSession();
+            } finally {
+                this.sessionReady = true;
+                this.updateUI();
+                console.log('✅ [auth.js] Bootstrap completado. Sesión lista:', this.sessionReady, 'Usuario:', this.currentUser ? this.currentUser.email : 'null');
             }
         }
 
-        // Guardar en localStorage
-        saveToStorage() {
-            if (this.token && this.currentUser) {
-                localStorage.setItem('authToken', this.token);
-                localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+        // Verificar si hay cookies de autenticación
+        hasAuthCookie() {
+            if (typeof document === 'undefined') {
+                return false;
             }
+            
+            const cookies = document.cookie ? document.cookie.split('; ') : [];
+            const hasAccessToken = cookies.some(cookie => cookie.startsWith('access_token='));
+            const hasRefreshToken = cookies.some(cookie => cookie.startsWith('refresh_token='));
+            
+            return hasAccessToken || hasRefreshToken;
         }
 
-        // Limpiar localStorage
-        clearStorage() {
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('currentUser');
-            this.token = null;
+        clearSession() {
             this.currentUser = null;
+            this.sessionToken = null;
+            this.sessionReady = true;
+            
+            // Limpiar cookies de autenticación del lado del cliente
+            this.clearAuthCookies();
+        }
+
+        // Limpiar cookies de autenticación manualmente
+        clearAuthCookies() {
+            if (typeof document === 'undefined') {
+                return;
+            }
+
+            // Lista de cookies a limpiar
+            const cookiesToClear = [
+                'access_token',
+                'refresh_token',
+                'csrf_token'
+            ];
+
+            // Limpiar cada cookie con diferentes configuraciones de path
+            cookiesToClear.forEach(cookieName => {
+                // Limpiar con path raíz
+                document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+                // Limpiar con path /api/auth (para refresh_token)
+                document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/api/auth;`;
+                // Limpiar con path actual
+                const currentPath = window.location.pathname;
+                const pathParts = currentPath.split('/').filter(p => p);
+                for (let i = pathParts.length; i >= 0; i--) {
+                    const path = '/' + pathParts.slice(0, i).join('/');
+                    document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${path};`;
+                }
+            });
         }
 
         // Registrar nuevo usuario
@@ -74,12 +161,11 @@ if (typeof AuthManager === 'undefined') {
                 const response = await api.login({ email, password });
                 
                 if (response.success) {
-                    const { token, user } = response.data;
+                    const { token = null, user } = response.data;
                     
-                    // Guardar token y usuario
-                    this.token = token;
+                    this.sessionToken = token;
                     this.currentUser = user;
-                    this.saveToStorage();
+                    this.sessionReady = true;
                     
                     window.dispatchEvent(new Event('userLoggedIn'));
         
@@ -96,17 +182,38 @@ if (typeof AuthManager === 'undefined') {
                     
                     if (redirect) {
                         console.log('🔄 Redirigiendo a:', redirect);
-                        const redirectPath = redirect.startsWith('/') ? redirect :
-                                             redirect.startsWith('./') ? redirect :
-                                             `./${redirect}`;
-                        window.location.href = redirectPath;
-                      } else if (user.role === 'admin') {
+                        // Manejar redirect con diferentes formatos
+                        let redirectPath;
+                        let processedRedirect = redirect; // Crear nueva variable para modificar
+                        
+                        if (redirect.startsWith('/')) {
+                            // Ruta absoluta: /admin/perfil o /admin/perfil.html
+                            // Agregar .html si no tiene extensión
+                            if (!processedRedirect.includes('.html') && !processedRedirect.includes('.php') && !processedRedirect.endsWith('/')) {
+                                processedRedirect = processedRedirect + '.html';
+                            }
+                            // Convertir a relativa para desarrollo local
+                            redirectPath = processedRedirect.startsWith('/admin/') ? '.' + processedRedirect : './admin' + processedRedirect;
+                        } else if (redirect.startsWith('./')) {
+                            // Ya es relativa con ./
+                            redirectPath = redirect;
+                        } else {
+                            // Ruta relativa sin ./: admin/perfil o admin/perfil.html
+                            // Agregar .html si no tiene extensión y no termina en /
+                            if (!processedRedirect.includes('.html') && !processedRedirect.includes('.php') && !processedRedirect.endsWith('/')) {
+                                processedRedirect = processedRedirect + '.html';
+                            }
+                            redirectPath = `./${processedRedirect}`;
+                        }
+                        console.log('🔄 Redirigiendo a:', redirectPath);
+                        window.location.replace(redirectPath);
+                    } else if (user.role === 'admin') {
                         console.log('👨‍💼 Usuario admin detectado, redirigiendo a perfil admin');
-                        window.location.href = '/admin/perfil.html';
-                      } else {
+                        window.location.replace('./admin/perfil.html'); 
+                    } else {
                         console.log('👤 Usuario cliente detectado, redirigiendo a perfil cliente');
-                        window.location.href = '/perfil.html';
-                      }
+                        window.location.replace('./perfil.html');
+                    }
                     
                     return { success: true, user };
                 } else {
@@ -149,47 +256,93 @@ if (typeof AuthManager === 'undefined') {
             }
         }
 
-        // Cerrar sesión - MEJORADO
-        logout() {
-            console.log('👋 Cerrando sesión...');
+        // Cerrar sesión - MEJORADO Y SEGURO
+        async logout() {
+            console.log('👋 Iniciando proceso de cierre de sesión...');
             
+            // Guardar información antes de limpiar
             const wasAdmin = this.currentUser?.role === 'admin';
+            const currentPath = window.location.pathname;
             
-            // ✅ AGREGAR: Disparar evento para limpiar carrito
+            // ✅ Disparar evento para limpiar carrito y otros datos
             window.dispatchEvent(new Event('userLoggedOut'));
             
-            // Limpiar datos
-            this.clearStorage();
+            // Limpiar datos locales primero
+            this.clearSession();
             
-            // Llamar a API logout si existe
+            // Llamar a API logout si existe (pero no esperar si falla)
             if (typeof api !== 'undefined' && api.logout) {
-                api.logout();
+                try {
+                    await Promise.race([
+                        api.logout(),
+                        new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 2000))
+                    ]);
+                } catch (error) {
+                    // No importa si falla, ya limpiamos localmente
+                    console.log('⚠️ Error al cerrar sesión en backend (continuando de todas formas):', error.message);
+                }
             }
+            
+            // Asegurar que las cookies estén limpiadas
+            this.clearAuthCookies();
             
             // Actualizar UI
             this.updateUI();
             
-            // Redirigir según tipo de usuario
+            // Función helper para construir rutas con basePath
+            const getFullPath = (path) => {
+                if (path.startsWith('http') || path.startsWith('//')) return path;
+                if (typeof window.BASE_PATH !== 'undefined' && window.BASE_PATH) {
+                    const cleanPath = path.startsWith('/') ? path.substring(1) : 
+                                     path.startsWith('../') ? path.substring(3) : 
+                                     path.startsWith('./') ? path.substring(2) : path;
+                    return window.BASE_PATH + cleanPath;
+                }
+                return path;
+            };
+            
+            // Pequeño delay para asegurar que todo se limpió
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            // Redirigir según tipo de usuario y ubicación actual
+            // SIEMPRE redirigir a login o index, NUNCA a perfil
             if (wasAdmin) {
-                console.log('🔄 Redirigiendo admin a login');
-                if (window.location.pathname.includes('admin')) {
-                    window.location.href = '../login.html';
-                } else {
-                    window.location.href = './login.html';
-                }
+                // Admin siempre va a login
+                const loginPath = currentPath.includes('admin') 
+                    ? getFullPath('../login.html') 
+                    : getFullPath('./login.html');
+                console.log('🔄 Redirigiendo admin a login:', loginPath);
+                window.location.href = loginPath;
             } else {
-                console.log('🔄 Redirigiendo cliente a home');
-                if (window.location.pathname.includes('admin')) {
-                    window.location.href = '../index.html';
-                } else {
-                    window.location.href = './index.html';
-                }
+                // Cliente siempre va a index (nunca a perfil)
+                const indexPath = currentPath.includes('admin') 
+                    ? getFullPath('../index.html') 
+                    : getFullPath('./index.html');
+                console.log('🔄 Redirigiendo cliente a index:', indexPath);
+                window.location.href = indexPath;
             }
         }
 
-        // Verificar si está autenticado
+        // Verificar si está autenticado - MEJORADO: Más logging
         isAuthenticated() {
-            return this.token !== null && this.currentUser !== null;
+            const hasUser = !!this.currentUser;
+            const hasValidData = hasUser && this.currentUser.id && this.currentUser.email;
+            
+            if (!hasUser) {
+                console.log('🔒 isAuthenticated: No hay currentUser');
+                return false;
+            }
+            if (!hasValidData) {
+                console.log('🔒 isAuthenticated: Usuario sin datos válidos (id o email faltante)');
+                return false;
+            }
+            
+            console.log('✅ isAuthenticated: Usuario válido', {
+                id: this.currentUser.id,
+                email: this.currentUser.email,
+                role: this.currentUser.role
+            });
+            return true;
         }
 
         // Verificar si es admin
@@ -204,7 +357,7 @@ if (typeof AuthManager === 'undefined') {
 
         // Obtener token
         getToken() {
-            return this.token;
+            return this.sessionToken;
         }
 
         // Actualizar perfil
@@ -215,7 +368,6 @@ if (typeof AuthManager === 'undefined') {
                 
                 if (response.success) {
                     this.currentUser = response.data.user;
-                    this.saveToStorage();
                     this.updateUI();
                     console.log('✅ Perfil actualizado');
                     return { success: true, user: this.currentUser };
@@ -231,29 +383,24 @@ if (typeof AuthManager === 'undefined') {
 
         // Verificar token válido con el servidor
         async verifyToken() {
-            if (!this.token) {
-                return false;
+            if (!api || typeof api.getMe !== 'function' || !api.baseURL) {
+                return !!this.sessionToken;
             }
-            
+
             try {
                 const response = await api.getMe();
                 if (response.success) {
                     this.currentUser = response.data.user;
-                    this.saveToStorage();
+                    this.sessionReady = true;
+                    this.updateUI();
                     return true;
                 }
                 console.warn('Token podría ser inválido, respuesta no exitosa');
                 return false;
             } catch (error) {
-                // Solo hacer logout si es específicamente un error de token inválido
-                if (error.message.includes('Token') || 
-                    error.message.includes('Usuario no encontrado') || 
-                    error.message.includes('Unauthorized')) {
-                    console.warn('Token inválido o expirado:', error.message);
-                    this.logout();
-                } else {
-                    console.warn('Error de conexión al verificar token:', error.message);
-                }
+                console.warn('Error al verificar sesión:', error.message);
+                this.clearSession();
+                this.updateUI();
                 return false;
             }
         }
@@ -301,6 +448,15 @@ if (typeof AuthManager === 'undefined') {
         // Requerir autenticación (para páginas protegidas) - MEJORADO
         requireAuth(redirectPath = 'login.html') {
             console.log('🔒 Verificando autenticación...');
+
+            if (!this.sessionReady) {
+                if (this.bootstrapPromise) {
+                    this.bootstrapPromise.finally(() => {
+                        this.requireAuth(redirectPath);
+                    });
+                }
+                return true;
+            }
             
             if (!this.isAuthenticated()) {
                 console.log('❌ No autenticado');
@@ -323,6 +479,15 @@ if (typeof AuthManager === 'undefined') {
 
         // Requerir rol admin (para páginas admin) - MEJORADO
         requireAdmin() {
+            if (!this.sessionReady) {
+                if (this.bootstrapPromise) {
+                    this.bootstrapPromise.finally(() => {
+                        this.requireAdmin();
+                    });
+                }
+                return true;
+            }
+
             if (!this.isAuthenticated()) {
               notify.warning('Debes iniciar sesión para acceder al panel admin');
               window.location.href = '../login.html?redirect=admin';
@@ -339,8 +504,13 @@ if (typeof AuthManager === 'undefined') {
     }
 
     // Crear instancia global solo si no existe
+    console.log('📦 [ADMIN AUTH] Verificando si authManager existe...', typeof authManager);
     if (typeof authManager === 'undefined') {
+        console.log('📦 [ADMIN AUTH] Creando instancia de AuthManager...');
         window.authManager = new AuthManager();
+        console.log('✅ [ADMIN AUTH] Instancia creada:', window.authManager);
+    } else {
+        console.log('⚠️ [ADMIN AUTH] authManager ya existe, usando existente');
     }
 
     // Inicializar UI cuando el DOM esté listo
@@ -351,7 +521,9 @@ if (typeof AuthManager === 'undefined') {
     }
 
     function initAuth() {
+        console.log('🚀 [ADMIN AUTH] initAuth() ejecutado');
         if (window.authManager) {
+            console.log('✅ [ADMIN AUTH] authManager disponible, actualizando UI...');
             window.authManager.updateUI();
             
             // Configurar botón de logout si existe

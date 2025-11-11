@@ -21,8 +21,170 @@ router.get('/', authenticateToken, requireAdmin, async (req, res) => {
         
         const users = await userModel.getAll(filters);
         
+        // Verificar aprobaciones forzadas
+        const db = require('../database/db').getInstance();
+        let forcedApprovalsMap = {};
+        try {
+            const forcedApprovals = await db.all(
+                'SELECT DISTINCT user_id FROM user_forced_approvals'
+            );
+            forcedApprovals.forEach(fa => {
+                forcedApprovalsMap[fa.user_id] = true;
+            });
+        } catch (error) {
+            // Si la tabla no existe, intentar crearla
+            if (error.code === 'SQLITE_ERROR' && 
+                (error.message.includes('user_forced_approvals') || 
+                 error.message.includes('no such table'))) {
+                try {
+                    await db.run(`
+                        CREATE TABLE IF NOT EXISTS user_forced_approvals (
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            user_id INTEGER NOT NULL,
+                            admin_id INTEGER NOT NULL,
+                            admin_notes TEXT NOT NULL,
+                            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                            FOREIGN KEY (admin_id) REFERENCES users(id)
+                        )
+                    `);
+                    await db.run(`
+                        CREATE INDEX IF NOT EXISTS idx_user_forced_approvals_user_id 
+                        ON user_forced_approvals(user_id)
+                    `);
+                    // Intentar de nuevo después de crear la tabla
+                    const forcedApprovals = await db.all(
+                        'SELECT DISTINCT user_id FROM user_forced_approvals'
+                    );
+                    forcedApprovals.forEach(fa => {
+                        forcedApprovalsMap[fa.user_id] = true;
+                    });
+                } catch (createError) {
+                    // Si falla la creación, continuar sin el flag
+                    console.warn('⚠️ No se pudo crear user_forced_approvals:', createError.message);
+                }
+            } else {
+                // Si es otro error, mostrar warning
+                console.warn('⚠️ No se pudo verificar aprobaciones forzadas:', error.message);
+            }
+        }
+        
+        // Obtener documentos de todos los usuarios clientes para verificar si tienen documentos requeridos
+        const userDocumentsMap = {};
+        try {
+            // Verificar si la tabla existe antes de consultar
+            const tableCheck = await db.all(
+                "SELECT name FROM sqlite_master WHERE type='table' AND name='user_documents'"
+            );
+            
+            if (tableCheck.length > 0) {
+                const allDocuments = await db.all(
+                    'SELECT user_id, document_type FROM user_documents'
+                );
+                allDocuments.forEach(doc => {
+                    if (!userDocumentsMap[doc.user_id]) {
+                        userDocumentsMap[doc.user_id] = [];
+                    }
+                    userDocumentsMap[doc.user_id].push(doc.document_type);
+                });
+            } else {
+                // Si la tabla no existe, crearla
+                await db.run(`
+                    CREATE TABLE IF NOT EXISTS user_documents (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        user_id INTEGER NOT NULL,
+                        document_type TEXT NOT NULL,
+                        file_name TEXT NOT NULL,
+                        file_data TEXT NOT NULL,
+                        file_size INTEGER,
+                        mime_type TEXT,
+                        uploaded_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+                    )
+                `);
+                await db.run(`
+                    CREATE INDEX IF NOT EXISTS idx_user_documents_user_id 
+                    ON user_documents(user_id)
+                `);
+                console.log('✅ Tabla user_documents creada automáticamente');
+            }
+        } catch (error) {
+            // Si hay error, intentar crear la tabla
+            if (error.message && error.message.includes('no such table')) {
+                try {
+                    await db.run(`
+                        CREATE TABLE IF NOT EXISTS user_documents (
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            user_id INTEGER NOT NULL,
+                            document_type TEXT NOT NULL,
+                            file_name TEXT NOT NULL,
+                            file_data TEXT NOT NULL,
+                            file_size INTEGER,
+                            mime_type TEXT,
+                            uploaded_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+                        )
+                    `);
+                    await db.run(`
+                        CREATE INDEX IF NOT EXISTS idx_user_documents_user_id 
+                        ON user_documents(user_id)
+                    `);
+                    console.log('✅ Tabla user_documents creada automáticamente después de error');
+                } catch (createError) {
+                    console.warn('⚠️ No se pudieron verificar documentos:', createError.message);
+                }
+            } else {
+                console.warn('⚠️ No se pudieron verificar documentos:', error.message);
+            }
+        }
+        
+        // Primero, identificar y crear registros de aprobación forzada para clientes aprobados sin documentos
+        for (const user of users) {
+            const isCustomer = user.role === 'customer';
+            const isApproved = user.is_verified === 1 || user.is_verified === '1';
+            const isForced = forcedApprovalsMap[user.id];
+            
+            if (isCustomer && isApproved && !isForced) {
+                const requiredDocuments = ['receta_medica', 'carnet_identidad', 'certificado_antecedentes', 'poder_cultivo'];
+                const userDocuments = userDocumentsMap[user.id] || [];
+                const hasAllRequiredDocuments = requiredDocuments.every(docType => 
+                    userDocuments.includes(docType)
+                );
+                
+                if (!hasAllRequiredDocuments) {
+                    // Crear registro en user_forced_approvals si no existe
+                    try {
+                        const existingForcedApproval = await db.all(
+                            'SELECT * FROM user_forced_approvals WHERE user_id = ? LIMIT 1',
+                            [user.id]
+                        );
+                        
+                        if (existingForcedApproval.length === 0) {
+                            // Crear registro automático de aprobación forzada
+                            const adminId = req.user?.id || 1; // Usar el admin actual o 1 por defecto
+                            await db.run(`
+                                INSERT INTO user_forced_approvals 
+                                (user_id, admin_id, admin_notes, created_at)
+                                VALUES (?, ?, ?, datetime('now'))
+                            `, [
+                                user.id, 
+                                adminId, 
+                                'Aprobación automática detectada: Usuario cliente aprobado sin documentos requeridos completos'
+                            ]);
+                            console.log(`✅ Registro de aprobación forzada creado automáticamente para usuario ${user.id}`);
+                            // Actualizar el mapa
+                            forcedApprovalsMap[user.id] = true;
+                        }
+                    } catch (error) {
+                        // Si falla, continuar sin crear el registro
+                        console.warn(`⚠️ No se pudo crear registro de aprobación forzada para usuario ${user.id}:`, error.message);
+                    }
+                }
+            }
+        }
+        
         // No enviar passwords y agregar campos calculados
-        const sanitizedUsers = users.map(user => {
+        const sanitizedUsers = await Promise.all(users.map(async (user) => {
             const { password_hash, verification_token, reset_token, reset_token_expires, ...userData } = user;
             
             // Agregar campo 'name' combinado
@@ -34,8 +196,15 @@ router.get('/', authenticateToken, requireAdmin, async (req, res) => {
                 userData.name = userData.email || 'Usuario sin nombre';
             }
             
+            // Verificar aprobación forzada (actualizado después de crear registros automáticos)
+            const isForced = forcedApprovalsMap[userData.id];
+            
             // Agregar campo 'account_status' calculado
-            if (userData.is_verified === 1 || userData.is_verified === '1') {
+            if (isForced && (userData.is_verified === 1 || userData.is_verified === '1')) {
+                userData.account_status = 'forced_approved';
+                userData.is_forced_approval = true;
+                userData.forced_approval = true;
+            } else if (userData.is_verified === 1 || userData.is_verified === '1') {
                 userData.account_status = 'approved';
             } else if (userData.is_active === 0 || userData.is_active === '0') {
                 userData.account_status = 'rejected';
@@ -44,7 +213,7 @@ router.get('/', authenticateToken, requireAdmin, async (req, res) => {
             }
             
             return userData;
-        });
+        }));
         
         res.json({
             success: true,
@@ -71,7 +240,11 @@ router.post('/:id/approve', authenticateToken, requireAdmin, async (req, res) =>
     try {
         console.log('🔍 POST /users/:id/approve llamado');
         const userId = parseInt(req.params.id);
+        const { admin_notes, is_forced } = req.body;
+        const adminId = req.user.id; // ID del admin que aprueba
+        
         console.log('👤 Aprobando usuario ID:', userId);
+        console.log('📝 Datos de aprobación:', { admin_notes, is_forced, adminId });
         
         const user = await userModel.findById(userId);
         
@@ -79,6 +252,14 @@ router.post('/:id/approve', authenticateToken, requireAdmin, async (req, res) =>
             return res.status(404).json({
                 success: false,
                 message: 'Usuario no encontrado'
+            });
+        }
+        
+        // Validar que si es forzada, tenga notas
+        if (is_forced && (!admin_notes || admin_notes.trim() === '')) {
+            return res.status(400).json({
+                success: false,
+                message: 'Las notas son obligatorias para aprobaciones forzadas'
             });
         }
         
@@ -95,6 +276,48 @@ router.post('/:id/approve', authenticateToken, requireAdmin, async (req, res) =>
             is_verified: 1
         });
         
+        // Guardar información de aprobación forzada si aplica
+        if (is_forced && admin_notes) {
+            const db = require('../database/db').getInstance();
+            try {
+                // Intentar guardar en tabla de aprobaciones forzadas
+                await db.run(`
+                    INSERT INTO user_forced_approvals 
+                    (user_id, admin_id, admin_notes, created_at)
+                    VALUES (?, ?, ?, datetime('now'))
+                `, [userId, adminId, admin_notes.trim()]);
+                console.log('✅ Nota de aprobación forzada guardada');
+            } catch (approvalError) {
+                // Si la tabla no existe, crear un registro en una tabla de notas
+                if (approvalError.message && approvalError.message.includes('no such table')) {
+                    console.warn('⚠️ Tabla user_forced_approvals no existe, creando...');
+                    try {
+                        await db.run(`
+                            CREATE TABLE IF NOT EXISTS user_forced_approvals (
+                                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                user_id INTEGER NOT NULL,
+                                admin_id INTEGER NOT NULL,
+                                admin_notes TEXT NOT NULL,
+                                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                                FOREIGN KEY (admin_id) REFERENCES users(id)
+                            )
+                        `);
+                        await db.run(`
+                            INSERT INTO user_forced_approvals 
+                            (user_id, admin_id, admin_notes, created_at)
+                            VALUES (?, ?, ?, datetime('now'))
+                        `, [userId, adminId, admin_notes.trim()]);
+                        console.log('✅ Tabla y nota de aprobación forzada creadas');
+                    } catch (createError) {
+                        console.warn('⚠️ No se pudo guardar nota de aprobación forzada:', createError.message);
+                    }
+                } else {
+                    console.warn('⚠️ Error al guardar nota de aprobación:', approvalError.message);
+                }
+            }
+        }
+        
         console.log('✅ Usuario actualizado en BD');
         
         const updatedUser = await userModel.findByIdWithMedicalInfo(userId);
@@ -109,19 +332,83 @@ router.post('/:id/approve', authenticateToken, requireAdmin, async (req, res) =>
         }
         
         // Agregar campo 'account_status' calculado
-        updatedUser.account_status = 'approved';
+        // Si es aprobación forzada, usar estado específico
+        if (is_forced) {
+            updatedUser.account_status = 'forced_approved';
+            updatedUser.is_forced_approval = true;
+            updatedUser.forced_approval = true;
+        } else {
+            updatedUser.account_status = 'approved';
+            // Verificar si tiene aprobación forzada previa
+            try {
+                const forcedApproval = await db.all(
+                    'SELECT * FROM user_forced_approvals WHERE user_id = ? LIMIT 1',
+                    [userId]
+                );
+                if (forcedApproval.length > 0) {
+                    updatedUser.account_status = 'forced_approved';
+                    updatedUser.is_forced_approval = true;
+                    updatedUser.forced_approval = true;
+                }
+            } catch (error) {
+                // Si la tabla no existe, intentar crearla
+                if (error.code === 'SQLITE_ERROR' && 
+                    (error.message.includes('user_forced_approvals') || 
+                     error.message.includes('no such table'))) {
+                    try {
+                        await db.run(`
+                            CREATE TABLE IF NOT EXISTS user_forced_approvals (
+                                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                user_id INTEGER NOT NULL,
+                                admin_id INTEGER NOT NULL,
+                                admin_notes TEXT NOT NULL,
+                                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                                FOREIGN KEY (admin_id) REFERENCES users(id)
+                            )
+                        `);
+                        await db.run(`
+                            CREATE INDEX IF NOT EXISTS idx_user_forced_approvals_user_id 
+                            ON user_forced_approvals(user_id)
+                        `);
+                        // Intentar de nuevo - usar la variable correcta según el contexto
+                        const forcedApproval = await db.all(
+                            'SELECT * FROM user_forced_approvals WHERE user_id = ? LIMIT 1',
+                            [userId]
+                        );
+                        if (forcedApproval.length > 0) {
+                            // Determinar qué variable usar según el contexto
+                            if (typeof updatedUser !== 'undefined') {
+                                updatedUser.is_forced_approval = true;
+                                updatedUser.forced_approval = true;
+                            } else if (typeof user !== 'undefined') {
+                                user.is_forced_approval = true;
+                                user.forced_approval = true;
+                            }
+                        }
+                    } catch (createError) {
+                        // Si falla, continuar sin el flag
+                    }
+                }
+            }
+        }
         
         console.log('📤 Usuario actualizado:', {
             id: updatedUser.id,
             name: updatedUser.name,
             is_active: updatedUser.is_active,
             is_verified: updatedUser.is_verified,
-            account_status: updatedUser.account_status
+            account_status: updatedUser.account_status,
+            is_forced: is_forced
         });
+        
+        const message = is_forced ? 
+            'Usuario aprobado forzadamente. Nota registrada.' : 
+            'Usuario aprobado correctamente';
         
         res.json({
             success: true,
-            message: 'Usuario aprobado correctamente',
+            message: message,
             data: { user: updatedUser }
         });
     } catch (error) {
@@ -229,14 +516,114 @@ router.get('/:id', authenticateToken, requireAdmin, async (req, res) => {
             user.name = user.email || 'Usuario sin nombre';
         }
         
-        // Agregar campo 'account_status' calculado
-        if (user.is_verified === 1 || user.is_verified === '1') {
+        // Verificar si tiene aprobación forzada
+        const db = require('../database/db').getInstance();
+        let isForced = false;
+        try {
+            const forcedApproval = await db.all(
+                'SELECT * FROM user_forced_approvals WHERE user_id = ? LIMIT 1',
+                [userId]
+            );
+            isForced = forcedApproval.length > 0;
+        } catch (error) {
+            // Si la tabla no existe, intentar crearla
+            if (error.code === 'SQLITE_ERROR' && 
+                (error.message.includes('user_forced_approvals') || 
+                 error.message.includes('no such table'))) {
+                try {
+                    await db.run(`
+                        CREATE TABLE IF NOT EXISTS user_forced_approvals (
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            user_id INTEGER NOT NULL,
+                            admin_id INTEGER NOT NULL,
+                            admin_notes TEXT NOT NULL,
+                            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                            FOREIGN KEY (admin_id) REFERENCES users(id)
+                        )
+                    `);
+                    await db.run(`
+                        CREATE INDEX IF NOT EXISTS idx_user_forced_approvals_user_id 
+                        ON user_forced_approvals(user_id)
+                    `);
+                    // Intentar de nuevo
+                    const forcedApproval = await db.all(
+                        'SELECT * FROM user_forced_approvals WHERE user_id = ? LIMIT 1',
+                        [userId]
+                    );
+                    isForced = forcedApproval.length > 0;
+                } catch (createError) {
+                    // Si falla, continuar sin el flag
+                    console.warn('⚠️ No se pudo crear user_forced_approvals:', createError.message);
+                }
+            }
+        }
+        
+        // Para usuarios clientes, verificar si tienen todos los documentos requeridos
+        const isCustomer = user.role === 'customer';
+        if (isCustomer && (user.is_verified === 1 || user.is_verified === '1') && !isForced) {
+            // Verificar documentos
+            try {
+                const tableCheck = await db.all(
+                    "SELECT name FROM sqlite_master WHERE type='table' AND name='user_documents'"
+                );
+                
+                if (tableCheck.length > 0) {
+                    const requiredDocuments = ['receta_medica', 'carnet_identidad', 'certificado_antecedentes', 'poder_cultivo'];
+                    const userDocuments = await db.all(
+                        'SELECT document_type FROM user_documents WHERE user_id = ?',
+                        [userId]
+                    );
+                    const documentTypes = userDocuments.map(d => d.document_type);
+                    const hasAllRequiredDocuments = requiredDocuments.every(docType => 
+                        documentTypes.includes(docType)
+                    );
+                    
+                    if (!hasAllRequiredDocuments) {
+                        // Crear registro automático si no existe
+                        const existingForcedApproval = await db.all(
+                            'SELECT * FROM user_forced_approvals WHERE user_id = ? LIMIT 1',
+                            [userId]
+                        );
+                        
+                        if (existingForcedApproval.length === 0) {
+                            const adminId = req.user?.id || 1;
+                            await db.run(`
+                                INSERT INTO user_forced_approvals 
+                                (user_id, admin_id, admin_notes, created_at)
+                                VALUES (?, ?, ?, datetime('now'))
+                            `, [
+                                userId, 
+                                adminId, 
+                                'Aprobación automática detectada: Usuario cliente aprobado sin documentos requeridos completos'
+                            ]);
+                            isForced = true;
+                            console.log(`✅ Registro de aprobación forzada creado automáticamente para usuario ${userId}`);
+                        } else {
+                            isForced = true;
+                        }
+                    }
+                }
+            } catch (docError) {
+                // Si falla, continuar sin verificar documentos
+                console.warn('⚠️ No se pudieron verificar documentos:', docError.message);
+            }
+        }
+        
+        // Agregar campo 'account_status' calculado (ya tenemos isForced calculado arriba)
+        if (isForced && (user.is_verified === 1 || user.is_verified === '1')) {
+            user.account_status = 'forced_approved';
+            user.is_forced_approval = true;
+            user.forced_approval = true;
+        } else if (user.is_verified === 1 || user.is_verified === '1') {
             user.account_status = 'approved';
         } else if (user.is_active === 0 || user.is_active === '0') {
             user.account_status = 'rejected';
         } else {
             user.account_status = 'pending';
         }
+        
+        console.log(`📊 Usuario ${userId} - Estado calculado: ${user.account_status}, isForced: ${isForced}`);
         
         res.json({
             success: true,
@@ -327,10 +714,36 @@ router.put('/:id', authenticateToken, requireAdmin, async (req, res) => {
         if (phone !== undefined) updateData.phone = phone;
         if (role) updateData.role = role;
         
-        // Manejar account_status
-        if (account_status && ['pending', 'approved', 'rejected'].includes(account_status)) {
-            updateData.is_verified = account_status === 'approved' ? 1 : 0;
-            updateData.is_active = account_status === 'rejected' ? 0 : 1;
+        // Manejar account_status (incluyendo forced_approved)
+        const db = require('../database/db').getInstance();
+        if (account_status && ['pending', 'approved', 'rejected', 'forced_approved'].includes(account_status)) {
+            if (account_status === 'forced_approved') {
+                updateData.is_verified = 1;
+                updateData.is_active = 1;
+                // El estado forced_approved se maneja con la tabla user_forced_approvals
+            } else if (account_status === 'pending') {
+                updateData.is_verified = 0;
+                updateData.is_active = 1;
+                // Si se cambia a pending, eliminar registro de aprobación forzada si existe
+                try {
+                    await db.run('DELETE FROM user_forced_approvals WHERE user_id = ?', [userId]);
+                } catch (error) {
+                    // Si la tabla no existe, continuar
+                    console.warn('⚠️ No se pudo eliminar aprobación forzada:', error.message);
+                }
+            } else {
+                updateData.is_verified = account_status === 'approved' ? 1 : 0;
+                updateData.is_active = account_status === 'rejected' ? 0 : 1;
+                // Si se cambia a rejected o approved normal, eliminar registro de aprobación forzada
+                if (account_status === 'rejected' || account_status === 'approved') {
+                    try {
+                        await db.run('DELETE FROM user_forced_approvals WHERE user_id = ?', [userId]);
+                    } catch (error) {
+                        // Si la tabla no existe, continuar
+                        console.warn('⚠️ No se pudo eliminar aprobación forzada:', error.message);
+                    }
+                }
+            }
         } else {
             if (is_active !== undefined) updateData.is_active = is_active ? 1 : 0;
             if (is_verified !== undefined) updateData.is_verified = is_verified ? 1 : 0;
@@ -380,8 +793,65 @@ router.put('/:id', authenticateToken, requireAdmin, async (req, res) => {
             updatedUser.name = updatedUser.email || 'Usuario sin nombre';
         }
         
-        // Agregar campo 'account_status' calculado
-        if (updatedUser.is_verified === 1 || updatedUser.is_verified === '1') {
+        // Verificar si tiene aprobación forzada primero
+        // db ya está declarado arriba en la línea 573
+        let isForced = false;
+        try {
+            const forcedApproval = await db.all(
+                'SELECT * FROM user_forced_approvals WHERE user_id = ? LIMIT 1',
+                [userId]
+            );
+            if (forcedApproval.length > 0) {
+                isForced = true;
+                updatedUser.is_forced_approval = true;
+                updatedUser.forced_approval = true;
+            }
+            } catch (error) {
+                // Si la tabla no existe, intentar crearla
+                if (error.code === 'SQLITE_ERROR' && 
+                    (error.message.includes('user_forced_approvals') || 
+                     error.message.includes('no such table'))) {
+                    try {
+                        await db.run(`
+                            CREATE TABLE IF NOT EXISTS user_forced_approvals (
+                                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                user_id INTEGER NOT NULL,
+                                admin_id INTEGER NOT NULL,
+                                admin_notes TEXT NOT NULL,
+                                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                                FOREIGN KEY (admin_id) REFERENCES users(id)
+                            )
+                        `);
+                        await db.run(`
+                            CREATE INDEX IF NOT EXISTS idx_user_forced_approvals_user_id 
+                            ON user_forced_approvals(user_id)
+                        `);
+                        // Intentar de nuevo - usar la variable correcta según el contexto
+                        const forcedApproval = await db.all(
+                            'SELECT * FROM user_forced_approvals WHERE user_id = ? LIMIT 1',
+                            [userId]
+                        );
+                        if (forcedApproval.length > 0) {
+                            // Determinar qué variable usar según el contexto
+                            if (typeof updatedUser !== 'undefined') {
+                                updatedUser.is_forced_approval = true;
+                                updatedUser.forced_approval = true;
+                            } else if (typeof user !== 'undefined') {
+                                user.is_forced_approval = true;
+                                user.forced_approval = true;
+                            }
+                        }
+                    } catch (createError) {
+                        // Si falla, continuar sin el flag
+                    }
+            }
+        }
+        
+        // Agregar campo 'account_status' calculado considerando aprobación forzada
+        if (isForced && (updatedUser.is_verified === 1 || updatedUser.is_verified === '1')) {
+            updatedUser.account_status = 'forced_approved';
+        } else if (updatedUser.is_verified === 1 || updatedUser.is_verified === '1') {
             updatedUser.account_status = 'approved';
         } else if (updatedUser.is_active === 0 || updatedUser.is_active === '0') {
             updatedUser.account_status = 'rejected';
@@ -393,7 +863,8 @@ router.put('/:id', authenticateToken, requireAdmin, async (req, res) => {
             id: updatedUser.id,
             name: updatedUser.name,
             email: updatedUser.email,
-            account_status: updatedUser.account_status
+            account_status: updatedUser.account_status,
+            is_forced_approval: updatedUser.is_forced_approval
         });
         
         res.json({
@@ -436,20 +907,42 @@ router.delete('/:id', authenticateToken, requireAdmin, async (req, res) => {
             });
         }
         
-        await userModel.delete(userId);
-        
-        console.log(`🗑️ Usuario eliminado: #${userId} por Admin #${adminId}`);
-        
-        res.json({
-            success: true,
-            message: 'Usuario eliminado correctamente'
-        });
+        // Intentar eliminar el usuario
+        try {
+            await userModel.delete(userId);
+            console.log(`🗑️ Usuario eliminado: #${userId} por Admin #${adminId}`);
+            
+            res.json({
+                success: true,
+                message: 'Usuario eliminado correctamente'
+            });
+        } catch (deleteError) {
+            console.error('❌ Error al eliminar usuario:', deleteError);
+            
+            // Verificar si es un error de restricción de clave foránea
+            if (deleteError.code === 'SQLITE_CONSTRAINT' || deleteError.message.includes('FOREIGN KEY constraint')) {
+                return res.status(409).json({
+                    success: false,
+                    message: 'No se puede eliminar el usuario porque tiene registros asociados en otras tablas. Por favor, elimina primero los registros relacionados.',
+                    error: 'FOREIGN_KEY_CONSTRAINT',
+                    details: deleteError.message
+                });
+            }
+            
+            // Si es otro tipo de error, lanzarlo para que se maneje en el catch externo
+            throw deleteError;
+        }
     } catch (error) {
         console.error('❌ Error en DELETE /users/:id:', error);
+        console.error('   Código:', error.code);
+        console.error('   Mensaje:', error.message);
+        console.error('   Stack:', error.stack);
+        
         res.status(500).json({
             success: false,
             message: 'Error al eliminar usuario',
-            error: error.message
+            error: error.message,
+            code: error.code || 'UNKNOWN_ERROR'
         });
     }
 });
@@ -547,12 +1040,82 @@ router.get('/:id/documents', authenticateToken, requireAdmin, async (req, res) =
             });
         }
         
-        // Obtener documentos del usuario
+        // Obtener documentos del usuario desde user_documents
         const db = require('../database/db').getInstance();
-        const documents = await db.all(
-            'SELECT * FROM user_documents WHERE user_id = ? ORDER BY uploaded_at DESC',
-            [userId]
-        );
+        const { decryptDocument } = require('../utils/encryption');
+        
+        let documents = [];
+        try {
+            const rawDocuments = await db.all(
+                'SELECT * FROM user_documents WHERE user_id = ? ORDER BY uploaded_at DESC',
+                [userId]
+            );
+            
+            // Desencriptar documentos si están encriptados
+            documents = rawDocuments.map(doc => {
+                if (doc.is_encrypted && doc.file_data) {
+                    try {
+                        const originalLength = doc.file_data ? doc.file_data.length : 0;
+                        doc.file_data = decryptDocument(doc.file_data);
+                        const decryptedLength = doc.file_data ? doc.file_data.length : 0;
+                        
+                        // Log para poder_cultivo específicamente
+                        if (doc.document_type === 'poder_cultivo') {
+                            console.log('🔓 Desencriptando poder_cultivo:', {
+                                doc_id: doc.id,
+                                original_length: originalLength,
+                                decrypted_length: decryptedLength,
+                                mime_type: doc.mime_type,
+                                preview: doc.file_data ? doc.file_data.substring(0, 100) : 'null'
+                            });
+                        }
+                    } catch (error) {
+                        console.error(`Error desencriptando documento ${doc.id} (${doc.document_type}):`, error);
+                        // Si falla la desencriptación, mantener el dato encriptado
+                    }
+                }
+                // No retornar el hash de la clave por seguridad
+                delete doc.encryption_key_hash;
+                return doc;
+            });
+        } catch (error) {
+            // Si la tabla no existe, intentar crearla
+            if (error.message && error.message.includes('no such table')) {
+                console.warn('⚠️ Tabla user_documents no encontrada, intentando crearla...');
+                try {
+                    await db.run(`
+                        CREATE TABLE IF NOT EXISTS user_documents (
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            user_id INTEGER NOT NULL,
+                            document_type TEXT NOT NULL,
+                            file_name TEXT NOT NULL,
+                            file_data TEXT NOT NULL,
+                            file_size INTEGER,
+                            mime_type TEXT,
+                            uploaded_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+                        )
+                    `);
+                    await db.run(`
+                        CREATE INDEX IF NOT EXISTS idx_user_documents_user_id 
+                        ON user_documents(user_id)
+                    `);
+                    console.log('✅ Tabla user_documents creada exitosamente');
+                    // Retornar array vacío ya que la tabla acaba de crearse
+                    return res.json({
+                        success: true,
+                        data: { documents: [] }
+                    });
+                } catch (createError) {
+                    console.error('❌ Error al crear tabla user_documents:', createError.message);
+                    return res.json({
+                        success: true,
+                        data: { documents: [] }
+                    });
+                }
+            }
+            throw error;
+        }
         
         res.json({
             success: true,
@@ -594,34 +1157,83 @@ router.post('/:id/documents', async (req, res) => {
         }
         
         const db = require('../database/db').getInstance();
+        const { encryptDocument, hashKey } = require('../utils/encryption');
         const savedDocuments = [];
         
         for (const doc of documents) {
             if (!doc.document_type || !doc.file_data) {
+                console.warn(`⚠️ Documento sin tipo o datos:`, { type: doc.document_type, has_data: !!doc.file_data });
                 continue;
             }
             
-            // Calcular tamaño del archivo en bytes
-            const fileSize = Buffer.byteLength(doc.file_data, 'base64');
+            // Log para poder_cultivo específicamente
+            if (doc.document_type === 'poder_cultivo') {
+                console.log('💾 Guardando poder_cultivo:', {
+                    file_name: doc.file_name,
+                    original_length: doc.file_data ? doc.file_data.length : 0,
+                    has_data_prefix: doc.file_data ? doc.file_data.startsWith('data:') : false,
+                    preview: doc.file_data ? doc.file_data.substring(0, 100) : 'null'
+                });
+            }
             
-            // Determinar MIME type basado en el prefijo
+            // Extraer base64 puro (sin prefijo data:)
+            let base64Data = doc.file_data;
+            if (base64Data.includes(',')) {
+                base64Data = base64Data.split(',')[1];
+            }
+            
+            // Verificar que el base64 no esté vacío
+            if (!base64Data || base64Data.trim().length === 0) {
+                console.error(`❌ Documento ${doc.document_type} tiene base64 vacío después de extraer`);
+                continue;
+            }
+            
+            // Encriptar documento
+            const encryptedData = encryptDocument(base64Data);
+            const encryptionKeyHash = hashKey(process.env.ENCRYPTION_KEY || 'default');
+            
+            // Calcular tamaño del archivo en bytes (del original)
+            const fileSize = Buffer.byteLength(base64Data, 'base64');
+            
+            // Determinar MIME type basado en el prefijo o extensión
             let mimeType = 'application/pdf';
             if (doc.file_data.startsWith('data:image/')) {
                 mimeType = doc.file_data.substring(5, doc.file_data.indexOf(';'));
+            } else if (doc.file_data.startsWith('data:application/')) {
+                mimeType = doc.file_data.substring(5, doc.file_data.indexOf(';'));
+            } else if (doc.file_data.startsWith('data:text/html')) {
+                mimeType = 'text/html';
+            } else if (doc.mime_type) {
+                mimeType = doc.mime_type;
+            } else if (doc.file_name) {
+                const ext = doc.file_name.split('.').pop().toLowerCase();
+                if (ext === 'jpg' || ext === 'jpeg') mimeType = 'image/jpeg';
+                else if (ext === 'png') mimeType = 'image/png';
+                else if (ext === 'html') mimeType = 'text/html';
             }
             
-            // Insertar documento
+            if (doc.document_type === 'poder_cultivo') {
+                console.log('💾 Poder_cultivo procesado:', {
+                    base64_length: base64Data.length,
+                    encrypted_length: encryptedData ? encryptedData.length : 0,
+                    file_size: fileSize,
+                    mime_type: mimeType
+                });
+            }
+            
+            // Insertar documento encriptado
             const result = await db.run(
                 `INSERT INTO user_documents 
-                (user_id, document_type, file_name, file_data, file_size, mime_type, uploaded_at)
-                VALUES (?, ?, ?, ?, ?, ?, datetime('now'))`,
+                (user_id, document_type, file_name, file_data, file_size, mime_type, is_encrypted, encryption_key_hash, uploaded_at)
+                VALUES (?, ?, ?, ?, ?, ?, 1, ?, datetime('now'))`,
                 [
                     userId,
                     doc.document_type,
                     doc.file_name || `${doc.document_type}.pdf`,
-                    doc.file_data,
+                    encryptedData,
                     fileSize,
-                    mimeType
+                    mimeType,
+                    encryptionKeyHash
                 ]
             );
             
@@ -630,7 +1242,8 @@ router.post('/:id/documents', async (req, res) => {
                 document_type: doc.document_type,
                 file_name: doc.file_name || `${doc.document_type}.pdf`,
                 file_size: fileSize,
-                mime_type: mimeType
+                mime_type: mimeType,
+                is_encrypted: true
             });
         }
         

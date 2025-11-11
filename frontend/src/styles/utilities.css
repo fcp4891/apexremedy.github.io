@@ -1,0 +1,44 @@
+/* utilities.css – Utilidades BEM/utility-first para frontend público
+   Estas clases aún no se usan en HTML legacy; servirán como alias futuros (u-*). */
+
+.u-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.u-text-center {
+  text-align: center;
+}
+
+.u-flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.u-flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.u-grid-responsive {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+}
+
+.u-shadow-elevated {
+  box-shadow: var(--box-shadow, 0 4px 6px rgba(0, 0, 0, 0.1));
+}
+
+.u-radius-md {
+  border-radius: var(--border-radius, 12px);
+}
+
+.u-spacing-section {
+  padding: 60px 0;
+}
+
+
