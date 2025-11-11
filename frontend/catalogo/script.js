@@ -192,8 +192,11 @@ function setupEventListeners() {
         if (e.key === 'Escape') closeModal();
     });
     
-    // Botones de acción
-    document.getElementById('editBtn').addEventListener('click', openModal);
+    // Botones de acción (solo si existe)
+    const editBtn = document.getElementById('editBtn');
+    if (editBtn) {
+        editBtn.addEventListener('click', openModal);
+    }
     
     // Modal
     document.getElementById('saveBtn').addEventListener('click', saveChanges);
@@ -256,13 +259,29 @@ function updateNavigationButtons() {
 
 // Renderizar contenido
 function renderContent() {
-    renderTerms();
-    renderProducts(); // Esto creará las páginas dinámicas si son necesarias
-    renderHash();
-    renderOils();
-    renderPolicies();
-    // Actualizar números de página después de renderizar todo
-    updatePageNumbers();
+    // Verificar que catalogData esté definido
+    if (typeof catalogData === 'undefined') {
+        console.error('❌ catalogData no está definido. Verificando carga de datos...');
+        // Intentar cargar datos guardados
+        loadSavedData();
+        // Si aún no está definido después de cargar, mostrar error
+        if (typeof catalogData === 'undefined') {
+            console.error('❌ No se pudieron cargar los datos del catálogo');
+            return;
+        }
+    }
+    
+    try {
+        renderTerms();
+        renderProducts(); // Esto creará las páginas dinámicas si son necesarias
+        renderHash();
+        renderOils();
+        renderPolicies();
+        // Actualizar números de página después de renderizar todo
+        updatePageNumbers();
+    } catch (error) {
+        console.error('❌ Error al renderizar contenido:', error);
+    }
 }
 
 function renderTerms() {
@@ -493,6 +512,12 @@ function updatePageNumbers() {
 function renderProducts() {
     console.log('🔄 renderProducts() iniciado');
     
+    // Verificar que catalogData esté definido
+    if (typeof catalogData === 'undefined') {
+        console.error('❌ catalogData no está definido en renderProducts()');
+        return;
+    }
+    
     // Eliminar páginas HTML que ya no existen en los datos
     removeOrphanProductPages();
     
@@ -506,24 +531,47 @@ function renderProducts() {
     const productPages = Object.keys(catalogData).filter(key => key.startsWith('productsPage'));
     console.log(`📄 Encontradas ${productPages.length} páginas de productos:`, productPages);
     
+    // Si no hay páginas de productos, mostrar mensaje de advertencia
+    if (productPages.length === 0) {
+        console.warn('⚠️ No se encontraron páginas de productos en catalogData');
+        // Limpiar grids existentes
+        const existingGrids = document.querySelectorAll('[id^="productsGrid"]');
+        existingGrids.forEach(grid => {
+            grid.innerHTML = '';
+        });
+        return;
+    }
+    
     // Renderizar todas las páginas de productos dinámicamente
     productPages.forEach(key => {
         const pageNum = key.replace('productsPage', '');
         const grid = document.getElementById(`productsGrid${pageNum}`);
         
+        console.log(`🔍 Procesando página ${pageNum} (${key}):`, {
+            gridExists: !!grid,
+            dataExists: !!catalogData[key],
+            isArray: Array.isArray(catalogData[key]),
+            dataLength: catalogData[key] ? catalogData[key].length : 0,
+            data: catalogData[key]
+        });
+        
         if (grid) {
             if (catalogData[key] && Array.isArray(catalogData[key]) && catalogData[key].length > 0) {
-                // Renderizar directamente (sin setTimeout para actualización inmediata)
-                const html = catalogData[key].map(product => createProductCard(product)).join('');
-                grid.innerHTML = html;
-                console.log(`✅ Renderizada página ${pageNum}: ${catalogData[key].length} productos`);
-                
-                // Forzar reflow para asegurar actualización visual
-                void grid.offsetHeight;
+                try {
+                    // Renderizar directamente (sin setTimeout para actualización inmediata)
+                    const html = catalogData[key].map(product => createProductCard(product)).join('');
+                    grid.innerHTML = html;
+                    console.log(`✅ Renderizada página ${pageNum}: ${catalogData[key].length} productos`);
+                    
+                    // Forzar reflow para asegurar actualización visual
+                    void grid.offsetHeight;
+                } catch (error) {
+                    console.error(`❌ Error al renderizar página ${pageNum}:`, error);
+                }
             } else {
                 // Si no hay datos o está vacío, limpiar el grid
                 grid.innerHTML = '';
-                console.log(`⚠️ Página ${pageNum} vacía, grid limpiado`);
+                console.log(`⚠️ Página ${pageNum} vacía o datos inválidos, grid limpiado. Datos:`, catalogData[key]);
             }
         } else {
             // Si no se encuentra el grid, intentar crear la página
@@ -533,10 +581,14 @@ function renderProducts() {
             const gridAfter = document.getElementById(`productsGrid${pageNum}`);
             if (gridAfter) {
                 if (catalogData[key] && Array.isArray(catalogData[key]) && catalogData[key].length > 0) {
-                    const html = catalogData[key].map(product => createProductCard(product)).join('');
-                    gridAfter.innerHTML = html;
-                    console.log(`✅ Página ${pageNum} creada y renderizada después del intento`);
-                    void gridAfter.offsetHeight;
+                    try {
+                        const html = catalogData[key].map(product => createProductCard(product)).join('');
+                        gridAfter.innerHTML = html;
+                        console.log(`✅ Página ${pageNum} creada y renderizada después del intento`);
+                        void gridAfter.offsetHeight;
+                    } catch (error) {
+                        console.error(`❌ Error al renderizar página ${pageNum} después de crear:`, error);
+                    }
                 }
             } else {
                 console.error(`❌ No se pudo crear el grid productsGrid${pageNum}`);

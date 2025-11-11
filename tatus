@@ -1,0 +1,35 @@
+warning: LF will be replaced by CRLF in frontend/catalogo/index.html.
+The file will have its original line endings in your working directory
+[1mdiff --git a/frontend/catalogo/index.html b/frontend/catalogo/index.html[m
+[1mindex a412291..a8bc346 100644[m
+[1m--- a/frontend/catalogo/index.html[m
+[1m+++ b/frontend/catalogo/index.html[m
+[36m@@ -17,10 +17,7 @@[m
+         <div class="nav-container">[m
+             <div class="logo">[m
+                 <span class="logo-text">ApexRemedy</span>[m
+[31m-            </div>[m
+[31m-            <a href="../index.html"  class="logo"><i class="fas fa-home mr-1"></i><span>Visitanos</span></a>[m
+[31m-            [m
+[31m-            [m
+[32m+[m[32m            </div>[m[41m         [m
+             <div class="nav-controls">[m
+                 <button class="nav-btn" id="prevBtn" aria-label="Anterior">[m
+                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">[m
+[36m@@ -37,13 +34,9 @@[m
+                         <path d="M9 18l6-6-6-6"/>[m
+                     </svg>[m
+                 </button>[m
+[31m-                <button class="action-btn" id="editBtn" aria-label="Editar">[m
+[31m-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">[m
+[31m-                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>[m
+[31m-                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>[m
+[31m-                    </svg>[m
+[31m-                    <span>Editar</span>[m
+[31m-                </button>[m
+[32m+[m[32m                <a href="../index.html" class="logo">[m
+[32m+[m[32m                    <i class="fas fa-home">Web</i>[m
+[32m+[m[32m                </a>[m
+             </div>[m
+ <!--             <div class="nav-actions">[m
+                 <button class="action-btn" id="editBtn" aria-label="Editar">[m
