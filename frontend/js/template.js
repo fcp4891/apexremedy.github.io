@@ -10,26 +10,39 @@
    * Obtener path base para GitHub Pages (usa el global si existe)
    */
   function getBasePath() {
-    // Usar el basePath global si está disponible
-    if (typeof window.BASE_PATH !== 'undefined') {
+    // Usar el basePath global si está disponible y no está vacío
+    if (typeof window.BASE_PATH !== 'undefined' && window.BASE_PATH) {
       return window.BASE_PATH;
     }
     // Fallback: calcularlo manualmente
     if (window.location.hostname.includes('github.io')) {
-      const pathParts = window.location.pathname.split('/').filter(p => p);
+      const pathname = window.location.pathname;
+      const pathParts = pathname.split('/').filter(p => p);
       const repoName = 'apexremedy.github.io';
-      const repoIndex = pathParts.indexOf(repoName);
+      
+      // Buscar el índice del repositorio
+      let repoIndex = -1;
+      for (let i = 0; i < pathParts.length; i++) {
+        if (pathParts[i] === repoName || pathParts[i].includes('apexremedy')) {
+          repoIndex = i;
+          break;
+        }
+      }
       
       if (repoIndex !== -1) {
+        // Construir ruta base: /username/repo-name/
         const repoPath = '/' + pathParts.slice(0, repoIndex + 1).join('/') + '/';
-        // Verificar si necesitamos agregar /frontend/
-        const currentPath = window.location.pathname;
-        if (!currentPath.includes('/frontend/') && !currentPath.endsWith('/frontend')) {
-          return repoPath + 'frontend/';
-        }
+        console.log('🔧 [template.js] BasePath calculado:', repoPath);
+        return repoPath;
+      } else if (pathname.includes(repoName)) {
+        // Si el pathname incluye el nombre del repo pero no lo encontramos en pathParts
+        const repoPos = pathname.indexOf(repoName);
+        const repoPath = pathname.substring(0, repoPos + repoName.length) + '/';
+        console.log('🔧 [template.js] BasePath calculado (fallback):', repoPath);
         return repoPath;
       }
     }
+    // Si no estamos en GitHub Pages o no encontramos el repo, retornar vacío
     return '';
   }
 
@@ -82,22 +95,39 @@
     let fullUrl = url;
     const basePath = getBasePath();
     
+    console.log('🔧 [template.js] loadTemplate - URL original:', url);
+    console.log('🔧 [template.js] loadTemplate - BasePath:', basePath);
+    
     if (basePath) {
+      // Limpiar la URL: eliminar ./ si existe
+      let cleanUrl = url.replace('./', '');
+      
       // Si la URL ya comienza con el basePath, no duplicar
-      if (url.startsWith(basePath)) {
-        fullUrl = url;
-      } else if (url.startsWith('/')) {
-        // Si comienza con / pero no con basePath, agregar basePath al inicio
-        fullUrl = basePath + url.substring(1);
+      if (cleanUrl.startsWith(basePath)) {
+        fullUrl = cleanUrl;
+      } else if (cleanUrl.startsWith('/')) {
+        // Si comienza con /, agregar basePath al inicio (sin duplicar la /)
+        fullUrl = basePath + cleanUrl.substring(1);
       } else {
-        // Si es relativa (./ o sin /), reemplazar ./ y agregar basePath
-        fullUrl = basePath + url.replace('./', '');
+        // Si es relativa, agregar basePath
+        fullUrl = basePath + cleanUrl;
+      }
+    } else {
+      // Si no hay basePath, usar la URL tal cual (pero limpiar ./)
+      fullUrl = url.replace('./', '');
+      // Si no comienza con /, agregarlo para hacerla absoluta desde la raíz
+      if (!fullUrl.startsWith('/')) {
+        fullUrl = '/' + fullUrl;
       }
     }
+    
+    console.log('🔧 [template.js] loadTemplate - URL final:', fullUrl);
 
     try {
+      console.log('🔧 [template.js] Intentando cargar template desde:', fullUrl);
       const response = await fetch(fullUrl, { cache: 'no-store' });
       if (!response.ok) {
+        console.error('❌ [template.js] Error HTTP:', response.status, response.statusText, 'URL:', fullUrl);
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
       const html = await response.text();
