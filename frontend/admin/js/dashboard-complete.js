@@ -18,6 +18,13 @@ var currentPeriod = window.currentPeriod;
 // ============================================
 async function loadExecutiveDashboard() {
     try {
+        // Verificar si hay backend configurado
+        if (!api || !api.baseURL) {
+            console.warn('⚠️ [Dashboard] Backend no configurado, mostrando mensaje informativo');
+            showDashboardUnavailable('executive');
+            return;
+        }
+
         const response = await api.getExecutiveDashboard(currentPeriod);
         if (!response.success) throw new Error(response.message);
 
@@ -45,6 +52,48 @@ async function loadExecutiveDashboard() {
         loadHeatmapRM('chart-exec-heatmap-rm');
     } catch (error) {
         console.error('Error loading executive dashboard:', error);
+        if (error.code === 'NO_BACKEND_CONFIGURED' || error.message.includes('Backend no configurado')) {
+            showDashboardUnavailable('executive');
+        }
+    }
+}
+
+// Función helper para verificar si hay backend disponible
+function checkBackendAvailable() {
+    return api && api.baseURL;
+}
+
+// Función helper para mostrar mensaje cuando el dashboard no está disponible
+function showDashboardUnavailable(dashboardType) {
+    const container = document.querySelector(`[data-dashboard="${dashboardType}"]`) || 
+                      document.querySelector('.dashboard-content') ||
+                      document.querySelector('.dashboard-tab-content') ||
+                      document.body;
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'p-8 bg-yellow-50 border border-yellow-200 rounded-lg text-center max-w-2xl mx-auto mt-8';
+    messageDiv.innerHTML = `
+        <i class="fas fa-info-circle text-yellow-600 text-4xl mb-4"></i>
+        <h3 class="text-xl font-semibold text-yellow-800 mb-2">Dashboard no disponible</h3>
+        <p class="text-yellow-700 mb-4">
+            Este dashboard requiere un backend configurado para funcionar.
+        </p>
+        <p class="text-sm text-yellow-600">
+            En modo estático (GitHub Pages), los dashboards analíticos no están disponibles.
+            <br>
+            Para ver los dashboards completos, ejecuta la aplicación en modo de desarrollo con el backend activo.
+        </p>
+    `;
+    
+    // Limpiar contenido existente del dashboard
+    const dashboardContent = container.querySelector('.dashboard-grid') || 
+                            container.querySelector('.dashboard-content') ||
+                            container.querySelector('.grid');
+    if (dashboardContent) {
+        dashboardContent.innerHTML = '';
+        dashboardContent.appendChild(messageDiv);
+    } else {
+        container.appendChild(messageDiv);
     }
 }
 
@@ -53,6 +102,10 @@ async function loadExecutiveDashboard() {
 // ============================================
 async function loadCommercialDashboard() {
     try {
+        if (!checkBackendAvailable()) {
+            showDashboardUnavailable('commercial');
+            return;
+        }
         const response = await api.getCommercialDashboard(currentPeriod);
         if (!response.success) throw new Error(response.message);
 
