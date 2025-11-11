@@ -2,23 +2,37 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0; url=./index.html">
     <title>Redirigiendo a Apexremedy...</title>
     <script>
         // Detectar si estamos en GitHub Pages
         const isGitHubPages = window.location.hostname.includes('github.io');
+        
         if (isGitHubPages) {
-            // En GitHub Pages, redirigir a index.html en la raíz del sitio desplegado
-            // El workflow despliega desde frontend/, así que index.html está en la raíz
-            window.location.href = './index.html';
+            // En GitHub Pages, el workflow despliega desde frontend/
+            // Así que index.html ya está en la raíz del sitio desplegado
+            // No necesitamos redirigir, pero si estamos en la raíz del repo, ir a la raíz del sitio
+            const pathname = window.location.pathname;
+            const basePath = pathname.includes('apexremedy.github.io') 
+                ? pathname.substring(0, pathname.indexOf('apexremedy.github.io') + 'apexremedy.github.io'.length) + '/'
+                : '/';
+            
+            // Si ya estamos en la raíz del sitio desplegado, no redirigir
+            if (pathname === basePath || pathname === basePath + 'index.html' || pathname.endsWith('/index.html')) {
+                // Ya estamos en el lugar correcto, no hacer nada
+                console.log('✅ Ya estamos en la página correcta');
+            } else {
+                // Redirigir a la raíz del sitio desplegado
+                window.location.replace(basePath + 'index.html');
+            }
         } else {
             // En desarrollo local, redirigir a frontend/index.html
-            window.location.href = './frontend/index.html';
+            window.location.replace('./frontend/index.html');
         }
     </script>
 </head>
 <body>
-    <p>Si no eres redirigido automáticamente, <a href="./index.html">haz clic aquí</a>.</p>
+    <p>Redirigiendo...</p>
+    <p>Si no eres redirigido automáticamente, <a href="./frontend/index.html">haz clic aquí</a>.</p>
 </body>
 </html>
 
