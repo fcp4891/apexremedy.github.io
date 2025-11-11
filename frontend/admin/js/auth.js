@@ -235,6 +235,25 @@ if (typeof AuthManager === 'undefined') {
                     const urlParams = new URLSearchParams(window.location.search);
                     const redirect = urlParams.get('redirect');
                     
+                    // Función helper para construir rutas con basePath
+                    const getFullPath = (path) => {
+                        if (path.startsWith('http') || path.startsWith('//')) return path;
+                        if (typeof window.BASE_PATH !== 'undefined' && window.BASE_PATH) {
+                            const cleanPath = path.startsWith('/') ? path.substring(1) : path.replace(/^\.\.?\//, '');
+                            return window.BASE_PATH + cleanPath;
+                        }
+                        // Desarrollo local: convertir rutas absolutas a relativas
+                        if (path.startsWith('/')) {
+                            const currentPath = window.location.pathname;
+                            const isInAdmin = currentPath.includes('/admin/');
+                            if (isInAdmin) {
+                                return '.' + path;
+                            }
+                            return '.' + path;
+                        }
+                        return path;
+                    };
+                    
                     if (redirect) {
                         console.log('🔄 Redirigiendo a:', redirect);
                         // Manejar redirect con diferentes formatos
@@ -247,27 +266,28 @@ if (typeof AuthManager === 'undefined') {
                             if (!processedRedirect.includes('.html') && !processedRedirect.includes('.php') && !processedRedirect.endsWith('/')) {
                                 processedRedirect = processedRedirect + '.html';
                             }
-                            // Convertir a relativa para desarrollo local
-                            redirectPath = processedRedirect.startsWith('/admin/') ? '.' + processedRedirect : './admin' + processedRedirect;
+                            redirectPath = getFullPath(processedRedirect);
                         } else if (redirect.startsWith('./')) {
                             // Ya es relativa con ./
-                            redirectPath = redirect;
+                            redirectPath = getFullPath(processedRedirect);
                         } else {
                             // Ruta relativa sin ./: admin/perfil o admin/perfil.html
                             // Agregar .html si no tiene extensión y no termina en /
                             if (!processedRedirect.includes('.html') && !processedRedirect.includes('.php') && !processedRedirect.endsWith('/')) {
                                 processedRedirect = processedRedirect + '.html';
                             }
-                            redirectPath = `./${processedRedirect}`;
+                            redirectPath = getFullPath(`./${processedRedirect}`);
                         }
                         console.log('🔄 Redirigiendo a:', redirectPath);
                         window.location.replace(redirectPath);
                     } else if (user.role === 'admin') {
                         console.log('👨‍💼 Usuario admin detectado, redirigiendo a perfil admin');
-                        window.location.replace('./admin/perfil.html'); 
+                        const adminPath = getFullPath('./admin/perfil.html');
+                        window.location.replace(adminPath); 
                     } else {
                         console.log('👤 Usuario cliente detectado, redirigiendo a perfil cliente');
-                        window.location.replace('./perfil.html');
+                        const clientPath = getFullPath('./perfil.html');
+                        window.location.replace(clientPath);
                     }
                     
                     return { success: true, user };
@@ -520,10 +540,22 @@ if (typeof AuthManager === 'undefined') {
                 const currentPath = window.location.pathname;
                 const currentPage = currentPath.split('/').pop();
                 
+                // Función helper para construir rutas con basePath
+                const getFullPath = (path) => {
+                    if (path.startsWith('http') || path.startsWith('//')) return path;
+                    if (typeof window.BASE_PATH !== 'undefined' && window.BASE_PATH) {
+                        const cleanPath = path.startsWith('/') ? path.substring(1) : path.replace(/^\.\.?\//, '');
+                        return window.BASE_PATH + cleanPath;
+                    }
+                    return path;
+                };
+                
                 if (currentPath.includes('admin')) {
-                    window.location.href = `../${redirectPath}?redirect=${currentPage}`;
+                    const loginUrl = getFullPath(`../${redirectPath}?redirect=${currentPage}`);
+                    window.location.href = loginUrl;
                 } else {
-                    window.location.href = `./${redirectPath}?redirect=${currentPage}`;
+                    const loginUrl = getFullPath(`./${redirectPath}?redirect=${currentPage}`);
+                    window.location.href = loginUrl;
                 }
                 return false;
             }
@@ -545,13 +577,23 @@ if (typeof AuthManager === 'undefined') {
 
             if (!this.isAuthenticated()) {
               notify.warning('Debes iniciar sesión para acceder al panel admin');
-              window.location.href = '../login.html?redirect=admin';
+              // Función helper para construir rutas con basePath
+              const getFullPath = (path) => {
+                  if (path.startsWith('http') || path.startsWith('//')) return path;
+                  if (typeof window.BASE_PATH !== 'undefined' && window.BASE_PATH) {
+                      const cleanPath = path.startsWith('/') ? path.substring(1) : path.replace(/^\.\.?\//, '');
+                      return window.BASE_PATH + cleanPath;
+                  }
+                  return path;
+              };
+              
+              window.location.href = getFullPath('../login.html?redirect=admin');
               return false;
             }
             const user = this.getCurrentUser();
             if (!user || user.role !== 'admin') {
               notify.error('Acceso denegado. Solo administradores.');
-              window.location.href = '../perfil.html';
+              window.location.href = getFullPath('../perfil.html');
               return false;
             }
             return true;

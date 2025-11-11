@@ -21,7 +21,11 @@ try {
         
         if (typeof authManager === 'undefined') {
             console.error('❌ authManager no disponible');
-            window.location.href = '../login.html';
+            // Usar BASE_PATH si está disponible (GitHub Pages)
+            const loginPath = (typeof window.BASE_PATH !== 'undefined' && window.BASE_PATH) 
+                ? window.BASE_PATH + 'login.html'
+                : '../login.html';
+            window.location.href = loginPath;
             return false;
         }
 
@@ -58,7 +62,11 @@ try {
             if (typeof notify !== 'undefined') {
                 notify.warning('Debes iniciar sesión para acceder a tu perfil', 'Autenticación Requerida');
             }
-            window.location.href = '../login.html?redirect=admin/perfil';
+            // Usar BASE_PATH si está disponible (GitHub Pages)
+            const loginPath = (typeof window.BASE_PATH !== 'undefined' && window.BASE_PATH) 
+                ? window.BASE_PATH + 'login.html?redirect=admin/perfil'
+                : '../login.html?redirect=admin/perfil';
+            window.location.href = loginPath;
             return false;
         }
         

@@ -286,19 +286,6 @@
             document.getElementById('successMessage').style.display = 'none';
         }
         
-        // Redirigir si ya está autenticado
-        document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                if (typeof authManager !== 'undefined' && authManager.isAuthenticated()) {
-                if (authManager.isAdmin()) {
-                    window.location.href = './admin/perfil.html';
-                } else {
-                    window.location.href = './perfil.html';
-                }
-                }
-            }, 100);
-        });
-
         function resetButton() {
             const submitBtn = document.getElementById('submitBtn');
             const btnText = document.getElementById('btnText');
@@ -310,21 +297,61 @@
         }
         
         // ============================================
-        // PREVENIR LOOP: Redirigir si ya está autenticado
+        // PREVENIR LOOP: Redirigir si ya está autenticado (SOLO UNA VEZ)
         // ============================================
+        let redirectCheckDone = false;
         document.addEventListener('DOMContentLoaded', () => {
             // Esperar a que authManager esté completamente inicializado
-            setTimeout(() => {
-                if (typeof authManager !== 'undefined' && authManager.isAuthenticated()) {
-                    console.log('✅ Usuario ya autenticado, redirigiendo...');
-                    
-                    if (authManager.isAdmin()) {
-                        window.location.replace('./admin/perfil.html');
-                    } else {
-                        window.location.replace('./perfil.html');
+            setTimeout(async () => {
+                if (redirectCheckDone) {
+                    console.log('⚠️ [LOGIN] Redirect check ya ejecutado, evitando duplicación');
+                    return;
+                }
+                
+                if (typeof authManager === 'undefined') {
+                    console.log('⏳ [LOGIN] authManager aún no disponible, esperando...');
+                    return;
+                }
+                
+                // Esperar a que bootstrap termine
+                if (authManager.bootstrapPromise) {
+                    try {
+                        await authManager.bootstrapPromise;
+                    } catch (e) {
+                        console.warn('⚠️ [LOGIN] Error en bootstrap:', e);
                     }
                 }
-            }, 100);
+                
+                // Pequeño delay adicional para asegurar que todo está listo
+                await new Promise(resolve => setTimeout(resolve, 200));
+                
+                if (authManager.isAuthenticated()) {
+                    redirectCheckDone = true;
+                    console.log('✅ [LOGIN] Usuario ya autenticado, redirigiendo...');
+                    
+                    // Función helper para construir rutas con basePath
+                    const getFullPath = (path) => {
+                        if (path.startsWith('http') || path.startsWith('//')) return path;
+                        if (typeof window.BASE_PATH !== 'undefined' && window.BASE_PATH) {
+                            const cleanPath = path.startsWith('/') ? path.substring(1) : path.replace('./', '');
+                            return window.BASE_PATH + cleanPath;
+                        }
+                        return path;
+                    };
+                    
+                    if (authManager.isAdmin()) {
+                        const adminPath = getFullPath('./admin/perfil.html');
+                        console.log('🔄 [LOGIN] Redirigiendo admin a:', adminPath);
+                        window.location.replace(adminPath);
+                    } else {
+                        const clientPath = getFullPath('./perfil.html');
+                        console.log('🔄 [LOGIN] Redirigiendo cliente a:', clientPath);
+                        window.location.replace(clientPath);
+                    }
+                } else {
+                    console.log('ℹ️ [LOGIN] Usuario no autenticado, permaneciendo en login');
+                }
+            }, 300);
         });
     </script>
 </body>
