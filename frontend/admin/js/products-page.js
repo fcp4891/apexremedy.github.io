@@ -1059,8 +1059,18 @@ document.addEventListener('DOMContentLoaded', function() {
          */
         async function generateCatalog() {
             try {
-                // Obtener la URL base del catálogo
-                const catalogUrl = window.location.origin + '/catalogo/index.html';
+                // Obtener la URL base del catálogo usando BASE_PATH si está disponible
+                let catalogUrl;
+                
+                if (typeof window.BASE_PATH !== 'undefined' && window.BASE_PATH) {
+                    // GitHub Pages: usar BASE_PATH
+                    catalogUrl = window.location.origin + window.BASE_PATH + 'catalogo/index.html';
+                } else {
+                    // Desarrollo local: usar ruta relativa
+                    catalogUrl = window.location.origin + '/catalogo/index.html';
+                }
+                
+                console.log('🔗 [generateCatalog] URL del catálogo:', catalogUrl);
                 
                 // Abrir catálogo en nueva ventana (sin modo edición)
                 window.open(catalogUrl, '_blank');
@@ -1079,6 +1089,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         }
+        
+        // Exportar función al scope global para uso desde admin/index.html
+        window.generateCatalog = generateCatalog;
 
 // Cerrar modal con overlay y ESC
     (function () {
