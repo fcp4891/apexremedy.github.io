@@ -195,6 +195,10 @@ async function loadTopProducts() {
 // ============================================
 async function loadCustomersDashboard() {
     try {
+        if (!checkBackendAvailable()) {
+            showDashboardUnavailable('customers');
+            return;
+        }
         const response = await api.getCustomersDashboard(currentPeriod);
         if (!response.success) throw new Error(response.message);
 
@@ -266,6 +270,10 @@ function getSegmentClass(segment) {
 // ============================================
 async function loadMarketingDashboard() {
     try {
+        if (!checkBackendAvailable()) {
+            showDashboardUnavailable('marketing');
+            return;
+        }
         const response = await api.getMarketingDashboard(currentPeriod);
         if (!response.success) throw new Error(response.message);
 
@@ -321,6 +329,10 @@ async function loadMarketingDashboard() {
 // ============================================
 async function loadProductsDashboard() {
     try {
+        if (!checkBackendAvailable()) {
+            showDashboardUnavailable('products');
+            return;
+        }
         const response = await api.getProductsDashboard(currentPeriod);
         if (!response.success) throw new Error(response.message);
 
@@ -368,6 +380,10 @@ async function loadProductsDashboard() {
 // ============================================
 async function loadInventoryDashboard() {
     try {
+        if (!checkBackendAvailable()) {
+            showDashboardUnavailable('inventory');
+            return;
+        }
         const response = await api.getInventoryDashboard();
         if (!response.success) throw new Error(response.message);
 
@@ -416,6 +432,10 @@ async function loadInventoryDashboard() {
 // ============================================
 async function loadOperationsDashboard() {
     try {
+        if (!checkBackendAvailable()) {
+            showDashboardUnavailable('operations');
+            return;
+        }
         const response = await api.getOperationsDashboard(currentPeriod);
         if (!response.success) throw new Error(response.message);
 
@@ -452,6 +472,10 @@ async function loadOperationsDashboard() {
 // ============================================
 async function loadUXDashboard() {
     try {
+        if (!checkBackendAvailable()) {
+            showDashboardUnavailable('ux');
+            return;
+        }
         const response = await api.getUXDashboard(currentPeriod);
         if (!response.success) throw new Error(response.message);
 
@@ -490,6 +514,10 @@ async function loadUXDashboard() {
 // ============================================
 async function loadFinancialDashboard() {
     try {
+        if (!checkBackendAvailable()) {
+            showDashboardUnavailable('financial');
+            return;
+        }
         const response = await api.getFinancialDashboard(currentPeriod);
         if (!response.success) throw new Error(response.message);
 
@@ -518,6 +546,10 @@ async function loadFinancialDashboard() {
 // ============================================
 async function loadServiceDashboard() {
     try {
+        if (!checkBackendAvailable()) {
+            showDashboardUnavailable('service');
+            return;
+        }
         const response = await api.getCustomerServiceDashboard(currentPeriod);
         if (!response.success) throw new Error(response.message);
 
