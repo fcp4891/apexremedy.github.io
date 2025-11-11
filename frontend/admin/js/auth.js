@@ -24,9 +24,55 @@ if (typeof AuthManager === 'undefined') {
         async bootstrap() {
             console.log('🚀 [auth.js] Iniciando bootstrap...');
             
-            // Si no hay API configurada, no hay sesión
+            // Si no hay API configurada, verificar localStorage (modo estático/GitHub Pages)
             if (!api || typeof api.getProfile !== 'function' || !api.baseURL) {
-                console.log('⚠️ [auth.js] No hay API configurada');
+                console.log('⚠️ [auth.js] No hay API configurada, verificando localStorage...');
+                
+                try {
+                    const storedToken = localStorage.getItem('auth_token');
+                    const storedUser = localStorage.getItem('auth_user');
+                    
+                    if (storedToken && storedUser) {
+                        try {
+                            const user = JSON.parse(storedUser);
+                            // Validar que el token no haya expirado (si es un token estático)
+                            if (storedToken.startsWith('static.')) {
+                                const parts = storedToken.split('.');
+                                if (parts.length >= 2) {
+                                    const payload = JSON.parse(atob(parts[1]));
+                                    if (payload.exp && payload.exp > Date.now()) {
+                                        this.sessionToken = storedToken;
+                                        this.currentUser = user;
+                                        this.sessionReady = true;
+                                        console.log('✅ [auth.js] Sesión restaurada desde localStorage:', user.email);
+                                        this.updateUI();
+                                        return;
+                                    } else {
+                                        console.log('⚠️ [auth.js] Token expirado, limpiando...');
+                                        localStorage.removeItem('auth_token');
+                                        localStorage.removeItem('auth_user');
+                                    }
+                                }
+                            } else {
+                                // Token no estático, asumir válido
+                                this.sessionToken = storedToken;
+                                this.currentUser = user;
+                                this.sessionReady = true;
+                                console.log('✅ [auth.js] Sesión restaurada desde localStorage:', user.email);
+                                this.updateUI();
+                                return;
+                            }
+                        } catch (e) {
+                            console.warn('⚠️ [auth.js] Error parseando usuario de localStorage:', e);
+                            localStorage.removeItem('auth_token');
+                            localStorage.removeItem('auth_user');
+                        }
+                    }
+                } catch (e) {
+                    console.warn('⚠️ [auth.js] Error accediendo a localStorage:', e);
+                }
+                
+                // No hay sesión válida en localStorage
                 this.sessionReady = true;
                 this.currentUser = null;
                 this.clearSession();
@@ -95,6 +141,15 @@ if (typeof AuthManager === 'undefined') {
             this.currentUser = null;
             this.sessionToken = null;
             this.sessionReady = true;
+            
+            // Limpiar localStorage también
+            try {
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('auth_user');
+                console.log('🧹 [auth.js] localStorage limpiado');
+            } catch (e) {
+                console.warn('⚠️ [auth.js] Error limpiando localStorage:', e);
+            }
             
             // Limpiar cookies de autenticación del lado del cliente
             this.clearAuthCookies();

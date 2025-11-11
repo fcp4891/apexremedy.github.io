@@ -92,6 +92,15 @@ if (typeof AuthManager === 'undefined') {
             this.sessionToken = null;
             this.sessionReady = true;
             
+            // Limpiar localStorage también
+            try {
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('auth_user');
+                console.log('🧹 [AUTH] localStorage limpiado');
+            } catch (e) {
+                console.warn('⚠️ [AUTH] Error limpiando localStorage:', e);
+            }
+            
             // Limpiar cookies de autenticación del lado del cliente
             this.clearAuthCookies();
         }
@@ -199,6 +208,17 @@ if (typeof AuthManager === 'undefined') {
                     this.sessionToken = token;
                     this.currentUser = user;
                     this.sessionReady = true;
+                    
+                    // Guardar en localStorage para que el authManager del admin pueda acceder
+                    if (token && user) {
+                        try {
+                            localStorage.setItem('auth_token', token);
+                            localStorage.setItem('auth_user', JSON.stringify(user));
+                            console.log('💾 [AUTH] Token y usuario guardados en localStorage');
+                        } catch (e) {
+                            console.warn('⚠️ [AUTH] Error guardando en localStorage:', e);
+                        }
+                    }
                     
                     console.log('✅ [AUTH] Estado actualizado - sessionReady:', this.sessionReady);
                     console.log('✅ [AUTH] currentUser establecido:', this.currentUser?.email);
