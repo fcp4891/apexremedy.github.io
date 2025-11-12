@@ -6,65 +6,144 @@
  */
 async function loadCatalogFromAPI() {
     try {
-        // Detectar entorno
-        const isProduction = window.location.hostname.includes('github.io') || 
-                            (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1');
+        // Usar detector de entorno si está disponible
+        let env = 'unknown';
+        let backendURL = null;
+        let hasBackend = false;
         
-        let result = null;
-        
-        // En producción, usar JSON estático
-        if (isProduction) {
-            console.log('📡 Cargando catálogo desde JSON estático: /api/products.json');
-            try {
-                const response = await fetch('/api/products.json');
-                if (!response.ok) {
-                    throw new Error(`Error al cargar JSON: ${response.status}`);
+        if (typeof window !== 'undefined' && window.envDetector) {
+            env = window.envDetector.env;
+            hasBackend = window.envDetector.dataSource.hasBackend;
+            backendURL = window.envDetector.getBackendURL();
+            console.log(`🌍 Entorno detectado: ${env} | Backend: ${hasBackend ? 'Sí' : 'No'}`);
+        } else {
+            // Fallback: detección básica
+            const hostname = window.location.hostname;
+            if (hostname.includes('github.io')) {
+                env = 'github';
+                hasBackend = false;
+            } else if (hostname === 'localhost' || hostname === '127.0.0.1') {
+                env = 'local';
+                hasBackend = true;
+                backendURL = 'http://localhost:3000/api';
+            } else {
+                env = 'production';
+                hasBackend = true;
+                // Intentar usar CONFIG si está disponible
+                if (window.CONFIG && window.CONFIG.API_BASE_URL) {
+                    backendURL = window.CONFIG.API_BASE_URL;
+                } else {
+                    // Inferir desde el hostname
+                    const protocol = window.location.protocol;
+                    backendURL = `${protocol}//api.${hostname}/api`;
                 }
-                result = await response.json();
-                
-                if (!result.success || !result.data || !result.data.products) {
-                    throw new Error('Formato de JSON inválido');
-                }
-                
-                console.log('✅ JSON estático cargado:', result.data.products.length, 'productos');
-                
-                // Transformar productos del formato JSON al formato del catálogo
-                return transformProductsToCatalogFormat(result.data.products);
-                
-            } catch (error) {
-                console.error('❌ Error al cargar JSON estático:', error);
-                console.warn('⚠️ Intentando con API dinámica como fallback...');
-                // Continuar para intentar con API dinámica
             }
         }
         
-        // En desarrollo o si falló el JSON estático, intentar API dinámica
-        const API_BASE_URL = 'http://localhost:3000/api';
-        console.log('📡 Cargando catálogo desde API dinámica:', `${API_BASE_URL}/products/catalog/medicinal`);
+        // Estrategia según entorno:
+        // 1. GitHub Pages: Solo JSON estático
+        // 2. Local: Intentar API dinámica, fallback a JSON estático
+        // 3. Producción: Intentar API dinámica, fallback a JSON estático
         
+        // Si hay backend disponible, intentar API dinámica primero
+        if (hasBackend && backendURL) {
+            console.log(`📡 Intentando cargar desde API dinámica: ${backendURL}/products/catalog/medicinal`);
+            try {
+                // Crear timeout manual para compatibilidad
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000);
+                
+                const response = await fetch(`${backendURL}/products/catalog/medicinal`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                
+                if (!response.ok) {
+                    throw new Error(`Error al cargar catálogo: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                
+                if (!result.success) {
+                    throw new Error(result.message || 'Error al obtener catálogo');
+                }
+                
+                const catalogData = result.data;
+                const stats = result.stats;
+                
+                console.log('✅ Catálogo cargado desde API dinámica:', stats);
+                
+                // Formatear datos para el catálogo
+                return formatCatalogData(catalogData);
+                
+            } catch (error) {
+                if (error.name === 'AbortError') {
+                    console.warn('⚠️ Timeout al conectar con API dinámica, usando JSON estático...');
+                } else {
+                    console.warn(`⚠️ Error al cargar desde API dinámica (${error.message}), usando JSON estático como fallback...`);
+                }
+                // Continuar para intentar con JSON estático
+            }
+        }
+        
+        // Cargar desde JSON estático (GitHub Pages o fallback)
+        console.log('📡 Cargando catálogo desde JSON estático');
         try {
-            const response = await fetch(`${API_BASE_URL}/products/catalog/medicinal`);
+            // Detectar la ruta correcta del JSON
+            // En GitHub Pages: /apexremedy.github.io/api/products.json
+            // En local desde catalogo/: ../api/products.json
+            // En producción: /api/products.json o desde el mismo dominio
+            
+            let jsonPath = '/api/products.json';
+            
+            // Si estamos en GitHub Pages, puede estar en un subdirectorio del repo
+            if (env === 'github') {
+                // GitHub Pages puede servir desde la raíz del repo o desde /apexremedy.github.io/
+                // Intentar primero desde la raíz
+                jsonPath = '/api/products.json';
+            } else if (window.location.pathname.includes('/catalogo/')) {
+                // Si estamos en el subdirectorio catalogo/, usar ruta relativa
+                jsonPath = '../api/products.json';
+            }
+            
+            console.log(`📂 Intentando cargar JSON desde: ${jsonPath}`);
+            const response = await fetch(jsonPath);
             
             if (!response.ok) {
-                throw new Error(`Error al cargar catálogo: ${response.status}`);
+                // Si falla, intentar con ruta alternativa
+                if (jsonPath.startsWith('/')) {
+                    const altPath = '../api/products.json';
+                    console.log(`📂 Intentando ruta alternativa: ${altPath}`);
+                    const altResponse = await fetch(altPath);
+                    if (altResponse.ok) {
+                        const altResult = await altResponse.json();
+                        if (altResult.success && altResult.data && altResult.data.products) {
+                            console.log('✅ JSON estático cargado desde ruta alternativa:', altResult.data.products.length, 'productos');
+                            return transformProductsToCatalogFormat(altResult.data.products);
+                        }
+                    }
+                }
+                throw new Error(`Error al cargar JSON: ${response.status}`);
             }
             
-            result = await response.json();
+            const result = await response.json();
             
-            if (!result.success) {
-                throw new Error(result.message || 'Error al obtener catálogo');
+            if (!result.success || !result.data || !result.data.products) {
+                throw new Error('Formato de JSON inválido');
             }
             
-            const catalogData = result.data;
-            const stats = result.stats;
+            console.log('✅ JSON estático cargado:', result.data.products.length, 'productos');
             
-            console.log('✅ Catálogo cargado desde API dinámica:', stats);
-            
-            // Formatear datos para el catálogo
-            return formatCatalogData(catalogData);
+            // Transformar productos del formato JSON al formato del catálogo
+            return transformProductsToCatalogFormat(result.data.products);
             
         } catch (error) {
-            console.error('❌ Error al cargar catálogo desde API dinámica:', error);
+            console.error('❌ Error al cargar JSON estático:', error);
             throw error;
         }
         

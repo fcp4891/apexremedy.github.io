@@ -84,18 +84,33 @@ class EnvironmentDetector {
      * Obtiene la URL del backend en producción
      */
     getProductionBackendURL() {
-        // Verificar si hay una configuración explícita
+        // 1. Verificar si hay una configuración explícita en CONFIG
+        if (typeof window !== 'undefined' && window.CONFIG && window.CONFIG.API_BASE_URL) {
+            const configURL = window.CONFIG.API_BASE_URL;
+            // Verificar que no sea la URL por defecto de desarrollo
+            if (configURL && !configURL.includes('localhost') && !configURL.includes('127.0.0.1')) {
+                return configURL;
+            }
+        }
+        
+        // 2. Verificar si hay una configuración explícita en variable global
         if (typeof window !== 'undefined' && window.PRODUCTION_API_URL) {
             return window.PRODUCTION_API_URL;
         }
         
-        // Intentar inferir desde el hostname actual
+        // 3. Intentar inferir desde el hostname actual
         const hostname = window.location.hostname;
         const protocol = window.location.protocol;
         
-        // Si es HTTPS, probablemente el backend está en el mismo dominio
+        // Si es HTTPS, probablemente el backend está en el mismo dominio o subdominio
         if (protocol === 'https:') {
+            // Intentar subdominio api.
             return `${protocol}//api.${hostname}/api`;
+        }
+        
+        // 4. Si es HTTP (desarrollo), usar localhost
+        if (protocol === 'http:') {
+            return 'http://localhost:3000/api';
         }
         
         return null; // No se pudo determinar, usar JSON estático
