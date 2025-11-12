@@ -4,21 +4,21 @@
   "data": {
     "products": [
       {
-        "id": 6,
-        "name": "Aceite Full Spectrum THC 20% · 30ml",
-        "description": "Aceite de cannabis full spectrum con 20% THC. Extracción CO2 supercrítico. Efecto entourage completo.",
-        "short_description": "Aceite THC 20% full spectrum",
-        "sku": "MED-OIL-THC20-30ML",
+        "id": 8,
+        "name": "Aceite Balanceado 1:1 (THC:CBD) · 30ml",
+        "description": "Aceite balanceado ratio 1:1 THC:CBD (10:10). Efecto sinérgico ideal para dolor y ansiedad.",
+        "short_description": "Ratio balanceado 1:1 THC:CBD",
+        "sku": "MED-OIL-BAL11-30ML",
         "breeder": "Apex Remedy",
         "brand_id": 1,
         "category": "Aceites Medicinales",
         "category_slug": "medicinal-aceites",
         "category_id": 2,
         "product_type": "oil",
-        "price": 45000,
-        "base_price": 45000,
-        "stock": 100,
-        "stock_quantity": 100,
+        "price": 42000,
+        "base_price": 42000,
+        "stock": 120,
+        "stock_quantity": 120,
         "stock_unit": "unidades",
         "image": "",
         "images": [
@@ -34,81 +34,80 @@
         "active": false,
         "is_medicinal": true,
         "requires_prescription": true,
-        "created_at": "2025-11-03T01:13:16.774Z",
-        "updated_at": "2025-11-03 20:40:52",
+        "created_at": "2025-11-03T01:13:17.149Z",
+        "updated_at": "2025-11-03 20:40:53",
         "attributes": {
           "packaging": "Frasco gotero ámbar",
-          "concentration": "Alta potencia",
-          "storage": "Lugar fresco y oscuro"
+          "concentration": "Balanceada",
+          "storage": "Lugar fresco"
         },
         "price_variants": null,
         "medicinal_info": null,
         "cannabinoid_profile": {
-          "thc": 20,
-          "cbd": 1,
-          "cbn": 0.5,
-          "cbg": 0.8,
-          "cbc": 0.3
+          "thc": 10,
+          "cbd": 10,
+          "cbn": 0.3,
+          "cbg": 0.6,
+          "cbc": 0.4
         },
         "terpene_profile": null,
         "strain_info": null,
         "therapeutic_info": {
           "conditions": [
             "Dolor crónico",
-            "Insomnio",
-            "Náuseas",
-            "Falta de apetito"
+            "Ansiedad",
+            "Inflamación",
+            "Espasticidad"
           ],
           "benefits": [
-            "Dosificación precisa",
-            "Efecto prolongado",
-            "Absorción sublingual rápida"
+            "Efecto sinérgico",
+            "CBD modera efectos del THC",
+            "Versatilidad terapéutica"
           ],
           "effects": [
-            "Relajante",
-            "Analgésico",
-            "Sedante"
+            "Relajación equilibrada",
+            "Alivio del dolor",
+            "Calma mental"
           ]
         },
         "usage_info": {
           "recommended_time": "Tarde/noche",
           "dosage": {
-            "beginner": "0.25ml (5mg THC)",
-            "intermediate": "0.5ml (10mg THC)",
-            "advanced": "1ml (20mg THC)"
+            "beginner": "0.5ml (5mg:5mg)",
+            "intermediate": "1ml (10mg:10mg)",
+            "advanced": "2ml (20mg:20mg)"
           },
           "administration": [
             "Sublingual - mantener 60 segundos"
           ],
           "onset": "15-45 minutos",
-          "duration": "4-6 horas"
+          "duration": "5-7 horas"
         },
         "safety_info": {
           "contraindications": [
             "Embarazo",
-            "Lactancia",
-            "Enfermedad hepática severa"
+            "Lactancia"
           ],
           "side_effects": [
-            "Somnolencia",
-            "Mareos",
+            "Somnolencia leve",
             "Boca seca"
           ],
           "interactions": [
             "Sedantes",
-            "Anticoagulantes",
-            "Alcohol"
+            "Anticoagulantes"
           ]
         },
         "specifications": {
           "volume": "30ml",
-          "thc_per_ml": "20mg",
-          "total_thc": "600mg",
+          "thc_per_ml": "10mg",
+          "cbd_per_ml": "10mg",
+          "total_thc": "300mg",
+          "total_cbd": "300mg",
           "extraction": "CO2 Supercrítico",
-          "carrier_oil": "Aceite MCT de coco",
+          "carrier_oil": "Aceite MCT",
           "spectrum": "Full Spectrum"
         },
-        "medical_category": "thc",
+        "medical_category": "balanced",
         "unit_type": "volume",
         "base_unit": "ml",
         "unit_size": 30,
@@ -223,21 +222,122 @@
         "status": "active"
       },
       {
-        "id": 8,
-        "name": "Aceite Balanceado 1:1 (THC:CBD) · 30ml",
-        "description": "Aceite balanceado ratio 1:1 THC:CBD (10:10). Efecto sinérgico ideal para dolor y ansiedad.",
-        "short_description": "Ratio balanceado 1:1 THC:CBD",
-        "sku": "MED-OIL-BAL11-30ML",
+        "id": 32,
+        "name": "Aceite CBD 5% · Uso Diario · 15ml",
+        "description": "Aceite CBD 5% de venta libre. Ideal para principiantes. Ansiedad leve y bienestar general.",
+        "short_description": "CBD 5% uso diario sin receta",
+        "sku": "CBD-OIL-5-15ML",
+        "breeder": "Apex Remedy",
+        "brand_id": 1,
+        "category": "CBD",
+        "category_slug": "cbd",
+        "category_id": 10,
+        "product_type": "oil",
+        "price": 19990,
+        "base_price": 19990,
+        "stock": 200,
+        "stock_quantity": 200,
+        "stock_unit": "unidades",
+        "image": "",
+        "images": [
+          {
+            "id": null,
+            "url": "./images/catalogo/placeholder_2.png",
+            "alt_text": "Imagen no disponible",
+            "display_order": 0,
+            "is_primary": 1
+          }
+        ],
+        "featured": true,
+        "active": false,
+        "is_medicinal": false,
+        "requires_prescription": false,
+        "created_at": "2025-11-03T01:13:21.541Z",
+        "updated_at": "2025-11-03 20:40:52",
+        "attributes": {
+          "otc": "Venta libre",
+          "beginner_friendly": "Sí",
+          "packaging": "Gotero 15ml"
+        },
+        "price_variants": null,
+        "medicinal_info": null,
+        "cannabinoid_profile": {
+          "thc": 0,
+          "cbd": 5
+        },
+        "terpene_profile": null,
+        "strain_info": null,
+        "therapeutic_info": {
+          "conditions": [
+            "Ansiedad leve",
+            "Estrés",
+            "Bienestar general"
+          ],
+          "benefits": [
+            "Sin receta",
+            "Uso diario",
+            "Sin psicoactividad"
+          ],
+          "effects": [
+            "Calma",
+            "Relajación",
+            "Equilibrio"
+          ]
+        },
+        "usage_info": {
+          "recommended_time": "Cualquier hora",
+          "dosage": {
+            "beginner": "0.5ml",
+            "intermediate": "1ml",
+            "advanced": "2ml"
+          },
+          "administration": [
+            "Sublingual 60 segundos"
+          ],
+          "onset": "20-40 minutos",
+          "duration": "4-6 horas"
+        },
+        "safety_info": {
+          "contraindications": [
+            "Hipersensibilidad"
+          ],
+          "side_effects": [
+            "Ninguno reportado en dosis normales"
+          ],
+          "interactions": [
+            "Ninguna significativa"
+          ]
+        },
+        "specifications": {
+          "volume": "15ml",
+          "cbd_per_ml": "5mg",
+          "total_cbd": "75mg",
+          "thc_content": "0% THC",
+          "extraction": "CO2",
+          "carrier_oil": "Aceite de hemp"
+        },
+        "medical_category": "cbd",
+        "unit_type": "volume",
+        "base_unit": "ml",
+        "unit_size": 15,
+        "status": "active"
+      },
+      {
+        "id": 52,
+        "name": "Aceite CBD Full Spectrum · 5000mg",
+        "description": "Aceite CBD Full Spectrum 5000mg en 30ml. Extracción premium 120-73 micrones. Máxima potencia y efecto séquito completo.",
+        "short_description": "CBD 5000mg full spectrum ultra potente",
+        "sku": "MED-OIL-CBDFULL-5000",
         "breeder": "Apex Remedy",
         "brand_id": 1,
         "category": "Aceites Medicinales",
         "category_slug": "medicinal-aceites",
         "category_id": 2,
         "product_type": "oil",
-        "price": 42000,
-        "base_price": 42000,
-        "stock": 120,
-        "stock_quantity": 120,
+        "price": 70000,
+        "base_price": 70000,
+        "stock": 100,
+        "stock_quantity": 100,
         "stock_unit": "unidades",
         "image": "",
         "images": [
@@ -253,83 +353,1428 @@
         "active": false,
         "is_medicinal": true,
         "requires_prescription": true,
-        "created_at": "2025-11-03T01:13:17.149Z",
+        "created_at": "2025-11-03T01:22:31.285Z",
         "updated_at": "2025-11-03 20:40:53",
         "attributes": {
-          "packaging": "Frasco gotero ámbar",
-          "concentration": "Balanceada",
-          "storage": "Lugar fresco"
+          "packaging": "Frasco gotero ámbar premium",
+          "concentration": "Ultra alta potencia",
+          "storage": "Lugar fresco y oscuro"
         },
         "price_variants": null,
         "medicinal_info": null,
         "cannabinoid_profile": {
-          "thc": 10,
-          "cbd": 10,
-          "cbn": 0.3,
-          "cbg": 0.6,
-          "cbc": 0.4
+          "thc": 1.5,
+          "cbd": 166.7,
+          "cbn": 0.5,
+          "cbg": 3,
+          "cbc": 2
+        },
+        "terpene_profile": null,
+        "strain_info": null,
+        "therapeutic_info": {
+          "conditions": [
+            "Dolor crónico severo",
+            "Inflamación severa",
+            "Ansiedad severa",
+            "Epilepsia",
+            "Insomnio"
+          ],
+          "benefits": [
+            "Máxima potencia CBD",
+            "Efecto séquito completo",
+            "Extracción premium"
+          ],
+          "effects": [
+            "Relajación profunda",
+            "Antiinflamatorio potente",
+            "Ansiolítico fuerte"
+          ]
+        },
+        "usage_info": {
+          "recommended_time": "Mañana y noche",
+          "dosage": {
+            "beginner": "0.3ml (50mg CBD)",
+            "intermediate": "0.6ml (100mg CBD)",
+            "advanced": "1ml (166mg CBD)"
+          },
+          "administration": [
+            "Sublingual - mantener 90 segundos"
+          ],
+          "onset": "15-45 minutos",
+          "duration": "6-8 horas"
+        },
+        "safety_info": {
+          "contraindications": [
+            "Hipersensibilidad a cannabinoides",
+            "Enfermedad hepática severa"
+          ],
+          "side_effects": [
+            "Somnolencia leve",
+            "Boca seca",
+            "Cambios en apetito"
+          ],
+          "interactions": [
+            "Anticoagulantes",
+            "Anticonvulsivos",
+            "Sedantes"
+          ]
+        },
+        "specifications": {
+          "volume": "30ml",
+          "cbd_per_ml": "166.7mg",
+          "total_cbd": "5000mg",
+          "extraction": "CO2 Supercrítico + Presión (120-73 micrones)",
+          "carrier_oil": "Aceite MCT orgánico",
+          "spectrum": "Full Spectrum"
+        },
+        "medical_category": "cbd",
+        "unit_type": "volume",
+        "base_unit": "ml",
+        "unit_size": 30,
+        "status": "active"
+      },
+      {
+        "id": 6,
+        "name": "Aceite Full Spectrum THC 20% · 30ml",
+        "description": "Aceite de cannabis full spectrum con 20% THC. Extracción CO2 supercrítico. Efecto entourage completo.",
+        "short_description": "Aceite THC 20% full spectrum",
+        "sku": "MED-OIL-THC20-30ML",
+        "breeder": "Apex Remedy",
+        "brand_id": 1,
+        "category": "Aceites Medicinales",
+        "category_slug": "medicinal-aceites",
+        "category_id": 2,
+        "product_type": "oil",
+        "price": 45000,
+        "base_price": 45000,
+        "stock": 100,
+        "stock_quantity": 100,
+        "stock_unit": "unidades",
+        "image": "",
+        "images": [
+          {
+            "id": null,
+            "url": "./images/catalogo/placeholder_2.png",
+            "alt_text": "Imagen no disponible",
+            "display_order": 0,
+            "is_primary": 1
+          }
+        ],
+        "featured": true,
+        "active": false,
+        "is_medicinal": true,
+        "requires_prescription": true,
+        "created_at": "2025-11-03T01:13:16.774Z",
+        "updated_at": "2025-11-03 20:40:52",
+        "attributes": {
+          "packaging": "Frasco gotero ámbar",
+          "concentration": "Alta potencia",
+          "storage": "Lugar fresco y oscuro"
+        },
+        "price_variants": null,
+        "medicinal_info": null,
+        "cannabinoid_profile": {
+          "thc": 20,
+          "cbd": 1,
+          "cbn": 0.5,
+          "cbg": 0.8,
+          "cbc": 0.3
         },
         "terpene_profile": null,
         "strain_info": null,
         "therapeutic_info": {
           "conditions": [
             "Dolor crónico",
-            "Ansiedad",
-            "Inflamación",
-            "Espasticidad"
+            "Insomnio",
+            "Náuseas",
+            "Falta de apetito"
           ],
           "benefits": [
-            "Efecto sinérgico",
-            "CBD modera efectos del THC",
-            "Versatilidad terapéutica"
+            "Dosificación precisa",
+            "Efecto prolongado",
+            "Absorción sublingual rápida"
           ],
           "effects": [
-            "Relajación equilibrada",
-            "Alivio del dolor",
-            "Calma mental"
+            "Relajante",
+            "Analgésico",
+            "Sedante"
           ]
         },
         "usage_info": {
           "recommended_time": "Tarde/noche",
           "dosage": {
-            "beginner": "0.5ml (5mg:5mg)",
-            "intermediate": "1ml (10mg:10mg)",
-            "advanced": "2ml (20mg:20mg)"
+            "beginner": "0.25ml (5mg THC)",
+            "intermediate": "0.5ml (10mg THC)",
+            "advanced": "1ml (20mg THC)"
           },
           "administration": [
             "Sublingual - mantener 60 segundos"
           ],
           "onset": "15-45 minutos",
-          "duration": "5-7 horas"
+          "duration": "4-6 horas"
         },
         "safety_info": {
           "contraindications": [
             "Embarazo",
-            "Lactancia"
+            "Lactancia",
+            "Enfermedad hepática severa"
           ],
           "side_effects": [
-            "Somnolencia leve",
+            "Somnolencia",
+            "Mareos",
             "Boca seca"
           ],
           "interactions": [
             "Sedantes",
-            "Anticoagulantes"
+            "Anticoagulantes",
+            "Alcohol"
           ]
         },
         "specifications": {
           "volume": "30ml",
-          "thc_per_ml": "10mg",
-          "cbd_per_ml": "10mg",
-          "total_thc": "300mg",
-          "total_cbd": "300mg",
+          "thc_per_ml": "20mg",
+          "total_thc": "600mg",
           "extraction": "CO2 Supercrítico",
-          "carrier_oil": "Aceite MCT",
+          "carrier_oil": "Aceite MCT de coco",
           "spectrum": "Full Spectrum"
+        },
+        "medical_category": "thc",
+        "unit_type": "volume",
+        "base_unit": "ml",
+        "unit_size": 30,
+        "status": "active"
+      },
+      {
+        "id": 16,
+        "name": "Amnesia Haze · 5 semillas",
+        "description": "Sativa clásica galardonada. Alto THC. Cultivo intermedio. Floración 11-12 semanas.",
+        "short_description": "Sativa clásica alto THC",
+        "sku": "SEED-AMN-HAZE-5",
+        "breeder": "Sensi Seeds",
+        "brand_id": 8,
+        "category": "Semillas",
+        "category_slug": "semillas",
+        "category_id": 6,
+        "product_type": "seed",
+        "price": 22000,
+        "base_price": 22000,
+        "stock": 100,
+        "stock_quantity": 100,
+        "stock_unit": "unidades",
+        "image": "",
+        "images": [
+          {
+            "id": null,
+            "url": "./images/catalogo/placeholder_2.png",
+            "alt_text": "Imagen no disponible",
+            "display_order": 0,
+            "is_primary": 1
+          }
+        ],
+        "featured": true,
+        "active": false,
+        "is_medicinal": false,
+        "requires_prescription": false,
+        "created_at": "2025-11-03T01:13:18.545Z",
+        "updated_at": "2025-11-03 20:40:56",
+        "attributes": {
+          "harvest_time": "Octubre (exterior)",
+          "aroma": "Cítrico, Terroso, Especiado",
+          "effects": "Eufórico, Creativo, Energético"
+        },
+        "price_variants": null,
+        "medicinal_info": null,
+        "cannabinoid_profile": null,
+        "terpene_profile": null,
+        "strain_info": {
+          "type": "Sativa dominante",
+          "genetics": "80% Sativa / 20% Indica",
+          "flowering_time": "11-12 semanas",
+          "yield": "600-650g/m²",
+          "thc": "20-25%",
+          "cbd": "0.1-0.3%"
+        },
+        "therapeutic_info": null,
+        "usage_info": null,
+        "safety_info": null,
+        "specifications": {
+          "seeds_per_pack": 5,
+          "feminized": "Sí",
+          "autoflowering": "No",
+          "difficulty": "Intermedia",
+          "height": "140-180cm",
+          "climate": "Interior/Exterior mediterráneo"
+        },
+        "medical_category": null,
+        "unit_type": "unit",
+        "base_unit": "pack",
+        "unit_size": 5,
+        "status": "active"
+      },
+      {
+        "id": 13,
+        "name": "Bálsamo CBD · 500mg",
+        "description": "Bálsamo de CBD 500mg para aplicación tópica. Ideal para dolor muscular, artritis e inflamación localizada.",
+        "short_description": "Bálsamo CBD 500mg para dolor",
+        "sku": "MED-TOP-BALM-CBD500",
+        "breeder": "Apex Remedy",
+        "brand_id": 1,
+        "category": "Tópicos Medicinales",
+        "category_slug": "medicinal-topicos",
+        "category_id": 5,
+        "product_type": "topical",
+        "price": 25000,
+        "base_price": 25000,
+        "stock": 150,
+        "stock_quantity": 150,
+        "stock_unit": "unidades",
+        "image": "",
+        "images": [
+          {
+            "id": null,
+            "url": "./images/catalogo/placeholder_2.png",
+            "alt_text": "Imagen no disponible",
+            "display_order": 0,
+            "is_primary": 1
+          }
+        ],
+        "featured": true,
+        "active": false,
+        "is_medicinal": true,
+        "requires_prescription": false,
+        "created_at": "2025-11-03T01:13:18.015Z",
+        "updated_at": "2025-11-03 20:40:55",
+        "attributes": {
+          "texture": "Cremosa",
+          "scent": "Lavanda y mentol",
+          "packaging": "Tarro 60ml"
+        },
+        "price_variants": null,
+        "medicinal_info": null,
+        "cannabinoid_profile": {
+          "thc": 0,
+          "cbd": 500
+        },
+        "terpene_profile": null,
+        "strain_info": null,
+        "therapeutic_info": {
+          "conditions": [
+            "Dolor muscular",
+            "Artritis",
+            "Inflamación localizada",
+            "Lesiones deportivas"
+          ],
+          "benefits": [
+            "Alivio localizado",
+            "Sin efectos sistémicos",
+            "Antiinflamatorio"
+          ],
+          "effects": [
+            "Alivio del dolor",
+            "Reducción inflamación",
+            "Relajación muscular"
+          ]
+        },
+        "usage_info": {
+          "recommended_time": "Cuando sea necesario",
+          "dosage": {
+            "application": "Cantidad generosa en área afectada"
+          },
+          "administration": [
+            "Tópica - masajear hasta absorber"
+          ],
+          "onset": "15-30 minutos",
+          "duration": "3-5 horas"
+        },
+        "safety_info": {
+          "contraindications": [
+            "Piel con heridas abiertas",
+            "Alergia a componentes"
+          ],
+          "side_effects": [
+            "Irritación leve en pieles sensibles"
+          ],
+          "interactions": [
+            "Ninguna conocida"
+          ]
+        },
+        "specifications": {
+          "total_cbd": "500mg",
+          "volume": "60ml",
+          "base": "Manteca de karité, cera de abejas, aceite de coco",
+          "additional_ingredients": "Árnica, mentol, lavanda",
+          "absorption": "Tópica (no sistémica)",
+          "application": "Aplicar 2-3 veces al día"
+        },
+        "medical_category": "cbd",
+        "unit_type": "volume",
+        "base_unit": "ml",
+        "unit_size": 60,
+        "status": "active"
+      },
+      {
+        "id": 35,
+        "name": "Citron Lemon · Sativa Energizante",
+        "description": "Sativa dominante (60/40) con intenso perfil cítrico. THC 16%. Ideal para uso diurno con efectos energizantes y enfoque mental.",
+        "short_description": "Sativa 60% cítrica energizante",
+        "sku": "MED-FLOWER-CITRON-001",
+        "breeder": "Apex Remedy",
+        "brand_id": 1,
+        "category": "Flores Medicinales",
+        "category_slug": "medicinal-flores",
+        "category_id": 1,
+        "product_type": "flower",
+        "price": 13500,
+        "base_price": 13500,
+        "stock": 300,
+        "stock_quantity": 300,
+        "stock_unit": "gramos",
+        "image": "",
+        "images": [
+          {
+            "id": null,
+            "url": "./images/catalogo/placeholder_2.png",
+            "alt_text": "Imagen no disponible",
+            "display_order": 0,
+            "is_primary": 1
+          }
+        ],
+        "featured": true,
+        "active": false,
+        "is_medicinal": true,
+        "requires_prescription": true,
+        "created_at": "2025-11-03T01:22:28.461Z",
+        "updated_at": "2025-11-03 20:40:54",
+        "attributes": {
+          "aroma": "Limón, Cítrico, Fresco",
+          "flavor": "Limón intenso, Dulce",
+          "appearance": "Cogollos verde claro con pistilos naranjas"
+        },
+        "price_variants": null,
+        "medicinal_info": null,
+        "cannabinoid_profile": {
+          "thc": 16,
+          "cbd": 0.4,
+          "cbn": 0.2,
+          "cbg": 0.8,
+          "thcv": 0.5
+        },
+        "terpene_profile": {
+          "Limoneno": 1.2,
+          "Pineno": 0.6,
+          "Mirceno": 0.4,
+          "Terpinoleno": 0.5
+        },
+        "strain_info": {
+          "type": "Sativa dominante",
+          "genetics": "60% Sativa / 40% Indica",
+          "lineage": "Lemon Skunk x Unknown Sativa",
+          "origin": "Países Bajos"
+        },
+        "therapeutic_info": {
+          "conditions": [
+            "Fatiga",
+            "Depresión leve",
+            "Falta de concentración",
+            "Pérdida de apetito"
+          ],
+          "benefits": [
+            "Energía sostenida",
+            "Claridad mental",
+            "Mejora del ánimo",
+            "Creatividad"
+          ],
+          "effects": [
+            "Energizante",
+            "Eufórico",
+            "Enfoque",
+            "Sociable"
+          ]
+        },
+        "usage_info": {
+          "recommended_time": "Diurno/matutino",
+          "dosage": {
+            "beginner": "0.2-0.3g",
+            "intermediate": "0.3-0.5g",
+            "advanced": "0.5-1g"
+          },
+          "administration": [
+            "Vaporización 170-180°C"
+          ],
+          "onset": "2-5 minutos",
+          "duration": "2-3 horas"
+        },
+        "safety_info": {
+          "contraindications": [
+            "Ansiedad severa",
+            "Trastornos del corazón"
+          ],
+          "side_effects": [
+            "Boca seca",
+            "Ojos rojos",
+            "Leve ansiedad en dosis altas"
+          ],
+          "interactions": [
+            "Estimulantes",
+            "Antidepresivos"
+          ]
+        },
+        "specifications": null,
+        "medical_category": "thc",
+        "unit_type": "weight",
+        "base_unit": "g",
+        "unit_size": 1,
+        "status": "active"
+      },
+      {
+        "id": 14,
+        "name": "Crema THC+CBD · 1:1 · 200mg",
+        "description": "Crema balanceada 1:1 THC:CBD. Total 200mg cannabinoides. Absorción transdérmica para dolor profundo.",
+        "short_description": "Crema 1:1 THC:CBD para dolor profundo",
+        "sku": "MED-TOP-CREAM-11-200",
+        "breeder": "Apex Remedy",
+        "brand_id": 1,
+        "category": "Tópicos Medicinales",
+        "category_slug": "medicinal-topicos",
+        "category_id": 5,
+        "product_type": "topical",
+        "price": 28000,
+        "base_price": 28000,
+        "stock": 100,
+        "stock_quantity": 100,
+        "stock_unit": "unidades",
+        "image": "",
+        "images": [
+          {
+            "id": null,
+            "url": "./images/catalogo/placeholder_2.png",
+            "alt_text": "Imagen no disponible",
+            "display_order": 0,
+            "is_primary": 1
+          }
+        ],
+        "featured": true,
+        "active": false,
+        "is_medicinal": true,
+        "requires_prescription": true,
+        "created_at": "2025-11-03T01:13:18.199Z",
+        "updated_at": "2025-11-03 20:40:55",
+        "attributes": {
+          "texture": "Suave y absorbente",
+          "scent": "Mentol y eucalipto",
+          "packaging": "Tubo 50ml"
+        },
+        "price_variants": null,
+        "medicinal_info": null,
+        "cannabinoid_profile": {
+          "thc": 100,
+          "cbd": 100
+        },
+        "terpene_profile": null,
+        "strain_info": null,
+        "therapeutic_info": {
+          "conditions": [
+            "Dolor neuropático",
+            "Artritis reumatoide",
+            "Fibromialgia",
+            "Dolor crónico severo"
+          ],
+          "benefits": [
+            "Efecto sinérgico THC+CBD",
+            "Penetración profunda",
+            "Alivio prolongado"
+          ],
+          "effects": [
+            "Analgésico potente",
+            "Antiinflamatorio",
+            "Relajante muscular"
+          ]
+        },
+        "usage_info": {
+          "recommended_time": "Según necesidad",
+          "dosage": {
+            "application": "Aplicar generosamente y masajear"
+          },
+          "administration": [
+            "Tópica - absorción transdérmica"
+          ],
+          "onset": "20-40 minutos",
+          "duration": "4-6 horas"
+        },
+        "safety_info": {
+          "contraindications": [
+            "Heridas abiertas",
+            "Embarazo",
+            "Lactancia"
+          ],
+          "side_effects": [
+            "Posible enrojecimiento leve"
+          ],
+          "interactions": [
+            "Ninguna sistémica"
+          ]
+        },
+        "specifications": {
+          "total_thc": "100mg",
+          "total_cbd": "100mg",
+          "volume": "50ml",
+          "base": "Crema base hipoalergénica",
+          "additional_ingredients": "Mentol, eucalipto, caléndula",
+          "absorption": "Transdérmica mejorada",
+          "application": "2-4 veces al día"
         },
         "medical_category": "balanced",
         "unit_type": "volume",
         "base_unit": "ml",
+        "unit_size": 50,
+        "status": "active"
+      },
+      {
+        "id": 37,
+        "name": "Critical Kush · Indica Extrema",
+        "description": "Indica dominante (80/20) con 27% THC. Relajación profunda extrema. Ideal para dolor severo e insomnio crónico.",
+        "short_description": "Indica 80% potencia extrema",
+        "sku": "MED-FLOWER-CRITIKUSH-001",
+        "breeder": "Apex Remedy",
+        "brand_id": 1,
+        "category": "Flores Medicinales",
+        "category_slug": "medicinal-flores",
+        "category_id": 1,
+        "product_type": "flower",
+        "price": 18000,
+        "base_price": 18000,
+        "stock": 280,
+        "stock_quantity": 280,
+        "stock_unit": "gramos",
+        "image": "",
+        "images": [
+          {
+            "id": null,
+            "url": "./images/catalogo/placeholder_2.png",
+            "alt_text": "Imagen no disponible",
+            "display_order": 0,
+            "is_primary": 1
+          }
+        ],
+        "featured": true,
+        "active": false,
+        "is_medicinal": true,
+        "requires_prescription": true,
+        "created_at": "2025-11-03T01:22:28.978Z",
+        "updated_at": "2025-11-03 20:40:54",
+        "attributes": {
+          "aroma": "Terroso, Especias, Pino",
+          "flavor": "Terroso, Picante, Kush",
+          "appearance": "Cogollos muy densos púrpura oscuro"
+        },
+        "price_variants": null,
+        "medicinal_info": null,
+        "cannabinoid_profile": {
+          "thc": 27,
+          "cbd": 0.4,
+          "cbn": 2.5,
+          "cbg": 0.7,
+          "thcv": 0.2
+        },
+        "terpene_profile": {
+          "Mirceno": 1.5,
+          "Cariofileno": 0.9,
+          "Limoneno": 0.4,
+          "Humuleno": 0.5
+        },
+        "strain_info": {
+          "type": "Indica dominante",
+          "genetics": "80% Indica / 20% Sativa",
+          "lineage": "Critical Mass x OG Kush",
+          "origin": "California, USA"
+        },
+        "therapeutic_info": {
+          "conditions": [
+            "Dolor crónico severo",
+            "Insomnio grave",
+            "Espasticidad",
+            "Ansiedad severa"
+          ],
+          "benefits": [
+            "Sedación profunda",
+            "Alivio dolor intenso",
+            "Relajación muscular extrema"
+          ],
+          "effects": [
+            "Muy sedante",
+            "Relajante profundo",
+            "Somnolencia"
+          ]
+        },
+        "usage_info": {
+          "recommended_time": "Nocturno exclusivamente",
+          "dosage": {
+            "beginner": "0.1-0.2g",
+            "intermediate": "0.2-0.3g",
+            "advanced": "0.3-0.5g"
+          },
+          "administration": [
+            "Vaporización 170-180°C"
+          ],
+          "onset": "2-5 minutos",
+          "duration": "3-5 horas"
+        },
+        "safety_info": {
+          "contraindications": [
+            "Hipotensión severa",
+            "Embarazo",
+            "Operación de maquinaria"
+          ],
+          "side_effects": [
+            "Somnolencia extrema",
+            "Boca seca severa",
+            "Sedación prolongada"
+          ],
+          "interactions": [
+            "Sedantes",
+            "Benzodiacepinas",
+            "Alcohol"
+          ]
+        },
+        "specifications": null,
+        "medical_category": "thc",
+        "unit_type": "weight",
+        "base_unit": "g",
+        "unit_size": 1,
+        "status": "active"
+      },
+      {
+        "id": 11,
+        "name": "Cápsulas THC 10mg · 30 unidades",
+        "description": "Cápsulas de gelatina blanda con 10mg THC cada una. Dosificación precisa. Efecto prolongado.",
+        "short_description": "Cápsulas THC 10mg precisas",
+        "sku": "MED-CAPS-THC10-30",
+        "breeder": "Apex Remedy",
+        "brand_id": 1,
+        "category": "Cápsulas Medicinales",
+        "category_slug": "medicinal-capsulas",
+        "category_id": 4,
+        "product_type": "capsule",
+        "price": 28000,
+        "base_price": 28000,
+        "stock": 200,
+        "stock_quantity": 200,
+        "stock_unit": "unidades",
+        "image": "",
+        "images": [
+          {
+            "id": null,
+            "url": "./images/catalogo/placeholder_2.png",
+            "alt_text": "Imagen no disponible",
+            "display_order": 0,
+            "is_primary": 1
+          }
+        ],
+        "featured": true,
+        "active": false,
+        "is_medicinal": true,
+        "requires_prescription": true,
+        "created_at": "2025-11-03T01:13:17.668Z",
+        "updated_at": "2025-11-03 20:40:53",
+        "attributes": {
+          "packaging": "Frasco sellado",
+          "portability": "Portátil y discreto",
+          "storage": "Temperatura ambiente"
+        },
+        "price_variants": null,
+        "medicinal_info": null,
+        "cannabinoid_profile": {
+          "thc": 10,
+          "cbd": 0.5,
+          "cbn": 0.3
+        },
+        "terpene_profile": null,
+        "strain_info": null,
+        "therapeutic_info": {
+          "conditions": [
+            "Insomnio",
+            "Dolor crónico",
+            "Ansiedad nocturna"
+          ],
+          "benefits": [
+            "Dosificación exacta",
+            "Discreción",
+            "Efecto prolongado"
+          ],
+          "effects": [
+            "Relajante",
+            "Sedante",
+            "Analgésico"
+          ]
+        },
+        "usage_info": {
+          "recommended_time": "Noche",
+          "dosage": {
+            "beginner": "1 cápsula (10mg)",
+            "intermediate": "1-2 cápsulas",
+            "advanced": "2-3 cápsulas"
+          },
+          "administration": [
+            "Vía oral con agua"
+          ],
+          "onset": "45-90 minutos",
+          "duration": "6-8 horas"
+        },
+        "safety_info": {
+          "contraindications": [
+            "Embarazo",
+            "Lactancia",
+            "Enfermedad hepática"
+          ],
+          "side_effects": [
+            "Somnolencia",
+            "Boca seca",
+            "Mareos"
+          ],
+          "interactions": [
+            "Sedantes",
+            "Alcohol"
+          ]
+        },
+        "specifications": {
+          "capsules_per_container": 30,
+          "thc_per_capsule": "10mg",
+          "total_thc": "300mg",
+          "capsule_type": "Gelatina blanda",
+          "carrier": "Aceite MCT",
+          "shelf_life": "12 meses"
+        },
+        "medical_category": "thc",
+        "unit_type": "unit",
+        "base_unit": "cápsula",
         "unit_size": 30,
+        "status": "active"
+      },
+      {
+        "id": 36,
+        "name": "Fruit Spirit · Sativa Potente",
+        "description": "Sativa potente (60/40) con 27% THC. Perfil frutal intenso. Energía extrema y creatividad. Para usuarios experimentados.",
+        "short_description": "Sativa 60% ultra potente 27% THC",
+        "sku": "MED-FLOWER-FRUITSPIRIT-001",
+        "breeder": "Apex Remedy",
+        "brand_id": 1,
+        "category": "Flores Medicinales",
+        "category_slug": "medicinal-flores",
+        "category_id": 1,
+        "product_type": "flower",
+        "price": 18000,
+        "base_price": 18000,
+        "stock": 250,
+        "stock_quantity": 250,
+        "stock_unit": "gramos",
+        "image": "",
+        "images": [
+          {
+            "id": null,
+            "url": "./images/catalogo/placeholder_2.png",
+            "alt_text": "Imagen no disponible",
+            "display_order": 0,
+            "is_primary": 1
+          }
+        ],
+        "featured": true,
+        "active": false,
+        "is_medicinal": true,
+        "requires_prescription": true,
+        "created_at": "2025-11-03T01:22:28.792Z",
+        "updated_at": "2025-11-03 20:40:54",
+        "attributes": {
+          "aroma": "Frutas tropicales, Bayas, Dulce",
+          "flavor": "Frutal intenso, Dulce, Cremoso",
+          "appearance": "Cogollos densos con tricomas abundantes"
+        },
+        "price_variants": null,
+        "medicinal_info": null,
+        "cannabinoid_profile": {
+          "thc": 27,
+          "cbd": 0.3,
+          "cbn": 0.4,
+          "cbg": 1,
+          "thcv": 0.8
+        },
+        "terpene_profile": {
+          "Limoneno": 0.9,
+          "Mirceno": 0.7,
+          "Cariofileno": 0.5,
+          "Pineno": 0.4
+        },
+        "strain_info": {
+          "type": "Sativa dominante",
+          "genetics": "60% Sativa / 40% Indica",
+          "lineage": "Blueberry x White Widow",
+          "origin": "Países Bajos"
+        },
+        "therapeutic_info": {
+          "conditions": [
+            "Fatiga crónica severa",
+            "Depresión resistente",
+            "TDAH"
+          ],
+          "benefits": [
+            "Energía intensa",
+            "Euforia marcada",
+            "Creatividad extrema"
+          ],
+          "effects": [
+            "Muy energizante",
+            "Eufórico",
+            "Concentración",
+            "Motivación"
+          ]
+        },
+        "usage_info": {
+          "recommended_time": "Diurno",
+          "dosage": {
+            "beginner": "0.1-0.2g",
+            "intermediate": "0.2-0.3g",
+            "advanced": "0.3-0.5g"
+          },
+          "administration": [
+            "Vaporización 175-185°C"
+          ],
+          "onset": "2-5 minutos",
+          "duration": "3-4 horas"
+        },
+        "safety_info": {
+          "contraindications": [
+            "Ansiedad",
+            "Paranoia",
+            "Taquicardia",
+            "Trastornos psicóticos"
+          ],
+          "side_effects": [
+            "Boca seca severa",
+            "Taquicardia leve",
+            "Posible ansiedad"
+          ],
+          "interactions": [
+            "Estimulantes fuertes",
+            "Antidepresivos IMAO"
+          ]
+        },
+        "specifications": null,
+        "medical_category": "thc",
+        "unit_type": "weight",
+        "base_unit": "g",
+        "unit_size": 1,
+        "status": "active"
+      },
+      {
+        "id": 17,
+        "name": "Gorilla Glue #4 · 5 semillas",
+        "description": "Híbrido potente. THC extremo 25%+. Rendimiento alto. Cultivo intermedio-avanzado.",
+        "short_description": "Híbrido extremo THC 25%+",
+        "sku": "SEED-GG4-5",
+        "breeder": "Barney's Farm",
+        "brand_id": 9,
+        "category": "Semillas",
+        "category_slug": "semillas",
+        "category_id": 6,
+        "product_type": "seed",
+        "price": 25000,
+        "base_price": 25000,
+        "stock": 80,
+        "stock_quantity": 80,
+        "stock_unit": "unidades",
+        "image": "",
+        "images": [
+          {
+            "id": null,
+            "url": "./images/catalogo/placeholder_2.png",
+            "alt_text": "Imagen no disponible",
+            "display_order": 0,
+            "is_primary": 1
+          }
+        ],
+        "featured": true,
+        "active": false,
+        "is_medicinal": false,
+        "requires_prescription": false,
+        "created_at": "2025-11-03T01:13:18.734Z",
+        "updated_at": "2025-11-03 20:40:56",
+        "attributes": {
+          "harvest_time": "Septiembre-Octubre",
+          "aroma": "Diesel, Terroso, Pino",
+          "effects": "Eufórico, Relajante, Potente"
+        },
+        "price_variants": null,
+        "medicinal_info": null,
+        "cannabinoid_profile": null,
+        "terpene_profile": null,
+        "strain_info": {
+          "type": "Híbrido",
+          "genetics": "Chem Sister x Sour Dubb x Chocolate Diesel",
+          "flowering_time": "8-9 semanas",
+          "yield": "550-600g/m²",
+          "thc": "25-28%",
+          "cbd": "0.1%"
+        },
+        "therapeutic_info": null,
+        "usage_info": null,
+        "safety_info": null,
+        "specifications": {
+          "seeds_per_pack": 5,
+          "feminized": "Sí",
+          "autoflowering": "No",
+          "difficulty": "Intermedia-Avanzada",
+          "height": "100-140cm",
+          "climate": "Interior recomendado"
+        },
+        "medical_category": null,
+        "unit_type": "unit",
+        "base_unit": "pack",
+        "unit_size": 5,
+        "status": "active"
+      },
+      {
+        "id": 23,
+        "name": "Grinder Metálico 4 Piezas · Premium",
+        "description": "Grinder de aluminio anodizado. 4 piezas con recolector de kief. Imanes potentes. Dientes diamante.",
+        "short_description": "Grinder 4 piezas premium",
+        "sku": "ACC-GRINDER-4PC-PREM",
+        "breeder": null,
+        "brand_id": null,
+        "category": "Accesorios",
+        "category_slug": "accesorios",
+        "category_id": 8,
+        "product_type": "accessory",
+        "price": 12990,
+        "base_price": 12990,
+        "stock": 100,
+        "stock_quantity": 100,
+        "stock_unit": "unidades",
+        "image": "",
+        "images": [
+          {
+            "id": null,
+            "url": "./images/catalogo/placeholder_2.png",
+            "alt_text": "Imagen no disponible",
+            "display_order": 0,
+            "is_primary": 1
+          }
+        ],
+        "featured": true,
+        "active": false,
+        "is_medicinal": false,
+        "requires_prescription": false,
+        "created_at": "2025-11-03T01:13:19.868Z",
+        "updated_at": "2025-11-03 20:40:51",
+        "attributes": {
+          "color": "Gris metálico",
+          "durability": "Alta resistencia",
+          "cleaning": "Fácil limpieza"
+        },
+        "price_variants": null,
+        "medicinal_info": null,
+        "cannabinoid_profile": null,
+        "terpene_profile": null,
+        "strain_info": null,
+        "therapeutic_info": null,
+        "usage_info": null,
+        "safety_info": null,
+        "specifications": {
+          "material": "Aluminio anodizado",
+          "pieces": "4 piezas",
+          "diameter": "63mm",
+          "features": "Recolector kief, Imanes, Dientes diamante"
+        },
+        "medical_category": null,
+        "unit_type": "unit",
+        "base_unit": "unidad",
+        "unit_size": 1,
+        "status": "active"
+      },
+      {
+        "id": 33,
+        "name": "Gummies CBD 10mg · 30 unidades",
+        "description": "Gummies sabor frutas con 10mg CBD cada una. Sin azúcar. Veganas. Fácil dosificación.",
+        "short_description": "Gummies CBD 10mg veganas",
+        "sku": "CBD-GUMMIES-10MG-30",
+        "breeder": "Apex Remedy",
+        "brand_id": 1,
+        "category": "CBD",
+        "category_slug": "cbd",
+        "category_id": 10,
+        "product_type": "capsule",
+        "price": 22990,
+        "base_price": 22990,
+        "stock": 150,
+        "stock_quantity": 150,
+        "stock_unit": "unidades",
+        "image": "",
+        "images": [
+          {
+            "id": null,
+            "url": "./images/catalogo/placeholder_2.png",
+            "alt_text": "Imagen no disponible",
+            "display_order": 0,
+            "is_primary": 1
+          }
+        ],
+        "featured": true,
+        "active": false,
+        "is_medicinal": false,
+        "requires_prescription": false,
+        "created_at": "2025-11-03T01:13:21.707Z",
+        "updated_at": "2025-11-03 20:40:52",
+        "attributes": {
+          "flavors": "Frutas mixtas",
+          "otc": "Venta libre",
+          "kid_friendly": "No (adultos)"
+        },
+        "price_variants": null,
+        "medicinal_info": null,
+        "cannabinoid_profile": {
+          "thc": 0,
+          "cbd": 10
+        },
+        "terpene_profile": null,
+        "strain_info": null,
+        "therapeutic_info": {
+          "conditions": [
+            "Ansiedad",
+            "Estrés",
+            "Bienestar"
+          ],
+          "benefits": [
+            "Sabor agradable",
+            "Discreto",
+            "Dosificación fácil"
+          ],
+          "effects": [
+            "Calma",
+            "Relajación"
+          ]
+        },
+        "usage_info": {
+          "recommended_time": "Cualquier hora",
+          "dosage": {
+            "beginner": "1 gummy",
+            "intermediate": "2 gummies",
+            "advanced": "3 gummies"
+          },
+          "administration": [
+            "Masticar y tragar"
+          ],
+          "onset": "30-60 minutos",
+          "duration": "4-6 horas"
+        },
+        "safety_info": {
+          "contraindications": [
+            "Ninguna conocida"
+          ],
+          "side_effects": [
+            "Ninguno en dosis normales"
+          ],
+          "interactions": [
+            "Ninguna significativa"
+          ]
+        },
+        "specifications": {
+          "gummies_per_container": 30,
+          "cbd_per_gummy": "10mg",
+          "total_cbd": "300mg",
+          "thc_content": "0% THC",
+          "sweetener": "Sin azúcar (stevia)",
+          "vegan": "Sí"
+        },
+        "medical_category": "cbd",
+        "unit_type": "unit",
+        "base_unit": "frasco",
+        "unit_size": 30,
+        "status": "active"
+      },
+      {
+        "id": 30,
+        "name": "Hoodie Apex Premium · Gris",
+        "description": "Hoodie premium 80% algodón 20% poliéster. Logo bordado grande. Capucha ajustable. Bolsillo canguro.",
+        "short_description": "Hoodie premium gris",
+        "sku": "APPAREL-HOODIE-GREY",
+        "breeder": null,
+        "brand_id": null,
+        "category": "Ropa",
+        "category_slug": "ropa",
+        "category_id": 9,
+        "product_type": "apparel",
+        "price": 34990,
+        "base_price": 34990,
+        "stock": 60,
+        "stock_quantity": 60,
+        "stock_unit": "unidades",
+        "image": "",
+        "images": [
+          {
+            "id": null,
+            "url": "./images/catalogo/placeholder_2.png",
+            "alt_text": "Imagen no disponible",
+            "display_order": 0,
+            "is_primary": 1
+          }
+        ],
+        "featured": true,
+        "active": false,
+        "is_medicinal": false,
+        "requires_prescription": false,
+        "created_at": "2025-11-03T01:13:21.163Z",
+        "updated_at": "2025-11-03 20:40:56",
+        "attributes": {
+          "color": "Gris jaspeado",
+          "fit": "Regular unisex",
+          "features": "Capucha ajustable, Bolsillo canguro"
+        },
+        "price_variants": null,
+        "medicinal_info": null,
+        "cannabinoid_profile": null,
+        "terpene_profile": null,
+        "strain_info": null,
+        "therapeutic_info": null,
+        "usage_info": null,
+        "safety_info": null,
+        "specifications": {
+          "material": "80% Algodón / 20% Poliéster",
+          "weight": "320 GSM",
+          "sizes": "S, M, L, XL, XXL",
+          "care": "Lavar a máquina agua fría"
+        },
+        "medical_category": null,
+        "unit_type": "unit",
+        "base_unit": "unidad",
+        "unit_size": 1,
+        "status": "active"
+      },
+      {
+        "id": 39,
+        "name": "Kush Mintz · Indica Premium",
+        "description": "Indica dominante (70/30) con 26% THC. Perfil menta-kush único. Relajación profunda sin sedación excesiva.",
+        "short_description": "Indica 70% menta premium",
+        "sku": "MED-FLOWER-KUSHMINTZ-001",
+        "breeder": "Apex Remedy",
+        "brand_id": 1,
+        "category": "Flores Medicinales",
+        "category_slug": "medicinal-flores",
+        "category_id": 1,
+        "product_type": "flower",
+        "price": 17500,
+        "base_price": 17500,
+        "stock": 260,
+        "stock_quantity": 260,
+        "stock_unit": "gramos",
+        "image": "",
+        "images": [
+          {
+            "id": null,
+            "url": "./images/catalogo/placeholder_2.png",
+            "alt_text": "Imagen no disponible",
+            "display_order": 0,
+            "is_primary": 1
+          }
+        ],
+        "featured": true,
+        "active": false,
+        "is_medicinal": true,
+        "requires_prescription": true,
+        "created_at": "2025-11-03T01:22:29.297Z",
+        "updated_at": "2025-11-03 20:40:55",
+        "attributes": {
+          "aroma": "Menta fresca, Kush, Terroso",
+          "flavor": "Menta, Cremoso, Dulce",
+          "appearance": "Cogollos densos con tricomas blancos"
+        },
+        "price_variants": null,
+        "medicinal_info": null,
+        "cannabinoid_profile": {
+          "thc": 26,
+          "cbd": 0.6,
+          "cbn": 1.8,
+          "cbg": 0.9,
+          "thcv": 0.4
+        },
+        "terpene_profile": {
+          "Cariofileno": 1,
+          "Limoneno": 0.8,
+          "Mirceno": 0.7,
+          "Linalol": 0.6
+        },
+        "strain_info": {
+          "type": "Indica dominante",
+          "genetics": "70% Indica / 30% Sativa",
+          "lineage": "Bubba Kush x Animal Mints",
+          "origin": "California, USA"
+        },
+        "therapeutic_info": {
+          "conditions": [
+            "Ansiedad",
+            "Dolor muscular",
+            "Insomnio moderado",
+            "Estrés"
+          ],
+          "benefits": [
+            "Relajación sin sedación",
+            "Alivio dolor",
+            "Calma mental"
+          ],
+          "effects": [
+            "Relajante",
+            "Euforia leve",
+            "Calma"
+          ]
+        },
+        "usage_info": {
+          "recommended_time": "Tarde/noche",
+          "dosage": {
+            "beginner": "0.2-0.3g",
+            "intermediate": "0.3-0.5g",
+            "advanced": "0.5-0.8g"
+          },
+          "administration": [
+            "Vaporización 170-180°C"
+          ],
+          "onset": "2-5 minutos",
+          "duration": "2-4 horas"
+        },
+        "safety_info": {
+          "contraindications": [
+            "Hipotensión",
+            "Embarazo"
+          ],
+          "side_effects": [
+            "Somnolencia moderada",
+            "Boca seca",
+            "Ojos rojos"
+          ],
+          "interactions": [
+            "Sedantes",
+            "Alcohol"
+          ]
+        },
+        "specifications": null,
+        "medical_category": "thc",
+        "unit_type": "weight",
+        "base_unit": "g",
+        "unit_size": 1,
+        "status": "active"
+      },
+      {
+        "id": 43,
+        "name": "Leche Lunar · Indica Ultra Potente",
+        "description": "Indica dominante (60/40) con 28% THC. La más potente de la colección. Sedación profunda. Solo usuarios muy experimentados.",
+        "short_description": "Indica 60% máxima potencia 28% THC",
+        "sku": "MED-FLOWER-LECHELUNA-001",
+        "breeder": "Apex Remedy",
+        "brand_id": 1,
+        "category": "Flores Medicinales",
+        "category_slug": "medicinal-flores",
+        "category_id": 1,
+        "product_type": "flower",
+        "price": 19500,
+        "base_price": 19500,
+        "stock": 180,
+        "stock_quantity": 180,
+        "stock_unit": "gramos",
+        "image": "",
+        "images": [
+          {
+            "id": null,
+            "url": "./images/catalogo/placeholder_2.png",
+            "alt_text": "Imagen no disponible",
+            "display_order": 0,
+            "is_primary": 1
+          }
+        ],
+        "featured": true,
+        "active": false,
+        "is_medicinal": true,
+        "requires_prescription": true,
+        "created_at": "2025-11-03T01:22:30.021Z",
+        "updated_at": "2025-11-03 20:40:55",
+        "attributes": {
+          "aroma": "Cremoso, Dulce, Terroso, Único",
+          "flavor": "Leche, Dulce, Suave",
+          "appearance": "Cogollos blancos por tricomas, muy densos"
+        },
+        "price_variants": null,
+        "medicinal_info": null,
+        "cannabinoid_profile": {
+          "thc": 28,
+          "cbd": 0.6,
+          "cbn": 2.8,
+          "cbg": 1.1,
+          "thcv": 0.3
+        },
+        "terpene_profile": {
+          "Mirceno": 1.8,
+          "Cariofileno": 1.2,
+          "Linalol": 0.8,
+          "Limoneno": 0.5
+        },
+        "strain_info": {
+          "type": "Indica dominante",
+          "genetics": "60% Indica / 40% Sativa",
+          "lineage": "Genética exclusiva",
+          "origin": "Chile"
+        },
+        "therapeutic_info": {
+          "conditions": [
+            "Dolor crónico severo",
+            "Insomnio severo",
+            "Espasmos musculares",
+            "Ansiedad extrema"
+          ],
+          "benefits": [
+            "Sedación extrema",
+            "Alivio dolor máximo",
+            "Sueño profundo garantizado"
+          ],
+          "effects": [
+            "Muy sedante",
+            "Relajación profunda",
+            "Somnolencia intensa"
+          ]
+        },
+        "usage_info": {
+          "recommended_time": "Nocturno exclusivamente - antes de dormir",
+          "dosage": {
+            "beginner": "NO RECOMENDADO",
+            "intermediate": "0.1-0.2g",
+            "advanced": "0.2-0.4g"
+          },
+          "administration": [
+            "Vaporización 170-180°C"
+          ],
+          "onset": "2-5 minutos",
+          "duration": "4-6 horas"
+        },
+        "safety_info": {
+          "contraindications": [
+            "Usuarios novatos",
+            "Hipotensión severa",
+            "Embarazo",
+            "Conducir",
+            "Operación de maquinaria"
+          ],
+          "side_effects": [
+            "Somnolencia extrema",
+            "Sedación prolongada",
+            "Boca muy seca",
+            "Posible desorientación"
+          ],
+          "interactions": [
+            "Sedantes fuertes",
+            "Benzodiacepinas",
+            "Alcohol",
+            "Opioides"
+          ]
+        },
+        "specifications": null,
+        "medical_category": "thc",
+        "unit_type": "weight",
+        "base_unit": "g",
+        "unit_size": 1,
         "status": "active"
       },
       {
@@ -447,127 +1892,21 @@
         "status": "active"
       },
       {
-        "id": 10,
-        "name": "Shatter CBD · 80% CBD",
-        "description": "Shatter de CBD puro 80%. Sin THC. Transparente como vidrio. Rápido alivio sin psicoactividad.",
-        "short_description": "Shatter CBD 80% sin THC",
-        "sku": "MED-CONC-SHATTER-CBD80",
-        "breeder": "Apex Remedy",
-        "brand_id": 1,
-        "category": "Concentrados Medicinales",
-        "category_slug": "medicinal-concentrados",
-        "category_id": 3,
-        "product_type": "concentrate",
-        "price": 32000,
-        "base_price": 32000,
-        "stock": 60,
-        "stock_quantity": 60,
-        "stock_unit": "gramos",
-        "image": "",
-        "images": [
-          {
-            "id": null,
-            "url": "./images/catalogo/placeholder_2.png",
-            "alt_text": "Imagen no disponible",
-            "display_order": 0,
-            "is_primary": 1
-          }
-        ],
-        "featured": true,
-        "active": false,
-        "is_medicinal": true,
-        "requires_prescription": true,
-        "created_at": "2025-11-03T01:13:17.500Z",
-        "updated_at": "2025-11-03 20:40:53",
-        "attributes": {
-          "appearance": "Ámbar transparente",
-          "aroma": "Suave, herbal",
-          "storage": "Temperatura ambiente"
-        },
-        "price_variants": null,
-        "medicinal_info": null,
-        "cannabinoid_profile": {
-          "thc": 0.2,
-          "cbd": 80,
-          "cbn": 0.1,
-          "cbg": 2,
-          "cbc": 1.5
-        },
-        "terpene_profile": null,
-        "strain_info": null,
-        "therapeutic_info": {
-          "conditions": [
-            "Dolor crónico",
-            "Inflamación aguda",
-            "Ansiedad",
-            "Epilepsia"
-          ],
-          "benefits": [
-            "Altísima concentración CBD",
-            "Sin psicoactividad",
-            "Alivio rápido"
-          ],
-          "effects": [
-            "Relajación",
-            "Antiinflamatorio",
-            "Claridad mental"
-          ]
-        },
-        "usage_info": {
-          "recommended_time": "Cualquier hora",
-          "dosage": {
-            "beginner": "0.1g (80mg CBD)",
-            "intermediate": "0.2g",
-            "advanced": "0.3-0.5g"
-          },
-          "administration": [
-            "Dabbing 260-315°C",
-            "Vaporizador"
-          ],
-          "onset": "Inmediato (1-3 minutos)",
-          "duration": "3-5 horas"
-        },
-        "safety_info": {
-          "contraindications": [
-            "Hipersensibilidad"
-          ],
-          "side_effects": [
-            "Fatiga leve",
-            "Boca seca"
-          ],
-          "interactions": [
-            "Anticoagulantes"
-          ]
-        },
-        "specifications": {
-          "extraction_method": "CO2 + Winterización",
-          "consistency": "Shatter (vidrio)",
-          "purity": "95%+",
-          "thc_content": "<0.3%",
-          "lab_tested": "Sí"
-        },
-        "medical_category": "cbd",
-        "unit_type": "weight",
-        "base_unit": "g",
-        "unit_size": 1,
-        "status": "active"
-      },
-      {
-        "id": 11,
-        "name": "Cápsulas THC 10mg · 30 unidades",
-        "description": "Cápsulas de gelatina blanda con 10mg THC cada una. Dosificación precisa. Efecto prolongado.",
-        "short_description": "Cápsulas THC 10mg precisas",
-        "sku": "MED-CAPS-THC10-30",
-        "breeder": "Apex Remedy",
-        "brand_id": 1,
-        "category": "Cápsulas Medicinales",
-        "category_slug": "medicinal-capsulas",
-        "category_id": 4,
-        "product_type": "capsule",
-        "price": 28000,
-        "base_price": 28000,
-        "stock": 200,
-        "stock_quantity": 200,
+        "id": 20,
+        "name": "Mighty+ · Storz & Bickel",
+        "description": "El vaporizador portátil más potente. Tecnología médica alemana. Calidad excepcional. Batería mejorada.",
+        "short_description": "Top tier portátil alemán",
+        "sku": "VAP-MIGHTY-PLUS",
+        "breeder": "Storz & Bickel",
+        "brand_id": 7,
+        "category": "Vaporizadores",
+        "category_slug": "vaporizadores",
+        "category_id": 7,
+        "product_type": "accessory",
+        "price": 399990,
+        "base_price": 399990,
+        "stock": 8,
+        "stock_quantity": 8,
         "stock_unit": "unidades",
         "image": "",
         "images": [
@@ -581,286 +1920,33 @@
         ],
         "featured": true,
         "active": false,
-        "is_medicinal": true,
-        "requires_prescription": true,
-        "created_at": "2025-11-03T01:13:17.668Z",
-        "updated_at": "2025-11-03 20:40:53",
-        "attributes": {
-          "packaging": "Frasco sellado",
-          "portability": "Portátil y discreto",
-          "storage": "Temperatura ambiente"
-        },
-        "price_variants": null,
-        "medicinal_info": null,
-        "cannabinoid_profile": {
-          "thc": 10,
-          "cbd": 0.5,
-          "cbn": 0.3
-        },
-        "terpene_profile": null,
-        "strain_info": null,
-        "therapeutic_info": {
-          "conditions": [
-            "Insomnio",
-            "Dolor crónico",
-            "Ansiedad nocturna"
-          ],
-          "benefits": [
-            "Dosificación exacta",
-            "Discreción",
-            "Efecto prolongado"
-          ],
-          "effects": [
-            "Relajante",
-            "Sedante",
-            "Analgésico"
-          ]
-        },
-        "usage_info": {
-          "recommended_time": "Noche",
-          "dosage": {
-            "beginner": "1 cápsula (10mg)",
-            "intermediate": "1-2 cápsulas",
-            "advanced": "2-3 cápsulas"
-          },
-          "administration": [
-            "Vía oral con agua"
-          ],
-          "onset": "45-90 minutos",
-          "duration": "6-8 horas"
-        },
-        "safety_info": {
-          "contraindications": [
-            "Embarazo",
-            "Lactancia",
-            "Enfermedad hepática"
-          ],
-          "side_effects": [
-            "Somnolencia",
-            "Boca seca",
-            "Mareos"
-          ],
-          "interactions": [
-            "Sedantes",
-            "Alcohol"
-          ]
-        },
-        "specifications": {
-          "capsules_per_container": 30,
-          "thc_per_capsule": "10mg",
-          "total_thc": "300mg",
-          "capsule_type": "Gelatina blanda",
-          "carrier": "Aceite MCT",
-          "shelf_life": "12 meses"
-        },
-        "medical_category": "thc",
-        "unit_type": "unit",
-        "base_unit": "cápsula",
-        "unit_size": 30,
-        "status": "active"
-      },
-      {
-        "id": 13,
-        "name": "Bálsamo CBD · 500mg",
-        "description": "Bálsamo de CBD 500mg para aplicación tópica. Ideal para dolor muscular, artritis e inflamación localizada.",
-        "short_description": "Bálsamo CBD 500mg para dolor",
-        "sku": "MED-TOP-BALM-CBD500",
-        "breeder": "Apex Remedy",
-        "brand_id": 1,
-        "category": "Tópicos Medicinales",
-        "category_slug": "medicinal-topicos",
-        "category_id": 5,
-        "product_type": "topical",
-        "price": 25000,
-        "base_price": 25000,
-        "stock": 150,
-        "stock_quantity": 150,
-        "stock_unit": "unidades",
-        "image": "",
-        "images": [
-          {
-            "id": null,
-            "url": "./images/catalogo/placeholder_2.png",
-            "alt_text": "Imagen no disponible",
-            "display_order": 0,
-            "is_primary": 1
-          }
-        ],
-        "featured": true,
-        "active": false,
-        "is_medicinal": true,
+        "is_medicinal": false,
         "requires_prescription": false,
-        "created_at": "2025-11-03T01:13:18.015Z",
-        "updated_at": "2025-11-03 20:40:55",
+        "created_at": "2025-11-03T01:13:19.288Z",
+        "updated_at": "2025-11-03 20:40:57",
         "attributes": {
-          "texture": "Cremosa",
-          "scent": "Lavanda y mentol",
-          "packaging": "Tarro 60ml"
+          "color": "Negro/Gris",
+          "features": "Pantalla LED, USB-C, Cámara cerámica"
         },
         "price_variants": null,
         "medicinal_info": null,
-        "cannabinoid_profile": {
-          "thc": 0,
-          "cbd": 500
-        },
+        "cannabinoid_profile": null,
         "terpene_profile": null,
         "strain_info": null,
-        "therapeutic_info": {
-          "conditions": [
-            "Dolor muscular",
-            "Artritis",
-            "Inflamación localizada",
-            "Lesiones deportivas"
-          ],
-          "benefits": [
-            "Alivio localizado",
-            "Sin efectos sistémicos",
-            "Antiinflamatorio"
-          ],
-          "effects": [
-            "Alivio del dolor",
-            "Reducción inflamación",
-            "Relajación muscular"
-          ]
-        },
-        "usage_info": {
-          "recommended_time": "Cuando sea necesario",
-          "dosage": {
-            "application": "Cantidad generosa en área afectada"
-          },
-          "administration": [
-            "Tópica - masajear hasta absorber"
-          ],
-          "onset": "15-30 minutos",
-          "duration": "3-5 horas"
-        },
-        "safety_info": {
-          "contraindications": [
-            "Piel con heridas abiertas",
-            "Alergia a componentes"
-          ],
-          "side_effects": [
-            "Irritación leve en pieles sensibles"
-          ],
-          "interactions": [
-            "Ninguna conocida"
-          ]
-        },
+        "therapeutic_info": null,
+        "usage_info": null,
+        "safety_info": null,
         "specifications": {
-          "total_cbd": "500mg",
-          "volume": "60ml",
-          "base": "Manteca de karité, cera de abejas, aceite de coco",
-          "additional_ingredients": "Árnica, mentol, lavanda",
-          "absorption": "Tópica (no sistémica)",
-          "application": "Aplicar 2-3 veces al día"
+          "material": "Hierbas secas",
+          "heating": "Convección + Conducción",
+          "temp_range": "40-210°C",
+          "battery": "50% más capacidad",
+          "warranty": "3 años"
         },
-        "medical_category": "cbd",
-        "unit_type": "volume",
-        "base_unit": "ml",
-        "unit_size": 60,
-        "status": "active"
-      },
-      {
-        "id": 14,
-        "name": "Crema THC+CBD · 1:1 · 200mg",
-        "description": "Crema balanceada 1:1 THC:CBD. Total 200mg cannabinoides. Absorción transdérmica para dolor profundo.",
-        "short_description": "Crema 1:1 THC:CBD para dolor profundo",
-        "sku": "MED-TOP-CREAM-11-200",
-        "breeder": "Apex Remedy",
-        "brand_id": 1,
-        "category": "Tópicos Medicinales",
-        "category_slug": "medicinal-topicos",
-        "category_id": 5,
-        "product_type": "topical",
-        "price": 28000,
-        "base_price": 28000,
-        "stock": 100,
-        "stock_quantity": 100,
-        "stock_unit": "unidades",
-        "image": "",
-        "images": [
-          {
-            "id": null,
-            "url": "./images/catalogo/placeholder_2.png",
-            "alt_text": "Imagen no disponible",
-            "display_order": 0,
-            "is_primary": 1
-          }
-        ],
-        "featured": true,
-        "active": false,
-        "is_medicinal": true,
-        "requires_prescription": true,
-        "created_at": "2025-11-03T01:13:18.199Z",
-        "updated_at": "2025-11-03 20:40:55",
-        "attributes": {
-          "texture": "Suave y absorbente",
-          "scent": "Mentol y eucalipto",
-          "packaging": "Tubo 50ml"
-        },
-        "price_variants": null,
-        "medicinal_info": null,
-        "cannabinoid_profile": {
-          "thc": 100,
-          "cbd": 100
-        },
-        "terpene_profile": null,
-        "strain_info": null,
-        "therapeutic_info": {
-          "conditions": [
-            "Dolor neuropático",
-            "Artritis reumatoide",
-            "Fibromialgia",
-            "Dolor crónico severo"
-          ],
-          "benefits": [
-            "Efecto sinérgico THC+CBD",
-            "Penetración profunda",
-            "Alivio prolongado"
-          ],
-          "effects": [
-            "Analgésico potente",
-            "Antiinflamatorio",
-            "Relajante muscular"
-          ]
-        },
-        "usage_info": {
-          "recommended_time": "Según necesidad",
-          "dosage": {
-            "application": "Aplicar generosamente y masajear"
-          },
-          "administration": [
-            "Tópica - absorción transdérmica"
-          ],
-          "onset": "20-40 minutos",
-          "duration": "4-6 horas"
-        },
-        "safety_info": {
-          "contraindications": [
-            "Heridas abiertas",
-            "Embarazo",
-            "Lactancia"
-          ],
-          "side_effects": [
-            "Posible enrojecimiento leve"
-          ],
-          "interactions": [
-            "Ninguna sistémica"
-          ]
-        },
-        "specifications": {
-          "total_thc": "100mg",
-          "total_cbd": "100mg",
-          "volume": "50ml",
-          "base": "Crema base hipoalergénica",
-          "additional_ingredients": "Mentol, eucalipto, caléndula",
-          "absorption": "Transdérmica mejorada",
-          "application": "2-4 veces al día"
-        },
-        "medical_category": "balanced",
-        "unit_type": "volume",
-        "base_unit": "ml",
-        "unit_size": 50,
+        "medical_category": null,
+        "unit_type": "unit",
+        "base_unit": "unidad",
+        "unit_size": 1,
         "status": "active"
       },
       {
@@ -931,140 +2017,6 @@
         "status": "active"
       },
       {
-        "id": 16,
-        "name": "Amnesia Haze · 5 semillas",
-        "description": "Sativa clásica galardonada. Alto THC. Cultivo intermedio. Floración 11-12 semanas.",
-        "short_description": "Sativa clásica alto THC",
-        "sku": "SEED-AMN-HAZE-5",
-        "breeder": "Sensi Seeds",
-        "brand_id": 8,
-        "category": "Semillas",
-        "category_slug": "semillas",
-        "category_id": 6,
-        "product_type": "seed",
-        "price": 22000,
-        "base_price": 22000,
-        "stock": 100,
-        "stock_quantity": 100,
-        "stock_unit": "unidades",
-        "image": "",
-        "images": [
-          {
-            "id": null,
-            "url": "./images/catalogo/placeholder_2.png",
-            "alt_text": "Imagen no disponible",
-            "display_order": 0,
-            "is_primary": 1
-          }
-        ],
-        "featured": true,
-        "active": false,
-        "is_medicinal": false,
-        "requires_prescription": false,
-        "created_at": "2025-11-03T01:13:18.545Z",
-        "updated_at": "2025-11-03 20:40:56",
-        "attributes": {
-          "harvest_time": "Octubre (exterior)",
-          "aroma": "Cítrico, Terroso, Especiado",
-          "effects": "Eufórico, Creativo, Energético"
-        },
-        "price_variants": null,
-        "medicinal_info": null,
-        "cannabinoid_profile": null,
-        "terpene_profile": null,
-        "strain_info": {
-          "type": "Sativa dominante",
-          "genetics": "80% Sativa / 20% Indica",
-          "flowering_time": "11-12 semanas",
-          "yield": "600-650g/m²",
-          "thc": "20-25%",
-          "cbd": "0.1-0.3%"
-        },
-        "therapeutic_info": null,
-        "usage_info": null,
-        "safety_info": null,
-        "specifications": {
-          "seeds_per_pack": 5,
-          "feminized": "Sí",
-          "autoflowering": "No",
-          "difficulty": "Intermedia",
-          "height": "140-180cm",
-          "climate": "Interior/Exterior mediterráneo"
-        },
-        "medical_category": null,
-        "unit_type": "unit",
-        "base_unit": "pack",
-        "unit_size": 5,
-        "status": "active"
-      },
-      {
-        "id": 17,
-        "name": "Gorilla Glue #4 · 5 semillas",
-        "description": "Híbrido potente. THC extremo 25%+. Rendimiento alto. Cultivo intermedio-avanzado.",
-        "short_description": "Híbrido extremo THC 25%+",
-        "sku": "SEED-GG4-5",
-        "breeder": "Barney's Farm",
-        "brand_id": 9,
-        "category": "Semillas",
-        "category_slug": "semillas",
-        "category_id": 6,
-        "product_type": "seed",
-        "price": 25000,
-        "base_price": 25000,
-        "stock": 80,
-        "stock_quantity": 80,
-        "stock_unit": "unidades",
-        "image": "",
-        "images": [
-          {
-            "id": null,
-            "url": "./images/catalogo/placeholder_2.png",
-            "alt_text": "Imagen no disponible",
-            "display_order": 0,
-            "is_primary": 1
-          }
-        ],
-        "featured": true,
-        "active": false,
-        "is_medicinal": false,
-        "requires_prescription": false,
-        "created_at": "2025-11-03T01:13:18.734Z",
-        "updated_at": "2025-11-03 20:40:56",
-        "attributes": {
-          "harvest_time": "Septiembre-Octubre",
-          "aroma": "Diesel, Terroso, Pino",
-          "effects": "Eufórico, Relajante, Potente"
-        },
-        "price_variants": null,
-        "medicinal_info": null,
-        "cannabinoid_profile": null,
-        "terpene_profile": null,
-        "strain_info": {
-          "type": "Híbrido",
-          "genetics": "Chem Sister x Sour Dubb x Chocolate Diesel",
-          "flowering_time": "8-9 semanas",
-          "yield": "550-600g/m²",
-          "thc": "25-28%",
-          "cbd": "0.1%"
-        },
-        "therapeutic_info": null,
-        "usage_info": null,
-        "safety_info": null,
-        "specifications": {
-          "seeds_per_pack": 5,
-          "feminized": "Sí",
-          "autoflowering": "No",
-          "difficulty": "Intermedia-Avanzada",
-          "height": "100-140cm",
-          "climate": "Interior recomendado"
-        },
-        "medical_category": null,
-        "unit_type": "unit",
-        "base_unit": "pack",
-        "unit_size": 5,
-        "status": "active"
-      },
-      {
         "id": 19,
         "name": "PAX 3 · Dual Use",
         "description": "Vaporizador portátil premium. Doble uso: hierbas y concentrados. Calentamiento 15 segundos. Control por app.",
@@ -1117,180 +2069,6 @@
           "temp_range": "182-215°C",
           "battery": "8-10 sesiones",
           "warranty": "10 años"
-        },
-        "medical_category": null,
-        "unit_type": "unit",
-        "base_unit": "unidad",
-        "unit_size": 1,
-        "status": "active"
-      },
-      {
-        "id": 20,
-        "name": "Mighty+ · Storz & Bickel",
-        "description": "El vaporizador portátil más potente. Tecnología médica alemana. Calidad excepcional. Batería mejorada.",
-        "short_description": "Top tier portátil alemán",
-        "sku": "VAP-MIGHTY-PLUS",
-        "breeder": "Storz & Bickel",
-        "brand_id": 7,
-        "category": "Vaporizadores",
-        "category_slug": "vaporizadores",
-        "category_id": 7,
-        "product_type": "accessory",
-        "price": 399990,
-        "base_price": 399990,
-        "stock": 8,
-        "stock_quantity": 8,
-        "stock_unit": "unidades",
-        "image": "",
-        "images": [
-          {
-            "id": null,
-            "url": "./images/catalogo/placeholder_2.png",
-            "alt_text": "Imagen no disponible",
-            "display_order": 0,
-            "is_primary": 1
-          }
-        ],
-        "featured": true,
-        "active": false,
-        "is_medicinal": false,
-        "requires_prescription": false,
-        "created_at": "2025-11-03T01:13:19.288Z",
-        "updated_at": "2025-11-03 20:40:57",
-        "attributes": {
-          "color": "Negro/Gris",
-          "features": "Pantalla LED, USB-C, Cámara cerámica"
-        },
-        "price_variants": null,
-        "medicinal_info": null,
-        "cannabinoid_profile": null,
-        "terpene_profile": null,
-        "strain_info": null,
-        "therapeutic_info": null,
-        "usage_info": null,
-        "safety_info": null,
-        "specifications": {
-          "material": "Hierbas secas",
-          "heating": "Convección + Conducción",
-          "temp_range": "40-210°C",
-          "battery": "50% más capacidad",
-          "warranty": "3 años"
-        },
-        "medical_category": null,
-        "unit_type": "unit",
-        "base_unit": "unidad",
-        "unit_size": 1,
-        "status": "active"
-      },
-      {
-        "id": 21,
-        "name": "Volcano Hybrid · Storz & Bickel",
-        "description": "El vaporizador de mesa legendario. Tecnología médica. Modo globo y directo. El estándar de oro.",
-        "short_description": "Legendario vaporizador de mesa",
-        "sku": "VAP-VOLCANO-HYBRID",
-        "breeder": "Storz & Bickel",
-        "brand_id": 7,
-        "category": "Vaporizadores",
-        "category_slug": "vaporizadores",
-        "category_id": 7,
-        "product_type": "accessory",
-        "price": 699990,
-        "base_price": 699990,
-        "stock": 5,
-        "stock_quantity": 5,
-        "stock_unit": "unidades",
-        "image": "",
-        "images": [
-          {
-            "id": null,
-            "url": "./images/catalogo/placeholder_2.png",
-            "alt_text": "Imagen no disponible",
-            "display_order": 0,
-            "is_primary": 1
-          }
-        ],
-        "featured": true,
-        "active": false,
-        "is_medicinal": false,
-        "requires_prescription": false,
-        "created_at": "2025-11-03T01:13:19.501Z",
-        "updated_at": "2025-11-03 20:40:57",
-        "attributes": {
-          "type": "Mesa",
-          "features": "Control App, Calentamiento 40seg, Certificado médico"
-        },
-        "price_variants": null,
-        "medicinal_info": null,
-        "cannabinoid_profile": null,
-        "terpene_profile": null,
-        "strain_info": null,
-        "therapeutic_info": null,
-        "usage_info": null,
-        "safety_info": null,
-        "specifications": {
-          "material": "Hierbas secas",
-          "heating": "Convección + Conducción híbrida",
-          "temp_range": "40-230°C",
-          "modes": "Globo y tubo directo",
-          "warranty": "3 años"
-        },
-        "medical_category": null,
-        "unit_type": "unit",
-        "base_unit": "unidad",
-        "unit_size": 1,
-        "status": "active"
-      },
-      {
-        "id": 23,
-        "name": "Grinder Metálico 4 Piezas · Premium",
-        "description": "Grinder de aluminio anodizado. 4 piezas con recolector de kief. Imanes potentes. Dientes diamante.",
-        "short_description": "Grinder 4 piezas premium",
-        "sku": "ACC-GRINDER-4PC-PREM",
-        "breeder": null,
-        "brand_id": null,
-        "category": "Accesorios",
-        "category_slug": "accesorios",
-        "category_id": 8,
-        "product_type": "accessory",
-        "price": 12990,
-        "base_price": 12990,
-        "stock": 100,
-        "stock_quantity": 100,
-        "stock_unit": "unidades",
-        "image": "",
-        "images": [
-          {
-            "id": null,
-            "url": "./images/catalogo/placeholder_2.png",
-            "alt_text": "Imagen no disponible",
-            "display_order": 0,
-            "is_primary": 1
-          }
-        ],
-        "featured": true,
-        "active": false,
-        "is_medicinal": false,
-        "requires_prescription": false,
-        "created_at": "2025-11-03T01:13:19.868Z",
-        "updated_at": "2025-11-03 20:40:51",
-        "attributes": {
-          "color": "Gris metálico",
-          "durability": "Alta resistencia",
-          "cleaning": "Fácil limpieza"
-        },
-        "price_variants": null,
-        "medicinal_info": null,
-        "cannabinoid_profile": null,
-        "terpene_profile": null,
-        "strain_info": null,
-        "therapeutic_info": null,
-        "usage_info": null,
-        "safety_info": null,
-        "specifications": {
-          "material": "Aluminio anodizado",
-          "pieces": "4 piezas",
-          "diameter": "63mm",
-          "features": "Recolector kief, Imanes, Dientes diamante"
         },
         "medical_category": null,
         "unit_type": "unit",
@@ -1416,280 +2194,21 @@
         "status": "active"
       },
       {
-        "id": 30,
-        "name": "Hoodie Apex Premium · Gris",
-        "description": "Hoodie premium 80% algodón 20% poliéster. Logo bordado grande. Capucha ajustable. Bolsillo canguro.",
-        "short_description": "Hoodie premium gris",
-        "sku": "APPAREL-HOODIE-GREY",
-        "breeder": null,
-        "brand_id": null,
-        "category": "Ropa",
-        "category_slug": "ropa",
-        "category_id": 9,
-        "product_type": "apparel",
-        "price": 34990,
-        "base_price": 34990,
-        "stock": 60,
-        "stock_quantity": 60,
-        "stock_unit": "unidades",
-        "image": "",
-        "images": [
-          {
-            "id": null,
-            "url": "./images/catalogo/placeholder_2.png",
-            "alt_text": "Imagen no disponible",
-            "display_order": 0,
-            "is_primary": 1
-          }
-        ],
-        "featured": true,
-        "active": false,
-        "is_medicinal": false,
-        "requires_prescription": false,
-        "created_at": "2025-11-03T01:13:21.163Z",
-        "updated_at": "2025-11-03 20:40:56",
-        "attributes": {
-          "color": "Gris jaspeado",
-          "fit": "Regular unisex",
-          "features": "Capucha ajustable, Bolsillo canguro"
-        },
-        "price_variants": null,
-        "medicinal_info": null,
-        "cannabinoid_profile": null,
-        "terpene_profile": null,
-        "strain_info": null,
-        "therapeutic_info": null,
-        "usage_info": null,
-        "safety_info": null,
-        "specifications": {
-          "material": "80% Algodón / 20% Poliéster",
-          "weight": "320 GSM",
-          "sizes": "S, M, L, XL, XXL",
-          "care": "Lavar a máquina agua fría"
-        },
-        "medical_category": null,
-        "unit_type": "unit",
-        "base_unit": "unidad",
-        "unit_size": 1,
-        "status": "active"
-      },
-      {
-        "id": 32,
-        "name": "Aceite CBD 5% · Uso Diario · 15ml",
-        "description": "Aceite CBD 5% de venta libre. Ideal para principiantes. Ansiedad leve y bienestar general.",
-        "short_description": "CBD 5% uso diario sin receta",
-        "sku": "CBD-OIL-5-15ML",
-        "breeder": "Apex Remedy",
-        "brand_id": 1,
-        "category": "CBD",
-        "category_slug": "cbd",
-        "category_id": 10,
-        "product_type": "oil",
-        "price": 19990,
-        "base_price": 19990,
-        "stock": 200,
-        "stock_quantity": 200,
-        "stock_unit": "unidades",
-        "image": "",
-        "images": [
-          {
-            "id": null,
-            "url": "./images/catalogo/placeholder_2.png",
-            "alt_text": "Imagen no disponible",
-            "display_order": 0,
-            "is_primary": 1
-          }
-        ],
-        "featured": true,
-        "active": false,
-        "is_medicinal": false,
-        "requires_prescription": false,
-        "created_at": "2025-11-03T01:13:21.541Z",
-        "updated_at": "2025-11-03 20:40:52",
-        "attributes": {
-          "otc": "Venta libre",
-          "beginner_friendly": "Sí",
-          "packaging": "Gotero 15ml"
-        },
-        "price_variants": null,
-        "medicinal_info": null,
-        "cannabinoid_profile": {
-          "thc": 0,
-          "cbd": 5
-        },
-        "terpene_profile": null,
-        "strain_info": null,
-        "therapeutic_info": {
-          "conditions": [
-            "Ansiedad leve",
-            "Estrés",
-            "Bienestar general"
-          ],
-          "benefits": [
-            "Sin receta",
-            "Uso diario",
-            "Sin psicoactividad"
-          ],
-          "effects": [
-            "Calma",
-            "Relajación",
-            "Equilibrio"
-          ]
-        },
-        "usage_info": {
-          "recommended_time": "Cualquier hora",
-          "dosage": {
-            "beginner": "0.5ml",
-            "intermediate": "1ml",
-            "advanced": "2ml"
-          },
-          "administration": [
-            "Sublingual 60 segundos"
-          ],
-          "onset": "20-40 minutos",
-          "duration": "4-6 horas"
-        },
-        "safety_info": {
-          "contraindications": [
-            "Hipersensibilidad"
-          ],
-          "side_effects": [
-            "Ninguno reportado en dosis normales"
-          ],
-          "interactions": [
-            "Ninguna significativa"
-          ]
-        },
-        "specifications": {
-          "volume": "15ml",
-          "cbd_per_ml": "5mg",
-          "total_cbd": "75mg",
-          "thc_content": "0% THC",
-          "extraction": "CO2",
-          "carrier_oil": "Aceite de hemp"
-        },
-        "medical_category": "cbd",
-        "unit_type": "volume",
-        "base_unit": "ml",
-        "unit_size": 15,
-        "status": "active"
-      },
-      {
-        "id": 33,
-        "name": "Gummies CBD 10mg · 30 unidades",
-        "description": "Gummies sabor frutas con 10mg CBD cada una. Sin azúcar. Veganas. Fácil dosificación.",
-        "short_description": "Gummies CBD 10mg veganas",
-        "sku": "CBD-GUMMIES-10MG-30",
-        "breeder": "Apex Remedy",
-        "brand_id": 1,
-        "category": "CBD",
-        "category_slug": "cbd",
-        "category_id": 10,
-        "product_type": "capsule",
-        "price": 22990,
-        "base_price": 22990,
-        "stock": 150,
-        "stock_quantity": 150,
-        "stock_unit": "unidades",
-        "image": "",
-        "images": [
-          {
-            "id": null,
-            "url": "./images/catalogo/placeholder_2.png",
-            "alt_text": "Imagen no disponible",
-            "display_order": 0,
-            "is_primary": 1
-          }
-        ],
-        "featured": true,
-        "active": false,
-        "is_medicinal": false,
-        "requires_prescription": false,
-        "created_at": "2025-11-03T01:13:21.707Z",
-        "updated_at": "2025-11-03 20:40:52",
-        "attributes": {
-          "flavors": "Frutas mixtas",
-          "otc": "Venta libre",
-          "kid_friendly": "No (adultos)"
-        },
-        "price_variants": null,
-        "medicinal_info": null,
-        "cannabinoid_profile": {
-          "thc": 0,
-          "cbd": 10
-        },
-        "terpene_profile": null,
-        "strain_info": null,
-        "therapeutic_info": {
-          "conditions": [
-            "Ansiedad",
-            "Estrés",
-            "Bienestar"
-          ],
-          "benefits": [
-            "Sabor agradable",
-            "Discreto",
-            "Dosificación fácil"
-          ],
-          "effects": [
-            "Calma",
-            "Relajación"
-          ]
-        },
-        "usage_info": {
-          "recommended_time": "Cualquier hora",
-          "dosage": {
-            "beginner": "1 gummy",
-            "intermediate": "2 gummies",
-            "advanced": "3 gummies"
-          },
-          "administration": [
-            "Masticar y tragar"
-          ],
-          "onset": "30-60 minutos",
-          "duration": "4-6 horas"
-        },
-        "safety_info": {
-          "contraindications": [
-            "Ninguna conocida"
-          ],
-          "side_effects": [
-            "Ninguno en dosis normales"
-          ],
-          "interactions": [
-            "Ninguna significativa"
-          ]
-        },
-        "specifications": {
-          "gummies_per_container": 30,
-          "cbd_per_gummy": "10mg",
-          "total_cbd": "300mg",
-          "thc_content": "0% THC",
-          "sweetener": "Sin azúcar (stevia)",
-          "vegan": "Sí"
-        },
-        "medical_category": "cbd",
-        "unit_type": "unit",
-        "base_unit": "frasco",
-        "unit_size": 30,
-        "status": "active"
-      },
-      {
-        "id": 35,
-        "name": "Citron Lemon · Sativa Energizante",
-        "description": "Sativa dominante (60/40) con intenso perfil cítrico. THC 16%. Ideal para uso diurno con efectos energizantes y enfoque mental.",
-        "short_description": "Sativa 60% cítrica energizante",
-        "sku": "MED-FLOWER-CITRON-001",
+        "id": 41,
+        "name": "Runtz · Híbrido Balanceado",
+        "description": "Híbrido balanceado (50/50) con 27% THC. Perfil dulce intenso. Efecto equilibrado cuerpo-mente. Muy popular.",
+        "short_description": "Híbrido 50/50 dulce potente",
+        "sku": "MED-FLOWER-RUNTZ-001",
         "breeder": "Apex Remedy",
         "brand_id": 1,
         "category": "Flores Medicinales",
         "category_slug": "medicinal-flores",
         "category_id": 1,
         "product_type": "flower",
-        "price": 13500,
-        "base_price": 13500,
-        "stock": 300,
-        "stock_quantity": 300,
+        "price": 18500,
+        "base_price": 18500,
+        "stock": 320,
+        "stock_quantity": 320,
         "stock_unit": "gramos",
         "image": "",
         "images": [
@@ -1705,172 +2224,59 @@
         "active": false,
         "is_medicinal": true,
         "requires_prescription": true,
-        "created_at": "2025-11-03T01:22:28.461Z",
-        "updated_at": "2025-11-03 20:40:54",
+        "created_at": "2025-11-03T01:22:29.663Z",
+        "updated_at": "2025-11-03 20:40:55",
         "attributes": {
-          "aroma": "Limón, Cítrico, Fresco",
-          "flavor": "Limón intenso, Dulce",
-          "appearance": "Cogollos verde claro con pistilos naranjas"
-        },
-        "price_variants": null,
-        "medicinal_info": null,
-        "cannabinoid_profile": {
-          "thc": 16,
-          "cbd": 0.4,
-          "cbn": 0.2,
-          "cbg": 0.8,
-          "thcv": 0.5
-        },
-        "terpene_profile": {
-          "Limoneno": 1.2,
-          "Pineno": 0.6,
-          "Mirceno": 0.4,
-          "Terpinoleno": 0.5
-        },
-        "strain_info": {
-          "type": "Sativa dominante",
-          "genetics": "60% Sativa / 40% Indica",
-          "lineage": "Lemon Skunk x Unknown Sativa",
-          "origin": "Países Bajos"
-        },
-        "therapeutic_info": {
-          "conditions": [
-            "Fatiga",
-            "Depresión leve",
-            "Falta de concentración",
-            "Pérdida de apetito"
-          ],
-          "benefits": [
-            "Energía sostenida",
-            "Claridad mental",
-            "Mejora del ánimo",
-            "Creatividad"
-          ],
-          "effects": [
-            "Energizante",
-            "Eufórico",
-            "Enfoque",
-            "Sociable"
-          ]
-        },
-        "usage_info": {
-          "recommended_time": "Diurno/matutino",
-          "dosage": {
-            "beginner": "0.2-0.3g",
-            "intermediate": "0.3-0.5g",
-            "advanced": "0.5-1g"
-          },
-          "administration": [
-            "Vaporización 170-180°C"
-          ],
-          "onset": "2-5 minutos",
-          "duration": "2-3 horas"
-        },
-        "safety_info": {
-          "contraindications": [
-            "Ansiedad severa",
-            "Trastornos del corazón"
-          ],
-          "side_effects": [
-            "Boca seca",
-            "Ojos rojos",
-            "Leve ansiedad en dosis altas"
-          ],
-          "interactions": [
-            "Estimulantes",
-            "Antidepresivos"
-          ]
-        },
-        "specifications": null,
-        "medical_category": "thc",
-        "unit_type": "weight",
-        "base_unit": "g",
-        "unit_size": 1,
-        "status": "active"
-      },
-      {
-        "id": 36,
-        "name": "Fruit Spirit · Sativa Potente",
-        "description": "Sativa potente (60/40) con 27% THC. Perfil frutal intenso. Energía extrema y creatividad. Para usuarios experimentados.",
-        "short_description": "Sativa 60% ultra potente 27% THC",
-        "sku": "MED-FLOWER-FRUITSPIRIT-001",
-        "breeder": "Apex Remedy",
-        "brand_id": 1,
-        "category": "Flores Medicinales",
-        "category_slug": "medicinal-flores",
-        "category_id": 1,
-        "product_type": "flower",
-        "price": 18000,
-        "base_price": 18000,
-        "stock": 250,
-        "stock_quantity": 250,
-        "stock_unit": "gramos",
-        "image": "",
-        "images": [
-          {
-            "id": null,
-            "url": "./images/catalogo/placeholder_2.png",
-            "alt_text": "Imagen no disponible",
-            "display_order": 0,
-            "is_primary": 1
-          }
-        ],
-        "featured": true,
-        "active": false,
-        "is_medicinal": true,
-        "requires_prescription": true,
-        "created_at": "2025-11-03T01:22:28.792Z",
-        "updated_at": "2025-11-03 20:40:54",
-        "attributes": {
-          "aroma": "Frutas tropicales, Bayas, Dulce",
-          "flavor": "Frutal intenso, Dulce, Cremoso",
-          "appearance": "Cogollos densos con tricomas abundantes"
+          "aroma": "Caramelo, Frutas, Dulce intenso",
+          "flavor": "Dulce, Frutal, Cremoso",
+          "appearance": "Cogollos multicolor con resina abundante"
         },
         "price_variants": null,
         "medicinal_info": null,
         "cannabinoid_profile": {
           "thc": 27,
-          "cbd": 0.3,
-          "cbn": 0.4,
+          "cbd": 0.5,
+          "cbn": 0.8,
           "cbg": 1,
-          "thcv": 0.8
+          "thcv": 0.6
         },
         "terpene_profile": {
-          "Limoneno": 0.9,
-          "Mirceno": 0.7,
-          "Cariofileno": 0.5,
-          "Pineno": 0.4
+          "Limoneno": 1.1,
+          "Cariofileno": 0.8,
+          "Linalol": 0.7,
+          "Mirceno": 0.6
         },
         "strain_info": {
-          "type": "Sativa dominante",
-          "genetics": "60% Sativa / 40% Indica",
-          "lineage": "Blueberry x White Widow",
-          "origin": "Países Bajos"
+          "type": "Híbrido balanceado",
+          "genetics": "50% Sativa / 50% Indica",
+          "lineage": "Zkittlez x Gelato",
+          "origin": "California, USA"
         },
         "therapeutic_info": {
           "conditions": [
-            "Fatiga crónica severa",
-            "Depresión resistente",
-            "TDAH"
+            "Dolor",
+            "Ansiedad",
+            "Depresión",
+            "Falta de apetito"
           ],
           "benefits": [
-            "Energía intensa",
-            "Euforia marcada",
-            "Creatividad extrema"
+            "Balance perfecto",
+            "Euforia sostenida",
+            "Relajación funcional"
           ],
           "effects": [
-            "Muy energizante",
             "Eufórico",
-            "Concentración",
-            "Motivación"
+            "Relajante",
+            "Creativo",
+            "Sociable"
           ]
         },
         "usage_info": {
-          "recommended_time": "Diurno",
+          "recommended_time": "Cualquier hora",
           "dosage": {
             "beginner": "0.1-0.2g",
-            "intermediate": "0.2-0.3g",
-            "advanced": "0.3-0.5g"
+            "intermediate": "0.2-0.4g",
+            "advanced": "0.4-0.6g"
           },
           "administration": [
             "Vaporización 175-185°C"
@@ -1880,137 +2286,21 @@
         },
         "safety_info": {
           "contraindications": [
-            "Ansiedad",
-            "Paranoia",
-            "Taquicardia",
-            "Trastornos psicóticos"
+            "Trastornos psicóticos",
+            "Ansiedad severa en dosis altas"
           ],
           "side_effects": [
-            "Boca seca severa",
-            "Taquicardia leve",
-            "Posible ansiedad"
-          ],
-          "interactions": [
-            "Estimulantes fuertes",
-            "Antidepresivos IMAO"
-          ]
-        },
-        "specifications": null,
-        "medical_category": "thc",
-        "unit_type": "weight",
-        "base_unit": "g",
-        "unit_size": 1,
-        "status": "active"
-      },
-      {
-        "id": 37,
-        "name": "Critical Kush · Indica Extrema",
-        "description": "Indica dominante (80/20) con 27% THC. Relajación profunda extrema. Ideal para dolor severo e insomnio crónico.",
-        "short_description": "Indica 80% potencia extrema",
-        "sku": "MED-FLOWER-CRITIKUSH-001",
-        "breeder": "Apex Remedy",
-        "brand_id": 1,
-        "category": "Flores Medicinales",
-        "category_slug": "medicinal-flores",
-        "category_id": 1,
-        "product_type": "flower",
-        "price": 18000,
-        "base_price": 18000,
-        "stock": 280,
-        "stock_quantity": 280,
-        "stock_unit": "gramos",
-        "image": "",
-        "images": [
-          {
-            "id": null,
-            "url": "./images/catalogo/placeholder_2.png",
-            "alt_text": "Imagen no disponible",
-            "display_order": 0,
-            "is_primary": 1
-          }
-        ],
-        "featured": true,
-        "active": false,
-        "is_medicinal": true,
-        "requires_prescription": true,
-        "created_at": "2025-11-03T01:22:28.978Z",
-        "updated_at": "2025-11-03 20:40:54",
-        "attributes": {
-          "aroma": "Terroso, Especias, Pino",
-          "flavor": "Terroso, Picante, Kush",
-          "appearance": "Cogollos muy densos púrpura oscuro"
-        },
-        "price_variants": null,
-        "medicinal_info": null,
-        "cannabinoid_profile": {
-          "thc": 27,
-          "cbd": 0.4,
-          "cbn": 2.5,
-          "cbg": 0.7,
-          "thcv": 0.2
-        },
-        "terpene_profile": {
-          "Mirceno": 1.5,
-          "Cariofileno": 0.9,
-          "Limoneno": 0.4,
-          "Humuleno": 0.5
-        },
-        "strain_info": {
-          "type": "Indica dominante",
-          "genetics": "80% Indica / 20% Sativa",
-          "lineage": "Critical Mass x OG Kush",
-          "origin": "California, USA"
-        },
-        "therapeutic_info": {
-          "conditions": [
-            "Dolor crónico severo",
-            "Insomnio grave",
-            "Espasticidad",
-            "Ansiedad severa"
-          ],
-          "benefits": [
-            "Sedación profunda",
-            "Alivio dolor intenso",
-            "Relajación muscular extrema"
-          ],
-          "effects": [
-            "Muy sedante",
-            "Relajante profundo",
-            "Somnolencia"
-          ]
-        },
-        "usage_info": {
-          "recommended_time": "Nocturno exclusivamente",
-          "dosage": {
-            "beginner": "0.1-0.2g",
-            "intermediate": "0.2-0.3g",
-            "advanced": "0.3-0.5g"
-          },
-          "administration": [
-            "Vaporización 170-180°C"
-          ],
-          "onset": "2-5 minutos",
-          "duration": "3-5 horas"
-        },
-        "safety_info": {
-          "contraindications": [
-            "Hipotensión severa",
-            "Embarazo",
-            "Operación de maquinaria"
-          ],
-          "side_effects": [
-            "Somnolencia extrema",
-            "Boca seca severa",
-            "Sedación prolongada"
+            "Boca seca",
+            "Ojos rojos",
+            "Posible mareo leve"
           ],
           "interactions": [
             "Sedantes",
-            "Benzodiacepinas",
             "Alcohol"
           ]
         },
         "specifications": null,
-        "medical_category": "thc",
+        "medical_category": "balanced",
         "unit_type": "weight",
         "base_unit": "g",
         "unit_size": 1,
@@ -2131,21 +2421,21 @@
         "status": "active"
       },
       {
-        "id": 39,
-        "name": "Kush Mintz · Indica Premium",
-        "description": "Indica dominante (70/30) con 26% THC. Perfil menta-kush único. Relajación profunda sin sedación excesiva.",
-        "short_description": "Indica 70% menta premium",
-        "sku": "MED-FLOWER-KUSHMINTZ-001",
+        "id": 10,
+        "name": "Shatter CBD · 80% CBD",
+        "description": "Shatter de CBD puro 80%. Sin THC. Transparente como vidrio. Rápido alivio sin psicoactividad.",
+        "short_description": "Shatter CBD 80% sin THC",
+        "sku": "MED-CONC-SHATTER-CBD80",
         "breeder": "Apex Remedy",
         "brand_id": 1,
-        "category": "Flores Medicinales",
-        "category_slug": "medicinal-flores",
-        "category_id": 1,
-        "product_type": "flower",
-        "price": 17500,
-        "base_price": 17500,
-        "stock": 260,
-        "stock_quantity": 260,
+        "category": "Concentrados Medicinales",
+        "category_slug": "medicinal-concentrados",
+        "category_id": 3,
+        "product_type": "concentrate",
+        "price": 32000,
+        "base_price": 32000,
+        "stock": 60,
+        "stock_quantity": 60,
         "stock_unit": "gramos",
         "image": "",
         "images": [
@@ -2161,334 +2451,97 @@
         "active": false,
         "is_medicinal": true,
         "requires_prescription": true,
-        "created_at": "2025-11-03T01:22:29.297Z",
-        "updated_at": "2025-11-03 20:40:55",
+        "created_at": "2025-11-03T01:13:17.500Z",
+        "updated_at": "2025-11-03 20:40:53",
         "attributes": {
-          "aroma": "Menta fresca, Kush, Terroso",
-          "flavor": "Menta, Cremoso, Dulce",
-          "appearance": "Cogollos densos con tricomas blancos"
+          "appearance": "Ámbar transparente",
+          "aroma": "Suave, herbal",
+          "storage": "Temperatura ambiente"
         },
         "price_variants": null,
         "medicinal_info": null,
         "cannabinoid_profile": {
-          "thc": 26,
-          "cbd": 0.6,
-          "cbn": 1.8,
-          "cbg": 0.9,
-          "thcv": 0.4
+          "thc": 0.2,
+          "cbd": 80,
+          "cbn": 0.1,
+          "cbg": 2,
+          "cbc": 1.5
         },
-        "terpene_profile": {
-          "Cariofileno": 1,
-          "Limoneno": 0.8,
-          "Mirceno": 0.7,
-          "Linalol": 0.6
-        },
-        "strain_info": {
-          "type": "Indica dominante",
-          "genetics": "70% Indica / 30% Sativa",
-          "lineage": "Bubba Kush x Animal Mints",
-          "origin": "California, USA"
-        },
+        "terpene_profile": null,
+        "strain_info": null,
         "therapeutic_info": {
           "conditions": [
+            "Dolor crónico",
+            "Inflamación aguda",
             "Ansiedad",
-            "Dolor muscular",
-            "Insomnio moderado",
-            "Estrés"
+            "Epilepsia"
           ],
           "benefits": [
-            "Relajación sin sedación",
-            "Alivio dolor",
-            "Calma mental"
+            "Altísima concentración CBD",
+            "Sin psicoactividad",
+            "Alivio rápido"
           ],
           "effects": [
-            "Relajante",
-            "Euforia leve",
-            "Calma"
-          ]
-        },
-        "usage_info": {
-          "recommended_time": "Tarde/noche",
-          "dosage": {
-            "beginner": "0.2-0.3g",
-            "intermediate": "0.3-0.5g",
-            "advanced": "0.5-0.8g"
-          },
-          "administration": [
-            "Vaporización 170-180°C"
-          ],
-          "onset": "2-5 minutos",
-          "duration": "2-4 horas"
-        },
-        "safety_info": {
-          "contraindications": [
-            "Hipotensión",
-            "Embarazo"
-          ],
-          "side_effects": [
-            "Somnolencia moderada",
-            "Boca seca",
-            "Ojos rojos"
-          ],
-          "interactions": [
-            "Sedantes",
-            "Alcohol"
-          ]
-        },
-        "specifications": null,
-        "medical_category": "thc",
-        "unit_type": "weight",
-        "base_unit": "g",
-        "unit_size": 1,
-        "status": "active"
-      },
-      {
-        "id": 41,
-        "name": "Runtz · Híbrido Balanceado",
-        "description": "Híbrido balanceado (50/50) con 27% THC. Perfil dulce intenso. Efecto equilibrado cuerpo-mente. Muy popular.",
-        "short_description": "Híbrido 50/50 dulce potente",
-        "sku": "MED-FLOWER-RUNTZ-001",
-        "breeder": "Apex Remedy",
-        "brand_id": 1,
-        "category": "Flores Medicinales",
-        "category_slug": "medicinal-flores",
-        "category_id": 1,
-        "product_type": "flower",
-        "price": 18500,
-        "base_price": 18500,
-        "stock": 320,
-        "stock_quantity": 320,
-        "stock_unit": "gramos",
-        "image": "",
-        "images": [
-          {
-            "id": null,
-            "url": "./images/catalogo/placeholder_2.png",
-            "alt_text": "Imagen no disponible",
-            "display_order": 0,
-            "is_primary": 1
-          }
-        ],
-        "featured": true,
-        "active": false,
-        "is_medicinal": true,
-        "requires_prescription": true,
-        "created_at": "2025-11-03T01:22:29.663Z",
-        "updated_at": "2025-11-03 20:40:55",
-        "attributes": {
-          "aroma": "Caramelo, Frutas, Dulce intenso",
-          "flavor": "Dulce, Frutal, Cremoso",
-          "appearance": "Cogollos multicolor con resina abundante"
-        },
-        "price_variants": null,
-        "medicinal_info": null,
-        "cannabinoid_profile": {
-          "thc": 27,
-          "cbd": 0.5,
-          "cbn": 0.8,
-          "cbg": 1,
-          "thcv": 0.6
-        },
-        "terpene_profile": {
-          "Limoneno": 1.1,
-          "Cariofileno": 0.8,
-          "Linalol": 0.7,
-          "Mirceno": 0.6
-        },
-        "strain_info": {
-          "type": "Híbrido balanceado",
-          "genetics": "50% Sativa / 50% Indica",
-          "lineage": "Zkittlez x Gelato",
-          "origin": "California, USA"
-        },
-        "therapeutic_info": {
-          "conditions": [
-            "Dolor",
-            "Ansiedad",
-            "Depresión",
-            "Falta de apetito"
-          ],
-          "benefits": [
-            "Balance perfecto",
-            "Euforia sostenida",
-            "Relajación funcional"
-          ],
-          "effects": [
-            "Eufórico",
-            "Relajante",
-            "Creativo",
-            "Sociable"
+            "Relajación",
+            "Antiinflamatorio",
+            "Claridad mental"
           ]
         },
         "usage_info": {
           "recommended_time": "Cualquier hora",
           "dosage": {
-            "beginner": "0.1-0.2g",
-            "intermediate": "0.2-0.4g",
-            "advanced": "0.4-0.6g"
+            "beginner": "0.1g (80mg CBD)",
+            "intermediate": "0.2g",
+            "advanced": "0.3-0.5g"
           },
           "administration": [
-            "Vaporización 175-185°C"
+            "Dabbing 260-315°C",
+            "Vaporizador"
           ],
-          "onset": "2-5 minutos",
-          "duration": "3-4 horas"
+          "onset": "Inmediato (1-3 minutos)",
+          "duration": "3-5 horas"
         },
         "safety_info": {
           "contraindications": [
-            "Trastornos psicóticos",
-            "Ansiedad severa en dosis altas"
+            "Hipersensibilidad"
           ],
           "side_effects": [
-            "Boca seca",
-            "Ojos rojos",
-            "Posible mareo leve"
+            "Fatiga leve",
+            "Boca seca"
           ],
           "interactions": [
-            "Sedantes",
-            "Alcohol"
+            "Anticoagulantes"
           ]
         },
-        "specifications": null,
-        "medical_category": "balanced",
+        "specifications": {
+          "extraction_method": "CO2 + Winterización",
+          "consistency": "Shatter (vidrio)",
+          "purity": "95%+",
+          "thc_content": "<0.3%",
+          "lab_tested": "Sí"
+        },
+        "medical_category": "cbd",
         "unit_type": "weight",
         "base_unit": "g",
         "unit_size": 1,
         "status": "active"
       },
       {
-        "id": 43,
-        "name": "Leche Lunar · Indica Ultra Potente",
-        "description": "Indica dominante (60/40) con 28% THC. La más potente de la colección. Sedación profunda. Solo usuarios muy experimentados.",
-        "short_description": "Indica 60% máxima potencia 28% THC",
-        "sku": "MED-FLOWER-LECHELUNA-001",
-        "breeder": "Apex Remedy",
-        "brand_id": 1,
-        "category": "Flores Medicinales",
-        "category_slug": "medicinal-flores",
-        "category_id": 1,
-        "product_type": "flower",
-        "price": 19500,
-        "base_price": 19500,
-        "stock": 180,
-        "stock_quantity": 180,
-        "stock_unit": "gramos",
-        "image": "",
-        "images": [
-          {
-            "id": null,
-            "url": "./images/catalogo/placeholder_2.png",
-            "alt_text": "Imagen no disponible",
-            "display_order": 0,
-            "is_primary": 1
-          }
-        ],
-        "featured": true,
-        "active": false,
-        "is_medicinal": true,
-        "requires_prescription": true,
-        "created_at": "2025-11-03T01:22:30.021Z",
-        "updated_at": "2025-11-03 20:40:55",
-        "attributes": {
-          "aroma": "Cremoso, Dulce, Terroso, Único",
-          "flavor": "Leche, Dulce, Suave",
-          "appearance": "Cogollos blancos por tricomas, muy densos"
-        },
-        "price_variants": null,
-        "medicinal_info": null,
-        "cannabinoid_profile": {
-          "thc": 28,
-          "cbd": 0.6,
-          "cbn": 2.8,
-          "cbg": 1.1,
-          "thcv": 0.3
-        },
-        "terpene_profile": {
-          "Mirceno": 1.8,
-          "Cariofileno": 1.2,
-          "Linalol": 0.8,
-          "Limoneno": 0.5
-        },
-        "strain_info": {
-          "type": "Indica dominante",
-          "genetics": "60% Indica / 40% Sativa",
-          "lineage": "Genética exclusiva",
-          "origin": "Chile"
-        },
-        "therapeutic_info": {
-          "conditions": [
-            "Dolor crónico severo",
-            "Insomnio severo",
-            "Espasmos musculares",
-            "Ansiedad extrema"
-          ],
-          "benefits": [
-            "Sedación extrema",
-            "Alivio dolor máximo",
-            "Sueño profundo garantizado"
-          ],
-          "effects": [
-            "Muy sedante",
-            "Relajación profunda",
-            "Somnolencia intensa"
-          ]
-        },
-        "usage_info": {
-          "recommended_time": "Nocturno exclusivamente - antes de dormir",
-          "dosage": {
-            "beginner": "NO RECOMENDADO",
-            "intermediate": "0.1-0.2g",
-            "advanced": "0.2-0.4g"
-          },
-          "administration": [
-            "Vaporización 170-180°C"
-          ],
-          "onset": "2-5 minutos",
-          "duration": "4-6 horas"
-        },
-        "safety_info": {
-          "contraindications": [
-            "Usuarios novatos",
-            "Hipotensión severa",
-            "Embarazo",
-            "Conducir",
-            "Operación de maquinaria"
-          ],
-          "side_effects": [
-            "Somnolencia extrema",
-            "Sedación prolongada",
-            "Boca muy seca",
-            "Posible desorientación"
-          ],
-          "interactions": [
-            "Sedantes fuertes",
-            "Benzodiacepinas",
-            "Alcohol",
-            "Opioides"
-          ]
-        },
-        "specifications": null,
-        "medical_category": "thc",
-        "unit_type": "weight",
-        "base_unit": "g",
-        "unit_size": 1,
-        "status": "active"
-      },
-      {
-        "id": 52,
-        "name": "Aceite CBD Full Spectrum · 5000mg",
-        "description": "Aceite CBD Full Spectrum 5000mg en 30ml. Extracción premium 120-73 micrones. Máxima potencia y efecto séquito completo.",
-        "short_description": "CBD 5000mg full spectrum ultra potente",
-        "sku": "MED-OIL-CBDFULL-5000",
-        "breeder": "Apex Remedy",
-        "brand_id": 1,
-        "category": "Aceites Medicinales",
-        "category_slug": "medicinal-aceites",
-        "category_id": 2,
-        "product_type": "oil",
-        "price": 70000,
-        "base_price": 70000,
-        "stock": 100,
-        "stock_quantity": 100,
+        "id": 21,
+        "name": "Volcano Hybrid · Storz & Bickel",
+        "description": "El vaporizador de mesa legendario. Tecnología médica. Modo globo y directo. El estándar de oro.",
+        "short_description": "Legendario vaporizador de mesa",
+        "sku": "VAP-VOLCANO-HYBRID",
+        "breeder": "Storz & Bickel",
+        "brand_id": 7,
+        "category": "Vaporizadores",
+        "category_slug": "vaporizadores",
+        "category_id": 7,
+        "product_type": "accessory",
+        "price": 699990,
+        "base_price": 699990,
+        "stock": 5,
+        "stock_quantity": 5,
         "stock_unit": "unidades",
         "image": "",
         "images": [
@@ -2502,90 +2555,37 @@
         ],
         "featured": true,
         "active": false,
-        "is_medicinal": true,
-        "requires_prescription": true,
-        "created_at": "2025-11-03T01:22:31.285Z",
-        "updated_at": "2025-11-03 20:40:53",
+        "is_medicinal": false,
+        "requires_prescription": false,
+        "created_at": "2025-11-03T01:13:19.501Z",
+        "updated_at": "2025-11-03 20:40:57",
         "attributes": {
-          "packaging": "Frasco gotero ámbar premium",
-          "concentration": "Ultra alta potencia",
-          "storage": "Lugar fresco y oscuro"
+          "type": "Mesa",
+          "features": "Control App, Calentamiento 40seg, Certificado médico"
         },
         "price_variants": null,
         "medicinal_info": null,
-        "cannabinoid_profile": {
-          "thc": 1.5,
-          "cbd": 166.7,
-          "cbn": 0.5,
-          "cbg": 3,
-          "cbc": 2
-        },
+        "cannabinoid_profile": null,
         "terpene_profile": null,
         "strain_info": null,
-        "therapeutic_info": {
-          "conditions": [
-            "Dolor crónico severo",
-            "Inflamación severa",
-            "Ansiedad severa",
-            "Epilepsia",
-            "Insomnio"
-          ],
-          "benefits": [
-            "Máxima potencia CBD",
-            "Efecto séquito completo",
-            "Extracción premium"
-          ],
-          "effects": [
-            "Relajación profunda",
-            "Antiinflamatorio potente",
-            "Ansiolítico fuerte"
-          ]
-        },
-        "usage_info": {
-          "recommended_time": "Mañana y noche",
-          "dosage": {
-            "beginner": "0.3ml (50mg CBD)",
-            "intermediate": "0.6ml (100mg CBD)",
-            "advanced": "1ml (166mg CBD)"
-          },
-          "administration": [
-            "Sublingual - mantener 90 segundos"
-          ],
-          "onset": "15-45 minutos",
-          "duration": "6-8 horas"
-        },
-        "safety_info": {
-          "contraindications": [
-            "Hipersensibilidad a cannabinoides",
-            "Enfermedad hepática severa"
-          ],
-          "side_effects": [
-            "Somnolencia leve",
-            "Boca seca",
-            "Cambios en apetito"
-          ],
-          "interactions": [
-            "Anticoagulantes",
-            "Anticonvulsivos",
-            "Sedantes"
-          ]
-        },
+        "therapeutic_info": null,
+        "usage_info": null,
+        "safety_info": null,
         "specifications": {
-          "volume": "30ml",
-          "cbd_per_ml": "166.7mg",
-          "total_cbd": "5000mg",
-          "extraction": "CO2 Supercrítico + Presión (120-73 micrones)",
-          "carrier_oil": "Aceite MCT orgánico",
-          "spectrum": "Full Spectrum"
+          "material": "Hierbas secas",
+          "heating": "Convección + Conducción híbrida",
+          "temp_range": "40-230°C",
+          "modes": "Globo y tubo directo",
+          "warranty": "3 años"
         },
-        "medical_category": "cbd",
-        "unit_type": "volume",
-        "base_unit": "ml",
-        "unit_size": 30,
+        "medical_category": null,
+        "unit_type": "unit",
+        "base_unit": "unidad",
+        "unit_size": 1,
         "status": "active"
       }
     ],
     "total": 28,
-    "timestamp": "2025-11-11T23:50:26.019Z"
+    "timestamp": "2025-11-12T01:37:28.503Z"
   }
 }

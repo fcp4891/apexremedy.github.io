@@ -83,9 +83,14 @@ async function exportProducts(useUnified = false) {
         // Crear instancia del modelo Product
         const productModel = new Product();
         
-        // Obtener todos los productos con sus imágenes
-        console.log('📦 Obteniendo productos de la base de datos...');
-        const products = await productModel.findAll();
+        // Obtener solo productos ACTIVOS con sus imágenes
+        console.log('📦 Obteniendo productos ACTIVOS de la base de datos...');
+        // Usar findAllWithFilters para obtener solo productos activos
+        const products = await productModel.findAllWithFilters({
+            status: 'active',
+            includeInactive: false
+        });
+        console.log(`✅ Encontrados ${products.length} productos activos`);
         
         // Obtener todas las marcas/breeders para mapear brand_id a breeder
         console.log('🏷️ Obteniendo marcas/breeders...');

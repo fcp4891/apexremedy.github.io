@@ -907,10 +907,17 @@ class Product extends BaseModel {
             delete product.supplier_code;
             
             // Agregar imágenes desde product_images
-            if (imagesMap[product.id]) {
+            if (imagesMap[product.id] && imagesMap[product.id].length > 0) {
                 product.images = imagesMap[product.id];
             } else {
-                product.images = [];
+                // Si no hay imágenes, usar placeholder por defecto
+                product.images = [{
+                    id: null,
+                    url: PLACEHOLDER_IMAGE_URL || './images/catalogo/placeholder.jpg',
+                    alt_text: 'Imagen no disponible',
+                    display_order: 0,
+                    is_primary: 1
+                }];
             }
             
             if (product.attributes && typeof product.attributes === 'string') {
