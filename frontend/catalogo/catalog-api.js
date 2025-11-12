@@ -161,10 +161,10 @@ function transformProductsToCatalogFormat(products) {
     console.log(`📦 Total de productos recibidos: ${products.length}`);
     
     // Filtrar solo productos ACTIVOS y medicinales para el catálogo
-    // IMPORTANTE: Solo mostrar productos activos (status = 'active' O active = true)
+    // NOTA: El JSON ya contiene solo productos activos (filtrados en la exportación)
+    // Pero mantenemos el filtro como seguridad adicional
     const activeMedicinalProducts = products.filter(p => {
-        // Verificar si el producto está activo
-        // Puede ser: status === 'active' O active === true O active === 1
+        // Verificar si el producto está activo (status = 'active' O active = true)
         const isActive = p.status === 'active' || 
                         p.active === true || 
                         p.active === 1;
@@ -174,7 +174,12 @@ function transformProductsToCatalogFormat(products) {
         const requiresPrescription = p.requires_prescription === true || p.requires_prescription === 1;
         
         // SOLO mostrar productos que estén ACTIVOS Y sean medicinales
-        return isActive && (isMedicinal || requiresPrescription);
+        // Si el producto no está activo, NO se muestra (ni en catálogo, ni en tienda, ni en productos)
+        if (!isActive) {
+            return false;
+        }
+        
+        return isMedicinal || requiresPrescription;
     });
     
     console.log(`📦 Procesando ${activeMedicinalProducts.length} productos activos medicinales (de ${products.length} total)`);

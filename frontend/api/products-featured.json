@@ -31,7 +31,7 @@
           }
         ],
         "featured": true,
-        "active": false,
+        "active": true,
         "is_medicinal": true,
         "requires_prescription": true,
         "created_at": "2025-11-03T01:13:17.149Z",
@@ -141,7 +141,7 @@
           }
         ],
         "featured": true,
-        "active": false,
+        "active": true,
         "is_medicinal": true,
         "requires_prescription": true,
         "created_at": "2025-11-03T01:13:16.972Z",
@@ -249,7 +249,7 @@
           }
         ],
         "featured": true,
-        "active": false,
+        "active": true,
         "is_medicinal": false,
         "requires_prescription": false,
         "created_at": "2025-11-03T01:13:21.541Z",
@@ -350,7 +350,7 @@
           }
         ],
         "featured": true,
-        "active": false,
+        "active": true,
         "is_medicinal": true,
         "requires_prescription": true,
         "created_at": "2025-11-03T01:22:31.285Z",
@@ -461,7 +461,7 @@
           }
         ],
         "featured": true,
-        "active": false,
+        "active": true,
         "is_medicinal": true,
         "requires_prescription": true,
         "created_at": "2025-11-03T01:13:16.774Z",
@@ -572,7 +572,7 @@
           }
         ],
         "featured": true,
-        "active": false,
+        "active": true,
         "is_medicinal": false,
         "requires_prescription": false,
         "created_at": "2025-11-03T01:13:18.545Z",
@@ -639,7 +639,7 @@
           }
         ],
         "featured": true,
-        "active": false,
+        "active": true,
         "is_medicinal": true,
         "requires_prescription": false,
         "created_at": "2025-11-03T01:13:18.015Z",
@@ -740,7 +740,7 @@
           }
         ],
         "featured": true,
-        "active": false,
+        "active": true,
         "is_medicinal": true,
         "requires_prescription": true,
         "created_at": "2025-11-03T01:22:28.461Z",
@@ -854,7 +854,7 @@
           }
         ],
         "featured": true,
-        "active": false,
+        "active": true,
         "is_medicinal": true,
         "requires_prescription": true,
         "created_at": "2025-11-03T01:13:18.199Z",
@@ -957,7 +957,7 @@
           }
         ],
         "featured": true,
-        "active": false,
+        "active": true,
         "is_medicinal": true,
         "requires_prescription": true,
         "created_at": "2025-11-03T01:22:28.978Z",
@@ -1071,7 +1071,7 @@
           }
         ],
         "featured": true,
-        "active": false,
+        "active": true,
         "is_medicinal": true,
         "requires_prescription": true,
         "created_at": "2025-11-03T01:13:17.668Z",
@@ -1178,7 +1178,7 @@
           }
         ],
         "featured": true,
-        "active": false,
+        "active": true,
         "is_medicinal": true,
         "requires_prescription": true,
         "created_at": "2025-11-03T01:22:28.792Z",
@@ -1292,7 +1292,7 @@
           }
         ],
         "featured": true,
-        "active": false,
+        "active": true,
         "is_medicinal": false,
         "requires_prescription": false,
         "created_at": "2025-11-03T01:13:18.734Z",
@@ -1359,7 +1359,7 @@
           }
         ],
         "featured": true,
-        "active": false,
+        "active": true,
         "is_medicinal": false,
         "requires_prescription": false,
         "created_at": "2025-11-03T01:13:19.868Z",
@@ -1417,7 +1417,7 @@
           }
         ],
         "featured": true,
-        "active": false,
+        "active": true,
         "is_medicinal": false,
         "requires_prescription": false,
         "created_at": "2025-11-03T01:13:21.707Z",
@@ -1517,7 +1517,7 @@
           }
         ],
         "featured": true,
-        "active": false,
+        "active": true,
         "is_medicinal": false,
         "requires_prescription": false,
         "created_at": "2025-11-03T01:13:21.163Z",
@@ -1575,7 +1575,7 @@
           }
         ],
         "featured": true,
-        "active": false,
+        "active": true,
         "is_medicinal": true,
         "requires_prescription": true,
         "created_at": "2025-11-03T01:22:29.297Z",
@@ -1687,7 +1687,7 @@
           }
         ],
         "featured": true,
-        "active": false,
+        "active": true,
         "is_medicinal": true,
         "requires_prescription": true,
         "created_at": "2025-11-03T01:22:30.021Z",
@@ -1805,7 +1805,7 @@
           }
         ],
         "featured": true,
-        "active": false,
+        "active": true,
         "is_medicinal": true,
         "requires_prescription": true,
         "created_at": "2025-11-03T01:13:17.347Z",
@@ -1919,7 +1919,7 @@
           }
         ],
         "featured": true,
-        "active": false,
+        "active": true,
         "is_medicinal": false,
         "requires_prescription": false,
         "created_at": "2025-11-03T01:13:19.288Z",
@@ -1977,7 +1977,7 @@
           }
         ],
         "featured": true,
-        "active": false,
+        "active": true,
         "is_medicinal": false,
         "requires_prescription": false,
         "created_at": "2025-11-03T01:13:18.370Z",
@@ -2044,7 +2044,7 @@
           }
         ],
         "featured": true,
-        "active": false,
+        "active": true,
         "is_medicinal": false,
         "requires_prescription": false,
         "created_at": "2025-11-03T01:13:19.102Z",
@@ -2104,7 +2104,7 @@
           }
         ],
         "featured": true,
-        "active": false,
+        "active": true,
         "is_medicinal": false,
         "requires_prescription": false,
         "created_at": "2025-11-03T01:13:20.234Z",
@@ -2163,7 +2163,7 @@
           }
         ],
         "featured": true,
-        "active": false,
+        "active": true,
         "is_medicinal": false,
         "requires_prescription": false,
         "created_at": "2025-11-03T01:13:20.786Z",
@@ -2221,7 +2221,7 @@
           }
         ],
         "featured": true,
-        "active": false,
+        "active": true,
         "is_medicinal": true,
         "requires_prescription": true,
         "created_at": "2025-11-03T01:22:29.663Z",
@@ -2334,7 +2334,7 @@
           }
         ],
         "featured": true,
-        "active": false,
+        "active": true,
         "is_medicinal": true,
         "requires_prescription": true,
         "created_at": "2025-11-03T01:22:29.145Z",
@@ -2448,7 +2448,7 @@
           }
         ],
         "featured": true,
-        "active": false,
+        "active": true,
         "is_medicinal": true,
         "requires_prescription": true,
         "created_at": "2025-11-03T01:13:17.500Z",
@@ -2554,7 +2554,7 @@
           }
         ],
         "featured": true,
-        "active": false,
+        "active": true,
         "is_medicinal": false,
         "requires_prescription": false,
         "created_at": "2025-11-03T01:13:19.501Z",
@@ -2586,6 +2586,6 @@
       }
     ],
     "total": 28,
-    "timestamp": "2025-11-12T01:37:28.503Z"
+    "timestamp": "2025-11-12T01:40:26.969Z"
   }
 }

@@ -32,7 +32,7 @@
             }
           ],
           "featured": true,
-          "active": false,
+          "active": true,
           "is_medicinal": true,
           "requires_prescription": true,
           "created_at": "2025-11-03T01:13:17.149Z",
@@ -142,7 +142,7 @@
             }
           ],
           "featured": true,
-          "active": false,
+          "active": true,
           "is_medicinal": true,
           "requires_prescription": true,
           "created_at": "2025-11-03T01:13:16.972Z",
@@ -250,7 +250,7 @@
             }
           ],
           "featured": true,
-          "active": false,
+          "active": true,
           "is_medicinal": true,
           "requires_prescription": true,
           "created_at": "2025-11-03T01:22:31.285Z",
@@ -361,7 +361,7 @@
             }
           ],
           "featured": true,
-          "active": false,
+          "active": true,
           "is_medicinal": true,
           "requires_prescription": true,
           "created_at": "2025-11-03T01:13:16.774Z",
@@ -474,7 +474,7 @@
             }
           ],
           "featured": true,
-          "active": false,
+          "active": true,
           "is_medicinal": false,
           "requires_prescription": false,
           "created_at": "2025-11-03T01:13:21.541Z",
@@ -575,7 +575,7 @@
             }
           ],
           "featured": false,
-          "active": false,
+          "active": true,
           "is_medicinal": false,
           "requires_prescription": false,
           "created_at": "2025-11-03T01:13:21.893Z",
@@ -674,7 +674,7 @@
             }
           ],
           "featured": true,
-          "active": false,
+          "active": true,
           "is_medicinal": false,
           "requires_prescription": false,
           "created_at": "2025-11-03T01:13:21.707Z",
@@ -776,7 +776,7 @@
             }
           ],
           "featured": true,
-          "active": false,
+          "active": true,
           "is_medicinal": false,
           "requires_prescription": false,
           "created_at": "2025-11-03T01:13:18.545Z",
@@ -843,7 +843,7 @@
             }
           ],
           "featured": false,
-          "active": false,
+          "active": true,
           "is_medicinal": false,
           "requires_prescription": false,
           "created_at": "2025-11-03T01:13:18.911Z",
@@ -910,7 +910,7 @@
             }
           ],
           "featured": true,
-          "active": false,
+          "active": true,
           "is_medicinal": false,
           "requires_prescription": false,
           "created_at": "2025-11-03T01:13:18.734Z",
@@ -977,7 +977,7 @@
             }
           ],
           "featured": true,
-          "active": false,
+          "active": true,
           "is_medicinal": false,
           "requires_prescription": false,
           "created_at": "2025-11-03T01:13:18.370Z",
@@ -1046,7 +1046,7 @@
             }
           ],
           "featured": false,
-          "active": false,
+          "active": true,
           "is_medicinal": false,
           "requires_prescription": false,
           "created_at": "2025-11-03T01:13:20.597Z",
@@ -1104,7 +1104,7 @@
             }
           ],
           "featured": false,
-          "active": false,
+          "active": true,
           "is_medicinal": false,
           "requires_prescription": false,
           "created_at": "2025-11-03T01:13:20.042Z",
@@ -1163,7 +1163,7 @@
             }
           ],
           "featured": true,
-          "active": false,
+          "active": true,
           "is_medicinal": false,
           "requires_prescription": false,
           "created_at": "2025-11-03T01:13:19.868Z",
@@ -1221,7 +1221,7 @@
             }
           ],
           "featured": false,
-          "active": false,
+          "active": true,
           "is_medicinal": false,
           "requires_prescription": false,
           "created_at": "2025-11-03T01:13:20.408Z",
@@ -1279,7 +1279,7 @@
             }
           ],
           "featured": true,
-          "active": false,
+          "active": true,
           "is_medicinal": false,
           "requires_prescription": false,
           "created_at": "2025-11-03T01:13:20.234Z",
@@ -1340,7 +1340,7 @@
             }
           ],
           "featured": true,
-          "active": false,
+          "active": true,
           "is_medicinal": true,
           "requires_prescription": false,
           "created_at": "2025-11-03T01:13:18.015Z",
@@ -1441,7 +1441,7 @@
             }
           ],
           "featured": true,
-          "active": false,
+          "active": true,
           "is_medicinal": true,
           "requires_prescription": true,
           "created_at": "2025-11-03T01:13:18.199Z",
@@ -1546,7 +1546,7 @@
             }
           ],
           "featured": false,
-          "active": false,
+          "active": true,
           "is_medicinal": false,
           "requires_prescription": false,
           "created_at": "2025-11-03T01:13:21.352Z",
@@ -1604,7 +1604,7 @@
             }
           ],
           "featured": false,
-          "active": false,
+          "active": true,
           "is_medicinal": false,
           "requires_prescription": false,
           "created_at": "2025-11-03T01:13:20.974Z",
@@ -1661,7 +1661,7 @@
             }
           ],
           "featured": true,
-          "active": false,
+          "active": true,
           "is_medicinal": false,
           "requires_prescription": false,
           "created_at": "2025-11-03T01:13:21.163Z",
@@ -1719,7 +1719,7 @@
             }
           ],
           "featured": true,
-          "active": false,
+          "active": true,
           "is_medicinal": false,
           "requires_prescription": false,
           "created_at": "2025-11-03T01:13:20.786Z",
@@ -1779,7 +1779,7 @@
             }
           ],
           "featured": false,
-          "active": false,
+          "active": true,
           "is_medicinal": true,
           "requires_prescription": true,
           "created_at": "2025-11-07T15:15:23.782Z",
@@ -1860,7 +1860,7 @@
             }
           ],
           "featured": true,
-          "active": false,
+          "active": true,
           "is_medicinal": true,
           "requires_prescription": true,
           "created_at": "2025-11-03T01:22:28.461Z",
@@ -1974,7 +1974,7 @@
             }
           ],
           "featured": true,
-          "active": false,
+          "active": true,
           "is_medicinal": true,
           "requires_prescription": true,
           "created_at": "2025-11-03T01:22:28.978Z",
@@ -2088,7 +2088,7 @@
             }
           ],
           "featured": true,
-          "active": false,
+          "active": true,
           "is_medicinal": true,
           "requires_prescription": true,
           "created_at": "2025-11-03T01:22:28.792Z",
@@ -2202,7 +2202,7 @@
             }
           ],
           "featured": true,
-          "active": false,
+          "active": true,
           "is_medicinal": true,
           "requires_prescription": true,
           "created_at": "2025-11-03T01:22:29.297Z",
@@ -2314,7 +2314,7 @@
             }
           ],
           "featured": false,
-          "active": false,
+          "active": true,
           "is_medicinal": true,
           "requires_prescription": true,
           "created_at": "2025-11-03T01:22:29.488Z",
@@ -2426,7 +2426,7 @@
             }
           ],
           "featured": true,
-          "active": false,
+          "active": true,
           "is_medicinal": true,
           "requires_prescription": true,
           "created_at": "2025-11-03T01:22:30.021Z",
@@ -2544,7 +2544,7 @@
             }
           ],
           "featured": true,
-          "active": false,
+          "active": true,
           "is_medicinal": true,
           "requires_prescription": true,
           "created_at": "2025-11-03T01:22:29.663Z",
@@ -2657,7 +2657,7 @@
             }
           ],
           "featured": true,
-          "active": false,
+          "active": true,
           "is_medicinal": true,
           "requires_prescription": true,
           "created_at": "2025-11-03T01:22:29.145Z",
@@ -2773,7 +2773,7 @@
             }
           ],
           "featured": false,
-          "active": false,
+          "active": true,
           "is_medicinal": true,
           "requires_prescription": true,
           "created_at": "2025-11-03T01:13:17.837Z",
@@ -2876,7 +2876,7 @@
             }
           ],
           "featured": true,
-          "active": false,
+          "active": true,
           "is_medicinal": true,
           "requires_prescription": true,
           "created_at": "2025-11-03T01:13:17.668Z",
@@ -2985,7 +2985,7 @@
             }
           ],
           "featured": false,
-          "active": false,
+          "active": true,
           "is_medicinal": false,
           "requires_prescription": false,
           "created_at": "2025-11-03T01:13:19.687Z",
@@ -3044,7 +3044,7 @@
             }
           ],
           "featured": true,
-          "active": false,
+          "active": true,
           "is_medicinal": false,
           "requires_prescription": false,
           "created_at": "2025-11-03T01:13:19.288Z",
@@ -3102,7 +3102,7 @@
             }
           ],
           "featured": true,
-          "active": false,
+          "active": true,
           "is_medicinal": false,
           "requires_prescription": false,
           "created_at": "2025-11-03T01:13:19.102Z",
@@ -3162,7 +3162,7 @@
             }
           ],
           "featured": true,
-          "active": false,
+          "active": true,
           "is_medicinal": false,
           "requires_prescription": false,
           "created_at": "2025-11-03T01:13:19.501Z",
@@ -3222,7 +3222,7 @@
             }
           ],
           "featured": true,
-          "active": false,
+          "active": true,
           "is_medicinal": true,
           "requires_prescription": true,
           "created_at": "2025-11-03T01:13:17.347Z",
@@ -3336,7 +3336,7 @@
             }
           ],
           "featured": true,
-          "active": false,
+          "active": true,
           "is_medicinal": true,
           "requires_prescription": true,
           "created_at": "2025-11-03T01:13:17.500Z",
@@ -3416,6 +3416,6 @@
         }
       ]
     },
-    "timestamp": "2025-11-12T01:37:28.506Z"
+    "timestamp": "2025-11-12T01:40:26.971Z"
   }
 }

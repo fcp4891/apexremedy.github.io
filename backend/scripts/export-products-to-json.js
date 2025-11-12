@@ -216,7 +216,8 @@ async function exportProducts(useUnified = false) {
                 image: product.image || product.primary_image || '',
                 images: product.images || [],
                 featured: product.featured === 1 || product.featured === true,
-                active: product.active === 1 || product.active === true,
+                // active debe derivarse de status (si status = 'active', entonces active = true)
+                active: product.status === 'active' || product.active === 1 || product.active === true,
                 is_medicinal: product.is_medicinal === 1 || product.is_medicinal === true,
                 requires_prescription: product.requires_prescription === 1 || product.requires_prescription === true,
                 created_at: product.created_at,
