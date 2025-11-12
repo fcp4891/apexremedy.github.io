@@ -158,13 +158,41 @@ async function loadCatalogFromAPI() {
  * Transformar productos del formato JSON estático al formato del catálogo
  */
 function transformProductsToCatalogFormat(products) {
-    // Filtrar solo productos activos y medicinales
-    const activeMedicinalProducts = products.filter(p => 
-        p.active === true && 
-        (p.is_medicinal === true || p.requires_prescription === true)
-    );
+    console.log(`📦 Total de productos recibidos: ${products.length}`);
     
-    console.log(`📦 Procesando ${activeMedicinalProducts.length} productos activos medicinales`);
+    // Filtrar productos medicinales para el catálogo
+    // El catálogo muestra productos medicinales independientemente de su estado activo
+    // (es solo para visualización, no para venta directa)
+    const activeMedicinalProducts = products.filter(p => {
+        const isMedicinal = p.is_medicinal === true || p.is_medicinal === 1;
+        const requiresPrescription = p.requires_prescription === true || p.requires_prescription === 1;
+        
+        // Mostrar productos que sean medicinales O requieran receta
+        return isMedicinal || requiresPrescription;
+    });
+    
+    console.log(`📦 Procesando ${activeMedicinalProducts.length} productos activos medicinales (de ${products.length} total)`);
+    
+    // Si no hay productos activos, mostrar información de diagnóstico
+    if (activeMedicinalProducts.length === 0) {
+        console.warn('⚠️ No se encontraron productos activos medicinales. Mostrando información de diagnóstico:');
+        const sampleProduct = products[0];
+        if (sampleProduct) {
+            console.log('Ejemplo de producto:', {
+                name: sampleProduct.name,
+                active: sampleProduct.active,
+                is_medicinal: sampleProduct.is_medicinal,
+                requires_prescription: sampleProduct.requires_prescription,
+                category_slug: sampleProduct.category_slug,
+                product_type: sampleProduct.product_type
+            });
+        }
+        // Mostrar conteo de productos por estado
+        const activeCount = products.filter(p => p.active === true || p.active === 1).length;
+        const medicinalCount = products.filter(p => p.is_medicinal === true || p.is_medicinal === 1).length;
+        const prescriptionCount = products.filter(p => p.requires_prescription === true || p.requires_prescription === 1).length;
+        console.log(`📊 Estadísticas: ${activeCount} activos, ${medicinalCount} medicinales, ${prescriptionCount} requieren receta`);
+    }
     
     // Separar productos por categoría
     const flowers = [];
@@ -406,7 +434,16 @@ async function initCatalogFromAPI() {
             }
             
             // Actualizar catalogData con datos de la API
+            console.log('📋 Datos recibidos de la API:', Object.keys(apiData));
+            console.log('📋 Páginas de productos en apiData:', Object.keys(apiData).filter(k => k.startsWith('productsPage')));
+            console.log('📋 Páginas de hash en apiData:', Object.keys(apiData).filter(k => k.startsWith('hashPage')));
+            console.log('📋 Páginas de aceites en apiData:', Object.keys(apiData).filter(k => k.startsWith('oilPage')));
+            
             Object.assign(catalogData, apiData);
+            
+            // Verificar que los datos se asignaron correctamente
+            const productPagesAfter = Object.keys(catalogData).filter(k => k.startsWith('productsPage'));
+            console.log('✅ Páginas de productos después de asignar:', productPagesAfter.length, productPagesAfter);
             
             // Ocultar botón de edición
             const editBtn = document.getElementById('editBtn');
@@ -417,7 +454,12 @@ async function initCatalogFromAPI() {
             // Marcar que el catálogo viene de la BD
             window.catalogFromDB = true;
             
-            console.log('✅ Catálogo cargado desde base de datos');
+            console.log('✅ Catálogo cargado desde base de datos. Total de páginas:', {
+                products: productPagesAfter.length,
+                hash: Object.keys(catalogData).filter(k => k.startsWith('hashPage')).length,
+                oils: Object.keys(catalogData).filter(k => k.startsWith('oilPage')).length
+            });
+            
             return true;
         } else {
             console.log('⚠️ Usando datos locales (fallback)');

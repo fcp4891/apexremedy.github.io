@@ -88,21 +88,38 @@ document.addEventListener('DOMContentLoaded', async function() {
     
     // Esperar a que se cargue el catálogo desde API si está disponible
     if (typeof window.catalogFromAPI === 'function') {
-        await window.catalogFromAPI();
+        console.log('🔄 Cargando catálogo desde API...');
+        const loadedFromAPI = await window.catalogFromAPI();
+        console.log('✅ Carga desde API completada:', loadedFromAPI);
     }
     
     // Si no se cargó desde API, cargar datos locales
     if (!window.catalogFromDB) {
+        console.log('📂 Cargando datos locales...');
         loadSavedData();
+    }
+    
+    // Verificar que catalogData tenga datos antes de renderizar
+    if (typeof catalogData !== 'undefined') {
+        const productPages = Object.keys(catalogData).filter(k => k.startsWith('productsPage'));
+        console.log('📊 Estado de catalogData antes de renderizar:', {
+            totalKeys: Object.keys(catalogData).length,
+            productPages: productPages.length,
+            productPageKeys: productPages,
+            hashPages: Object.keys(catalogData).filter(k => k.startsWith('hashPage')).length,
+            oilPages: Object.keys(catalogData).filter(k => k.startsWith('oilPage')).length
+        });
     }
     
     initCatalog();
     setupEventListeners();
     
     // Esperar un momento para asegurar que los datos estén listos
+    // Aumentar el timeout para dar tiempo a que los datos se asignen
     setTimeout(() => {
+        console.log('🎨 Iniciando renderizado de contenido...');
         renderContent();
-    }, 100);
+    }, 300);
 });
 
 // Verificar conexión con el servidor
