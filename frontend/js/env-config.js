@@ -97,6 +97,10 @@
         const pathParts = pathname.split('/').filter(p => p);
         const repoName = 'apexremedy.github.io';
         
+        // Detectar si el pathname incluye /frontend/
+        // Esto indica que GitHub Pages está sirviendo desde la estructura del repo
+        const hasFrontendInPath = pathname.includes('/frontend/');
+        
         // Buscar el índice del repositorio en la URL
         let repoIndex = -1;
         for (let i = 0; i < pathParts.length; i++) {
@@ -108,15 +112,25 @@
         
         if (repoIndex !== -1) {
             // Construir basePath: /fcp4891/apexremedy.github.io/
-            // GitHub Pages despliega desde ./frontend, así que los archivos están en la raíz del sitio
-            // NO agregamos /frontend/ porque el workflow ya lo despliega a la raíz
-            return '/' + pathParts.slice(0, repoIndex + 1).join('/') + '/';
+            let basePath = '/' + pathParts.slice(0, repoIndex + 1).join('/') + '/';
+            
+            // Si el pathname incluye /frontend/, los archivos están en /frontend/
+            // Si NO incluye /frontend/, el workflow desplegó a la raíz
+            if (hasFrontendInPath) {
+                basePath += 'frontend/';
+            }
+            
+            return basePath;
         } else if (pathname.includes(repoName)) {
             const repoPos = pathname.indexOf(repoName);
-            return pathname.substring(0, repoPos + repoName.length) + '/';
+            let basePath = pathname.substring(0, repoPos + repoName.length) + '/';
+            if (hasFrontendInPath) {
+                basePath += 'frontend/';
+            }
+            return basePath;
         }
         
-        return '/';
+        return hasFrontendInPath ? '/frontend/' : '/';
     }
     
     /**
@@ -128,10 +142,14 @@
         // Calcular basePath dinámicamente para GitHub Pages
         if (ENV === 'github_pages') {
             const basePath = calculateGitHubPagesBasePath();
+            const staticApiPath = basePath + 'api/';
+            console.log('🔧 [env-config] GitHub Pages - BasePath calculado:', basePath);
+            console.log('🔧 [env-config] GitHub Pages - Static API Path:', staticApiPath);
+            console.log('🔧 [env-config] GitHub Pages - Pathname incluye /frontend/:', window.location.pathname.includes('/frontend/'));
             return {
                 ...envConfig,
                 basePath: basePath,
-                staticApiPath: basePath + 'api/'
+                staticApiPath: staticApiPath
             };
         }
         

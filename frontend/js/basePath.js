@@ -135,6 +135,7 @@
     function updateAllPaths() {
         // Solo hacer si estamos en GitHub Pages y tenemos un basePath válido
         const currentBasePath = window.BASE_PATH || basePath;
+        const isGitHubPages = window.location.hostname.includes('github.io');
         if (!currentBasePath || !isGitHubPages) return;
         
         // Prevenir ejecuciones múltiples que causan parpadeo
