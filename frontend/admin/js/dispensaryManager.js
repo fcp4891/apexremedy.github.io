@@ -129,38 +129,131 @@ const DispensaryManager = (() => {
 
     async function fetchDispensary() {
         try {
-            const response = await fetch(apiUrl(), {
-                method: 'GET',
-                credentials: 'include'
-            });
+            const apiBaseUrl = window.CONFIG?.API_BASE_URL;
+            
+            // Si no hay backend disponible (GitHub Pages), usar JSON estático
+            if (!apiBaseUrl) {
+                console.log('📄 Usando JSON estático para dispensary...');
+                try {
+                    // Intentar cargar desde JSON estático usando api.loadStaticJSON si está disponible
+                    if (window.api && window.api.loadStaticJSON) {
+                        const staticData = await window.api.loadStaticJSON('dispensary.json');
+                        if (staticData && staticData.success && staticData.data) {
+                            state.data = staticData.data;
+                            if (state.data) {
+                                state.data.signature = normalizeSignatureDataUrl(state.data.signature);
+                            }
+                            render();
+                            updateActions();
+                            return;
+                        }
+                    }
+                    
+                    // Si api.loadStaticJSON no está disponible, hacer fetch directo
+                    const isAdminArea = window.location.pathname.includes('/admin/');
+                    let apiPath;
+                    
+                    if (window.location.hostname.includes('github.io')) {
+                        // GitHub Pages - construir ruta basada en la URL actual
+                        const pathname = window.location.pathname;
+                        const pathParts = pathname.split('/').filter(p => p);
+                        let repoIndex = -1;
+                        for (let i = 0; i < pathParts.length; i++) {
+                            if (pathParts[i].includes('apexremedy')) {
+                                repoIndex = i;
+                                break;
+                            }
+                        }
+                        
+                        if (repoIndex !== -1) {
+                            const basePath = '/' + pathParts.slice(0, repoIndex + 1).join('/') + '/';
+                            apiPath = basePath + 'api/dispensary.json';
+                        } else {
+                            apiPath = '/api/dispensary.json';
+                        }
+                    } else {
+                        // Desarrollo local
+                        apiPath = isAdminArea ? '../api/dispensary.json' : './api/dispensary.json';
+                    }
+                    
+                    const response = await fetch(apiPath);
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                    const result = await response.json();
+                    
+                    if (result.success && result.data) {
+                        state.data = result.data;
+                        if (state.data) {
+                            state.data.signature = normalizeSignatureDataUrl(state.data.signature);
+                        }
+                        render();
+                        updateActions();
+                        return;
+                    } else {
+                        throw new Error('Formato de JSON inválido');
+                    }
+                } catch (jsonError) {
+                    console.warn('⚠️ No se pudo cargar JSON estático, usando valores por defecto:', jsonError);
+                    state.data = null;
+                    render();
+                    updateActions();
+                    return;
+                }
+            }
+            
+            // Usar API backend
+            try {
+                const response = await fetch(apiUrl(), {
+                    method: 'GET',
+                    credentials: 'include'
+                });
 
-            if (response.status === 404) {
-                state.data = null;
+                if (response.status === 404) {
+                    state.data = null;
+                    render();
+                    updateActions();
+                    return;
+                }
+
+                const result = await response.json();
+                if (!response.ok || !result.success) {
+                    throw new Error(result.message || 'No se pudo obtener la información del dispensario');
+                }
+
+                state.data = result.data || null;
+                if (state.data) {
+                    state.data.signature = normalizeSignatureDataUrl(state.data.signature);
+                }
                 render();
                 updateActions();
-                return;
+            } catch (error) {
+                // Si falla el backend, intentar JSON estático como fallback
+                if (error.message.includes('Failed to fetch') || error.message.includes('ERR_CONNECTION_REFUSED')) {
+                    console.log('📄 Backend no disponible, usando JSON estático como fallback...');
+                    try {
+                        if (window.api && window.api.loadStaticJSON) {
+                            const staticData = await window.api.loadStaticJSON('dispensary.json');
+                            if (staticData && staticData.success && staticData.data) {
+                                state.data = staticData.data;
+                                if (state.data) {
+                                    state.data.signature = normalizeSignatureDataUrl(state.data.signature);
+                                }
+                                render();
+                                updateActions();
+                                return;
+                            }
+                        }
+                    } catch (jsonError) {
+                        console.warn('⚠️ No se pudo cargar JSON estático como fallback:', jsonError);
+                    }
+                }
+                throw error;
             }
-
-            const result = await response.json();
-            if (!response.ok || !result.success) {
-                throw new Error(result.message || 'No se pudo obtener la información del dispensario');
-            }
-
-            state.data = result.data || null;
-            if (state.data) {
-                state.data.signature = normalizeSignatureDataUrl(state.data.signature);
-            }
-            render();
-            updateActions();
         } catch (error) {
             console.error('Error cargando datos del dispensario:', error);
-            if (window.notify?.error) {
-                window.notify.error('No fue posible cargar la información del dispensario');
-            } else {
-                console.error('No fue posible cargar la información del dispensario');
-            }
             state.data = null;
-            renderError();
+            render();
             updateActions();
         }
     }
