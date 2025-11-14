@@ -167,8 +167,18 @@
     </div>
 </div>
 
-    <!-- env-config.js DEBE cargarse PRIMERO para sistema centralizado de rutas -->
-    <script src="./js/env-config.js"></script>
+    <!-- env-config.js y SignaturePad DEBEN cargarse PRIMERO -->
+    <script>
+        // Verificar si env-config.js ya está cargado, si no, cargarlo
+        if (typeof window.getStaticApiPath === 'undefined') {
+            const envScript = document.createElement('script');
+            // Intentar cargar desde diferentes rutas posibles
+            const basePath = window.BASE_PATH || '';
+            envScript.src = basePath + (basePath.endsWith('/') ? '' : '/') + 'js/env-config.js';
+            document.head.appendChild(envScript);
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
     <script>
 // Variables globales
 let cedenteSignaturePad = null;
@@ -203,10 +213,54 @@ function normalizeSignatureDataUrl(value) {
 async function initPoderCultivoForm() {
     console.log('🔧 Inicializando formulario de poder cultivo...');
     
+    // Verificar que SignaturePad esté cargado
+    if (typeof SignaturePad === 'undefined') {
+        console.error('❌ SignaturePad no está cargado');
+        // Intentar cargar nuevamente
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js';
+        script.onload = () => {
+            console.log('✅ SignaturePad cargado, reintentando inicialización...');
+            setTimeout(() => initPoderCultivoForm(), 100);
+        };
+        document.head.appendChild(script);
+        return;
+    }
+    
     // Obtener datos del dispensario (con reintentos y valores por defecto)
     try {
-        const apiBaseUrl = window.CONFIG?.API_BASE_URL || (window.api?.baseURL || '/api');
-        const response = await fetch(`${apiBaseUrl}/dispensary`);
+        // Usar sistema centralizado de rutas si está disponible
+        let apiPath;
+        if (typeof window.getStaticApiPath === 'function') {
+            apiPath = window.getStaticApiPath('dispensary.json');
+        } else if (window.api && window.api.loadStaticJSON) {
+            try {
+                const staticData = await window.api.loadStaticJSON('dispensary.json');
+                if (staticData && staticData.success && staticData.data) {
+                    dispensaryData = staticData.data;
+                    if (dispensaryData) {
+                        dispensaryData.signature = normalizeSignatureDataUrl(dispensaryData.signature);
+                    }
+                    console.log('✅ Datos del dispensario cargados desde JSON estático');
+                }
+            } catch (jsonError) {
+                console.warn('⚠️ Error cargando dispensary.json:', jsonError);
+            }
+        } else {
+            // Fallback: intentar con fetch directo
+            const apiBaseUrl = window.CONFIG?.API_BASE_URL || (window.api?.baseURL || null);
+            if (apiBaseUrl) {
+                apiPath = `${apiBaseUrl}/dispensary`;
+            } else {
+                // Modo estático: intentar cargar desde JSON
+                const basePath = window.BASE_PATH || '';
+                apiPath = basePath + (basePath.endsWith('/') ? '' : '/') + 'api/dispensary.json';
+            }
+        }
+        
+        // Si aún no se cargaron los datos y tenemos una ruta, intentar fetch
+        if (!dispensaryData && apiPath) {
+            const response = await fetch(apiPath);
         if (response.ok) {
             const result = await response.json();
             if (result.success && result.data) {
@@ -251,6 +305,11 @@ async function initPoderCultivoForm() {
     // Inicializar SignaturePad para firma del cedente
     const canvas = document.getElementById('cedenteSignatureCanvas');
     if (canvas) {
+        if (typeof SignaturePad === 'undefined') {
+            console.error('❌ SignaturePad no está disponible');
+            return;
+        }
+        
         cedenteSignaturePad = new SignaturePad(canvas, {
             backgroundColor: 'rgb(255, 255, 255)',
             penColor: 'rgb(0, 0, 0)',

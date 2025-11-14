@@ -64,8 +64,25 @@ document.addEventListener('poderCultivoGenerated', function(event) {
 // Cargar roles disponibles para el selector
 async function loadRolesForSelector() {
     try {
-        const response = await api.request('/roles', { method: 'GET' });
-        availableRoles = response.data.roles || [];
+        // Si no hay backend, usar roles por defecto
+        if (!window.api || !window.api.baseURL) {
+            console.log('📋 Usando roles por defecto (modo estático)');
+            availableRoles = [
+                { code: 'customer', name: 'Cliente', description: 'Usuario cliente del dispensario' },
+                { code: 'admin', name: 'Administrador', description: 'Administrador del sistema' }
+            ];
+        } else {
+            try {
+                const response = await api.request('/roles', { method: 'GET' });
+                availableRoles = response.data.roles || [];
+            } catch (error) {
+                console.warn('⚠️ Error cargando roles desde backend, usando roles por defecto:', error);
+                availableRoles = [
+                    { code: 'customer', name: 'Cliente', description: 'Usuario cliente del dispensario' },
+                    { code: 'admin', name: 'Administrador', description: 'Administrador del sistema' }
+                ];
+            }
+        }
         
         const roleSelector = document.getElementById('userTypeSelect');
         const roleDescription = document.getElementById('roleDescription');
@@ -98,7 +115,13 @@ async function loadRolesForSelector() {
             <option value="customer">Cliente</option>
             <option value="admin">Administrador</option>
         `;
-        notify.warning('No se pudieron cargar todos los roles. Usando roles por defecto.');
+        availableRoles = [
+            { code: 'customer', name: 'Cliente', description: 'Usuario cliente del dispensario' },
+            { code: 'admin', name: 'Administrador', description: 'Administrador del sistema' }
+        ];
+        if (typeof notify !== 'undefined') {
+            notify.warning('No se pudieron cargar todos los roles. Usando roles por defecto.');
+        }
     }
 }
 
