@@ -30,9 +30,11 @@
       }
       
       if (repoIndex !== -1) {
-        // Construir ruta base: /username/repo-name/
+        // Construir ruta base: /username/repo-name/ (o simplemente /repo-name/)
+        // GitHub Pages despliega desde ./frontend, así que todo está en la raíz del repo
         const repoPath = '/' + pathParts.slice(0, repoIndex + 1).join('/') + '/';
         console.log('🔧 [template.js] BasePath calculado:', repoPath);
+        console.log('🔧 [template.js] Pathname completo:', pathname);
         return repoPath;
       } else if (pathname.includes(repoName)) {
         // Si el pathname incluye el nombre del repo pero no lo encontramos en pathParts

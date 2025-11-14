@@ -588,13 +588,20 @@ if (typeof APIClient === 'undefined') {
                         
                         if (repoIndex !== -1) {
                             const repoPath = '/' + pathParts.slice(0, repoIndex + 1).join('/');
-                            const hasFrontend = window.location.pathname.includes('/frontend/');
-                            apiPath = repoPath + (hasFrontend ? '/frontend/api/' : '/api/') + filename;
+                            // GitHub Pages despliega desde ./frontend, así que api/ está en la raíz del repo
+                            apiPath = repoPath + 'api/' + filename;
                         } else {
-                            // Fallback simple
-                            apiPath = window.location.pathname.includes('/frontend/') 
-                                ? './api/' + filename 
-                                : './frontend/api/' + filename;
+                            // Fallback: intentar construir la ruta desde el pathname
+                            if (window.location.pathname.includes(repoName)) {
+                                const repoPos = window.location.pathname.indexOf(repoName);
+                                const repoPath = window.location.pathname.substring(0, repoPos + repoName.length);
+                                apiPath = repoPath + '/api/' + filename;
+                            } else {
+                                // Fallback simple para desarrollo local
+                                apiPath = window.location.pathname.includes('/frontend/') 
+                                    ? './api/' + filename 
+                                    : './frontend/api/' + filename;
+                            }
                         }
                     } else {
                         // Desarrollo local
