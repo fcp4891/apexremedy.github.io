@@ -15,13 +15,91 @@ async function viewDocuments(userId) {
         
         // ✅ USAR EL MÉTODO CORRECTO
         const response = await window.api.getUserDocuments(userId);
-
+        
         if (response.success) {
             const documents = response.data.documents || [];
+            const isStaticMode = documents.length === 0 && response.message && response.message.includes('no están disponibles en modo QA');
             
-            // Obtener información del usuario
-            const userResponse = await window.api.request(`/users/${userId}`, { method: 'GET' });
-            const user = userResponse.data.user;
+            // Si estamos en modo estático, mostrar mensaje directamente sin intentar cargar documentos
+            if (isStaticMode) {
+                try {
+                    const userResponse = await window.api.getUserById(userId);
+                    if (userResponse.success) {
+                        const user = userResponse.data.user;
+                        const userName = user.name || `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.email;
+                        
+                        const content = document.getElementById('documentsContent');
+                        content.innerHTML = `
+                            <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+                                <h3 class="text-lg font-bold text-gray-800 mb-2">${userName}</h3>
+                                <p class="text-sm text-gray-600 mb-1"><i class="fas fa-envelope mr-2"></i>${user.email}</p>
+                                <span class="px-3 py-1 text-xs font-semibold rounded-full ${
+                                    user.account_status === 'forced_approved' ? 'bg-orange-100 text-orange-800' :
+                                    user.account_status === 'approved' ? 'bg-green-100 text-green-800' :
+                                    user.account_status === 'rejected' ? 'bg-red-100 text-red-800' :
+                                    'bg-yellow-100 text-yellow-800'
+                                }">
+                                    ${user.account_status === 'forced_approved' ? 'Aprobado Forzosamente' :
+                                      user.account_status === 'approved' ? 'Aprobado' : 
+                                      user.account_status === 'rejected' ? 'Rechazado' : 'Pendiente'}
+                                </span>
+                            </div>
+                            
+                            <div class="p-8 text-center text-amber-600">
+                                <div class="flex flex-col items-center gap-4">
+                                    <span class="text-5xl">⚠️</span>
+                                    <p class="font-semibold text-lg">Documentos no disponibles en modo QA</p>
+                                    <p class="text-sm text-amber-500 mt-2 max-w-md">
+                                        Los documentos de los usuarios son datos sensibles y encriptados. 
+                                        Para ver y gestionar documentos, necesitas usar el entorno local con backend activo.
+                                    </p>
+                                    <p class="text-xs text-gray-500 mt-4">
+                                        💡 En GitHub Pages (QA) solo se pueden visualizar los datos básicos de usuarios, 
+                                        pero no los documentos adjuntos por seguridad.
+                                    </p>
+                                </div>
+                            </div>
+                        `;
+                        document.getElementById('documentsModal').classList.remove('hidden');
+                        return;
+                    }
+                } catch (userError) {
+                    console.error('Error al obtener información del usuario:', userError);
+                }
+            }
+            
+            // Obtener información del usuario (solo si hay documentos o no es modo estático)
+            let user;
+            try {
+                const userResponse = await window.api.getUserById(userId);
+                if (userResponse.success) {
+                    user = userResponse.data.user;
+                } else {
+                    throw new Error('No se pudo obtener información del usuario');
+                }
+            } catch (userError) {
+                console.error('Error al obtener información del usuario:', userError);
+                // En modo estático, intentar obtener desde users.json directamente
+                if (!window.api.baseURL) {
+                    try {
+                        const staticUsers = await window.api.loadStaticJSON('users.json');
+                        if (staticUsers && staticUsers.success && staticUsers.data && staticUsers.data.users) {
+                            const foundUser = staticUsers.data.users.find(u => u.id === parseInt(userId));
+                            if (foundUser) {
+                                user = foundUser;
+                            } else {
+                                throw new Error(`Usuario con ID ${userId} no encontrado`);
+                            }
+                        } else {
+                            throw new Error('No se pudo obtener información del usuario');
+                        }
+                    } catch (fallbackError) {
+                        throw new Error('No se pudo obtener información del usuario');
+                    }
+                } else {
+                    throw new Error('No se pudo obtener información del usuario');
+                }
+            }
             
             // Mapear documentos a formato esperado
             const documentsMap = {};
@@ -295,7 +373,46 @@ async function viewDocuments(userId) {
                     const userName = user.name || `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.email;
                     
                     const content = document.getElementById('documentsContent');
-                    content.innerHTML = `
+                    
+                    // Verificar si el error es porque estamos en modo estático (backend no configurado)
+                    const isBackendNotConfigured = error.message && (error.message.includes('Backend no configurado') || error.message.includes('no están disponibles en modo QA'));
+                    
+                    if (isBackendNotConfigured) {
+                        // Mostrar mensaje específico para modo QA
+                        content.innerHTML = `
+                            <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+                                <h3 class="text-lg font-bold text-gray-800 mb-2">${userName}</h3>
+                                <p class="text-sm text-gray-600 mb-1"><i class="fas fa-envelope mr-2"></i>${user.email}</p>
+                                <span class="px-3 py-1 text-xs font-semibold rounded-full ${
+                                    user.account_status === 'forced_approved' ? 'bg-orange-100 text-orange-800' :
+                                    user.account_status === 'approved' ? 'bg-green-100 text-green-800' :
+                                    user.account_status === 'rejected' ? 'bg-red-100 text-red-800' :
+                                    'bg-yellow-100 text-yellow-800'
+                                }">
+                                    ${user.account_status === 'forced_approved' ? 'Aprobado Forzosamente' :
+                                      user.account_status === 'approved' ? 'Aprobado' : 
+                                      user.account_status === 'rejected' ? 'Rechazado' : 'Pendiente'}
+                                </span>
+                            </div>
+                            
+                            <div class="p-8 text-center text-amber-600">
+                                <div class="flex flex-col items-center gap-4">
+                                    <span class="text-5xl">⚠️</span>
+                                    <p class="font-semibold text-lg">Documentos no disponibles en modo QA</p>
+                                    <p class="text-sm text-amber-500 mt-2 max-w-md">
+                                        Los documentos de los usuarios son datos sensibles y encriptados. 
+                                        Para ver y gestionar documentos, necesitas usar el entorno local con backend activo.
+                                    </p>
+                                    <p class="text-xs text-gray-500 mt-4">
+                                        💡 En GitHub Pages (QA) solo se pueden visualizar los datos básicos de usuarios, 
+                                        pero no los documentos adjuntos por seguridad.
+                                    </p>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        // Mostrar mensaje de error genérico
+                        content.innerHTML = `
                         <div class="mb-6 p-4 bg-gray-50 rounded-lg">
                             <h3 class="text-lg font-bold text-gray-800 mb-2">${userName}</h3>
                             <p class="text-sm text-gray-600 mb-1"><i class="fas fa-envelope mr-2"></i>${user.email}</p>

@@ -1612,10 +1612,46 @@ if (typeof APIClient === 'undefined') {
         }
 
         async getUserById(id) {
+            // Si no hay backend, obtener usuario desde JSON estático
+            if (!this.baseURL) {
+                try {
+                    const staticData = await this.loadStaticJSON('users.json');
+                    if (staticData && staticData.success && staticData.data && staticData.data.users) {
+                        const user = staticData.data.users.find(u => u.id === parseInt(id));
+                        if (user) {
+                            console.log('✅ Usuario cargado desde JSON estático:', user.email);
+                            return {
+                                success: true,
+                                data: { user },
+                                message: 'Usuario cargado desde API estática'
+                            };
+                        }
+                    }
+                    // Si no se encuentra, retornar error
+                    throw new Error(`Usuario con ID ${id} no encontrado`);
+                } catch (error) {
+                    console.warn('⚠️ Error al cargar usuario desde JSON estático:', error);
+                    throw error;
+                }
+            }
+            
+            // Si hay backend, usar API dinámica
             return await this.request(`/users/${id}`);
         }
 
         async getUserDocuments(id) {
+            // Si no hay backend, mostrar mensaje de que los documentos no están disponibles
+            // Los documentos son datos sensibles/encriptados y no se exportan a JSON
+            if (!this.baseURL) {
+                console.warn('⚠️ Backend no configurado. Los documentos no están disponibles en modo estático.');
+                return {
+                    success: true,
+                    data: { documents: [] },
+                    message: 'Los documentos no están disponibles en modo QA (GitHub Pages). Para ver documentos, usa el entorno local con backend.'
+                };
+            }
+            
+            // Si hay backend, usar API dinámica
             return await this.request(`/users/${id}/documents`);
         }
 
