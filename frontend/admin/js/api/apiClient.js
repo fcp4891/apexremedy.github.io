@@ -16,38 +16,45 @@ if (typeof APIClient === 'undefined') {
     console.log('📦 [ADMIN API] Creando clase APIClient...');
     class APIClient {
         constructor() {
-            // Detectar entorno y configurar URL de API
-            const isProduction = window.location.hostname.includes('github.io') || 
-                                (window.location.hostname !== 'localhost' && 
-                                 window.location.hostname !== '127.0.0.1');
+            // Usar sistema centralizado de detección de entorno (env-config.js)
+            let backendURL = null;
             
-            // ⚠️ IMPORTANTE: Configurar la URL de tu backend en producción
-            // Si tu backend está en Heroku/Railway/Render/etc, reemplaza la URL abajo
-            // Ejemplo: 'https://apexremedy-api.herokuapp.com/api'
-            // Ejemplo: 'https://api.apexremedy.com/api'
-            // Si no tienes backend en producción, déjalo como null para usar solo API estática
-            const PRODUCTION_API_URL = null; // ⚠️ Configurar URL real del backend o null para solo API estática
-            
-            // Si no hay URL de producción configurada, usar localhost como fallback o solo API estática
-            if (isProduction && !PRODUCTION_API_URL) {
-                console.warn('⚠️ No hay backend configurado en producción. Se usará solo API estática.');
-                this.baseURL = null; // null indica que solo se usará API estática
+            if (typeof window !== 'undefined' && window.API_BASE_URL !== undefined) {
+                // Sistema centralizado disponible
+                backendURL = window.API_BASE_URL; // Puede ser null (solo JSON estático)
+                this.env = window.ENV || 'unknown';
+                this.dataSource = backendURL ? 'api' : 'json';
             } else {
-                this.baseURL = isProduction 
-                    ? PRODUCTION_API_URL
-                    : 'http://localhost:3000/api';
+                // Fallback: detección básica
+                const isProduction = window.location.hostname.includes('github.io') || 
+                                    (window.location.hostname !== 'localhost' && 
+                                     window.location.hostname !== '127.0.0.1');
+                
+                if (window.location.hostname.includes('github.io')) {
+                    this.env = 'github_pages';
+                    this.dataSource = 'json';
+                    backendURL = null;
+                    console.warn('⚠️ No hay backend configurado en GitHub Pages. Se usará solo API estática.');
+                } else if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                    this.env = 'local';
+                    this.dataSource = 'sqlite';
+                    backendURL = 'http://localhost:3000/api';
+                    console.log('💻 Modo desarrollo detectado');
+                } else {
+                    this.env = 'production';
+                    this.dataSource = 'json'; // Por defecto, hasta que se configure backend
+                    backendURL = null;
+                    console.warn('⚠️ No hay backend configurado en producción. Se usará solo API estática.');
+                    console.warn('💡 Para configurar backend en producción, edita frontend/js/env-config.js');
+                }
             }
             
+            this.baseURL = backendURL;
             this.token = null;
             
             // Log para debug
-            if (isProduction) {
-                console.log('🌐 Modo producción detectado');
-                console.log('🔗 API URL:', this.baseURL);
-            } else {
-                console.log('💻 Modo desarrollo detectado');
-                console.log('🔗 API URL:', this.baseURL);
-            }
+            console.log(`📍 Entorno: ${this.env} | Fuente: ${this.dataSource}`);
+            console.log(`🔗 API URL: ${this.baseURL || 'Solo JSON estático'}`);
         }
 
         getCsrfTokenFromCookie() {
@@ -547,53 +554,45 @@ if (typeof APIClient === 'undefined') {
         // Método auxiliar para cargar JSON estático (fallback en producción)
         async loadStaticJSON(filename) {
             try {
-                // Usar getBasePath si está disponible (de basePath.js)
+                // Usar el sistema centralizado env-config.js si está disponible
                 let apiPath;
-                if (typeof window.getBasePath === 'function') {
-                    // Construir ruta usando getBasePath
+                if (typeof window.getStaticApiPath === 'function') {
+                    // Usar función centralizada de env-config.js
+                    apiPath = window.getStaticApiPath(filename);
+                } else if (typeof window.getBasePath === 'function') {
+                    // Fallback: usar getBasePath si está disponible
                     apiPath = window.getBasePath('api/' + filename);
                 } else if (window.BASE_PATH) {
-                    // Usar BASE_PATH global si existe
+                    // Fallback: usar BASE_PATH global si existe
                     apiPath = window.BASE_PATH + 'api/' + filename;
                 } else {
-                    // Fallback: detectar manualmente
+                    // Fallback final: detección manual (no debería llegar aquí si env-config.js está cargado)
+                    console.warn('⚠️ env-config.js no está cargado, usando detección manual');
                     const isGitHubPages = window.location.hostname.includes('github.io');
+                    const isAdminArea = window.location.pathname.includes('/admin/');
+                    
                     if (isGitHubPages) {
-                        // En GitHub Pages, construir ruta absoluta
+                        // GitHub Pages: calcular basePath y construir ruta
                         const pathParts = window.location.pathname.split('/').filter(p => p);
                         const repoName = 'apexremedy.github.io';
                         const repoIndex = pathParts.indexOf(repoName);
                         
                         if (repoIndex !== -1) {
-                            const repoPath = '/' + pathParts.slice(0, repoIndex + 1).join('/');
-                            const hasFrontend = window.location.pathname.includes('/frontend/');
-                            apiPath = repoPath + (hasFrontend ? '/frontend/api/' : '/api/') + filename;
+                            const basePath = '/' + pathParts.slice(0, repoIndex + 1).join('/') + '/';
+                            apiPath = basePath + 'api/' + filename;
                         } else {
-                            // Fallback simple
-                            apiPath = window.location.pathname.includes('/frontend/') 
-                                ? './api/' + filename 
-                                : './frontend/api/' + filename;
+                            apiPath = '/api/' + filename;
                         }
                     } else {
-                        // Desarrollo local - para admin, la ruta es diferente
-                        const isAdminArea = window.location.pathname.includes('/admin/');
-                        if (isAdminArea) {
-                            // En admin, usar ../api/ para subir un nivel
-                            apiPath = '../api/' + filename;
-                        } else {
-                            apiPath = window.location.pathname.includes('/frontend/') 
-                                ? './api/' + filename 
-                                : './frontend/api/' + filename;
-                        }
+                        // Local: desde admin/ usar ../api/, desde frontend/ usar ./api/
+                        apiPath = isAdminArea ? '../api/' + filename : './api/' + filename;
                     }
                 }
                 
-                // Asegurar que la ruta comience con / si es absoluta en GitHub Pages
-                if (window.location.hostname.includes('github.io') && !apiPath.startsWith('http') && !apiPath.startsWith('/')) {
-                    apiPath = '/' + apiPath;
-                }
+                console.log('📂 [loadStaticJSON] Entorno:', window.ENV || 'unknown');
+                console.log('📂 [loadStaticJSON] Intentando cargar JSON estático desde:', apiPath);
+                console.log('📂 [loadStaticJSON] Archivo:', filename);
                 
-                console.log('📂 Intentando cargar JSON estático desde:', apiPath);
                 const response = await fetch(apiPath);
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -605,6 +604,7 @@ if (typeof APIClient === 'undefined') {
                 // Solo mostrar warning si no es un 404 (archivo no encontrado es esperado)
                 if (!error.message.includes('404') && !error.message.includes('File not found')) {
                     console.warn(`⚠️ No se pudo cargar ${filename} estático:`, error.message);
+                    console.warn(`⚠️ Ruta intentada:`, apiPath);
                 }
                 return null;
             }

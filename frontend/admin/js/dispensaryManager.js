@@ -149,34 +149,46 @@ const DispensaryManager = (() => {
                         }
                     }
                     
-                    // Si api.loadStaticJSON no está disponible, hacer fetch directo
-                    const isAdminArea = window.location.pathname.includes('/admin/');
-                    let apiPath;
-                    
-                    if (window.location.hostname.includes('github.io')) {
-                        // GitHub Pages - construir ruta basada en la URL actual
-                        const pathname = window.location.pathname;
-                        const pathParts = pathname.split('/').filter(p => p);
-                        let repoIndex = -1;
-                        for (let i = 0; i < pathParts.length; i++) {
-                            if (pathParts[i].includes('apexremedy')) {
-                                repoIndex = i;
-                                break;
-                            }
-                        }
-                        
-                        if (repoIndex !== -1) {
-                            const basePath = '/' + pathParts.slice(0, repoIndex + 1).join('/') + '/';
-                            apiPath = basePath + 'api/dispensary.json';
-                        } else {
-                            apiPath = '/api/dispensary.json';
-                        }
-                    } else {
-                        // Desarrollo local
-                        apiPath = isAdminArea ? '../api/dispensary.json' : './api/dispensary.json';
-                    }
-                    
-                    const response = await fetch(apiPath);
+                       // Si api.loadStaticJSON no está disponible, usar sistema centralizado
+                       let apiPath;
+                       if (typeof window.getStaticApiPath === 'function') {
+                           // Usar función centralizada de env-config.js
+                           apiPath = window.getStaticApiPath('dispensary.json');
+                       } else if (typeof window.getBasePath === 'function') {
+                           // Fallback: usar getBasePath
+                           apiPath = window.getBasePath('api/dispensary.json');
+                       } else {
+                           // Fallback final: detección manual
+                           console.warn('⚠️ env-config.js no está cargado, usando detección manual');
+                           const isGitHubPages = window.location.hostname.includes('github.io');
+                           const isAdminArea = window.location.pathname.includes('/admin/');
+                           
+                           if (isGitHubPages) {
+                               // GitHub Pages: calcular basePath
+                               const pathParts = window.location.pathname.split('/').filter(p => p);
+                               const repoName = 'apexremedy.github.io';
+                               let repoIndex = -1;
+                               for (let i = 0; i < pathParts.length; i++) {
+                                   if (pathParts[i] === repoName || pathParts[i].includes('apexremedy')) {
+                                       repoIndex = i;
+                                       break;
+                                   }
+                               }
+                               if (repoIndex !== -1) {
+                                   const basePath = '/' + pathParts.slice(0, repoIndex + 1).join('/') + '/';
+                                   apiPath = basePath + 'api/dispensary.json';
+                               } else {
+                                   apiPath = '/api/dispensary.json';
+                               }
+                           } else {
+                               // Desarrollo local
+                               apiPath = isAdminArea ? '../api/dispensary.json' : './api/dispensary.json';
+                           }
+                       }
+                       
+                       console.log('📂 [dispensaryManager] Entorno:', window.ENV || 'unknown');
+                       console.log('📂 [dispensaryManager] Cargando dispensary.json desde:', apiPath);
+                       const response = await fetch(apiPath);
                     if (!response.ok) {
                         throw new Error(`HTTP ${response.status}`);
                     }

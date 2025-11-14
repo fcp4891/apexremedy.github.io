@@ -1,7 +1,14 @@
 /**
- * Sistema centralizado de configuración de entorno
- * Detecta automáticamente: LOCAL, GITHUB_PAGES, o PRODUCTION
- * Proporciona basePath y API_BASE_URL consistentes para cada entorno
+ * env-config.js
+ * Sistema centralizado de detección de entorno y construcción de rutas
+ * 
+ * Este archivo DEBE cargarse PRIMERO antes que cualquier otro script
+ * para establecer el entorno y las rutas base correctas.
+ * 
+ * Entornos soportados:
+ * - LOCAL: Desarrollo local (localhost, SQLite)
+ * - GITHUB_PAGES: QA en GitHub Pages (JSON estático)
+ * - PRODUCTION: Producción (PostgreSQL)
  */
 
 (function() {
@@ -11,135 +18,161 @@
     // DETECCIÓN DE ENTORNO
     // ============================================
     
-    const ENVIRONMENTS = {
-        LOCAL: 'local',
-        GITHUB_PAGES: 'github_pages',
-        PRODUCTION: 'production'
-    };
-    
     /**
      * Detecta el entorno actual
-     * @returns {string} Uno de: 'local', 'github_pages', 'production'
+     * @returns {string} 'local' | 'github_pages' | 'production'
      */
     function detectEnvironment() {
-        const hostname = window.location.hostname;
-        
-        // GitHub Pages: siempre incluye 'github.io'
-        if (hostname.includes('github.io')) {
-            return ENVIRONMENTS.GITHUB_PAGES;
+        if (typeof window === 'undefined') {
+            return 'unknown';
         }
         
-        // Local: localhost, 127.0.0.1, o protocolo file://
+        const hostname = window.location.hostname;
+        const protocol = window.location.protocol;
+        
+        // GitHub Pages (QA)
+        if (hostname.includes('github.io')) {
+            return 'github_pages';
+        }
+        
+        // Local (desarrollo)
         if (hostname === 'localhost' || 
             hostname === '127.0.0.1' || 
             hostname === '0.0.0.0' ||
-            window.location.protocol === 'file:') {
-            return ENVIRONMENTS.LOCAL;
+            protocol === 'file:') {
+            return 'local';
         }
         
-        // Producción: cualquier otro dominio
-        return ENVIRONMENTS.PRODUCTION;
+        // Producción (cualquier otro dominio)
+        return 'production';
     }
     
-    /**
-     * Calcula el basePath según el entorno
-     * @param {string} env - El entorno detectado
-     * @returns {string} El basePath para construir rutas
-     */
-    function calculateBasePath(env) {
-        if (env === ENVIRONMENTS.GITHUB_PAGES) {
-            // GitHub Pages: El workflow despliega desde ./frontend a la raíz del sitio
-            // URL será: https://fcp4891.github.io/apexremedy.github.io/index.html
-            // Entonces basePath = /apexremedy.github.io/
-            const pathname = window.location.pathname;
-            const pathParts = pathname.split('/').filter(p => p);
-            const repoName = 'apexremedy.github.io';
-            
-            // Buscar el índice del repositorio
-            let repoIndex = -1;
-            for (let i = 0; i < pathParts.length; i++) {
-                if (pathParts[i] === repoName || pathParts[i].includes('apexremedy')) {
-                    repoIndex = i;
-                    break;
-                }
-            }
-            
-            if (repoIndex !== -1) {
-                // Construir ruta base: /username/apexremedy.github.io/
-                return '/' + pathParts.slice(0, repoIndex + 1).join('/') + '/';
-            } else if (pathname.includes(repoName)) {
-                // Fallback: buscar en el pathname completo
-                const repoPos = pathname.indexOf(repoName);
-                return pathname.substring(0, repoPos + repoName.length) + '/';
-            } else {
-                // Fallback final: usar raíz
-                return '/';
-            }
-        } else if (env === ENVIRONMENTS.LOCAL) {
-            // Local: sin basePath, usar rutas relativas
-            return '';
-        } else {
-            // Producción: usar raíz absoluta
-            return '/';
-        }
-    }
+    const ENV = detectEnvironment();
     
-    /**
-     * Calcula la URL base de la API según el entorno
-     * @param {string} env - El entorno detectado
-     * @returns {string|null} La URL base de la API o null si no hay backend
-     */
-    function calculateAPIBaseURL(env) {
-        if (env === ENVIRONMENTS.LOCAL) {
-            // Local: usar backend en localhost
-            return 'http://localhost:3000/api';
-        } else if (env === ENVIRONMENTS.GITHUB_PAGES) {
-            // GitHub Pages: NO hay backend, usar solo JSON estático
-            return null;
-        } else {
-            // Producción: usar URL de producción (configurar según necesidad)
-            // Por ahora, null (solo JSON estático) hasta que se configure el backend
-            return null;
+    // ============================================
+    // CONFIGURACIÓN POR ENTORNO
+    // ============================================
+    
+    const CONFIG = {
+        local: {
+            // Desarrollo local: archivos en ./frontend/
+            basePath: '',
+            apiBaseURL: 'http://localhost:3000/api',
+            dataSource: 'sqlite',
+            staticApiPath: '../api/', // Desde admin/ hacia ../api/
+            description: 'Desarrollo local con SQLite'
+        },
+        github_pages: {
+            // GitHub Pages: workflow despliega desde ./frontend a la raíz
+            // Entonces los archivos están en: /apexremedy.github.io/api/
+            // NO en: /apexremedy.github.io/frontend/api/
+            basePath: '', // Se calcula dinámicamente
+            apiBaseURL: null, // No hay backend
+            dataSource: 'json',
+            staticApiPath: '', // Se calcula dinámicamente
+            description: 'QA en GitHub Pages con JSON estático'
+        },
+        production: {
+            // Producción: similar a GitHub Pages pero con dominio propio
+            basePath: '', // Se calcula dinámicamente si es necesario
+            apiBaseURL: null, // Configurar cuando haya backend
             // TODO: Cuando haya backend en producción, cambiar a:
-            // return 'https://api.apexremedy.cl/api';
+            // apiBaseURL: 'https://api.apexremedy.cl/api',
+            dataSource: 'postgresql',
+            staticApiPath: '/api/',
+            description: 'Producción con PostgreSQL'
         }
-    }
-    
-    // ============================================
-    // INICIALIZACIÓN
-    // ============================================
-    
-    const env = detectEnvironment();
-    const basePath = calculateBasePath(env);
-    const apiBaseURL = calculateAPIBaseURL(env);
-    
-    // ============================================
-    // FUNCIONES PÚBLICAS
-    // ============================================
-    
-    /**
-     * Obtiene el entorno actual
-     */
-    window.getEnvironment = function() {
-        return env;
     };
     
+    // ============================================
+    // CÁLCULO DE BASE PATH
+    // ============================================
+    
     /**
-     * Obtiene el basePath actual
+     * Calcula el basePath para GitHub Pages
+     * GitHub Pages despliega desde ./frontend, así que los archivos están en la raíz
      */
-    window.getBasePath = function(relativePath) {
-        if (!relativePath) return basePath;
+    function calculateGitHubPagesBasePath() {
+        const pathname = window.location.pathname;
+        const pathParts = pathname.split('/').filter(p => p);
+        const repoName = 'apexremedy.github.io';
         
-        // Si la ruta ya es absoluta o comienza con http, devolverla tal cual
-        if (relativePath.startsWith('http') || 
-            relativePath.startsWith('//') || 
-            relativePath.startsWith('data:') ||
-            relativePath.startsWith('#')) {
-            return relativePath;
+        // Buscar el índice del repositorio en la URL
+        let repoIndex = -1;
+        for (let i = 0; i < pathParts.length; i++) {
+            if (pathParts[i] === repoName || pathParts[i].includes('apexremedy')) {
+                repoIndex = i;
+                break;
+            }
+        }
+        
+        if (repoIndex !== -1) {
+            // Construir basePath: /fcp4891/apexremedy.github.io/
+            // GitHub Pages despliega desde ./frontend, así que los archivos están en la raíz del sitio
+            // NO agregamos /frontend/ porque el workflow ya lo despliega a la raíz
+            return '/' + pathParts.slice(0, repoIndex + 1).join('/') + '/';
+        } else if (pathname.includes(repoName)) {
+            const repoPos = pathname.indexOf(repoName);
+            return pathname.substring(0, repoPos + repoName.length) + '/';
+        }
+        
+        return '/';
+    }
+    
+    /**
+     * Obtiene la configuración del entorno actual
+     */
+    function getCurrentConfig() {
+        const envConfig = CONFIG[ENV] || CONFIG.local;
+        
+        // Calcular basePath dinámicamente para GitHub Pages
+        if (ENV === 'github_pages') {
+            const basePath = calculateGitHubPagesBasePath();
+            return {
+                ...envConfig,
+                basePath: basePath,
+                staticApiPath: basePath + 'api/'
+            };
+        }
+        
+        // Para producción, también calcular basePath si es necesario
+        if (ENV === 'production') {
+            // Por ahora, asumimos que producción está en la raíz del dominio
+            return {
+                ...envConfig,
+                basePath: '',
+                staticApiPath: '/api/'
+            };
+        }
+        
+        return envConfig;
+    }
+    
+    const currentConfig = getCurrentConfig();
+    
+    // ============================================
+    // FUNCIÓN PARA CONSTRUIR RUTAS
+    // ============================================
+    
+    /**
+     * Construye una ruta completa usando el basePath del entorno
+     * @param {string} path - Ruta relativa (ej: 'api/products.json', 'js/app.js')
+     * @returns {string} Ruta completa según el entorno
+     */
+    function getBasePath(path) {
+        // Si es una URL absoluta, devolverla tal cual
+        if (!path || 
+            path.startsWith('http') || 
+            path.startsWith('//') || 
+            path.startsWith('data:') || 
+            path.startsWith('#') ||
+            path.startsWith('mailto:') ||
+            path.startsWith('tel:')) {
+            return path || currentConfig.basePath;
         }
         
         // Limpiar la ruta
-        let cleanPath = relativePath;
+        let cleanPath = path;
         if (cleanPath.startsWith('./')) {
             cleanPath = cleanPath.substring(2);
         }
@@ -147,46 +180,61 @@
             cleanPath = cleanPath.substring(1);
         }
         
-        // Si no hay basePath (local), devolver ruta relativa
-        if (!basePath) {
+        // Para LOCAL, usar rutas relativas
+        if (ENV === 'local') {
+            // Si estamos en admin/, las rutas a api/ deben subir un nivel
+            const isInAdmin = window.location.pathname.includes('/admin/');
+            if (isInAdmin && cleanPath.startsWith('api/')) {
+                return '../' + cleanPath;
+            }
+            // Si estamos en una subcarpeta dentro de frontend/, mantener relativo
             return cleanPath.startsWith('/') ? cleanPath : './' + cleanPath;
         }
         
-        // Combinar basePath con la ruta
-        return basePath + cleanPath;
-    };
+        // Para GITHUB_PAGES y PRODUCTION, usar basePath
+        return currentConfig.basePath + cleanPath;
+    }
+    
+    // ============================================
+    // FUNCIÓN PARA CONSTRUIR RUTAS DE API ESTÁTICA
+    // ============================================
     
     /**
-     * Obtiene la URL base de la API
+     * Construye la ruta a un archivo JSON estático
+     * @param {string} filename - Nombre del archivo JSON (ej: 'products.json')
+     * @returns {string} Ruta completa al archivo JSON
      */
-    window.getAPIBaseURL = function() {
-        return apiBaseURL;
-    };
-    
-    /**
-     * Verifica si estamos en un entorno sin backend (solo JSON estático)
-     */
-    window.isStaticOnly = function() {
-        return apiBaseURL === null;
-    };
-    
-    // ============================================
-    // EXPORTAR VARIABLES GLOBALES
-    // ============================================
-    
-    window.ENV = env;
-    window.BASE_PATH = basePath;
-    window.API_BASE_URL = apiBaseURL;
+    function getStaticApiPath(filename) {
+        if (ENV === 'local') {
+            // Local: desde admin/ usar ../api/, desde frontend/ usar ./api/
+            const isInAdmin = window.location.pathname.includes('/admin/');
+            return isInAdmin ? '../api/' + filename : './api/' + filename;
+        }
+        
+        // GitHub Pages y Production: usar staticApiPath
+        return currentConfig.staticApiPath + filename;
+    }
     
     // ============================================
-    // LOGS DE DEBUG
+    // EXPORTAR AL ÁMBITO GLOBAL
     // ============================================
     
-    console.log('🔧 [env-config] Entorno detectado:', env);
-    console.log('🔧 [env-config] BasePath:', basePath || '(vacío - local)');
-    console.log('🔧 [env-config] API Base URL:', apiBaseURL || '(null - solo JSON estático)');
+    window.ENV = ENV;
+    window.ENV_CONFIG = currentConfig;
+    window.getBasePath = getBasePath;
+    window.getStaticApiPath = getStaticApiPath;
+    window.BASE_PATH = currentConfig.basePath;
+    window.API_BASE_URL = currentConfig.apiBaseURL;
+    window.DATA_SOURCE = currentConfig.dataSource;
+    
+    // Logs de debug
+    console.log('🔧 [env-config] Entorno detectado:', ENV);
+    console.log('🔧 [env-config] Base Path:', currentConfig.basePath);
+    console.log('🔧 [env-config] API Base URL:', currentConfig.apiBaseURL || 'null (solo JSON estático)');
+    console.log('🔧 [env-config] Static API Path:', currentConfig.staticApiPath);
+    console.log('🔧 [env-config] Data Source:', currentConfig.dataSource);
+    console.log('🔧 [env-config] Descripción:', currentConfig.description);
     console.log('🔧 [env-config] Hostname:', window.location.hostname);
     console.log('🔧 [env-config] Pathname:', window.location.pathname);
     
 })();
-

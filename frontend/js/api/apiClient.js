@@ -16,30 +16,32 @@ if (typeof APIClient === 'undefined') {
     console.log('📦 [API] Creando clase APIClient...');
     class APIClient {
         constructor() {
-            // Detectar entorno usando el detector de entorno
+            // Usar sistema centralizado de detección de entorno (env-config.js)
             let backendURL = null;
             
-            // Usar detector de entorno si está disponible
-            if (typeof window !== 'undefined' && window.envDetector) {
-                backendURL = window.envDetector.getBackendURL();
-                this.env = window.envDetector.env;
-                this.dataSource = window.envDetector.dataSource.type;
+            if (typeof window !== 'undefined' && window.API_BASE_URL !== undefined) {
+                // Sistema centralizado disponible
+                backendURL = window.API_BASE_URL; // Puede ser null (solo JSON estático)
+                this.env = window.ENV || 'unknown';
+                this.dataSource = backendURL ? 'api' : 'json';
             } else {
                 // Fallback: detección básica
                 const isProduction = window.location.hostname.includes('github.io') || 
                                     (window.location.hostname !== 'localhost' && 
                                      window.location.hostname !== '127.0.0.1');
                 
-                if (isProduction) {
-                    this.env = 'github';
+                if (window.location.hostname.includes('github.io')) {
+                    this.env = 'github_pages';
                     this.dataSource = 'json';
-                    // En GitHub Pages, no hay backend
                     backendURL = null;
-                } else {
+                } else if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
                     this.env = 'local';
                     this.dataSource = 'sqlite';
-                    // En local, usar backend en localhost
                     backendURL = 'http://localhost:3000/api';
+                } else {
+                    this.env = 'production';
+                    this.dataSource = 'json'; // Por defecto, hasta que se configure backend
+                    backendURL = null;
                 }
             }
             
