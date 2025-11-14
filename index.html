@@ -4,30 +4,11 @@
     <meta charset="UTF-8">
     <title>Redirigiendo a Apexremedy...</title>
     <script>
-        // Detectar si estamos en GitHub Pages
-        const isGitHubPages = window.location.hostname.includes('github.io');
-        
-        if (isGitHubPages) {
-            // En GitHub Pages, el workflow despliega desde frontend/
-            // Así que index.html ya está en la raíz del sitio desplegado
-            // No necesitamos redirigir, pero si estamos en la raíz del repo, ir a la raíz del sitio
-            const pathname = window.location.pathname;
-            const basePath = pathname.includes('apexremedy.github.io') 
-                ? pathname.substring(0, pathname.indexOf('apexremedy.github.io') + 'apexremedy.github.io'.length) + '/'
-                : '/';
-            
-            // Si ya estamos en la raíz del sitio desplegado, no redirigir
-            if (pathname === basePath || pathname === basePath + 'index.html' || pathname.endsWith('/index.html')) {
-                // Ya estamos en el lugar correcto, no hacer nada
-                console.log('✅ Ya estamos en la página correcta');
-            } else {
-                // Redirigir a la raíz del sitio desplegado
-                window.location.replace(basePath + 'index.html');
-            }
-        } else {
-            // En desarrollo local, redirigir a frontend/index.html
-            window.location.replace('./frontend/index.html');
-        }
+        // Este index.html solo se usa en desarrollo local
+        // En GitHub Pages, el workflow despliega desde ./frontend
+        // así que este archivo NO se sirve en producción
+        // Redirigir siempre a frontend/index.html en desarrollo local
+        window.location.replace('./frontend/index.html');
     </script>
 </head>
 <body>
