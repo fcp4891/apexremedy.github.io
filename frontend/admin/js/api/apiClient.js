@@ -1328,6 +1328,175 @@ if (typeof APIClient === 'undefined') {
             };
         }
 
+        // ============================================
+        // MÉTODOS DE LOGÍSTICA (ADMIN)
+        // ============================================
+        
+        async getShippingProviders() {
+            // Intentar JSON estático primero
+            try {
+                const staticData = await this.loadStaticJSON('shipping-providers.json');
+                if (staticData && staticData.success && staticData.data) {
+                    const providers = staticData.data.providers || staticData.data || [];
+                    if (Array.isArray(providers)) {
+                        console.log('✅ Proveedores de envío cargados desde JSON estático:', providers.length);
+                        return {
+                            success: true,
+                            data: { providers },
+                            count: providers.length
+                        };
+                    }
+                }
+            } catch (error) {
+                console.warn('⚠️ Error al cargar proveedores de envío desde JSON estático:', error.message);
+            }
+            
+            // Si hay backend, intentar API dinámica
+            if (this.baseURL) {
+                try {
+                    return await this.request('/shipping-providers');
+                } catch (error) {
+                    if (error.code === 'NO_BACKEND_CONFIGURED' || error.code === 'NETWORK_ERROR') {
+                        console.warn('⚠️ Backend no disponible para proveedores de envío');
+                    } else {
+                        throw error;
+                    }
+                }
+            }
+            
+            // Fallback: retornar array vacío
+            return {
+                success: true,
+                data: { providers: [] },
+                count: 0
+            };
+        }
+
+        async getShipments(filters = {}) {
+            // Intentar JSON estático primero
+            try {
+                const staticData = await this.loadStaticJSON('shipments.json');
+                if (staticData && staticData.success && staticData.data) {
+                    const shipments = staticData.data.shipments || staticData.data || [];
+                    if (Array.isArray(shipments)) {
+                        console.log('✅ Envíos cargados desde JSON estático:', shipments.length);
+                        return {
+                            success: true,
+                            data: { shipments },
+                            count: shipments.length
+                        };
+                    }
+                }
+            } catch (error) {
+                console.warn('⚠️ Error al cargar envíos desde JSON estático:', error.message);
+            }
+            
+            // Si hay backend, intentar API dinámica
+            if (this.baseURL) {
+                try {
+                    return await this.request('/shipments');
+                } catch (error) {
+                    if (error.code === 'NO_BACKEND_CONFIGURED' || error.code === 'NETWORK_ERROR') {
+                        console.warn('⚠️ Backend no disponible para envíos');
+                    } else {
+                        throw error;
+                    }
+                }
+            }
+            
+            // Fallback: retornar array vacío
+            return {
+                success: true,
+                data: { shipments: [] },
+                count: 0
+            };
+        }
+
+        async getInternalDeliveryZones() {
+            // Intentar JSON estático primero
+            try {
+                const staticData = await this.loadStaticJSON('internal-delivery-zones.json');
+                if (staticData && staticData.success && staticData.data) {
+                    const zones = staticData.data.zones || staticData.data || [];
+                    if (Array.isArray(zones)) {
+                        console.log('✅ Zonas de entrega cargadas desde JSON estático:', zones.length);
+                        return {
+                            success: true,
+                            data: { zones },
+                            count: zones.length
+                        };
+                    }
+                }
+            } catch (error) {
+                console.warn('⚠️ Error al cargar zonas desde JSON estático:', error.message);
+            }
+            
+            // Si hay backend, intentar API dinámica
+            if (this.baseURL) {
+                try {
+                    return await this.request('/internal-delivery-zones');
+                } catch (error) {
+                    if (error.code === 'NO_BACKEND_CONFIGURED' || error.code === 'NETWORK_ERROR') {
+                        console.warn('⚠️ Backend no disponible para zonas de entrega');
+                    } else {
+                        throw error;
+                    }
+                }
+            }
+            
+            // Fallback: retornar array vacío
+            return {
+                success: true,
+                data: { zones: [] },
+                count: 0
+            };
+        }
+
+        async getPackingMaterials(filters = {}) {
+            // Intentar JSON estático primero
+            try {
+                const staticData = await this.loadStaticJSON('packing-materials.json');
+                if (staticData && staticData.success && staticData.data) {
+                    const materials = staticData.data.materials || staticData.data || [];
+                    if (Array.isArray(materials)) {
+                        console.log('✅ Materiales de empaque cargados desde JSON estático:', materials.length);
+                        return {
+                            success: true,
+                            data: { materials },
+                            count: materials.length
+                        };
+                    }
+                }
+            } catch (error) {
+                console.warn('⚠️ Error al cargar materiales desde JSON estático:', error.message);
+            }
+            
+            // Si hay backend, intentar API dinámica
+            if (this.baseURL) {
+                try {
+                    const queryParams = new URLSearchParams();
+                    if (filters.active_only) {
+                        queryParams.append('active_only', filters.active_only);
+                    }
+                    const query = queryParams.toString();
+                    return await this.request(`/packing-materials${query ? '?' + query : ''}`);
+                } catch (error) {
+                    if (error.code === 'NO_BACKEND_CONFIGURED' || error.code === 'NETWORK_ERROR') {
+                        console.warn('⚠️ Backend no disponible para materiales de empaque');
+                    } else {
+                        throw error;
+                    }
+                }
+            }
+            
+            // Fallback: retornar array vacío
+            return {
+                success: true,
+                data: { materials: [] },
+                count: 0
+            };
+        }
+
         // Verificar salud de la API
         async checkHealth() {
             try {

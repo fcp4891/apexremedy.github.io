@@ -52,8 +52,9 @@
             const apiClient = window.api || new APIClient();
 
             try {
-                const providers = await apiClient.request('/shipping-providers', { method: 'GET' });
-                const count = providers?.data?.providers?.length || providers?.data?.count || 0;
+                // Usar el método getShippingProviders() que maneja JSON estático y API dinámica
+                const providers = await apiClient.getShippingProviders();
+                const count = providers?.data?.providers?.length || providers?.count || 0;
                 setStatValue('totalProviders', count);
             } catch (error) {
                 console.error('Error cargando proveedores:', error);
@@ -61,7 +62,8 @@
             }
 
             try {
-                const shipments = await apiClient.request('/shipments', { method: 'GET' });
+                // Usar el método getShipments() que maneja JSON estático y API dinámica
+                const shipments = await apiClient.getShipments();
                 const allShipments = shipments?.data?.shipments || [];
                 const activeShipments = allShipments.filter((s) =>
                     ['pending', 'processing', 'shipped', 'in_transit'].includes(s.status)
@@ -73,8 +75,9 @@
             }
 
             try {
-                const zones = await apiClient.request('/internal-delivery-zones', { method: 'GET' });
-                const count = zones?.data?.zones?.length || zones?.data?.count || 0;
+                // Usar el método getInternalDeliveryZones() que maneja JSON estático y API dinámica
+                const zones = await apiClient.getInternalDeliveryZones();
+                const count = zones?.data?.zones?.length || zones?.count || 0;
                 setStatValue('totalZones', count);
             } catch (error) {
                 console.error('Error cargando zonas:', error);
@@ -82,8 +85,9 @@
             }
 
             try {
-                const materials = await apiClient.request('/packing-materials', { method: 'GET' });
-                const count = materials?.data?.materials?.length || materials?.data?.count || 0;
+                // Usar el método getPackingMaterials() que maneja JSON estático y API dinámica
+                const materials = await apiClient.getPackingMaterials();
+                const count = materials?.data?.materials?.length || materials?.count || 0;
                 setStatValue('totalMaterials', count);
             } catch (error) {
                 console.error('Error cargando materiales:', error);
