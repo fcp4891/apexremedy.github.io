@@ -1,9 +1,41 @@
 // admin/js/config.js
 // Configuración del frontend ADMIN
 
+// Función para detectar la URL base de la API según el entorno
+// Usa el sistema centralizado env-config.js si está disponible
+function getAPIBaseURL() {
+    // Usar el sistema centralizado si está disponible (env-config.js)
+    if (typeof window !== 'undefined' && window.API_BASE_URL !== undefined) {
+        return window.API_BASE_URL; // Puede ser null (solo JSON estático)
+    }
+    
+    // Fallback: detección básica
+    const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
+    
+    // GitHub Pages
+    if (hostname.includes('github.io')) {
+        return null; // Usar solo JSON estático
+    }
+    
+    // Local
+    if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '0.0.0.0') {
+        return 'http://localhost:3000/api';
+    }
+    
+    // Producción - si hay backend configurado
+    // ⚠️ IMPORTANTE: Configurar la URL de tu backend en producción si es necesario
+    const PRODUCTION_API_URL = null; // null = solo API estática
+    // TODO: Cuando haya backend en producción, cambiar a:
+    // const PRODUCTION_API_URL = 'https://api.apexremedy.cl/api';
+    
+    return PRODUCTION_API_URL || null;
+}
+
 const CONFIG = {
-    // URLs de la API
-    API_BASE_URL: 'http://localhost:3000/api',
+    // URLs de la API - Auto-detectar entorno
+    get API_BASE_URL() {
+        return getAPIBaseURL();
+    },
     
     // Configuración de la aplicación
     APP_NAME: 'Apexremedy Admin',

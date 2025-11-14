@@ -1,75 +1,76 @@
 /**
  * Detectar y configurar el path base según el entorno
- * Para GitHub Pages, ajusta las rutas automáticamente
- * Versión para admin - copia de frontend/js/basePath.js
+ * Usa el sistema centralizado env-config.js si está disponible
+ * Versión para admin - usa el mismo sistema que frontend/js/basePath.js
  */
 
 (function() {
     'use strict';
     
-    // Detectar si estamos en GitHub Pages
-    const isGitHubPages = window.location.hostname.includes('github.io');
-    const repoName = 'apexremedy.github.io';
-    
-    // Si estamos en GitHub Pages y la URL incluye el nombre del repo
+    // Usar el sistema centralizado si está disponible
     let basePath = '';
-    if (isGitHubPages) {
-        // Extraer el path base desde el pathname actual
-        // pathname será algo como: /apexremedy.github.io/frontend/admin/index.html
-        const pathParts = window.location.pathname.split('/').filter(p => p);
-        const repoIndex = pathParts.indexOf(repoName);
+    let getBasePathFn = null;
+    
+    if (typeof window !== 'undefined' && typeof window.getBasePath === 'function') {
+        // El sistema centralizado ya está disponible (env-config.js)
+        basePath = window.BASE_PATH || '';
+        getBasePathFn = window.getBasePath;
+        console.log('✅ [admin/basePath] Usando sistema centralizado de rutas (env-config.js)');
+    } else {
+        // Fallback: calcular manualmente (compatibilidad hacia atrás)
+        const isGitHubPages = window.location.hostname.includes('github.io');
+        const repoName = 'apexremedy.github.io';
         
-        let repoPath = '';
-        // El pathname ya incluye el repo completo: /apexremedy.github.io/frontend/admin/index.html
-        // NO necesitamos agregar el usuario porque las rutas absolutas son relativas al dominio actual
-        // El dominio es fcp4891.github.io, entonces /apexremedy.github.io/ es correcto
-        if (repoIndex !== -1) {
-            // Usar solo el repoName desde el pathname (sin el usuario)
-            repoPath = '/' + repoName + '/';
-        } else {
-            // Fallback: construir desde el pathname completo si no encontramos el repoName
-            // Pero esto no debería pasar normalmente
-            repoPath = '/' + repoName + '/';
-        }
-        
-        // Verificar si la URL actual incluye /frontend/
-        const currentPath = window.location.pathname;
-        const hasFrontendInPath = currentPath.includes('/frontend/') || currentPath.endsWith('/frontend');
-        
-        if (repoPath) {
-            if (hasFrontendInPath) {
-                // Si la URL incluye /frontend/, agregarlo al basePath
-                basePath = repoPath + 'frontend/';
-            } else {
-                // Si NO incluye /frontend/, GitHub Pages está sirviendo desde la raíz
-                // (archivos de frontend/ están en la raíz del sitio desplegado)
-                basePath = repoPath;
+        if (isGitHubPages) {
+            const pathname = window.location.pathname;
+            const pathParts = pathname.split('/').filter(p => p);
+            
+            let repoIndex = -1;
+            for (let i = 0; i < pathParts.length; i++) {
+                if (pathParts[i] === repoName || pathParts[i].includes('apexremedy')) {
+                    repoIndex = i;
+                    break;
+                }
             }
+            
+            if (repoIndex !== -1) {
+                basePath = '/' + pathParts.slice(0, repoIndex + 1).join('/') + '/';
+            } else if (pathname.includes(repoName)) {
+                const repoPos = pathname.indexOf(repoName);
+                basePath = pathname.substring(0, repoPos + repoName.length) + '/';
+            } else {
+                basePath = '/';
+            }
+            
+            console.log('⚠️ [admin/basePath] Usando cálculo manual de basePath (env-config.js no encontrado)');
         }
+        
+        // Función de fallback
+        getBasePathFn = function(path) {
+            if (!path) return basePath;
+            
+            if (path.startsWith('http') || path.startsWith('//') || path.startsWith('data:') || path.startsWith('#')) {
+                return path;
+            }
+            
+            let cleanPath = path;
+            if (cleanPath.startsWith('./')) {
+                cleanPath = cleanPath.substring(2);
+            }
+            if (cleanPath.startsWith('/') && cleanPath.length > 1) {
+                cleanPath = cleanPath.substring(1);
+            }
+            
+            if (!basePath) {
+                return cleanPath.startsWith('/') ? cleanPath : './' + cleanPath;
+            }
+            
+            return basePath + cleanPath;
+        };
     }
     
-    // Función para obtener la ruta correcta
-    window.getBasePath = function(path) {
-        if (!path) return basePath;
-        
-        // Si la ruta ya es absoluta o comienza con http, devolverla tal cual
-        if (path.startsWith('http') || path.startsWith('//') || path.startsWith('data:')) {
-            return path;
-        }
-        
-        // Si la ruta comienza con ./, eliminar el ./
-        if (path.startsWith('./')) {
-            path = path.substring(2);
-        }
-        
-        // Si la ruta comienza con /, eliminarlo (excepto si es solo /)
-        if (path.startsWith('/') && path.length > 1) {
-            path = path.substring(1);
-        }
-        
-        // Combinar basePath con la ruta
-        return basePath + path;
-    };
+    // Exportar función
+    window.getBasePath = getBasePathFn;
     
     // Exportar basePath globalmente
     window.BASE_PATH = basePath;

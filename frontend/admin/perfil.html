@@ -11,7 +11,9 @@
     <link rel="stylesheet" href="style/perfil.css">
     <!-- Sistema de logging persistente - DEBE CARGARSE PRIMERO -->
     <script src="../js/logPersister.js" onerror="console.error('❌ Error cargando logPersister.js')" onload="console.log('✅ logPersister.js cargado')"></script>
-    <script src="./js/basePath.js"></script>
+        <!-- env-config.js DEBE cargarse PRIMERO para sistema centralizado de rutas -->
+    <script src="../js/env-config.js"></script>
+<script src="./js/basePath.js"></script>
     <script src="./js/config.js"></script>
     <script src="./js/utils.js"></script>
     <script type="module" src="./js/adminTemplate.legacy.js"></script>

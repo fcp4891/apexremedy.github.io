@@ -1,93 +1,76 @@
 /**
  * Detectar y configurar el path base según el entorno
+ * Usa el sistema centralizado env-config.js si está disponible
  * Para GitHub Pages, ajusta las rutas automáticamente
  */
 
 (function() {
     'use strict';
     
-    // Detectar si estamos en GitHub Pages
-    const isGitHubPages = window.location.hostname.includes('github.io');
-    const repoName = 'apexremedy.github.io';
-    
-    // Si estamos en GitHub Pages y la URL incluye el nombre del repo
+    // Usar el sistema centralizado si está disponible
     let basePath = '';
-    if (isGitHubPages) {
-        // Extraer el path base desde el pathname actual
-        // pathname será algo como: /fcp4891/apexremedy.github.io/index.html
-        // O simplemente: /apexremedy.github.io/index.html
-        // NOTA: El workflow despliega desde ./frontend, así que los archivos están en la raíz del sitio desplegado
-        const pathname = window.location.pathname;
-        const pathParts = pathname.split('/').filter(p => p);
+    let getBasePathFn = null;
+    
+    if (typeof window !== 'undefined' && typeof window.getBasePath === 'function') {
+        // El sistema centralizado ya está disponible (env-config.js)
+        basePath = window.BASE_PATH || '';
+        getBasePathFn = window.getBasePath;
+        console.log('✅ Usando sistema centralizado de rutas (env-config.js)');
+    } else {
+        // Fallback: calcular manualmente (compatibilidad hacia atrás)
+        const isGitHubPages = window.location.hostname.includes('github.io');
+        const repoName = 'apexremedy.github.io';
         
-        // Buscar el índice del repositorio en la URL
-        // La estructura de GitHub Pages es: /username/repo-name/path
-        let repoIndex = -1;
-        for (let i = 0; i < pathParts.length; i++) {
-            if (pathParts[i] === repoName || pathParts[i].includes('apexremedy')) {
-                repoIndex = i;
-                break;
-            }
-        }
-        
-        if (repoIndex !== -1) {
-            // Construir ruta base incluyendo todo desde el inicio hasta el repo
-            // Ejemplo: pathname = "/fcp4891/apexremedy.github.io/login.html"
-            //          pathParts = ["fcp4891", "apexremedy.github.io", "login.html"]
-            //          repoIndex = 1
-            //          basePath = "/fcp4891/apexremedy.github.io/"
-            basePath = '/' + pathParts.slice(0, repoIndex + 1).join('/') + '/';
-        } else {
-            // Si no encontramos el repo, construir desde el pathname completo
-            // Intentar extraer hasta el primer segmento que parezca el repo
-            if (pathname.includes(repoName)) {
-                // Encontrar la posición del repo en el pathname
-                const repoPos = pathname.indexOf(repoName);
-                // Extraer todo desde el inicio hasta el final del nombre del repo
-                basePath = pathname.substring(0, repoPos + repoName.length) + '/';
-            } else {
-                // Fallback: si no encontramos el repo, usar el pathname completo sin el archivo
-                // Extraer el directorio del pathname actual
-                const lastSlash = pathname.lastIndexOf('/');
-                if (lastSlash > 0) {
-                    basePath = pathname.substring(0, lastSlash + 1);
-                } else {
-                    basePath = '/';
+        if (isGitHubPages) {
+            const pathname = window.location.pathname;
+            const pathParts = pathname.split('/').filter(p => p);
+            
+            let repoIndex = -1;
+            for (let i = 0; i < pathParts.length; i++) {
+                if (pathParts[i] === repoName || pathParts[i].includes('apexremedy')) {
+                    repoIndex = i;
+                    break;
                 }
             }
+            
+            if (repoIndex !== -1) {
+                basePath = '/' + pathParts.slice(0, repoIndex + 1).join('/') + '/';
+            } else if (pathname.includes(repoName)) {
+                const repoPos = pathname.indexOf(repoName);
+                basePath = pathname.substring(0, repoPos + repoName.length) + '/';
+            } else {
+                basePath = '/';
+            }
+            
+            console.log('⚠️ Usando cálculo manual de basePath (env-config.js no encontrado)');
         }
         
-        // IMPORTANTE: GitHub Pages despliega desde ./frontend, así que los archivos
-        // están en la raíz del sitio desplegado, NO en /frontend/
-        // Por lo tanto, NO agregamos 'frontend/' al basePath
-        
-        console.log('🔧 BasePath calculado:', basePath);
-        console.log('🔧 Pathname:', pathname);
-        console.log('🔧 PathParts:', pathParts);
+        // Función de fallback
+        getBasePathFn = function(path) {
+            if (!path) return basePath;
+            
+            if (path.startsWith('http') || path.startsWith('//') || path.startsWith('data:') || path.startsWith('#')) {
+                return path;
+            }
+            
+            let cleanPath = path;
+            if (cleanPath.startsWith('./')) {
+                cleanPath = cleanPath.substring(2);
+            }
+            if (cleanPath.startsWith('/') && cleanPath.length > 1) {
+                cleanPath = cleanPath.substring(1);
+            }
+            
+            if (!basePath) {
+                return cleanPath.startsWith('/') ? cleanPath : './' + cleanPath;
+            }
+            
+            return basePath + cleanPath;
+        };
     }
     
-    // Función para obtener la ruta correcta
-    window.getBasePath = function(path) {
-        if (!path) return basePath;
-        
-        // Si la ruta ya es absoluta o comienza con http, devolverla tal cual
-        if (path.startsWith('http') || path.startsWith('//') || path.startsWith('data:')) {
-            return path;
-        }
-        
-        // Si la ruta comienza con ./, eliminar el ./
-        if (path.startsWith('./')) {
-            path = path.substring(2);
-        }
-        
-        // Si la ruta comienza con /, eliminarlo (excepto si es solo /)
-        if (path.startsWith('/') && path.length > 1) {
-            path = path.substring(1);
-        }
-        
-        // Combinar basePath con la ruta
-        return basePath + path;
-    };
+    // Exportar función
+    window.getBasePath = getBasePathFn;
     
     // Exportar basePath globalmente
     window.BASE_PATH = basePath;

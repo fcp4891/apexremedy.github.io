@@ -5,16 +5,11 @@
 // Si tu backend está en Heroku/Railway/Render/etc, reemplaza la URL abajo
 const PRODUCTION_API_URL = 'https://tu-backend-en-produccion.com/api'; // ⚠️ CAMBIAR ESTA URL
 
-// Detectar entorno - usar envDetector si está disponible, sino usar detección básica
+// Detectar entorno - usar el sistema centralizado env-config.js si está disponible
 function getAPIBaseURL() {
-    // Si envDetector está disponible, usarlo (se carga antes en algunos archivos)
-    if (typeof window !== 'undefined' && window.envDetector) {
-        const backendURL = window.envDetector.getBackendURL();
-        if (backendURL) {
-            return backendURL;
-        }
-        // Si no hay backend (GitHub Pages), retornar null para usar JSON estático
-        return null;
+    // Usar el sistema centralizado si está disponible (env-config.js)
+    if (typeof window !== 'undefined' && window.API_BASE_URL !== undefined) {
+        return window.API_BASE_URL; // Puede ser null (solo JSON estático)
     }
     
     // Fallback: detección básica
@@ -35,15 +30,8 @@ function getAPIBaseURL() {
         return PRODUCTION_API_URL;
     }
     
-    // Si no está configurada, intentar inferir desde el hostname
-    if (typeof window !== 'undefined') {
-        const protocol = window.location.protocol;
-        if (protocol === 'https:') {
-            return `${protocol}//api.${hostname}/api`;
-        }
-    }
-    
-    return null; // No se pudo determinar, usar JSON estático
+    // Si no está configurada, usar null (solo JSON estático)
+    return null;
 }
 
 // Inicializar CONFIG

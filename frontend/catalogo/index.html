@@ -413,7 +413,9 @@
 
     <!-- Scripts -->
     <script src="../js/env-detector.js"></script>
-    <script src="../js/config.js"></script>
+        <!-- env-config.js DEBE cargarse PRIMERO para sistema centralizado de rutas -->
+    <script src="./js/env-config.js"></script>
+<script src="../js/config.js"></script>
     <script src="data.js"></script>
     <script src="catalog-api.js"></script>
     <script src="visual-editor.js"></script>

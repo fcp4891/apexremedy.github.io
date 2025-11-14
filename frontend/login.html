@@ -25,7 +25,9 @@
     </script>
     <!-- Sistema de logging persistente - DEBE CARGARSE PRIMERO -->
     <script src="./js/logPersister.js" onerror="console.error('❌ Error cargando logPersister.js')" onload="console.log('✅ logPersister.js cargado')"></script>
-    <script src="./js/basePath.js" onerror="console.error('❌ Error cargando basePath.js')" onload="console.log('✅ basePath.js cargado')"></script>
+        <!-- env-config.js DEBE cargarse PRIMERO para sistema centralizado de rutas -->
+    <script src="./js/env-config.js"></script>
+<script src="./js/basePath.js" onerror="console.error('❌ Error cargando basePath.js')" onload="console.log('✅ basePath.js cargado')"></script>
     <script src="./js/config.js" onerror="console.error('❌ Error cargando config.js')" onload="console.log('✅ config.js cargado')"></script>
     <script src="./js/utils.js" onerror="console.error('❌ Error cargando utils.js')" onload="console.log('✅ utils.js cargado')"></script>
     <script src="./js/api/apiClient.js" onerror="console.error('❌ Error cargando apiClient.js')" onload="console.log('✅ apiClient.js cargado')"></script>

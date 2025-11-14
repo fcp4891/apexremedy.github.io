@@ -162,7 +162,9 @@
     </div>
   </div>
 
-<script>
+    <!-- env-config.js DEBE cargarse PRIMERO para sistema centralizado de rutas -->
+    <script src="./js/env-config.js"></script>
+    <script>
 // ---- Firma en canvas (sin librerías externas) ----
 function setupSignatureCanvas(id){
   const canvas = document.getElementById(id);

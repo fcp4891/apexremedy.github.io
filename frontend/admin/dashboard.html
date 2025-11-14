@@ -719,7 +719,9 @@
     <div id="footer-container"></div>
 
     <!-- Scripts -->
-    <script src="./js/basePath.js"></script>
+        <!-- env-config.js DEBE cargarse PRIMERO para sistema centralizado de rutas -->
+    <script src="../js/env-config.js"></script>
+<script src="./js/basePath.js"></script>
     <script src="./js/config.js"></script>
     <script src="./js/utils.js"></script>
     <script type="module" src="./js/adminTemplate.legacy.js"></script>

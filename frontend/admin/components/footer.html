@@ -114,7 +114,9 @@
     </div>
 </footer>
 
-<script>
+    <!-- env-config.js DEBE cargarse PRIMERO para sistema centralizado de rutas -->
+    <script src="../js/env-config.js"></script>
+    <script>
     document.getElementById('adminCurrentYear').textContent = new Date().getFullYear();
     
     // Actualizar timestamp
