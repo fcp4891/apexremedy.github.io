@@ -163,6 +163,23 @@ jobs:
             fi
           fi
       
+      - name: Export dispensary to JSON (Static API)
+        working-directory: ./backend
+        continue-on-error: true
+        run: |
+          if [ -f "../database/apexremedy.db" ] || [ -f "database/apexremedy.db" ]; then
+            echo "🚀 Exportando datos del dispensario a JSON estático..."
+            DB_PATH=${DB_PATH:-database/apexremedy.db} node scripts/export-dispensary-to-json.js
+            echo "✅ Exportación de dispensary completada"
+          else
+            echo "⚠️ Base de datos no encontrada, creando JSON vacío de dispensary..."
+            mkdir -p ../frontend/api
+            if [ ! -f "../frontend/api/dispensary.json" ]; then
+              echo '{"success":true,"message":"Datos del dispensario exportados correctamente","data":null}' > ../frontend/api/dispensary.json
+              echo "✅ JSON vacío de dispensary creado"
+            fi
+          fi
+      
       - name: Create empty logistics JSON files
         working-directory: ./backend
         continue-on-error: true
@@ -243,6 +260,17 @@ jobs:
             fi
           else
             echo "⚠️ Advertencia: payments.json no encontrado"
+          fi
+          if [ -f "frontend/api/dispensary.json" ]; then
+            echo "✅ dispensary.json encontrado"
+            echo "📊 Tamaño del archivo: $(du -h frontend/api/dispensary.json | cut -f1)"
+            if cat frontend/api/dispensary.json | grep -q '"data":null'; then
+              echo "⚠️ dispensary.json tiene data null"
+            else
+              echo "✅ dispensary.json tiene datos"
+            fi
+          else
+            echo "⚠️ Advertencia: dispensary.json no encontrado"
           fi
       
       - name: Setup Pages
