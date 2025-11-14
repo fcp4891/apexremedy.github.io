@@ -146,6 +146,23 @@ jobs:
             fi
           fi
       
+      - name: Export payments to JSON (Static API)
+        working-directory: ./backend
+        continue-on-error: true
+        run: |
+          if [ -f "../database/apexremedy.db" ] || [ -f "database/apexremedy.db" ]; then
+            echo "🚀 Exportando pagos a JSON estático..."
+            DB_PATH=${DB_PATH:-database/apexremedy.db} node scripts/export-payments-to-json.js
+            echo "✅ Exportación de pagos completada"
+          else
+            echo "⚠️ Base de datos no encontrada, creando JSON vacío de pagos..."
+            mkdir -p ../frontend/api
+            if [ ! -f "../frontend/api/payments.json" ]; then
+              echo '{"success":true,"message":"JSON vacío - base de datos no disponible","data":{"payments":[],"total":0,"timestamp":"'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"}}' > ../frontend/api/payments.json
+              echo "✅ JSON vacío de pagos creado"
+            fi
+          fi
+      
       - name: Verify JSON files
         run: |
           if [ -f "frontend/api/products.json" ]; then
@@ -183,6 +200,16 @@ jobs:
             fi
           else
             echo "⚠️ Advertencia: orders.json no encontrado"
+          fi
+          if [ -f "frontend/api/payments.json" ]; then
+            echo "✅ payments.json encontrado"
+            echo "📊 Tamaño del archivo: $(du -h frontend/api/payments.json | cut -f1)"
+            PAYMENT_COUNT=$(cat frontend/api/payments.json | grep -o '"total":[0-9]*' | grep -o '[0-9]*' | head -1)
+            if [ -n "$PAYMENT_COUNT" ]; then
+              echo "💳 Pagos en JSON: $PAYMENT_COUNT"
+            fi
+          else
+            echo "⚠️ Advertencia: payments.json no encontrado"
           fi
       
       - name: Setup Pages

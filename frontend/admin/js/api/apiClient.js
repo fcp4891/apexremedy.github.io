@@ -1128,6 +1128,206 @@ if (typeof APIClient === 'undefined') {
             return await this.request(`/orders/admin/sales-summary?period=${period}`);
         }
 
+        // ============================================
+        // MÉTODOS DE PAGOS (ADMIN)
+        // ============================================
+        
+        async getPayments(filters = {}) {
+            // Helper para aplicar filtros a payments
+            const applyFiltersToPayments = (payments, filters) => {
+                let filtered = [...payments];
+                
+                // Filtrar por estado
+                if (filters.status && filters.status !== 'all') {
+                    filtered = filtered.filter(p => p.status === filters.status);
+                }
+                
+                // Filtrar por método
+                if (filters.method && filters.method !== 'all') {
+                    filtered = filtered.filter(p => p.method === filters.method);
+                }
+                
+                // Filtrar por proveedor
+                if (filters.provider_id) {
+                    filtered = filtered.filter(p => p.provider_id === parseInt(filters.provider_id));
+                }
+                
+                // Filtrar por orden
+                if (filters.order_id) {
+                    filtered = filtered.filter(p => p.order_id === parseInt(filters.order_id));
+                }
+                
+                // Filtrar por cliente
+                if (filters.customer_id) {
+                    filtered = filtered.filter(p => p.customer_id === parseInt(filters.customer_id));
+                }
+                
+                // Filtrar por rango de fechas
+                if (filters.date_from) {
+                    const dateFrom = new Date(filters.date_from);
+                    filtered = filtered.filter(p => {
+                        const paymentDate = new Date(p.created_at);
+                        return paymentDate >= dateFrom;
+                    });
+                }
+                
+                if (filters.date_to) {
+                    const dateTo = new Date(filters.date_to);
+                    dateTo.setHours(23, 59, 59, 999); // Incluir todo el día
+                    filtered = filtered.filter(p => {
+                        const paymentDate = new Date(p.created_at);
+                        return paymentDate <= dateTo;
+                    });
+                }
+                
+                // Filtrar por rango de montos
+                if (filters.amount_min) {
+                    const minAmount = parseFloat(filters.amount_min);
+                    filtered = filtered.filter(p => (p.amount_gross || p.amount || 0) >= minAmount);
+                }
+                
+                if (filters.amount_max) {
+                    const maxAmount = parseFloat(filters.amount_max);
+                    filtered = filtered.filter(p => (p.amount_gross || p.amount || 0) <= maxAmount);
+                }
+                
+                return filtered;
+            };
+            
+            // SIEMPRE intentar JSON estático PRIMERO (más rápido y funciona sin backend)
+            try {
+                const staticData = await this.loadStaticJSON('payments.json');
+                if (staticData && staticData.success && staticData.data) {
+                    const paymentsArray = staticData.data.payments || staticData.data || [];
+                    if (Array.isArray(paymentsArray)) {
+                        let payments = applyFiltersToPayments(paymentsArray, filters);
+                        
+                        // Aplicar paginación si existe
+                        const limit = filters.limit ? parseInt(filters.limit) : null;
+                        const offset = filters.offset ? parseInt(filters.offset) : 0;
+                        const total = payments.length;
+                        
+                        if (limit !== null) {
+                            payments = payments.slice(offset, offset + limit);
+                        }
+                        
+                        // Calcular estadísticas desde los datos filtrados
+                        const allFiltered = applyFiltersToPayments(paymentsArray, filters);
+                        const stats = {
+                            total: allFiltered.length,
+                            captured: allFiltered.filter(p => p.status === 'captured').length,
+                            authorized: allFiltered.filter(p => p.status === 'authorized').length,
+                            pending: allFiltered.filter(p => p.status === 'pending').length,
+                            failed: allFiltered.filter(p => p.status === 'failed').length,
+                            voided: allFiltered.filter(p => p.status === 'voided').length
+                        };
+                        
+                        console.log('✅ Pagos cargados desde JSON estático:', payments.length);
+                        return {
+                            success: true,
+                            data: payments,
+                            stats,
+                            pagination: {
+                                limit: limit || total,
+                                offset,
+                                total
+                            }
+                        };
+                    }
+                }
+            } catch (error) {
+                console.warn('⚠️ Error al cargar JSON estático de payments:', error.message);
+                console.warn('⚠️ Intentando API dinámica...');
+            }
+            
+            // Solo si hay backend configurado Y el JSON falló, intentar API dinámica
+            if (this.baseURL) {
+                try {
+                    const queryParams = new URLSearchParams();
+                    Object.keys(filters).forEach(key => {
+                        if (filters[key] && filters[key] !== 'all') {
+                            queryParams.append(key, filters[key]);
+                        }
+                    });
+                    
+                    const response = await this.request(`/payments?${queryParams.toString()}`);
+                    return response;
+                } catch (error) {
+                    console.error('❌ Error al cargar pagos desde API dinámica:', error);
+                    // Si el error es de red o backend no configurado, continuar al fallback
+                    if (error.code === 'NO_BACKEND_CONFIGURED' || error.code === 'NETWORK_ERROR') {
+                        console.warn('⚠️ Backend no disponible, retornando array vacío');
+                    } else {
+                        throw error;
+                    }
+                }
+            }
+            
+            // Si no hay backend o falló, retornar array vacío con estructura válida
+            console.warn('⚠️ No se pudo cargar pagos desde ninguna fuente');
+            return {
+                success: true,
+                data: [],
+                stats: {
+                    total: 0,
+                    captured: 0,
+                    authorized: 0,
+                    pending: 0,
+                    failed: 0,
+                    voided: 0
+                },
+                pagination: {
+                    limit: filters.limit || 50,
+                    offset: filters.offset || 0,
+                    total: 0
+                }
+            };
+        }
+
+        async getPaymentStats() {
+            // Intentar JSON estático primero
+            try {
+                const staticData = await this.loadStaticJSON('payments.json');
+                if (staticData && staticData.success && staticData.data) {
+                    const payments = staticData.data.payments || staticData.data || [];
+                    if (Array.isArray(payments)) {
+                        return {
+                            success: true,
+                            total: payments.length,
+                            captured: payments.filter(p => p.status === 'captured').length,
+                            authorized: payments.filter(p => p.status === 'authorized').length,
+                            pending: payments.filter(p => p.status === 'pending').length,
+                            failed: payments.filter(p => p.status === 'failed').length,
+                            voided: payments.filter(p => p.status === 'voided').length
+                        };
+                    }
+                }
+            } catch (error) {
+                console.warn('⚠️ Error al cargar estadísticas desde JSON estático:', error.message);
+            }
+            
+            // Si hay backend, intentar API dinámica
+            if (this.baseURL) {
+                try {
+                    const response = await this.request('/payments?limit=1');
+                    return response.stats || { total: 0, captured: 0, authorized: 0, pending: 0, failed: 0, voided: 0 };
+                } catch (error) {
+                    console.warn('⚠️ Error al cargar estadísticas desde API dinámica:', error.message);
+                }
+            }
+            
+            // Fallback: retornar stats vacías
+            return {
+                success: true,
+                total: 0,
+                captured: 0,
+                authorized: 0,
+                pending: 0,
+                failed: 0,
+                voided: 0
+            };
+        }
+
         // Verificar salud de la API
         async checkHealth() {
             try {

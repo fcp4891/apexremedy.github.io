@@ -160,16 +160,12 @@ async function loadPayments(page = 1) {
             date_to: document.getElementById('filterPaymentDateTo')?.value || ''
         };
         
-        const queryParams = new URLSearchParams();
-        Object.keys(filters).forEach(key => {
-            if (filters[key]) queryParams.append(key, filters[key]);
-        });
+        // Agregar paginación a los filtros
+        filters.limit = ITEMS_PER_PAGE;
+        filters.offset = (page - 1) * ITEMS_PER_PAGE;
         
-        // Agregar paginación
-        queryParams.append('limit', ITEMS_PER_PAGE);
-        queryParams.append('offset', (page - 1) * ITEMS_PER_PAGE);
-        
-        const response = await api.get(`/payments?${queryParams.toString()}`);
+        // Usar el método getPayments() que maneja JSON estático y API dinámica
+        const response = await api.getPayments(filters);
         const payments = response.data || [];
         const total = response.pagination?.total || payments.length;
         const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
@@ -1414,19 +1410,38 @@ async function loadWebhooks(page = 1) {
 
 async function updateStats() {
     try {
-        const paymentsResponse = await api.get('/payments?limit=1');
-        const stats = paymentsResponse.stats || {};
+        // Usar el método getPaymentStats() que maneja JSON estático y API dinámica
+        const stats = await api.getPaymentStats();
         
         document.getElementById('statsTotalPayments').textContent = stats.total || 0;
         document.getElementById('statsCapturedPayments').textContent = stats.captured || 0;
         
-        const refundsResponse = await api.get('/refunds');
-        document.getElementById('statsTotalRefunds').textContent = (refundsResponse.data || []).length;
-        
-        const cardsResponse = await api.get('/gift-cards');
-        document.getElementById('statsGiftCards').textContent = (cardsResponse.data || []).length;
+        // Intentar cargar refunds y gift-cards solo si hay backend
+        try {
+            if (api.baseURL) {
+                const refundsResponse = await api.get('/refunds');
+                document.getElementById('statsTotalRefunds').textContent = (refundsResponse.data || []).length;
+                
+                const cardsResponse = await api.get('/gift-cards');
+                document.getElementById('statsGiftCards').textContent = (cardsResponse.data || []).length;
+            } else {
+                // Si no hay backend, usar valores por defecto
+                document.getElementById('statsTotalRefunds').textContent = '0';
+                document.getElementById('statsGiftCards').textContent = '0';
+            }
+        } catch (error) {
+            // Si falla, usar valores por defecto
+            console.warn('⚠️ Error al cargar estadísticas adicionales:', error.message);
+            document.getElementById('statsTotalRefunds').textContent = '0';
+            document.getElementById('statsGiftCards').textContent = '0';
+        }
     } catch (error) {
         console.error('Error al actualizar estadísticas:', error);
+        // En caso de error, mostrar 0 en las estadísticas
+        document.getElementById('statsTotalPayments').textContent = '0';
+        document.getElementById('statsCapturedPayments').textContent = '0';
+        document.getElementById('statsTotalRefunds').textContent = '0';
+        document.getElementById('statsGiftCards').textContent = '0';
     }
 }
 
