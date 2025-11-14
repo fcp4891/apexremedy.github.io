@@ -163,6 +163,39 @@ jobs:
             fi
           fi
       
+      - name: Create empty logistics JSON files
+        working-directory: ./backend
+        continue-on-error: true
+        run: |
+          echo "📦 Creando archivos JSON vacíos de logística si no existen..."
+          mkdir -p ../frontend/api
+          
+          # Crear shipping-providers.json si no existe
+          if [ ! -f "../frontend/api/shipping-providers.json" ]; then
+            echo '{"success":true,"message":"JSON vacío - base de datos no disponible","data":{"providers":[],"total":0,"timestamp":"'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"}}' > ../frontend/api/shipping-providers.json
+            echo "✅ JSON vacío de shipping-providers creado"
+          fi
+          
+          # Crear shipments.json si no existe
+          if [ ! -f "../frontend/api/shipments.json" ]; then
+            echo '{"success":true,"message":"JSON vacío - base de datos no disponible","data":{"shipments":[],"total":0,"timestamp":"'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"}}' > ../frontend/api/shipments.json
+            echo "✅ JSON vacío de shipments creado"
+          fi
+          
+          # Crear internal-delivery-zones.json si no existe
+          if [ ! -f "../frontend/api/internal-delivery-zones.json" ]; then
+            echo '{"success":true,"message":"JSON vacío - base de datos no disponible","data":{"zones":[],"total":0,"timestamp":"'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"}}' > ../frontend/api/internal-delivery-zones.json
+            echo "✅ JSON vacío de internal-delivery-zones creado"
+          fi
+          
+          # Crear packing-materials.json si no existe
+          if [ ! -f "../frontend/api/packing-materials.json" ]; then
+            echo '{"success":true,"message":"JSON vacío - base de datos no disponible","data":{"materials":[],"total":0,"timestamp":"'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"}}' > ../frontend/api/packing-materials.json
+            echo "✅ JSON vacío de packing-materials creado"
+          fi
+          
+          echo "✅ Archivos JSON de logística verificados/creados"
+      
       - name: Verify JSON files
         run: |
           if [ -f "frontend/api/products.json" ]; then

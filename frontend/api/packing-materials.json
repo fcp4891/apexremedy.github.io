@@ -1,0 +1,9 @@
+{
+  "success": true,
+  "message": "JSON vacío - base de datos no disponible",
+  "data": {
+    "materials": [],
+    "total": 0,
+    "timestamp": "2025-11-14T21:18:03.187Z"
+  }
+}
