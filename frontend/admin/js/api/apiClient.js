@@ -963,6 +963,31 @@ if (typeof APIClient === 'undefined') {
         }
 
         async getOrderById(id) {
+            // Si no hay backend, obtener pedido desde JSON estático
+            if (!this.baseURL) {
+                try {
+                    const staticData = await this.loadStaticJSON('orders.json');
+                    if (staticData && staticData.success && staticData.data) {
+                        const orders = staticData.data.orders || staticData.data || [];
+                        const order = orders.find(o => o.id === parseInt(id) || o.id === String(id));
+                        if (order) {
+                            console.log('✅ Pedido encontrado en JSON estático:', order.id);
+                            return {
+                                success: true,
+                                data: { order },
+                                message: 'Pedido cargado desde API estática'
+                            };
+                        }
+                    }
+                    // Si no se encuentra, retornar error
+                    throw new Error(`Pedido con ID ${id} no encontrado`);
+                } catch (error) {
+                    console.warn('⚠️ Error al cargar pedido desde JSON estático:', error);
+                    throw error;
+                }
+            }
+            
+            // Si hay backend, usar API dinámica
             return await this.request(`/orders/${id}`);
         }
 

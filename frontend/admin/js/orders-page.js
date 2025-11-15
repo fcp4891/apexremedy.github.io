@@ -610,6 +610,11 @@ let allOrders = [];
         }
 
         async function updateOrderStatus() {
+            // Si no hay backend, mostrar mensaje de modo QA
+            if (!api.baseURL) {
+                notify.warning('⚠️ Modo QA: No se pueden modificar pedidos. Los cambios solo se aplican en entorno local con backend.');
+                return;
+            }
             if (!currentOrderId) return;
 
             const newStatus = document.getElementById('modalStatusSelect').value;
@@ -645,8 +650,43 @@ let allOrders = [];
 
 async function openTransferReview(orderId) {
   try {
-    const res = await api.request(`/orders/${orderId}`);
-    const o = res?.data?.order;
+    // Si no hay backend, obtener pedido desde orders.json
+    let res;
+    let o;
+    
+    if (!api.baseURL) {
+      // Modo estático: buscar pedido en orders.json
+      try {
+        const staticData = await api.loadStaticJSON('orders.json');
+        if (staticData && staticData.success && staticData.data) {
+          const orders = staticData.data.orders || staticData.data || [];
+          o = orders.find(order => order.id === parseInt(orderId) || order.id === String(orderId));
+          if (o) {
+            console.log('✅ Pedido encontrado en JSON estático:', o.id);
+            res = { success: true, data: { order: o } };
+          } else {
+            throw new Error(`Pedido con ID ${orderId} no encontrado`);
+          }
+        } else {
+          throw new Error('No se pudieron cargar pedidos desde JSON estático');
+        }
+      } catch (jsonError) {
+        console.error('Error al cargar pedido desde JSON estático:', jsonError);
+        notify.warning('⚠️ Modo QA: No se pueden modificar pedidos. Los datos están en modo lectura.');
+        // Intentar buscar en allOrders si ya están cargados
+        o = allOrders.find(order => order.id === parseInt(orderId) || order.id === String(orderId));
+        if (!o) {
+          notify.error('No se pudo cargar el pedido');
+          return;
+        }
+        res = { success: true, data: { order: o } };
+      }
+    } else {
+      // Modo con backend: usar API dinámica
+      res = await api.request(`/orders/${orderId}`);
+      o = res?.data?.order;
+    }
+    
     if (!o) {
       notify.error('No se pudo cargar el pedido');
       return;
@@ -783,6 +823,13 @@ let currentRejectOrderId = null;
 async function validateTransfer(approved){
     const orderId = document.getElementById('reviewTransferId').value;
     
+    // Si no hay backend, mostrar mensaje de modo QA
+    if (!api.baseURL) {
+        notify.warning('⚠️ Modo QA: No se pueden modificar pedidos. Los cambios solo se aplican en entorno local con backend.');
+        hideReviewModal();
+        return;
+    }
+    
     if (!approved) {
         currentRejectOrderId = orderId;
         document.getElementById('rejectModal').classList.remove('hidden');
@@ -811,6 +858,14 @@ async function confirmReject() {
     const orderId = currentRejectOrderId;
     const reasonInput = document.getElementById('rejectReason').value.trim();
     const reason = reasonInput || 'Rechazado por administrador';
+    
+    // Si no hay backend, mostrar mensaje de modo QA
+    if (!api.baseURL) {
+        notify.warning('⚠️ Modo QA: No se pueden modificar pedidos. Los cambios solo se aplican en entorno local con backend.');
+        hideRejectModal();
+        hideReviewModal();
+        return;
+    }
     
     try {
         const res = await api.request(`/orders/${orderId}/status`, {
