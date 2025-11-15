@@ -497,8 +497,9 @@
     async function loadZones() {
         try {
             const api = ensureApiClient();
-            const response = await api.request('/internal-delivery-zones', { method: 'GET' });
-            allZones = response?.data?.zones || [];
+            // Usar getInternalDeliveryZones que tiene soporte para modo estático
+            const response = await api.getInternalDeliveryZones();
+            allZones = response?.data?.zones || response?.data || [];
             currentPage = 1;
             renderZones();
         } catch (error) {
@@ -509,7 +510,8 @@
                     <tr>
                         <td colspan="8" class="px-6 py-12 text-center text-red-600">
                             <i class="fas fa-exclamation-triangle text-2xl mb-2"></i>
-                            <p>Error al cargar zonas</p>
+                            <p>Error al cargar zonas: ${error.message || 'Error desconocido'}</p>
+                            ${!api.baseURL ? '<p class="text-sm text-gray-500 mt-2">Modo QA: Las zonas se cargan desde internal-delivery-zones.json</p>' : ''}
                         </td>
                     </tr>
                 `;

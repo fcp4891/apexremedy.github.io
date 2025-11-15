@@ -21,7 +21,8 @@
 
     async function loadMaterials() {
         try {
-            const response = await apiClient.request('/packing-materials', { method: 'GET' });
+            // Usar getPackingMaterials que tiene soporte para modo estático
+            const response = await apiClient.getPackingMaterials({});
             allMaterials = response.data?.materials || [];
             currentPage = 1;
             renderMaterials();
@@ -219,6 +220,15 @@
         if (!materialId) {
             return;
         }
+        
+        // Si no hay backend, mostrar mensaje de modo QA
+        if (!apiClient.baseURL) {
+            if (typeof notify !== 'undefined' && typeof notify.warning === 'function') {
+                notify.warning('⚠️ Modo QA: No se pueden modificar materiales. Los cambios solo se aplican en entorno local con backend.');
+            }
+            return;
+        }
+        
         const confirmed = typeof notify !== 'undefined' && typeof notify.confirmDelete === 'function'
             ? await notify.confirmDelete('este material')
             : window.confirm('¿Eliminar este material?');
@@ -241,6 +251,16 @@
 
     async function saveMaterial(event) {
         event.preventDefault();
+        
+        // Si no hay backend, mostrar mensaje de modo QA
+        if (!apiClient.baseURL) {
+            if (typeof notify !== 'undefined' && typeof notify.warning === 'function') {
+                notify.warning('⚠️ Modo QA: No se pueden modificar materiales. Los cambios solo se aplican en entorno local con backend.');
+            }
+            closeModal();
+            return;
+        }
+        
         const id = getElement('materialId').value;
 
         const payload = {

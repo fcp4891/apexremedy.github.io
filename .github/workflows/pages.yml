@@ -197,7 +197,47 @@ jobs:
             fi
           fi
       
-      - name: Create empty logistics JSON files
+      - name: Export shipments to JSON (Static API)
+        working-directory: ./backend
+        continue-on-error: true
+        run: |
+          if [ -f "../database/apexremedy.db" ] || [ -f "database/apexremedy.db" ]; then
+            echo "🚀 Exportando envíos a JSON estático..."
+            DB_PATH=${DB_PATH:-database/apexremedy.db} node scripts/export-shipments-to-json.js
+            echo "✅ Exportación de envíos completada"
+          else
+            echo "⚠️ Base de datos no encontrada, creando JSON vacío de envíos..."
+            mkdir -p ../frontend/api
+            if [ ! -f "../frontend/api/shipments.json" ]; then
+              echo '{"success":true,"message":"JSON vacío - base de datos no disponible","data":{"shipments":[],"total":0,"timestamp":"'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"}}' > ../frontend/api/shipments.json
+              echo "✅ JSON vacío de envíos creado"
+            fi
+          fi
+      
+      - name: Export logistics data to JSON (Static API)
+        working-directory: ./backend
+        continue-on-error: true
+        run: |
+          if [ -f "../database/apexremedy.db" ] || [ -f "database/apexremedy.db" ]; then
+            echo "🚀 Exportando datos de logística a JSON estático..."
+            DB_PATH=${DB_PATH:-database/apexremedy.db} node scripts/export-logistics-to-json.js
+            echo "✅ Exportación de logística completada"
+          else
+            echo "⚠️ Base de datos no encontrada, creando JSONs vacíos de logística..."
+            mkdir -p ../frontend/api
+            if [ ! -f "../frontend/api/dispatch-centers.json" ]; then
+              echo '{"success":true,"message":"JSON vacío - base de datos no disponible","data":{"centers":[]},"total":0,"timestamp":"'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"}}' > ../frontend/api/dispatch-centers.json
+            fi
+            if [ ! -f "../frontend/api/fleet-drivers.json" ]; then
+              echo '{"success":true,"message":"JSON vacío - base de datos no disponible","data":{"drivers":[]},"total":0,"timestamp":"'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"}}' > ../frontend/api/fleet-drivers.json
+            fi
+            if [ ! -f "../frontend/api/pickup-points.json" ]; then
+              echo '{"success":true,"message":"JSON vacío - base de datos no disponible","data":{"points":[]},"total":0,"timestamp":"'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"}}' > ../frontend/api/pickup-points.json
+            fi
+            echo "✅ JSONs vacíos de logística creados"
+          fi
+      
+      - name: Create empty logistics JSON files (if missing)
         working-directory: ./backend
         continue-on-error: true
         run: |
@@ -208,12 +248,6 @@ jobs:
           if [ ! -f "../frontend/api/shipping-providers.json" ]; then
             echo '{"success":true,"message":"JSON vacío - base de datos no disponible","data":{"providers":[],"total":0,"timestamp":"'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"}}' > ../frontend/api/shipping-providers.json
             echo "✅ JSON vacío de shipping-providers creado"
-          fi
-          
-          # Crear shipments.json si no existe
-          if [ ! -f "../frontend/api/shipments.json" ]; then
-            echo '{"success":true,"message":"JSON vacío - base de datos no disponible","data":{"shipments":[],"total":0,"timestamp":"'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"}}' > ../frontend/api/shipments.json
-            echo "✅ JSON vacío de shipments creado"
           fi
           
           # Crear internal-delivery-zones.json si no existe

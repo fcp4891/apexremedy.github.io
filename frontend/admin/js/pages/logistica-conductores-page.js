@@ -18,10 +18,28 @@
 
     async function loadDrivers() {
         try {
-            const response = await apiClient.request('/fleet-drivers', { method: 'GET' });
-            allDrivers = response.data?.drivers || [];
-            currentPage = 1;
-            renderDrivers();
+            // Si no hay backend, intentar cargar desde JSON estático
+            if (!apiClient.baseURL) {
+                try {
+                    const staticData = await apiClient.loadStaticJSON('fleet-drivers.json');
+                    if (staticData && staticData.success && staticData.data) {
+                        allDrivers = staticData.data.drivers || staticData.data || [];
+                        currentPage = 1;
+                        renderDrivers();
+                        return;
+                    }
+                } catch (jsonError) {
+                    console.warn('Error al cargar conductores desde JSON estático:', jsonError);
+                }
+            } else {
+                // Modo con backend: usar API dinámica
+                const response = await apiClient.request('/fleet-drivers', { method: 'GET' });
+                allDrivers = response.data?.drivers || [];
+                currentPage = 1;
+                renderDrivers();
+                return;
+            }
+            throw new Error('No se pudieron cargar conductores desde ninguna fuente');
         } catch (error) {
             console.error('Error cargando conductores:', error);
             const tbody = getElement('driversTableBody');
@@ -30,7 +48,8 @@
                     <tr>
                         <td colspan="9" class="px-6 py-12 text-center text-red-600">
                             <i class="fas fa-exclamation-triangle text-2xl mb-2"></i>
-                            <p>Error al cargar conductores</p>
+                            <p>Error al cargar conductores: ${error.message || 'Error desconocido'}</p>
+                            ${!apiClient.baseURL ? '<p class="text-sm text-gray-500 mt-2">Modo QA: Los conductores se cargan desde fleet-drivers.json</p>' : ''}
                         </td>
                     </tr>
                 `;
