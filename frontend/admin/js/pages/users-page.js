@@ -50,14 +50,28 @@
 
             switch (action) {
                 case 'edit-user':
-                    if (userId && typeof window.openEditModal === 'function') {
-                        await window.openEditModal(parseInt(userId));
+                    if (userId) {
+                        if (typeof window.openEditModal === 'function') {
+                            await window.openEditModal(parseInt(userId));
+                        } else {
+                            console.error('❌ openEditModal no está disponible. Verifica que users-modals.js esté cargado.');
+                            if (typeof notify !== 'undefined') {
+                                notify.error('Error: Función de edición no disponible. Recarga la página.');
+                            }
+                        }
                     }
                     break;
 
                 case 'view-documents':
-                    if (userId && typeof window.viewDocuments === 'function') {
-                        await window.viewDocuments(parseInt(userId));
+                    if (userId) {
+                        if (typeof window.viewDocuments === 'function') {
+                            await window.viewDocuments(parseInt(userId));
+                        } else {
+                            console.error('❌ viewDocuments no está disponible. Verifica que users-modals.js esté cargado.');
+                            if (typeof notify !== 'undefined') {
+                                notify.error('Error: Función de documentos no disponible. Recarga la página.');
+                            }
+                        }
                     }
                     break;
 
