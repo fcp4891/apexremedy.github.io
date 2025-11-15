@@ -557,6 +557,12 @@ let allOrders = [];
         async function viewOrderDetails(orderId) {
             currentOrderId = orderId;
             
+            // Si no hay backend, mostrar mensaje de modo QA
+            if (!api.baseURL) {
+                notify.warning('⚠️ Modo QA: La vista detallada de pedidos solo está disponible en entorno local con backend.');
+                return;
+            }
+            
             try {
                 const response = await api.request(`/orders/${orderId}`);
                 
