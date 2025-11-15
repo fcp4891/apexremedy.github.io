@@ -128,6 +128,23 @@ jobs:
               echo "✅ JSON vacío de usuarios creado"
             fi
           fi
+
+      - name: Export user documents to JSON (Static API - Metadata Only)
+        working-directory: ./backend
+        continue-on-error: true
+        run: |
+          if [ -f "../database/apexremedy.db" ] || [ -f "database/apexremedy.db" ]; then
+            echo "🚀 Exportando documentos de usuarios a JSON estático (solo metadatos)..."
+            DB_PATH=${DB_PATH:-database/apexremedy.db} node scripts/export-user-documents-to-json.js
+            echo "✅ Exportación de documentos completada"
+          else
+            echo "⚠️ Base de datos no encontrada, creando JSON vacío de documentos..."
+            mkdir -p ../frontend/api
+            if [ ! -f "../frontend/api/user-documents.json" ]; then
+              echo '{"success":true,"message":"JSON vacío - base de datos no disponible","data":{"documents":[],"documentsByUser":{},"total":0,"usersCount":0,"timestamp":"'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"},"warning":"Los datos reales (file_data) no se exportan por seguridad. Solo metadatos disponibles en QA."}' > ../frontend/api/user-documents.json
+              echo "✅ JSON vacío de documentos creado"
+            fi
+          fi
       
       - name: Export orders to JSON (Static API)
         working-directory: ./backend

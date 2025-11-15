@@ -18,10 +18,10 @@ async function viewDocuments(userId) {
         
         if (response.success) {
             const documents = response.data.documents || [];
-            const isStaticMode = documents.length === 0 && response.message && response.message.includes('no están disponibles en modo QA');
+            const isStaticMode = response.data.isStaticMode === true || (documents.length === 0 && response.message && response.message.includes('no están disponibles en modo QA'));
             
-            // Si estamos en modo estático, mostrar mensaje directamente sin intentar cargar documentos
-            if (isStaticMode) {
+            // Si estamos en modo estático SIN documentos, mostrar mensaje directamente
+            if (isStaticMode && documents.length === 0) {
                 try {
                     const userResponse = await window.api.getUserById(userId);
                     if (userResponse.success) {
@@ -101,8 +101,12 @@ async function viewDocuments(userId) {
                 }
             }
             
+            // Verificar si estamos en modo estático (solo metadatos, sin file_data)
+            const isStaticModeDocs = response.data.isStaticMode === true || documents.some(doc => !doc.file_data || doc.file_data === null);
+            
             // Mapear documentos a formato esperado
             const documentsMap = {};
+            const documentsMetadata = {}; // Para almacenar metadatos en modo estático
             const requiredDocuments = ['receta_medica', 'carnet_identidad', 'certificado_antecedentes', 'poder_cultivo'];
             const missingDocuments = [];
             
@@ -135,12 +139,39 @@ async function viewDocuments(userId) {
                     mime_type: doc.mime_type,
                     has_data: !!doc.file_data,
                     data_length: doc.file_data ? doc.file_data.length : 0,
-                    data_preview: doc.file_data ? doc.file_data.substring(0, 100) : 'null'
+                    file_name: doc.file_name,
+                    file_size: doc.file_size,
+                    isStaticMode: isStaticModeDocs
                 });
                 
                 const base64Data = doc.file_data;
                 const mimeType = doc.mime_type || 'application/pdf';
                 
+                // Guardar metadatos del documento
+                const metadata = {
+                    id: doc.id,
+                    file_name: doc.file_name || 'documento',
+                    file_size: doc.file_size || 0,
+                    mime_type: mimeType,
+                    uploaded_at: doc.uploaded_at
+                };
+                
+                // Si estamos en modo estático o no hay datos, solo guardar metadatos
+                if (isStaticModeDocs || !base64Data) {
+                    if (doc.document_type === 'receta_medica') {
+                        documentsMetadata.medical_prescription = metadata;
+                    } else if (doc.document_type === 'carnet_identidad') {
+                        documentsMetadata.id_card = metadata;
+                    } else if (doc.document_type === 'certificado_antecedentes') {
+                        documentsMetadata.background_check = metadata;
+                    } else if (doc.document_type === 'poder_cultivo') {
+                        documentsMetadata.cultivation_power = metadata;
+                    }
+                    // No continuar procesando file_data en modo estático
+                    return;
+                }
+                
+                // Si hay datos, procesarlos normalmente
                 // Para poder_cultivo, verificar si el contenido está vacío o solo tiene el prefijo
                 if (doc.document_type === 'poder_cultivo') {
                     console.log('🔍 Analizando poder_cultivo:', {

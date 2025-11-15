@@ -1640,15 +1640,46 @@ if (typeof APIClient === 'undefined') {
         }
 
         async getUserDocuments(id) {
-            // Si no hay backend, mostrar mensaje de que los documentos no están disponibles
-            // Los documentos son datos sensibles/encriptados y no se exportan a JSON
+            // Si no hay backend, obtener documentos desde JSON estático (solo metadatos)
             if (!this.baseURL) {
-                console.warn('⚠️ Backend no configurado. Los documentos no están disponibles en modo estático.');
-                return {
-                    success: true,
-                    data: { documents: [] },
-                    message: 'Los documentos no están disponibles en modo QA (GitHub Pages). Para ver documentos, usa el entorno local con backend.'
-                };
+                try {
+                    const staticData = await this.loadStaticJSON('user-documents.json');
+                    if (staticData && staticData.success && staticData.data) {
+                        // Buscar documentos del usuario
+                        let userDocuments = [];
+                        if (staticData.data.documentsByUser && staticData.data.documentsByUser[id]) {
+                            userDocuments = staticData.data.documentsByUser[id];
+                        } else if (staticData.data.documents) {
+                            // Fallback: buscar en array plano
+                            userDocuments = staticData.data.documents.filter(doc => doc.user_id === parseInt(id));
+                        }
+                        
+                        console.log(`✅ ${userDocuments.length} documentos encontrados para usuario ${id} (solo metadatos)`);
+                        return {
+                            success: true,
+                            data: { 
+                                documents: userDocuments,
+                                isStaticMode: true // Indicador de que solo hay metadatos
+                            },
+                            message: userDocuments.length > 0 
+                                ? `Documentos encontrados (solo metadatos). Los datos reales están disponibles solo en entorno local con backend.`
+                                : 'El usuario no tiene documentos registrados.'
+                        };
+                    }
+                    // Si no hay datos, retornar array vacío
+                    return {
+                        success: true,
+                        data: { documents: [], isStaticMode: true },
+                        message: 'No se encontraron documentos para este usuario.'
+                    };
+                } catch (error) {
+                    console.warn('⚠️ Error al cargar documentos desde JSON estático:', error);
+                    return {
+                        success: true,
+                        data: { documents: [], isStaticMode: true },
+                        message: 'No se pudieron cargar documentos desde API estática.'
+                    };
+                }
             }
             
             // Si hay backend, usar API dinámica
