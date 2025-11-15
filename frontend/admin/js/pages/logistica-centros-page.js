@@ -214,6 +214,15 @@
         if (!centerId) {
             return;
         }
+        
+        // Si no hay backend, mostrar mensaje de modo QA
+        if (!apiClient.baseURL) {
+            if (typeof notify !== 'undefined' && typeof notify.warning === 'function') {
+                notify.warning('⚠️ Modo QA: No se pueden modificar centros. Los cambios solo se aplican en entorno local con backend.');
+            }
+            return;
+        }
+        
         const confirmed = typeof notify !== 'undefined' && typeof notify.confirmDelete === 'function'
             ? await notify.confirmDelete('este centro')
             : window.confirm('¿Eliminar este centro?');
@@ -236,6 +245,16 @@
 
     async function saveCenter(event) {
         event.preventDefault();
+        
+        // Si no hay backend, mostrar mensaje de modo QA
+        if (!apiClient.baseURL) {
+            if (typeof notify !== 'undefined' && typeof notify.warning === 'function') {
+                notify.warning('⚠️ Modo QA: No se pueden modificar centros. Los cambios solo se aplican en entorno local con backend.');
+            }
+            closeModal();
+            return;
+        }
+        
         const id = getElement('centerId').value;
         const payload = {
             code: getElement('centerCode').value,

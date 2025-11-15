@@ -220,6 +220,15 @@
         if (!driverId) {
             return;
         }
+        
+        // Si no hay backend, mostrar mensaje de modo QA
+        if (!apiClient.baseURL) {
+            if (typeof notify !== 'undefined' && typeof notify.warning === 'function') {
+                notify.warning('⚠️ Modo QA: No se pueden modificar conductores. Los cambios solo se aplican en entorno local con backend.');
+            }
+            return;
+        }
+        
         const confirmed = typeof notify !== 'undefined' && typeof notify.confirmDelete === 'function'
             ? await notify.confirmDelete('este conductor')
             : window.confirm('¿Eliminar este conductor?');
@@ -242,6 +251,16 @@
 
     async function saveDriver(event) {
         event.preventDefault();
+        
+        // Si no hay backend, mostrar mensaje de modo QA
+        if (!apiClient.baseURL) {
+            if (typeof notify !== 'undefined' && typeof notify.warning === 'function') {
+                notify.warning('⚠️ Modo QA: No se pueden modificar conductores. Los cambios solo se aplican en entorno local con backend.');
+            }
+            closeModal();
+            return;
+        }
+        
         const id = getElement('driverId').value;
         const payload = {
             name: getElement('driverName').value,

@@ -210,6 +210,15 @@
         if (!pointId) {
             return;
         }
+        
+        // Si no hay backend, mostrar mensaje de modo QA
+        if (!apiClient.baseURL) {
+            if (typeof notify !== 'undefined' && typeof notify.warning === 'function') {
+                notify.warning('⚠️ Modo QA: No se pueden modificar puntos de retiro. Los cambios solo se aplican en entorno local con backend.');
+            }
+            return;
+        }
+        
         const confirmed = typeof notify !== 'undefined' && typeof notify.confirmDelete === 'function'
             ? await notify.confirmDelete('este punto')
             : window.confirm('¿Eliminar este punto?');
@@ -236,6 +245,16 @@
 
     async function savePoint(event) {
         event.preventDefault();
+        
+        // Si no hay backend, mostrar mensaje de modo QA
+        if (!apiClient.baseURL) {
+            if (typeof notify !== 'undefined' && typeof notify.warning === 'function') {
+                notify.warning('⚠️ Modo QA: No se pueden modificar puntos de retiro. Los cambios solo se aplican en entorno local con backend.');
+            }
+            closeModal();
+            return;
+        }
+        
         const id = getElement('pointId').value;
         const payload = {
             name: getElement('pointName').value,
