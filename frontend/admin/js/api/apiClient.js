@@ -1353,6 +1353,35 @@ if (typeof APIClient === 'undefined') {
             };
         }
 
+        async getPaymentById(id) {
+            // Si no hay backend, obtener pago desde JSON estático
+            if (!this.baseURL) {
+                try {
+                    const staticData = await this.loadStaticJSON('payments.json');
+                    if (staticData && staticData.success && staticData.data) {
+                        const payments = staticData.data.payments || staticData.data || [];
+                        const payment = payments.find(p => p.id === parseInt(id) || p.id === String(id));
+                        if (payment) {
+                            console.log('✅ Pago encontrado en JSON estático:', payment.id);
+                            return {
+                                success: true,
+                                data: payment,
+                                message: 'Pago cargado desde API estática'
+                            };
+                        }
+                    }
+                    // Si no se encuentra, retornar error
+                    throw new Error(`Pago con ID ${id} no encontrado`);
+                } catch (error) {
+                    console.warn('⚠️ Error al cargar pago desde JSON estático:', error);
+                    throw error;
+                }
+            }
+            
+            // Si hay backend, usar API dinámica
+            return await this.request(`/payments/${id}`);
+        }
+
         // ============================================
         // MÉTODOS DE LOGÍSTICA (ADMIN)
         // ============================================

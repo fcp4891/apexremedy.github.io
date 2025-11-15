@@ -236,11 +236,38 @@ function clearPaymentFilters() {
 
 async function viewPayment(id) {
     try {
-        const response = await api.get(`/payments/${id}`);
-        if (!response.success || !response.data) {
-            throw new Error(response.message || 'Pago no encontrado');
+        // Si no hay backend, usar getPaymentById que soporta modo estático
+        let response;
+        let payment;
+        
+        if (!api.baseURL) {
+            // Modo estático: usar getPaymentById que busca en payments.json
+            try {
+                response = await api.getPaymentById(id);
+                if (response && response.success && response.data) {
+                    payment = response.data;
+                } else {
+                    throw new Error(response?.message || 'Pago no encontrado');
+                }
+            } catch (jsonError) {
+                console.error('Error al cargar pago desde JSON estático:', jsonError);
+                showNotification('Error al cargar pago: ' + (jsonError.message || 'Error desconocido'), 'error');
+                return;
+            }
+        } else {
+            // Modo con backend: usar getPaymentById (también funciona en modo estático como fallback)
+            try {
+                response = await api.getPaymentById(id);
+                if (response && response.success && response.data) {
+                    payment = response.data;
+                } else {
+                    throw new Error(response?.message || 'Pago no encontrado');
+                }
+            } catch (backendError) {
+                console.error('Error al cargar pago desde backend:', backendError);
+                throw new Error(backendError.message || 'No se pudo cargar el pago');
+            }
         }
-        const payment = response.data;
         
         const modalHTML = `
             <div id="paymentDetailModal" class="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4" data-action="payment-detail-overlay">
