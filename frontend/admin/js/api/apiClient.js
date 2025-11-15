@@ -589,6 +589,8 @@ if (typeof APIClient === 'undefined') {
                     }
                 }
                 
+                const apiPath = window.getStaticApiPath ? window.getStaticApiPath(filename) : `/api/${filename}`;
+                
                 console.log('📂 [loadStaticJSON] Entorno:', window.ENV || 'unknown');
                 console.log('📂 [loadStaticJSON] Intentando cargar JSON estático desde:', apiPath);
                 console.log('📂 [loadStaticJSON] Archivo:', filename);
@@ -603,6 +605,7 @@ if (typeof APIClient === 'undefined') {
             } catch (error) {
                 // Solo mostrar warning si no es un 404 (archivo no encontrado es esperado)
                 if (!error.message.includes('404') && !error.message.includes('File not found')) {
+                    const apiPath = window.getStaticApiPath ? window.getStaticApiPath(filename) : `/api/${filename}`;
                     console.warn(`⚠️ No se pudo cargar ${filename} estático:`, error.message);
                     console.warn(`⚠️ Ruta intentada:`, apiPath);
                 }

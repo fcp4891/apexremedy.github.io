@@ -225,10 +225,28 @@
     async function loadZones() {
         try {
             const api = ensureApiClient();
-            const response = await api.request('/restricted-zones', { method: 'GET' });
-            allZones = response?.data?.zones || [];
-            currentPage = 1;
-            renderZones();
+            // Si no hay backend, intentar cargar desde JSON estático
+            if (!api.baseURL) {
+                try {
+                    const staticData = await api.loadStaticJSON('restricted-zones.json');
+                    if (staticData && staticData.success && staticData.data) {
+                        allZones = staticData.data.zones || staticData.data || [];
+                        currentPage = 1;
+                        renderZones();
+                        return;
+                    }
+                } catch (jsonError) {
+                    console.warn('Error al cargar zonas desde JSON estático:', jsonError);
+                }
+            } else {
+                // Modo con backend: usar API dinámica
+                const response = await api.request('/restricted-zones', { method: 'GET' });
+                allZones = response?.data?.zones || [];
+                currentPage = 1;
+                renderZones();
+                return;
+            }
+            throw new Error('No se pudieron cargar zonas desde ninguna fuente');
         } catch (error) {
             console.error('Error cargando zonas:', error);
             const tbody = document.getElementById('zonesTableBody');
@@ -237,7 +255,8 @@
                     <tr>
                         <td colspan="7" class="px-6 py-12 text-center text-red-600">
                             <i class="fas fa-exclamation-triangle text-2xl mb-2"></i>
-                            <p>Error al cargar zonas</p>
+                            <p>Error al cargar zonas: ${error.message || 'Error desconocido'}</p>
+                            ${!api.baseURL ? '<p class="text-sm text-gray-500 mt-2">Modo QA: Las zonas se cargan desde restricted-zones.json</p>' : ''}
                         </td>
                     </tr>
                 `;

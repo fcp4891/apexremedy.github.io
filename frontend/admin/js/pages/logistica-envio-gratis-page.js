@@ -21,10 +21,28 @@
 
     async function loadRules() {
         try {
-            const response = await apiClient.request('/free-shipping-rules', { method: 'GET' });
-            allRules = response.data?.rules || [];
-            currentPage = 1;
-            renderRules();
+            // Si no hay backend, intentar cargar desde JSON estático
+            if (!apiClient.baseURL) {
+                try {
+                    const staticData = await apiClient.loadStaticJSON('free-shipping-rules.json');
+                    if (staticData && staticData.success && staticData.data) {
+                        allRules = staticData.data.rules || staticData.data || [];
+                        currentPage = 1;
+                        renderRules();
+                        return;
+                    }
+                } catch (jsonError) {
+                    console.warn('Error al cargar reglas desde JSON estático:', jsonError);
+                }
+            } else {
+                // Modo con backend: usar API dinámica
+                const response = await apiClient.request('/free-shipping-rules', { method: 'GET' });
+                allRules = response.data?.rules || [];
+                currentPage = 1;
+                renderRules();
+                return;
+            }
+            throw new Error('No se pudieron cargar reglas desde ninguna fuente');
         } catch (error) {
             console.error('Error cargando reglas:', error);
             const tbody = getElement('rulesTableBody');
@@ -33,7 +51,8 @@
                     <tr>
                         <td colspan="9" class="px-6 py-12 text-center text-red-600">
                             <i class="fas fa-exclamation-triangle text-2xl mb-2"></i>
-                            <p>Error al cargar reglas</p>
+                            <p>Error al cargar reglas: ${error.message || 'Error desconocido'}</p>
+                            ${!apiClient.baseURL ? '<p class="text-sm text-gray-500 mt-2">Modo QA: Las reglas se cargan desde free-shipping-rules.json</p>' : ''}
                         </td>
                     </tr>
                 `;
