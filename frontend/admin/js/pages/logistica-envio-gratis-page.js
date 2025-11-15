@@ -222,6 +222,15 @@
         if (!ruleId) {
             return;
         }
+        
+        // Si no hay backend, mostrar mensaje de modo QA
+        if (!apiClient.baseURL) {
+            if (typeof notify !== 'undefined' && typeof notify.warning === 'function') {
+                notify.warning('⚠️ Modo QA: No se pueden modificar reglas. Los cambios solo se aplican en entorno local con backend.');
+            }
+            return;
+        }
+        
         const confirmed = typeof notify !== 'undefined' && typeof notify.confirmDelete === 'function'
             ? await notify.confirmDelete('esta regla')
             : window.confirm('¿Eliminar esta regla?');
@@ -244,6 +253,16 @@
 
     async function saveRule(event) {
         event.preventDefault();
+        
+        // Si no hay backend, mostrar mensaje de modo QA
+        if (!apiClient.baseURL) {
+            if (typeof notify !== 'undefined' && typeof notify.warning === 'function') {
+                notify.warning('⚠️ Modo QA: No se pueden modificar reglas. Los cambios solo se aplican en entorno local con backend.');
+            }
+            closeModal();
+            return;
+        }
+        
         const id = getElement('ruleId').value;
         const payload = {
             rule_name: getElement('ruleName').value,
