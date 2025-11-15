@@ -10,11 +10,24 @@ let allRoles = []; // Para almacenar todos los roles y mostrar nombres correctos
 // Cargar todos los roles para tener los nombres disponibles
 async function loadAllRoles() {
     try {
+        // Si no hay backend, usar roles por defecto
+        if (!window.api || !window.api.baseURL) {
+            console.log('📋 Usando roles por defecto (modo estático)');
+            allRoles = [
+                { code: 'customer', name: 'Cliente', description: 'Usuario cliente del dispensario' },
+                { code: 'admin', name: 'Administrador', description: 'Administrador del sistema' }
+            ];
+            return;
+        }
+        
         const response = await api.request('/roles', { method: 'GET' });
         allRoles = response.data.roles || [];
     } catch (error) {
-        console.error('Error cargando roles:', error);
-        allRoles = [];
+        console.warn('⚠️ Error cargando roles, usando roles por defecto:', error);
+        allRoles = [
+            { code: 'customer', name: 'Cliente', description: 'Usuario cliente del dispensario' },
+            { code: 'admin', name: 'Administrador', description: 'Administrador del sistema' }
+        ];
     }
 }
 
@@ -144,6 +157,20 @@ async function setupFilters() {
 // Cargar roles para el filtro de la tabla
 async function loadRolesForFilter() {
     try {
+        // Si no hay backend, usar roles por defecto
+        if (!window.api || !window.api.baseURL) {
+            console.log('📋 Usando roles por defecto para filtro (modo estático)');
+            const roleFilter = document.getElementById('roleFilter');
+            if (roleFilter) {
+                roleFilter.innerHTML = `
+                    <option value="">Todos los roles</option>
+                    <option value="customer">Cliente</option>
+                    <option value="admin">Administrador</option>
+                `;
+            }
+            return;
+        }
+        
         const response = await api.request('/roles', { method: 'GET' });
         const roles = response.data.roles || [];
         
@@ -151,6 +178,13 @@ async function loadRolesForFilter() {
         
         if (roles.length === 0) {
             // Mantener opciones por defecto si no hay roles
+            if (roleFilter) {
+                roleFilter.innerHTML = `
+                    <option value="">Todos los roles</option>
+                    <option value="customer">Cliente</option>
+                    <option value="admin">Administrador</option>
+                `;
+            }
             return;
         }
         
@@ -163,14 +197,23 @@ async function loadRolesForFilter() {
         });
         
         // Mantener "Todos los roles" y agregar todos los roles disponibles
-        roleFilter.innerHTML = '<option value="">Todos los roles</option>' + 
-            sortedRoles.map(role => 
-                `<option value="${role.code}">${role.name}</option>`
-            ).join('');
+        if (roleFilter) {
+            roleFilter.innerHTML = '<option value="">Todos los roles</option>' + 
+                sortedRoles.map(role => 
+                    `<option value="${role.code}">${role.name}</option>`
+                ).join('');
+        }
             
     } catch (error) {
-        console.error('Error cargando roles para filtro:', error);
-        // Mantener opciones por defecto en caso de error
+        console.warn('⚠️ Error cargando roles para filtro, usando roles por defecto:', error);
+        const roleFilter = document.getElementById('roleFilter');
+        if (roleFilter) {
+            roleFilter.innerHTML = `
+                <option value="">Todos los roles</option>
+                <option value="customer">Cliente</option>
+                <option value="admin">Administrador</option>
+            `;
+        }
     }
 }
 

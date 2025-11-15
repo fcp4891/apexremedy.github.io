@@ -413,57 +413,57 @@ async function viewDocuments(userId) {
                     } else {
                         // Mostrar mensaje de error genérico
                         content.innerHTML = `
-                        <div class="mb-6 p-4 bg-gray-50 rounded-lg">
-                            <h3 class="text-lg font-bold text-gray-800 mb-2">${userName}</h3>
-                            <p class="text-sm text-gray-600 mb-1"><i class="fas fa-envelope mr-2"></i>${user.email}</p>
-                            <span class="px-3 py-1 text-xs font-semibold rounded-full ${
-                                user.account_status === 'forced_approved' ? 'bg-orange-100 text-orange-800' :
-                                user.account_status === 'approved' ? 'bg-green-100 text-green-800' :
-                                user.account_status === 'rejected' ? 'bg-red-100 text-red-800' :
-                                'bg-yellow-100 text-yellow-800'
-                            }">
-                                ${user.account_status === 'forced_approved' ? 'Aprobado Forzosamente' :
-                                  user.account_status === 'approved' ? 'Aprobado' : 
-                                  user.account_status === 'rejected' ? 'Rechazado' : 'Pendiente'}
-                            </span>
-                        </div>
-                        
-                        <div class="text-center py-12">
-                            <i class="fas fa-exclamation-triangle text-5xl text-yellow-500 mb-4"></i>
-                            <h3 class="text-xl font-bold text-gray-800 mb-2">No se encontraron documentos</h3>
-                            <p class="text-gray-600 mb-6">
-                                Este usuario no tiene documentos cargados o hubo un error al recuperarlos.
-                            </p>
-                            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-left">
-                                <p class="text-sm text-yellow-800">
-                                    <i class="fas fa-info-circle mr-2"></i>
-                                    <strong>Estado:</strong> El usuario está marcado como <span class="font-semibold">Pendiente</span> 
-                                    hasta que se carguen todos los documentos requeridos (Receta Médica, Carnet de Identidad, Certificado de Antecedentes y Poder de Cultivo).
+                            <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+                                <h3 class="text-lg font-bold text-gray-800 mb-2">${userName}</h3>
+                                <p class="text-sm text-gray-600 mb-1"><i class="fas fa-envelope mr-2"></i>${user.email}</p>
+                                <span class="px-3 py-1 text-xs font-semibold rounded-full ${
+                                    user.account_status === 'forced_approved' ? 'bg-orange-100 text-orange-800' :
+                                    user.account_status === 'approved' ? 'bg-green-100 text-green-800' :
+                                    user.account_status === 'rejected' ? 'bg-red-100 text-red-800' :
+                                    'bg-yellow-100 text-yellow-800'
+                                }">
+                                    ${user.account_status === 'forced_approved' ? 'Aprobado Forzosamente' :
+                                      user.account_status === 'approved' ? 'Aprobado' : 
+                                      user.account_status === 'rejected' ? 'Rechazado' : 'Pendiente'}
+                                </span>
+                            </div>
+                            
+                            <div class="text-center py-12">
+                                <i class="fas fa-exclamation-triangle text-5xl text-yellow-500 mb-4"></i>
+                                <h3 class="text-xl font-bold text-gray-800 mb-2">No se encontraron documentos</h3>
+                                <p class="text-gray-600 mb-6">
+                                    Este usuario no tiene documentos cargados o hubo un error al recuperarlos.
                                 </p>
+                                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-left">
+                                    <p class="text-sm text-yellow-800">
+                                        <i class="fas fa-info-circle mr-2"></i>
+                                        <strong>Estado:</strong> El usuario está marcado como <span class="font-semibold">Pendiente</span> 
+                                        hasta que se carguen todos los documentos requeridos (Receta Médica, Carnet de Identidad, Certificado de Antecedentes y Poder de Cultivo).
+                                    </p>
+                                </div>
                             </div>
-                        </div>
+                            
+                            ${user.account_status === 'pending' ? `
+                                <div class="mt-6 flex gap-3">
+                                    <button data-action="approve-from-documents" data-user-id="${savedUserId}" data-user-name="${(userName || '').replace(/'/g, '&#39;')}" data-forced="true" 
+                                            class="admin-btn admin-btn--warning flex-1">
+                                        <i class="fas fa-exclamation-triangle admin-btn__icon"></i>Aprobar Forzadamente
+                                    </button>
+                                    <button data-action="reject-from-documents" data-user-id="${savedUserId}" data-user-name="${(userName || '').replace(/'/g, '&#39;')}" 
+                                            class="admin-btn admin-btn--danger flex-1">
+                                        <i class="fas fa-times admin-btn__icon"></i>Rechazar Cuenta
+                                    </button>
+                                </div>
+                            ` : ''}
+                        `;
                         
-                        ${user.account_status === 'pending' ? `
-                            <div class="mt-6 flex gap-3">
-                                <button data-action="approve-from-documents" data-user-id="${savedUserId}" data-user-name="${(userName || '').replace(/'/g, '&#39;')}" data-forced="true" 
-                                        class="admin-btn admin-btn--warning flex-1">
-                                    <i class="fas fa-exclamation-triangle admin-btn__icon"></i>Aprobar Forzadamente
-                                </button>
-                                <button data-action="reject-from-documents" data-user-id="${savedUserId}" data-user-name="${(userName || '').replace(/'/g, '&#39;')}" 
-                                        class="admin-btn admin-btn--danger flex-1">
-                                    <i class="fas fa-times admin-btn__icon"></i>Rechazar Cuenta
-                                </button>
-                            </div>
-                        ` : ''}
-                    `;
-                    
-                    document.getElementById('documentsModal').classList.remove('hidden');
-                    return;
+                        document.getElementById('documentsModal').classList.remove('hidden');
+                        return;
+                    }
+                } catch (userError) {
+                    console.error('Error al obtener información del usuario:', userError);
                 }
-            } catch (userError) {
-                console.error('Error al obtener información del usuario:', userError);
             }
-        }
         
         notify.error('Error al cargar documentos: ' + (error.message || 'Error desconocido'));
     }
@@ -635,13 +635,35 @@ async function loadUserAddresses(userId) {
 // Cargar roles para el selector de edición
 async function loadRolesForEdit() {
     try {
+        // Si no hay backend, usar roles por defecto
+        if (!window.api || !window.api.baseURL) {
+            console.log('📋 Usando roles por defecto para edición (modo estático)');
+            const roleSelector = document.getElementById('editRole');
+            if (roleSelector) {
+                roleSelector.innerHTML = `
+                    <option value="customer">Cliente</option>
+                    <option value="admin">Administrador</option>
+                `;
+            }
+            return;
+        }
+        
         const response = await api.request('/roles', { method: 'GET' });
         const roles = response.data.roles || [];
         
         const roleSelector = document.getElementById('editRole');
         
+        if (!roleSelector) {
+            console.warn('⚠️ Selector de roles no encontrado');
+            return;
+        }
+        
         if (roles.length === 0) {
             // Mantener opciones por defecto si no hay roles
+            roleSelector.innerHTML = `
+                <option value="customer">Cliente</option>
+                <option value="admin">Administrador</option>
+            `;
             return;
         }
         
@@ -658,8 +680,14 @@ async function loadRolesForEdit() {
         ).join('');
             
     } catch (error) {
-        console.error('Error cargando roles para edición:', error);
-        // Mantener opciones por defecto en caso de error
+        console.warn('⚠️ Error cargando roles para edición, usando roles por defecto:', error);
+        const roleSelector = document.getElementById('editRole');
+        if (roleSelector) {
+            roleSelector.innerHTML = `
+                <option value="customer">Cliente</option>
+                <option value="admin">Administrador</option>
+            `;
+        }
     }
 }
 
