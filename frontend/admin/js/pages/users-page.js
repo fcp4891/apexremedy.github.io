@@ -18,7 +18,25 @@
     }
 
     // Wait for DOM and dependencies
-    document.addEventListener('DOMContentLoaded', () => {
+    function initializePage() {
+        // Verificar que las funciones necesarias estén cargadas
+        if (typeof window.openEditModal === 'undefined' || typeof window.viewDocuments === 'undefined') {
+            // Esperar un poco más para que users-modals.js se cargue
+            console.log('⏳ Esperando que users-modals.js se cargue...');
+            setTimeout(() => {
+                if (typeof window.openEditModal === 'undefined' || typeof window.viewDocuments === 'undefined') {
+                    console.error('❌ users-modals.js no se cargó correctamente. Las funciones de editar/ver documentos no estarán disponibles.');
+                } else {
+                    console.log('✅ users-modals.js cargado correctamente');
+                    setupPage();
+                }
+            }, 100);
+        } else {
+            setupPage();
+        }
+    }
+    
+    function setupPage() {
         // Check admin access first
         if (!checkAdminAccess()) {
             return;
@@ -26,13 +44,14 @@
 
         setupEventDelegation();
         setupModalOverlays();
-    });
+    }
 
-    // Also check immediately if DOM is already loaded
-    if (document.readyState !== 'loading') {
-        checkAdminAccess();
+    // Wait for DOM and dependencies
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializePage);
     } else {
-        document.addEventListener('DOMContentLoaded', checkAdminAccess);
+        // DOM already loaded, initialize immediately
+        initializePage();
     }
 
     function setupEventDelegation() {
