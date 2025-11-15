@@ -262,6 +262,18 @@ jobs:
             echo "✅ JSON vacío de packing-materials creado"
           fi
           
+          # Crear free-shipping-rules.json si no existe
+          if [ ! -f "../frontend/api/free-shipping-rules.json" ]; then
+            echo '{"success":true,"message":"JSON vacío - base de datos no disponible","data":{"rules":[],"total":0,"timestamp":"'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"}}' > ../frontend/api/free-shipping-rules.json
+            echo "✅ JSON vacío de free-shipping-rules creado"
+          fi
+          
+          # Crear restricted-zones.json si no existe
+          if [ ! -f "../frontend/api/restricted-zones.json" ]; then
+            echo '{"success":true,"message":"JSON vacío - base de datos no disponible","data":{"zones":[],"total":0,"timestamp":"'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"}}' > ../frontend/api/restricted-zones.json
+            echo "✅ JSON vacío de restricted-zones creado"
+          fi
+          
           echo "✅ Archivos JSON de logística verificados/creados"
       
       - name: Verify JSON files

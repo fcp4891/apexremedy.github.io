@@ -69,6 +69,20 @@ async function exportLogistics() {
                     data: { providers: [] },
                     total: 0,
                     timestamp
+                },
+                'free-shipping-rules.json': {
+                    success: true,
+                    message: 'JSON vacío - base de datos no disponible',
+                    data: { rules: [] },
+                    total: 0,
+                    timestamp
+                },
+                'restricted-zones.json': {
+                    success: true,
+                    message: 'JSON vacío - base de datos no disponible',
+                    data: { zones: [] },
+                    total: 0,
+                    timestamp
                 }
             };
             
@@ -147,6 +161,32 @@ async function exportLogistics() {
             console.log(`   ✅ ${providers.length} proveedores de envío encontrados`);
         } catch (providersError) {
             console.warn('   ⚠️ No se pudieron obtener proveedores de envío:', providersError.message);
+        }
+        
+        // 7. Exportar free_shipping_rules
+        console.log('🆓 Obteniendo reglas de envío gratis...');
+        let freeShippingRules = [];
+        try {
+            freeShippingRules = await db.all(`
+                SELECT * FROM free_shipping_rules
+                ORDER BY created_at DESC
+            `);
+            console.log(`   ✅ ${freeShippingRules.length} reglas de envío gratis encontradas`);
+        } catch (rulesError) {
+            console.warn('   ⚠️ No se pudieron obtener reglas de envío gratis:', rulesError.message);
+        }
+        
+        // 8. Exportar restricted_zones
+        console.log('🚫 Obteniendo zonas restringidas...');
+        let restrictedZones = [];
+        try {
+            restrictedZones = await db.all(`
+                SELECT * FROM restricted_zones
+                ORDER BY created_at DESC
+            `);
+            console.log(`   ✅ ${restrictedZones.length} zonas restringidas encontradas`);
+        } catch (zonesError) {
+            console.warn('   ⚠️ No se pudieron obtener zonas restringidas:', zonesError.message);
         }
         
         // Crear directorio api si no existe
@@ -229,6 +269,30 @@ async function exportLogistics() {
         fs.writeFileSync(providersFile, JSON.stringify(providersData, null, 2));
         console.log(`✅ Proveedores de envío exportados a: ${providersFile}`);
         
+        // Exportar free-shipping-rules.json
+        const freeShippingRulesFile = path.join(apiDir, 'free-shipping-rules.json');
+        const freeShippingRulesData = {
+            success: true,
+            message: 'Reglas de envío gratis exportadas correctamente',
+            data: { rules: freeShippingRules },
+            total: freeShippingRules.length,
+            timestamp
+        };
+        fs.writeFileSync(freeShippingRulesFile, JSON.stringify(freeShippingRulesData, null, 2));
+        console.log(`✅ Reglas de envío gratis exportadas a: ${freeShippingRulesFile}`);
+        
+        // Exportar restricted-zones.json
+        const restrictedZonesFile = path.join(apiDir, 'restricted-zones.json');
+        const restrictedZonesData = {
+            success: true,
+            message: 'Zonas restringidas exportadas correctamente',
+            data: { zones: restrictedZones },
+            total: restrictedZones.length,
+            timestamp
+        };
+        fs.writeFileSync(restrictedZonesFile, JSON.stringify(restrictedZonesData, null, 2));
+        console.log(`✅ Zonas restringidas exportadas a: ${restrictedZonesFile}`);
+        
         console.log(`📊 Resumen de exportación:`);
         console.log(`   - Centros de despacho: ${centers.length}`);
         console.log(`   - Conductores: ${drivers.length}`);
@@ -236,11 +300,18 @@ async function exportLogistics() {
         console.log(`   - Zonas de entrega: ${zones.length}`);
         console.log(`   - Materiales de empaque: ${materials.length}`);
         console.log(`   - Proveedores de envío: ${providers.length}`);
+        console.log(`   - Reglas de envío gratis: ${freeShippingRules.length}`);
+        console.log(`   - Zonas restringidas: ${restrictedZones.length}`);
         
         return {
             centers: centersData,
             drivers: driversData,
-            pickupPoints: pickupPointsData
+            pickupPoints: pickupPointsData,
+            zones: zonesData,
+            materials: materialsData,
+            providers: providersData,
+            freeShippingRules: freeShippingRulesData,
+            restrictedZones: restrictedZonesData
         };
         
     } catch (error) {
