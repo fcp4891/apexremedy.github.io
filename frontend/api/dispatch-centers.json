@@ -1,0 +1,61 @@
+{
+  "success": true,
+  "message": "Centros de despacho exportados correctamente",
+  "data": {
+    "centers": [
+      {
+        "id": 3,
+        "warehouse_id": null,
+        "name": "Almacén Concepción",
+        "code": "BODEGA-03",
+        "address": "Av. O'Higgins 1500",
+        "commune": "Concepción",
+        "city": "Concepción",
+        "region": "Biobío",
+        "phone": "+56 41 2345 6789",
+        "email": "bodega3@apexremedy.cl",
+        "manager_name": "Carlos Silva",
+        "operating_hours": "Lun-Vie 8:00-18:00",
+        "is_active": 1,
+        "created_at": "2025-11-04 20:46:41",
+        "updated_at": "2025-11-04 20:46:41"
+      },
+      {
+        "id": 1,
+        "warehouse_id": null,
+        "name": "Bodega Principal Santiago",
+        "code": "BODEGA-01",
+        "address": "Av. Libertador Bernardo O'Higgins 1234",
+        "commune": "Santiago",
+        "city": "Santiago",
+        "region": "Metropolitana",
+        "phone": "+56 2 2345 6789",
+        "email": "bodega1@apexremedy.cl",
+        "manager_name": "Juan Pérez",
+        "operating_hours": "Lun-Vie 8:00-18:00",
+        "is_active": 1,
+        "created_at": "2025-11-04 20:46:40",
+        "updated_at": "2025-11-04 20:46:40"
+      },
+      {
+        "id": 2,
+        "warehouse_id": null,
+        "name": "Centro de Distribución Valparaíso",
+        "code": "BODEGA-02",
+        "address": "Av. Brasil 2000",
+        "commune": "Valparaíso",
+        "city": "Valparaíso",
+        "region": "Valparaíso",
+        "phone": "+56 32 2345 6789",
+        "email": "bodega2@apexremedy.cl",
+        "manager_name": "María González",
+        "operating_hours": "Lun-Vie 8:00-18:00",
+        "is_active": 1,
+        "created_at": "2025-11-04 20:46:40",
+        "updated_at": "2025-11-04 20:46:40"
+      }
+    ]
+  },
+  "total": 3,
+  "timestamp": "2025-11-15T01:49:34.006Z"
+}

@@ -1,9 +1,80 @@
 {
   "success": true,
-  "message": "JSON vacío - base de datos no disponible",
+  "message": "Materiales de empaque exportados correctamente",
   "data": {
-    "materials": [],
-    "total": 0,
-    "timestamp": "2025-11-14T21:18:03.187Z"
-  }
+    "materials": [
+      {
+        "id": 1,
+        "material_code": "BOLSA-01",
+        "material_name": "Bolsa Segura 5g",
+        "material_type": "bag",
+        "unit": "unidad",
+        "stock_quantity": 500,
+        "min_stock_level": 50,
+        "cost_per_unit": 500,
+        "supplier": null,
+        "is_active": 1,
+        "created_at": "2025-11-04 19:29:44",
+        "updated_at": "2025-11-04 19:29:44"
+      },
+      {
+        "id": 2,
+        "material_code": "BOLSA-02",
+        "material_name": "Bolsa Segura 10g",
+        "material_type": "bag",
+        "unit": "unidad",
+        "stock_quantity": 300,
+        "min_stock_level": 30,
+        "cost_per_unit": 800,
+        "supplier": null,
+        "is_active": 1,
+        "created_at": "2025-11-04 19:29:44",
+        "updated_at": "2025-11-04 19:29:44"
+      },
+      {
+        "id": 3,
+        "material_code": "CAJA-01",
+        "material_name": "Caja Segura Pequeña",
+        "material_type": "box",
+        "unit": "unidad",
+        "stock_quantity": 200,
+        "min_stock_level": 20,
+        "cost_per_unit": 1500,
+        "supplier": null,
+        "is_active": 1,
+        "created_at": "2025-11-04 19:29:44",
+        "updated_at": "2025-11-04 19:29:44"
+      },
+      {
+        "id": 4,
+        "material_code": "CAJA-02",
+        "material_name": "Caja Segura Mediana",
+        "material_type": "box",
+        "unit": "unidad",
+        "stock_quantity": 150,
+        "min_stock_level": 15,
+        "cost_per_unit": 2000,
+        "supplier": null,
+        "is_active": 1,
+        "created_at": "2025-11-04 19:29:44",
+        "updated_at": "2025-11-04 19:29:44"
+      },
+      {
+        "id": 5,
+        "material_code": "SELLO-01",
+        "material_name": "Sello de Seguridad",
+        "material_type": "seal",
+        "unit": "unidad",
+        "stock_quantity": 1000,
+        "min_stock_level": 100,
+        "cost_per_unit": 100,
+        "supplier": null,
+        "is_active": 1,
+        "created_at": "2025-11-04 19:29:44",
+        "updated_at": "2025-11-04 19:29:44"
+      }
+    ]
+  },
+  "total": 5,
+  "timestamp": "2025-11-15T01:49:34.006Z"
 }

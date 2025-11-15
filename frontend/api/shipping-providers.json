@@ -1,9 +1,85 @@
 {
   "success": true,
-  "message": "JSON vacío - base de datos no disponible",
+  "message": "Proveedores de envío exportados correctamente",
   "data": {
-    "providers": [],
-    "total": 0,
-    "timestamp": "2025-11-14T21:18:03.185Z"
-  }
+    "providers": [
+      {
+        "id": 4,
+        "name": "Bluexpress",
+        "code": "BLUEXPRESS",
+        "provider_type": "external",
+        "description": "Servicio de envío e-commerce",
+        "website": "https://www.bluexpress.cl",
+        "phone": "+56 2 2345 6789",
+        "email": null,
+        "is_active": 1,
+        "supports_tracking": 1,
+        "supports_labels": 1,
+        "created_at": "2025-11-04 19:29:43",
+        "updated_at": "2025-11-04 19:29:43"
+      },
+      {
+        "id": 5,
+        "name": "Delivery Propio",
+        "code": "INTERNAL",
+        "provider_type": "internal",
+        "description": "Delivery interno",
+        "website": null,
+        "phone": "+56 9 1234 5678",
+        "email": null,
+        "is_active": 1,
+        "supports_tracking": 1,
+        "supports_labels": 0,
+        "created_at": "2025-11-04 19:29:43",
+        "updated_at": "2025-11-04 19:29:43"
+      },
+      {
+        "id": 1,
+        "name": "Starken",
+        "code": "STARKEN",
+        "provider_type": "external",
+        "description": "Servicio de envío nacional en Chile",
+        "website": "https://www.starken.cl",
+        "phone": "+56 2 2345 6789",
+        "email": null,
+        "is_active": 1,
+        "supports_tracking": 1,
+        "supports_labels": 1,
+        "created_at": "2025-11-04 19:29:42",
+        "updated_at": "2025-11-04 19:29:42"
+      },
+      {
+        "id": 2,
+        "name": "Chilexpress",
+        "code": "CHILEXPRESS",
+        "provider_type": "external",
+        "description": "Servicio express de envíos",
+        "website": "https://www.chilexpress.cl",
+        "phone": "+56 2 2345 6789",
+        "email": null,
+        "is_active": 1,
+        "supports_tracking": 1,
+        "supports_labels": 1,
+        "created_at": "2025-11-04 19:29:42",
+        "updated_at": "2025-11-04 19:29:42"
+      },
+      {
+        "id": 3,
+        "name": "Correos Chile",
+        "code": "CORREOS",
+        "provider_type": "external",
+        "description": "Servicio postal nacional",
+        "website": "https://www.correos.cl",
+        "phone": "+56 2 2345 6789",
+        "email": null,
+        "is_active": 1,
+        "supports_tracking": 1,
+        "supports_labels": 0,
+        "created_at": "2025-11-04 19:29:42",
+        "updated_at": "2025-11-04 19:29:42"
+      }
+    ]
+  },
+  "total": 5,
+  "timestamp": "2025-11-15T01:49:34.006Z"
 }

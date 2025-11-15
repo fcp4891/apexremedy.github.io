@@ -1,9 +1,114 @@
 {
   "success": true,
-  "message": "JSON vacío - base de datos no disponible",
+  "message": "Zonas de entrega interna exportadas correctamente",
   "data": {
-    "zones": [],
-    "total": 0,
-    "timestamp": "2025-11-14T21:18:03.187Z"
-  }
+    "zones": [
+      {
+        "id": 7,
+        "zone_name": "Santiago Centro",
+        "description": "Zona centro de Santiago",
+        "coverage_data": "{\"regions\":[\"Metropolitana\"],\"communes\":[\"Santiago\",\"Providencia\",\"Las Condes\"]}",
+        "max_distance_km": 10,
+        "delivery_fee": 3000,
+        "estimated_days_min": 1,
+        "estimated_days_max": 2,
+        "is_active": 1,
+        "created_at": "2025-11-04 21:09:41",
+        "updated_at": "2025-11-04 21:09:41"
+      },
+      {
+        "id": 8,
+        "zone_name": "Gran Santiago",
+        "description": "Gran área metropolitana",
+        "coverage_data": "{\"regions\":[\"Metropolitana\"],\"communes\":[\"Maipú\",\"Puente Alto\",\"San Bernardo\"]}",
+        "max_distance_km": 30,
+        "delivery_fee": 5000,
+        "estimated_days_min": 2,
+        "estimated_days_max": 3,
+        "is_active": 1,
+        "created_at": "2025-11-04 21:09:41",
+        "updated_at": "2025-11-04 21:09:41"
+      },
+      {
+        "id": 5,
+        "zone_name": "Santiago Centro",
+        "description": "Zona centro de Santiago",
+        "coverage_data": "{\"regions\":[\"Metropolitana\"],\"communes\":[\"Santiago\",\"Providencia\",\"Las Condes\"]}",
+        "max_distance_km": 10,
+        "delivery_fee": 3000,
+        "estimated_days_min": 1,
+        "estimated_days_max": 2,
+        "is_active": 1,
+        "created_at": "2025-11-04 20:46:39",
+        "updated_at": "2025-11-04 20:46:39"
+      },
+      {
+        "id": 6,
+        "zone_name": "Gran Santiago",
+        "description": "Gran área metropolitana",
+        "coverage_data": "{\"regions\":[\"Metropolitana\"],\"communes\":[\"Maipú\",\"Puente Alto\",\"San Bernardo\"]}",
+        "max_distance_km": 30,
+        "delivery_fee": 5000,
+        "estimated_days_min": 2,
+        "estimated_days_max": 3,
+        "is_active": 1,
+        "created_at": "2025-11-04 20:46:39",
+        "updated_at": "2025-11-04 20:46:39"
+      },
+      {
+        "id": 3,
+        "zone_name": "Santiago Centro",
+        "description": "Zona centro de Santiago",
+        "coverage_data": "{\"regions\":[\"Metropolitana\"],\"communes\":[\"Santiago\",\"Providencia\",\"Las Condes\"]}",
+        "max_distance_km": 10,
+        "delivery_fee": 3000,
+        "estimated_days_min": 1,
+        "estimated_days_max": 2,
+        "is_active": 1,
+        "created_at": "2025-11-04 20:43:50",
+        "updated_at": "2025-11-04 20:43:50"
+      },
+      {
+        "id": 4,
+        "zone_name": "Gran Santiago",
+        "description": "Gran área metropolitana",
+        "coverage_data": "{\"regions\":[\"Metropolitana\"],\"communes\":[\"Maipú\",\"Puente Alto\",\"San Bernardo\"]}",
+        "max_distance_km": 30,
+        "delivery_fee": 5000,
+        "estimated_days_min": 2,
+        "estimated_days_max": 3,
+        "is_active": 1,
+        "created_at": "2025-11-04 20:43:50",
+        "updated_at": "2025-11-04 20:43:50"
+      },
+      {
+        "id": 1,
+        "zone_name": "Santiago Centro",
+        "description": "Zona centro de Santiago",
+        "coverage_data": "{\"regions\":[\"Metropolitana\"],\"communes\":[\"Santiago\",\"Providencia\",\"Las Condes\"]}",
+        "max_distance_km": 10,
+        "delivery_fee": 3000,
+        "estimated_days_min": 1,
+        "estimated_days_max": 2,
+        "is_active": 1,
+        "created_at": "2025-11-04 19:29:43",
+        "updated_at": "2025-11-04 19:29:43"
+      },
+      {
+        "id": 2,
+        "zone_name": "Gran Santiago",
+        "description": "Gran área metropolitana",
+        "coverage_data": "{\"regions\":[\"Metropolitana\"],\"communes\":[\"Maipú\",\"Puente Alto\",\"San Bernardo\"]}",
+        "max_distance_km": 30,
+        "delivery_fee": 5000,
+        "estimated_days_min": 2,
+        "estimated_days_max": 3,
+        "is_active": 1,
+        "created_at": "2025-11-04 19:29:43",
+        "updated_at": "2025-11-04 19:29:43"
+      }
+    ]
+  },
+  "total": 8,
+  "timestamp": "2025-11-15T01:49:34.006Z"
 }

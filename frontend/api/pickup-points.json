@@ -1,0 +1,66 @@
+{
+  "success": true,
+  "message": "Puntos de retiro exportados correctamente",
+  "data": {
+    "points": [
+      {
+        "id": 1,
+        "name": "Tienda Principal Santiago",
+        "code": "TIENDA-01",
+        "address": "Av. Providencia 1234",
+        "commune": "Providencia",
+        "city": "Santiago",
+        "region": "Metropolitana",
+        "phone": "+56 2 2345 6789",
+        "operating_hours": "Lun-Dom 09:00-20:00",
+        "is_active": 1,
+        "created_at": "2025-11-04 20:46:42",
+        "updated_at": "2025-11-04 20:46:42"
+      },
+      {
+        "id": 2,
+        "name": "Sucursal Las Condes",
+        "code": "TIENDA-02",
+        "address": "Av. Apoquindo 5000",
+        "commune": "Las Condes",
+        "city": "Las Condes",
+        "region": "Metropolitana",
+        "phone": "+56 2 3456 7890",
+        "operating_hours": "Lun-Dom 10:00-21:00",
+        "is_active": 1,
+        "created_at": "2025-11-04 20:46:42",
+        "updated_at": "2025-11-04 20:46:42"
+      },
+      {
+        "id": 3,
+        "name": "Punto Retiro Providencia",
+        "code": "TIENDA-03",
+        "address": "Av. Nueva Providencia 2150",
+        "commune": "Providencia",
+        "city": "Providencia",
+        "region": "Metropolitana",
+        "phone": "+56 2 4567 8901",
+        "operating_hours": "Lun-Vie 09:30-19:30",
+        "is_active": 1,
+        "created_at": "2025-11-04 20:46:42",
+        "updated_at": "2025-11-04 20:46:42"
+      },
+      {
+        "id": 4,
+        "name": "Tienda Valparaíso",
+        "code": "TIENDA-04",
+        "address": "Av. Pedro Montt 2000",
+        "commune": "Valparaíso",
+        "city": "Valparaíso",
+        "region": "Valparaíso",
+        "phone": "+56 32 2345 6789",
+        "operating_hours": "Lun-Dom 10:00-20:00",
+        "is_active": 1,
+        "created_at": "2025-11-04 20:46:42",
+        "updated_at": "2025-11-04 20:46:42"
+      }
+    ]
+  },
+  "total": 4,
+  "timestamp": "2025-11-15T01:49:34.006Z"
+}

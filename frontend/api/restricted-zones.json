@@ -1,0 +1,90 @@
+{
+  "success": true,
+  "message": "Zonas restringidas exportadas correctamente",
+  "data": {
+    "zones": [
+      {
+        "id": 5,
+        "zone_name": "Zona Restringida Isla de Pascua",
+        "restriction_type": "complete",
+        "coverage_data": "{\"regions\":[\"Isla de Pascua\"]}",
+        "reason": "Restricción por ubicación geográfica remota",
+        "is_active": 1,
+        "created_at": "2025-11-04 21:09:45",
+        "updated_at": "2025-11-04 21:09:45"
+      },
+      {
+        "id": 6,
+        "zone_name": "Zona Restringida Antártica",
+        "restriction_type": "complete",
+        "coverage_data": "{\"regions\":[\"Antártica Chilena\"]}",
+        "reason": "Restricción por ubicación geográfica extrema",
+        "is_active": 1,
+        "created_at": "2025-11-04 21:09:45",
+        "updated_at": "2025-11-04 21:09:45"
+      },
+      {
+        "id": 7,
+        "zone_name": "Comunas Restringidas - Región Metropolitana",
+        "restriction_type": "partial",
+        "coverage_data": "{\"communes\":[\"Lo Barnechea\",\"Vitacura\"]}",
+        "reason": "Restricción por políticas de zonificación local",
+        "is_active": 1,
+        "created_at": "2025-11-04 21:09:45",
+        "updated_at": "2025-11-04 21:09:45"
+      },
+      {
+        "id": 8,
+        "zone_name": "Códigos Postales Restringidos",
+        "restriction_type": "partial",
+        "coverage_data": "{\"postal_codes\":[\"8320000\",\"8320001\"]}",
+        "reason": "Restricción por código postal específico",
+        "is_active": 1,
+        "created_at": "2025-11-04 21:09:45",
+        "updated_at": "2025-11-04 21:09:45"
+      },
+      {
+        "id": 4,
+        "zone_name": "Códigos Postales Restringidos",
+        "restriction_type": "partial",
+        "coverage_data": "{\"postal_codes\":[\"8320000\",\"8320001\"]}",
+        "reason": "Restricción por código postal específico",
+        "is_active": 1,
+        "created_at": "2025-11-04 20:46:44",
+        "updated_at": "2025-11-04 20:46:44"
+      },
+      {
+        "id": 1,
+        "zone_name": "Zona Restringida Isla de Pascua",
+        "restriction_type": "complete",
+        "coverage_data": "{\"regions\":[\"Isla de Pascua\"]}",
+        "reason": "Restricción por ubicación geográfica remota",
+        "is_active": 1,
+        "created_at": "2025-11-04 20:46:43",
+        "updated_at": "2025-11-04 20:46:43"
+      },
+      {
+        "id": 2,
+        "zone_name": "Zona Restringida Antártica",
+        "restriction_type": "complete",
+        "coverage_data": "{\"regions\":[\"Antártica Chilena\"]}",
+        "reason": "Restricción por ubicación geográfica extrema",
+        "is_active": 1,
+        "created_at": "2025-11-04 20:46:43",
+        "updated_at": "2025-11-04 20:46:43"
+      },
+      {
+        "id": 3,
+        "zone_name": "Comunas Restringidas - Región Metropolitana",
+        "restriction_type": "partial",
+        "coverage_data": "{\"communes\":[\"Lo Barnechea\",\"Vitacura\"]}",
+        "reason": "Restricción por políticas de zonificación local",
+        "is_active": 1,
+        "created_at": "2025-11-04 20:46:43",
+        "updated_at": "2025-11-04 20:46:43"
+      }
+    ]
+  },
+  "total": 8,
+  "timestamp": "2025-11-15T01:49:34.006Z"
+}

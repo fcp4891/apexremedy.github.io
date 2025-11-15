@@ -1,0 +1,106 @@
+{
+  "success": true,
+  "message": "Reglas de envío gratis exportadas correctamente",
+  "data": {
+    "rules": [
+      {
+        "id": 8,
+        "rule_name": "Envío gratis clientes VIP",
+        "min_order_amount": 30000,
+        "applies_to_regions": null,
+        "applies_to_zones": null,
+        "start_date": null,
+        "end_date": null,
+        "is_active": 1,
+        "created_at": "2025-11-04 21:09:45",
+        "updated_at": "2025-11-04 21:09:45"
+      },
+      {
+        "id": 5,
+        "rule_name": "Envío gratis sobre $50.000",
+        "min_order_amount": 50000,
+        "applies_to_regions": null,
+        "applies_to_zones": null,
+        "start_date": null,
+        "end_date": null,
+        "is_active": 1,
+        "created_at": "2025-11-04 21:09:44",
+        "updated_at": "2025-11-04 21:09:44"
+      },
+      {
+        "id": 6,
+        "rule_name": "Promoción Navidad 2024",
+        "min_order_amount": 0,
+        "applies_to_regions": "Metropolitana,Valparaíso",
+        "applies_to_zones": null,
+        "start_date": "2024-12-01",
+        "end_date": "2024-12-31",
+        "is_active": 1,
+        "created_at": "2025-11-04 21:09:44",
+        "updated_at": "2025-11-04 21:09:44"
+      },
+      {
+        "id": 7,
+        "rule_name": "Envío gratis productos premium",
+        "min_order_amount": 0,
+        "applies_to_regions": null,
+        "applies_to_zones": "1,2",
+        "start_date": null,
+        "end_date": null,
+        "is_active": 1,
+        "created_at": "2025-11-04 21:09:44",
+        "updated_at": "2025-11-04 21:09:44"
+      },
+      {
+        "id": 2,
+        "rule_name": "Promoción Navidad 2024",
+        "min_order_amount": 0,
+        "applies_to_regions": "Metropolitana,Valparaíso",
+        "applies_to_zones": null,
+        "start_date": "2024-12-01",
+        "end_date": "2024-12-31",
+        "is_active": 1,
+        "created_at": "2025-11-04 20:46:43",
+        "updated_at": "2025-11-04 20:46:43"
+      },
+      {
+        "id": 3,
+        "rule_name": "Envío gratis productos premium",
+        "min_order_amount": 0,
+        "applies_to_regions": null,
+        "applies_to_zones": "1,2",
+        "start_date": null,
+        "end_date": null,
+        "is_active": 1,
+        "created_at": "2025-11-04 20:46:43",
+        "updated_at": "2025-11-04 20:46:43"
+      },
+      {
+        "id": 4,
+        "rule_name": "Envío gratis clientes VIP",
+        "min_order_amount": 30000,
+        "applies_to_regions": null,
+        "applies_to_zones": null,
+        "start_date": null,
+        "end_date": null,
+        "is_active": 1,
+        "created_at": "2025-11-04 20:46:43",
+        "updated_at": "2025-11-04 20:46:43"
+      },
+      {
+        "id": 1,
+        "rule_name": "Envío gratis sobre $50.000",
+        "min_order_amount": 50000,
+        "applies_to_regions": null,
+        "applies_to_zones": null,
+        "start_date": null,
+        "end_date": null,
+        "is_active": 1,
+        "created_at": "2025-11-04 20:46:42",
+        "updated_at": "2025-11-04 20:46:42"
+      }
+    ]
+  },
+  "total": 8,
+  "timestamp": "2025-11-15T01:49:34.006Z"
+}
