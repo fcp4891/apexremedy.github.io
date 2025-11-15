@@ -10,10 +10,28 @@
 
     async function loadPoints() {
         try {
-            const response = await apiClient.request('/pickup-points-dispensary', { method: 'GET' });
-            allPoints = response.data?.points || [];
-            currentPage = 1;
-            renderPoints();
+            // Si no hay backend, intentar cargar desde JSON estático
+            if (!apiClient.baseURL) {
+                try {
+                    const staticData = await apiClient.loadStaticJSON('pickup-points.json');
+                    if (staticData && staticData.success && staticData.data) {
+                        allPoints = staticData.data.points || staticData.data || [];
+                        currentPage = 1;
+                        renderPoints();
+                        return;
+                    }
+                } catch (jsonError) {
+                    console.warn('Error al cargar puntos desde JSON estático:', jsonError);
+                }
+            } else {
+                // Modo con backend: usar API dinámica
+                const response = await apiClient.request('/pickup-points-dispensary', { method: 'GET' });
+                allPoints = response.data?.points || [];
+                currentPage = 1;
+                renderPoints();
+                return;
+            }
+            throw new Error('No se pudieron cargar puntos desde ninguna fuente');
         } catch (error) {
             console.error('Error cargando puntos:', error);
             const tbody = getElement('pointsTableBody');
@@ -22,7 +40,8 @@
                     <tr>
                         <td colspan="8" class="px-6 py-12 text-center text-red-600">
                             <i class="fas fa-exclamation-triangle text-2xl mb-2"></i>
-                            <p>Error al cargar puntos</p>
+                            <p>Error al cargar puntos: ${error.message || 'Error desconocido'}</p>
+                            ${!apiClient.baseURL ? '<p class="text-sm text-gray-500 mt-2">Modo QA: Los puntos se cargan desde pickup-points.json</p>' : ''}
                         </td>
                     </tr>
                 `;

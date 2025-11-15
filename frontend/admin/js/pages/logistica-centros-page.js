@@ -10,10 +10,28 @@
 
     async function loadCenters() {
         try {
-            const response = await apiClient.request('/dispatch-centers', { method: 'GET' });
-            allCenters = response.data?.centers || [];
-            currentPage = 1;
-            renderCenters();
+            // Si no hay backend, intentar cargar desde JSON estático
+            if (!apiClient.baseURL) {
+                try {
+                    const staticData = await apiClient.loadStaticJSON('dispatch-centers.json');
+                    if (staticData && staticData.success && staticData.data) {
+                        allCenters = staticData.data.centers || staticData.data || [];
+                        currentPage = 1;
+                        renderCenters();
+                        return;
+                    }
+                } catch (jsonError) {
+                    console.warn('Error al cargar centros desde JSON estático:', jsonError);
+                }
+            } else {
+                // Modo con backend: usar API dinámica
+                const response = await apiClient.request('/dispatch-centers', { method: 'GET' });
+                allCenters = response.data?.centers || [];
+                currentPage = 1;
+                renderCenters();
+                return;
+            }
+            throw new Error('No se pudieron cargar centros desde ninguna fuente');
         } catch (error) {
             console.error('Error cargando centros:', error);
             const tbody = getElement('centersTableBody');
@@ -22,7 +40,8 @@
                     <tr>
                         <td colspan="9" class="px-6 py-12 text-center text-red-600">
                             <i class="fas fa-exclamation-triangle text-2xl mb-2"></i>
-                            <p>Error al cargar centros</p>
+                            <p>Error al cargar centros: ${error.message || 'Error desconocido'}</p>
+                            ${!apiClient.baseURL ? '<p class="text-sm text-gray-500 mt-2">Modo QA: Los centros se cargan desde dispatch-centers.json</p>' : ''}
                         </td>
                     </tr>
                 `;

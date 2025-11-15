@@ -18,8 +18,9 @@
 
     async function loadProviders() {
         try {
-            const response = await apiClient.request('/shipping-providers', { method: 'GET' });
-            allProviders = response.data?.providers || [];
+            // Usar getShippingProviders que tiene soporte para modo estático
+            const response = await apiClient.getShippingProviders();
+            allProviders = response.data?.providers || response.data || [];
             currentPage = 1;
             renderProviders();
         } catch (error) {
@@ -30,7 +31,8 @@
                     <tr>
                         <td colspan="7" class="px-6 py-12 text-center text-red-600">
                             <i class="fas fa-exclamation-triangle text-2xl mb-2"></i>
-                            <p>Error al cargar proveedores</p>
+                            <p>Error al cargar proveedores: ${error.message || 'Error desconocido'}</p>
+                            ${!apiClient.baseURL ? '<p class="text-sm text-gray-500 mt-2">Modo QA: Los proveedores se cargan desde shipping-providers.json</p>' : ''}
                         </td>
                     </tr>
                 `;
