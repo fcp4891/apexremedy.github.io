@@ -14,22 +14,62 @@ async function loadPoderCultivoFormInModal() {
             const container = document.getElementById('poderCultivoContainerModal');
             if (container) {
                 container.innerHTML = html;
-                // Ejecutar scripts del componente
+                // Ejecutar scripts del componente de forma segura
                 const scripts = container.querySelectorAll('script');
                 scripts.forEach(oldScript => {
-                    const newScript = document.createElement('script');
-                    if (oldScript.src) {
-                        newScript.src = oldScript.src;
-                    } else {
-                        newScript.textContent = oldScript.textContent;
+                    try {
+                        const newScript = document.createElement('script');
+                        if (oldScript.src) {
+                            // Script externo - cargar desde URL
+                            newScript.src = oldScript.src;
+                            newScript.async = false;
+                            // Esperar a que cargue antes de continuar
+                            newScript.onload = () => {
+                                console.log('✅ Script externo cargado:', oldScript.src);
+                            };
+                            newScript.onerror = (err) => {
+                                console.warn('⚠️ Error cargando script externo:', oldScript.src, err);
+                            };
+                        } else {
+                            // Script inline - validar sintaxis antes de ejecutar
+                            const scriptContent = oldScript.textContent || oldScript.innerHTML || '';
+                            if (scriptContent.trim()) {
+                                // Verificar que el script tenga sintaxis válida básica
+                                // Si tiene try, debe tener catch
+                                const tryCount = (scriptContent.match(/try\s*\{/g) || []).length;
+                                const catchCount = (scriptContent.match(/catch\s*\(/g) || []).length;
+                                
+                                if (tryCount > 0 && tryCount !== catchCount) {
+                                    console.warn('⚠️ Script con try sin catch detectado, omitiendo:', scriptContent.substring(0, 100));
+                                    return; // Omitir este script
+                                }
+                                
+                                newScript.textContent = scriptContent;
+                            }
+                        }
+                        
+                        if (newScript.src || newScript.textContent) {
+                            document.head.appendChild(newScript);
+                        }
+                        oldScript.remove();
+                    } catch (scriptError) {
+                        console.error('❌ Error procesando script:', scriptError, oldScript);
+                        // Continuar con el siguiente script aunque uno falle
                     }
-                    document.body.appendChild(newScript);
-                    oldScript.remove();
                 });
-                // Inicializar el formulario
-                if (window.initPoderCultivoForm) {
-                    window.initPoderCultivoForm();
-                }
+                
+                // Inicializar el formulario después de un pequeño delay para asegurar que los scripts se cargaron
+                setTimeout(() => {
+                    if (typeof window.initPoderCultivoForm === 'function') {
+                        try {
+                            window.initPoderCultivoForm();
+                        } catch (initError) {
+                            console.error('❌ Error inicializando formulario de poder cultivo:', initError);
+                        }
+                    } else {
+                        console.warn('⚠️ initPoderCultivoForm no está disponible');
+                    }
+                }, 100);
             }
         }
     } catch (error) {
@@ -470,8 +510,9 @@ async function validateRolePermissions(roleCode) {
             return;
         }
         
-        // Verificar si el rol tiene permisos asociados
-        if (!role.permissions || role.permissions.length === 0) {
+        // Verificar si el rol tiene permisos asociados (solo en modo con backend)
+        // En modo estático, no verificar permisos para evitar warnings innecesarios
+        if (window.api && window.api.baseURL && (!role.permissions || role.permissions.length === 0)) {
             console.warn(`⚠️ El rol ${roleCode} no tiene permisos asociados`);
             
             // Mostrar advertencia visual si es necesario
@@ -483,7 +524,7 @@ async function validateRolePermissions(roleCode) {
                     roleDescription.classList.add('text-yellow-600', 'font-semibold');
                 }
             }
-        } else {
+        } else if (role.permissions && role.permissions.length > 0) {
             // Limpiar advertencia si el rol tiene permisos
             const roleDescription = document.getElementById('roleDescription');
             if (roleDescription && roleDescription.textContent.includes('⚠️')) {
