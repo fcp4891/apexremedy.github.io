@@ -48,8 +48,9 @@
 
     async function loadShipments() {
         try {
-            const response = await apiClient.request('/shipments', { method: 'GET' });
-            allShipments = response.data?.shipments || [];
+            // Usar getShipments que tiene soporte para modo estático
+            const response = await apiClient.getShipments({});
+            allShipments = response.data?.shipments || response.data || [];
             currentPage = 1;
             applyFilters();
         } catch (error) {
@@ -60,7 +61,8 @@
                     <tr>
                         <td colspan="8" class="px-6 py-12 text-center text-red-600">
                             <i class="fas fa-exclamation-triangle text-2xl mb-2"></i>
-                            <p>Error al cargar envíos</p>
+                            <p>Error al cargar envíos: ${error.message || 'Error desconocido'}</p>
+                            ${!apiClient.baseURL ? '<p class="text-sm text-gray-500 mt-2">Modo QA: Los envíos se cargan desde shipments.json</p>' : ''}
                         </td>
                     </tr>
                 `;
@@ -208,10 +210,27 @@
         currentShipmentId = Number(shipmentId);
 
         try {
-            const response = await apiClient.request(`/shipments/${shipmentId}`, { method: 'GET' });
-            const shipment = response.data?.shipment;
-            if (!shipment) {
-                return;
+            let shipment;
+            
+            // Si no hay backend, buscar en allShipments ya cargados
+            if (!apiClient.baseURL) {
+                shipment = allShipments.find(s => s.id === Number(shipmentId) || s.id === String(shipmentId));
+                if (!shipment) {
+                    // Si no está en memoria, intentar recargar desde JSON
+                    const response = await apiClient.getShipments({});
+                    const shipments = response.data?.shipments || response.data || [];
+                    shipment = shipments.find(s => s.id === Number(shipmentId) || s.id === String(shipmentId));
+                }
+                if (!shipment) {
+                    throw new Error(`Envío con ID ${shipmentId} no encontrado`);
+                }
+            } else {
+                // Modo con backend: usar API dinámica
+                const response = await apiClient.request(`/shipments/${shipmentId}`, { method: 'GET' });
+                shipment = response.data?.shipment || response.data;
+                if (!shipment) {
+                    throw new Error('Envío no encontrado');
+                }
             }
 
             getElement('modalShipmentId').textContent = shipment.id;
@@ -316,6 +335,15 @@
 
     async function updateShipmentStatus() {
         if (!currentShipmentId) {
+            return;
+        }
+
+        // Si no hay backend, mostrar mensaje de modo QA
+        if (!apiClient.baseURL) {
+            if (typeof notify !== 'undefined' && notify?.warning) {
+                notify.warning('⚠️ Modo QA: No se pueden modificar envíos. Los cambios solo se aplican en entorno local con backend.');
+            }
+            closeModal();
             return;
         }
 
