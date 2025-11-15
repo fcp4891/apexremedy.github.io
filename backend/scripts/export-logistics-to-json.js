@@ -48,6 +48,27 @@ async function exportLogistics() {
                     data: { points: [] },
                     total: 0,
                     timestamp
+                },
+                'internal-delivery-zones.json': {
+                    success: true,
+                    message: 'JSON vacío - base de datos no disponible',
+                    data: { zones: [] },
+                    total: 0,
+                    timestamp
+                },
+                'packing-materials.json': {
+                    success: true,
+                    message: 'JSON vacío - base de datos no disponible',
+                    data: { materials: [] },
+                    total: 0,
+                    timestamp
+                },
+                'shipping-providers.json': {
+                    success: true,
+                    message: 'JSON vacío - base de datos no disponible',
+                    data: { providers: [] },
+                    total: 0,
+                    timestamp
                 }
             };
             
@@ -88,6 +109,45 @@ async function exportLogistics() {
             ORDER BY created_at DESC
         `);
         console.log(`   ✅ ${pickupPoints.length} puntos de retiro encontrados`);
+        
+        // 4. Exportar internal_delivery_zones
+        console.log('🗺️ Obteniendo zonas de entrega interna...');
+        let zones = [];
+        try {
+            zones = await db.all(`
+                SELECT * FROM internal_delivery_zones
+                ORDER BY created_at DESC
+            `);
+            console.log(`   ✅ ${zones.length} zonas de entrega encontradas`);
+        } catch (zonesError) {
+            console.warn('   ⚠️ No se pudieron obtener zonas de entrega:', zonesError.message);
+        }
+        
+        // 5. Exportar packing_materials
+        console.log('📦 Obteniendo materiales de empaque...');
+        let materials = [];
+        try {
+            materials = await db.all(`
+                SELECT * FROM packing_materials
+                ORDER BY created_at DESC
+            `);
+            console.log(`   ✅ ${materials.length} materiales de empaque encontrados`);
+        } catch (materialsError) {
+            console.warn('   ⚠️ No se pudieron obtener materiales de empaque:', materialsError.message);
+        }
+        
+        // 6. Exportar shipping_providers
+        console.log('🚚 Obteniendo proveedores de envío...');
+        let providers = [];
+        try {
+            providers = await db.all(`
+                SELECT * FROM shipping_providers
+                ORDER BY created_at DESC
+            `);
+            console.log(`   ✅ ${providers.length} proveedores de envío encontrados`);
+        } catch (providersError) {
+            console.warn('   ⚠️ No se pudieron obtener proveedores de envío:', providersError.message);
+        }
         
         // Crear directorio api si no existe
         const apiDir = path.join(__dirname, '../../frontend/api');
@@ -133,10 +193,49 @@ async function exportLogistics() {
         fs.writeFileSync(pickupPointsFile, JSON.stringify(pickupPointsData, null, 2));
         console.log(`✅ Puntos de retiro exportados a: ${pickupPointsFile}`);
         
+        // Exportar internal-delivery-zones.json
+        const zonesFile = path.join(apiDir, 'internal-delivery-zones.json');
+        const zonesData = {
+            success: true,
+            message: 'Zonas de entrega interna exportadas correctamente',
+            data: { zones },
+            total: zones.length,
+            timestamp
+        };
+        fs.writeFileSync(zonesFile, JSON.stringify(zonesData, null, 2));
+        console.log(`✅ Zonas de entrega exportadas a: ${zonesFile}`);
+        
+        // Exportar packing-materials.json
+        const materialsFile = path.join(apiDir, 'packing-materials.json');
+        const materialsData = {
+            success: true,
+            message: 'Materiales de empaque exportados correctamente',
+            data: { materials },
+            total: materials.length,
+            timestamp
+        };
+        fs.writeFileSync(materialsFile, JSON.stringify(materialsData, null, 2));
+        console.log(`✅ Materiales de empaque exportados a: ${materialsFile}`);
+        
+        // Exportar shipping-providers.json
+        const providersFile = path.join(apiDir, 'shipping-providers.json');
+        const providersData = {
+            success: true,
+            message: 'Proveedores de envío exportados correctamente',
+            data: { providers },
+            total: providers.length,
+            timestamp
+        };
+        fs.writeFileSync(providersFile, JSON.stringify(providersData, null, 2));
+        console.log(`✅ Proveedores de envío exportados a: ${providersFile}`);
+        
         console.log(`📊 Resumen de exportación:`);
         console.log(`   - Centros de despacho: ${centers.length}`);
         console.log(`   - Conductores: ${drivers.length}`);
         console.log(`   - Puntos de retiro: ${pickupPoints.length}`);
+        console.log(`   - Zonas de entrega: ${zones.length}`);
+        console.log(`   - Materiales de empaque: ${materials.length}`);
+        console.log(`   - Proveedores de envío: ${providers.length}`);
         
         return {
             centers: centersData,
