@@ -18,7 +18,11 @@ async function viewDocuments(userId) {
         
         if (response.success) {
             const documents = response.data.documents || [];
-            const isStaticMode = response.data.isStaticMode === true || (documents.length === 0 && response.message && response.message.includes('no están disponibles en modo QA'));
+            const isStaticMode = response.data.isStaticMode === true;
+            
+            console.log('📊 [viewDocuments] Modo estático:', isStaticMode);
+            console.log('📊 [viewDocuments] Documentos recibidos:', documents.length);
+            console.log('📊 [viewDocuments] Documentos:', documents);
             
             // Si estamos en modo estático SIN documentos, mostrar mensaje directamente
             if (isStaticMode && documents.length === 0) {

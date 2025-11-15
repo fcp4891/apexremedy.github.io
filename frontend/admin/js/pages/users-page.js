@@ -298,6 +298,30 @@
                     }
                     break;
 
+                case 'close-documents-modal':
+                    if (typeof window.closeDocumentsModal === 'function') {
+                        window.closeDocumentsModal();
+                    }
+                    break;
+
+                case 'close-edit-modal':
+                    if (typeof window.closeEditModal === 'function') {
+                        window.closeEditModal();
+                    }
+                    break;
+
+                case 'close-approve-modal':
+                    if (typeof window.closeApproveModal === 'function') {
+                        window.closeApproveModal();
+                    }
+                    break;
+
+                case 'close-reject-modal':
+                    if (typeof window.closeRejectModal === 'function') {
+                        window.closeRejectModal();
+                    }
+                    break;
+
                 default:
                     console.warn('Unhandled data-action:', action);
             }

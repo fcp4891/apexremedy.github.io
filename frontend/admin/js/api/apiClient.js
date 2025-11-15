@@ -1646,15 +1646,43 @@ if (typeof APIClient === 'undefined') {
                     const staticData = await this.loadStaticJSON('user-documents.json');
                     if (staticData && staticData.success && staticData.data) {
                         // Buscar documentos del usuario
+                        // Las claves de objetos JSON son siempre strings, así que buscamos tanto con string como número
+                        const userIdNum = parseInt(id);
+                        const userIdStr = String(id);
+                        
                         let userDocuments = [];
-                        if (staticData.data.documentsByUser && staticData.data.documentsByUser[id]) {
-                            userDocuments = staticData.data.documentsByUser[id];
-                        } else if (staticData.data.documents) {
-                            // Fallback: buscar en array plano
-                            userDocuments = staticData.data.documents.filter(doc => doc.user_id === parseInt(id));
+                        
+                        // Intentar buscar en documentsByUser (claves pueden ser string o número)
+                        if (staticData.data.documentsByUser) {
+                            // Intentar con string primero (más común en JSON)
+                            if (staticData.data.documentsByUser[userIdStr]) {
+                                userDocuments = staticData.data.documentsByUser[userIdStr];
+                            } else if (staticData.data.documentsByUser[userIdNum]) {
+                                // Intentar con número
+                                userDocuments = staticData.data.documentsByUser[userIdNum];
+                            } else {
+                                // Si no se encuentra, buscar en todos los keys
+                                console.log('🔍 [getUserDocuments] Buscando documentos por user_id en documentsByUser...');
+                                console.log('🔍 [getUserDocuments] IDs disponibles:', Object.keys(staticData.data.documentsByUser));
+                                console.log('🔍 [getUserDocuments] ID buscado (string):', userIdStr);
+                                console.log('🔍 [getUserDocuments] ID buscado (number):', userIdNum);
+                            }
+                        }
+                        
+                        // Fallback: buscar en array plano si no se encontró en documentsByUser
+                        if (userDocuments.length === 0 && staticData.data.documents) {
+                            userDocuments = staticData.data.documents.filter(doc => {
+                                const docUserId = doc.user_id;
+                                return docUserId === userIdNum || docUserId === userIdStr || String(docUserId) === userIdStr || parseInt(docUserId) === userIdNum;
+                            });
+                            console.log('🔍 [getUserDocuments] Buscando en array plano, documentos encontrados:', userDocuments.length);
                         }
                         
                         console.log(`✅ ${userDocuments.length} documentos encontrados para usuario ${id} (solo metadatos)`);
+                        if (userDocuments.length > 0) {
+                            console.log('📄 Documentos encontrados:', userDocuments.map(d => d.document_type));
+                        }
+                        
                         return {
                             success: true,
                             data: { 
