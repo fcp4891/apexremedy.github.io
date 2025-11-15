@@ -200,15 +200,24 @@
     }
 
     async function deleteZone(id) {
-        if (typeof notify !== 'undefined' && notify.confirmDelete) {
-            const confirmed = await notify.confirmDelete('esta zona');
-            if (!confirmed) {
-                return;
-            }
-        }
-
         try {
             const api = ensureApiClient();
+            
+            // Si no hay backend, mostrar mensaje de modo QA
+            if (!api.baseURL) {
+                if (typeof notify !== 'undefined' && notify.warning) {
+                    notify.warning('⚠️ Modo QA: No se pueden modificar zonas restringidas. Los cambios solo se aplican en entorno local con backend.');
+                }
+                return;
+            }
+            
+            if (typeof notify !== 'undefined' && notify.confirmDelete) {
+                const confirmed = await notify.confirmDelete('esta zona');
+                if (!confirmed) {
+                    return;
+                }
+            }
+
             await api.request(`/restricted-zones/${id}`, { method: 'DELETE' });
             await loadZones();
             if (typeof notify !== 'undefined' && notify.success) {
@@ -267,6 +276,17 @@
     async function handleFormSubmit(event) {
         event.preventDefault();
 
+        const api = ensureApiClient();
+        
+        // Si no hay backend, mostrar mensaje de modo QA
+        if (!api.baseURL) {
+            if (typeof notify !== 'undefined' && notify.warning) {
+                notify.warning('⚠️ Modo QA: No se pueden modificar zonas restringidas. Los cambios solo se aplican en entorno local con backend.');
+            }
+            closeModal();
+            return;
+        }
+
         const id = document.getElementById('zoneId').value;
         const coverageValue = document.getElementById('zoneCoverage').value;
         try {
@@ -287,7 +307,6 @@
         };
 
         try {
-            const api = ensureApiClient();
             if (id) {
                 await api.request(`/restricted-zones/${id}`, {
                     method: 'PUT',
