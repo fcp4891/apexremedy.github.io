@@ -260,21 +260,40 @@ async function initPoderCultivoForm() {
         
         // Si aún no se cargaron los datos y tenemos una ruta, intentar fetch
         if (!dispensaryData && apiPath) {
-            const response = await fetch(apiPath);
-        if (response.ok) {
-            const result = await response.json();
-            if (result.success && result.data) {
-                dispensaryData = result.data;
-                if (dispensaryData) {
-                    dispensaryData.signature = normalizeSignatureDataUrl(dispensaryData.signature);
+            try {
+                const response = await fetch(apiPath);
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success && result.data) {
+                        dispensaryData = result.data;
+                        if (dispensaryData) {
+                            dispensaryData.signature = normalizeSignatureDataUrl(dispensaryData.signature);
+                        }
+                        console.log('✅ Datos del dispensario cargados:', {
+                            name: dispensaryData?.name,
+                            rut: dispensaryData?.rut,
+                            has_signature: !!dispensaryData?.signature
+                        });
+                    } else {
+                        console.warn('⚠️ Respuesta del dispensario sin datos, usando valores por defecto');
+                        dispensaryData = {
+                            name: 'Apexremedy',
+                            rut: '76.237.243-6',
+                            address: 'Oficina Virtual',
+                            signature: null
+                        };
+                    }
+                } else {
+                    console.warn('⚠️ No se pudo cargar datos del dispensario, usando valores por defecto');
+                    dispensaryData = {
+                        name: 'Apexremedy',
+                        rut: '76.237.243-6',
+                        address: 'Oficina Virtual',
+                        signature: null
+                    };
                 }
-                console.log('✅ Datos del dispensario cargados:', {
-                    name: dispensaryData?.name,
-                    rut: dispensaryData?.rut,
-                    has_signature: !!dispensaryData?.signature
-                });
-            } else {
-                console.warn('⚠️ Respuesta del dispensario sin datos, usando valores por defecto');
+            } catch (fetchError) {
+                console.warn('⚠️ Error en fetch de dispensario:', fetchError);
                 dispensaryData = {
                     name: 'Apexremedy',
                     rut: '76.237.243-6',
@@ -282,14 +301,6 @@ async function initPoderCultivoForm() {
                     signature: null
                 };
             }
-        } else {
-            console.warn('⚠️ No se pudo cargar datos del dispensario, usando valores por defecto');
-            dispensaryData = {
-                name: 'Apexremedy',
-                rut: '76.237.243-6',
-                address: 'Oficina Virtual',
-                signature: null
-            };
         }
     } catch (error) {
         console.error('❌ Error cargando datos del dispensario:', error);
