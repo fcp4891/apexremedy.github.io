@@ -456,14 +456,15 @@ async function viewDocuments(userId) {
                                 </div>
                             ` : ''}
                         `;
-                        
-                        document.getElementById('documentsModal').classList.remove('hidden');
-                        return;
                     }
-                } catch (userError) {
-                    console.error('Error al obtener información del usuario:', userError);
+                    
+                    document.getElementById('documentsModal').classList.remove('hidden');
+                    return;
                 }
+            } catch (userError) {
+                console.error('Error al obtener información del usuario:', userError);
             }
+        }
         
         notify.error('Error al cargar documentos: ' + (error.message || 'Error desconocido'));
     }
